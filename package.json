@@ -1,0 +1,8 @@
+{
+  "name": "motor-narracion",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
