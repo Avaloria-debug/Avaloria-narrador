@@ -438,6 +438,47 @@ describe('contenido — reloj, viaje y forma de los eventos', () => {
   });
 });
 
+describe('contenido — grafo de escenas', () => {
+  const escena = (c, id) => c.escenas.find((e) => e.id === id);
+
+  test('archivo real: cada salida tiene su inversa', () => {
+    for (const e of base.escenas) {
+      for (const s of e.salidas) assert.ok(escena(base, s).salidas.includes(e.id), `${s} no lista a ${e.id}`);
+    }
+  });
+
+  test('archivo real: las ciudades salen a sus caminos y la taberna solo a la plaza', () => {
+    assert.deepEqual(escena(base, 'escena_mercado_circular').salidas, ['escena_archivo_real', 'escena_camino_norte']);
+    assert.deepEqual(escena(base, 'escena_plaza_cambistas').salidas, [
+      'escena_taberna_lareth',
+      'escena_camino_norte',
+      'escena_camino_este',
+    ]);
+    assert.deepEqual(escena(base, 'escena_archivo_real').salidas, ['escena_mercado_circular', 'escena_camino_sur']);
+    assert.deepEqual(escena(base, 'escena_biblioteca_publica').salidas, ['escena_aula_cartografia', 'escena_camino_sur']);
+    assert.deepEqual(escena(base, 'escena_aula_cartografia').salidas, ['escena_biblioteca_publica', 'escena_camino_este']);
+    assert.deepEqual(escena(base, 'escena_taberna_lareth').salidas, ['escena_plaza_cambistas']);
+  });
+
+  test('salida sin inversa: error que bloquea', () => {
+    const c = copia();
+    escena(c, 'escena_taberna_lareth').salidas.push('escena_camino_este');
+    const r = validarContenido(c);
+    assert.equal(r.ok, false);
+    assert.ok(r.errores.includes('escena_taberna_lareth.salidas: escena_camino_este no tiene a escena_taberna_lareth en sus salidas'));
+    const d = copia();
+    escena(d, 'escena_mercado_circular').salidas = ['escena_archivo_real'];
+    hay(d, /escena_camino_norte\.salidas: escena_mercado_circular no tiene a escena_camino_norte/);
+  });
+
+  test('salida a sí misma o repetida', () => {
+    const c = copia();
+    escena(c, 'escena_taberna_lareth').salidas.push('escena_taberna_lareth', 'escena_plaza_cambistas');
+    hay(c, /escena_taberna_lareth\.salidas: la escena se lista a sí misma/);
+    hay(c, /escena_taberna_lareth\.salidas: salida repetida/);
+  });
+});
+
 describe('contenido — plantillas', () => {
   test('cada intención necesita exito, fallo y neutro', () => {
     for (const r of RESULTADOS) {

@@ -18,35 +18,43 @@ const idDeCiudad = (ciudad) =>
 
 /**
  * Ruta con menos horas entre la escena actual y cualquiera de las escenas meta.
- * Las salidas valen en los dos sentidos. Las horas de una ruta son la suma de
- * reglas.viajeHorasPorCamino de cada camino por el que pasa, incluido el camino
- * de partida o de llegada.
+ *
+ * Costo: cada tramo entre un camino y una escena de ciudad cuesta la mitad de las horas
+ * de ese camino (reglas.viajeHorasPorCamino). Los demás tramos (dentro de la ciudad, o
+ * entre un camino y un lugar de camino) no suman.
+ * - Cruzar un camino de ciudad a ciudad: sus dos tramos, o sea sus horas completas, una vez.
+ * - Entrar a un camino y quedarse, o salir de un camino donde ya se estaba: la mitad,
+ *   redondeada hacia arriba.
  */
 function rutaPorCamino(origenId, metas, contenido) {
   const horasCamino = contenido.reglas?.viajeHorasPorCamino ?? {};
-  const costo = (id) => horasCamino[id] ?? 0;
-  const vecinas = new Map(contenido.escenas.map((e) => [e.id, new Set()]));
-  for (const e of contenido.escenas) {
-    for (const s of e.salidas ?? []) {
-      if (!vecinas.has(s)) continue;
-      vecinas.get(e.id).add(s);
-      vecinas.get(s).add(e.id);
-    }
-  }
-  if (!vecinas.has(origenId)) return null;
+  const porId = new Map(contenido.escenas.map((e) => [e.id, e]));
+  if (!porId.has(origenId)) return null;
+  const esCamino = (id) => id in horasCamino;
+  // Camino del tramo, si el tramo une un camino con una escena de ciudad.
+  const caminoDelTramo = (a, b) => {
+    if (esCamino(a) && ciudadDe(porId.get(b)) !== null) return a;
+    if (esCamino(b) && ciudadDe(porId.get(a)) !== null) return b;
+    return null;
+  };
+  const costoTramo = (a, b) => {
+    const camino = caminoDelTramo(a, b);
+    return camino === null ? 0 : horasCamino[camino] / 2;
+  };
 
-  const mejor = new Map([[origenId, { horas: costo(origenId), camino: [origenId] }]]);
+  const mejor = new Map([[origenId, { horas: 0, camino: [origenId] }]]);
   const pendientes = new Set([origenId]);
   while (pendientes.size > 0) {
     let actual = null;
     for (const id of pendientes) if (actual === null || mejor.get(id).horas < mejor.get(actual).horas) actual = id;
     pendientes.delete(actual);
-    for (const v of vecinas.get(actual)) {
-      const horas = mejor.get(actual).horas + costo(v);
+    for (const v of porId.get(actual).salidas ?? []) {
+      if (!porId.has(v)) continue;
+      const horas = mejor.get(actual).horas + costoTramo(actual, v);
       const previa = mejor.get(v);
-      const camino = mejor.get(actual).camino.length + 1;
+      const largo = mejor.get(actual).camino.length + 1;
       // Con las mismas horas gana la ruta con menos escenas.
-      if (!previa || horas < previa.horas || (horas === previa.horas && camino < previa.camino.length)) {
+      if (!previa || horas < previa.horas || (horas === previa.horas && largo < previa.camino.length)) {
         mejor.set(v, { horas, camino: [...mejor.get(actual).camino, v] });
         pendientes.add(v);
       }
@@ -60,9 +68,18 @@ function rutaPorCamino(origenId, metas, contenido) {
     if (gana) elegida = { ...r, escenaLlegada: id };
   }
   if (!elegida) return null;
+
+  // Horas por camino: completas si la ruta usa sus dos tramos; la mitad, hacia arriba, si usa uno.
+  const tramos = new Map();
+  for (let i = 1; i < elegida.camino.length; i++) {
+    const camino = caminoDelTramo(elegida.camino[i - 1], elegida.camino[i]);
+    if (camino !== null) tramos.set(camino, (tramos.get(camino) ?? 0) + 1);
+  }
+  let horas = 0;
+  for (const [camino, n] of tramos) horas += n >= 2 ? horasCamino[camino] : Math.ceil(horasCamino[camino] / 2);
   return {
-    horas: elegida.horas,
-    caminos: elegida.camino.filter((id) => id in horasCamino),
+    horas,
+    caminos: elegida.camino.filter(esCamino),
     escenaLlegada: elegida.escenaLlegada,
   };
 }
@@ -74,7 +91,8 @@ function rutaPorCamino(origenId, metas, contenido) {
  * @returns {{ tipo: string, horas: number|null, escenaLlegada: string|null, caminos: string[], motivo?: string }}
  *   `misma_escena`: el jugador ya está en el destino (la escena, o una escena de esa ciudad). 0 horas, motivo `ya_en_destino`.
  *   `intra_ciudad`: otra escena de la ciudad de la escena actual. Cuesta reglas.viajeHorasIntraCiudad.
- *   `por_camino`: cualquier otro destino. Cuesta la suma de reglas.viajeHorasPorCamino de los caminos de la ruta.
+ *   `por_camino`: cualquier otro destino. Cuesta la suma de las horas de los caminos de la ruta, cada uno una vez
+ *     (la mitad si el viaje empieza o termina en el camino). `caminos` trae los caminos por los que pasa.
  *   `sin_ruta`: el destino no existe o no hay ruta.
  */
 export function clasificarViaje(destino, escenaActualId, contenido) {

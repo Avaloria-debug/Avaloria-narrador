@@ -227,3 +227,25 @@ Resultado: `narrador/reloj.js`, `narrador/eventos.js`, `narrador/estadoEscena.js
 - Viajar a una ciudad llega a la escena de esa ciudad donde desemboca el camino (a Lareth por el norte se llega a la plaza). Viajar a una escena de otra ciudad llega directo a esa escena, sin sumar la hora dentro de la ciudad.
 - `sin_ruta`: el destino no existe o no hay cómo llegar. Con el contenido actual no pasa.
 - Si un evento bloquea el viaje (`evento_cierre_puerta`), lo decide el bloque 3b.
+
+## Bloque 3a.1 — grafo simétrico y costo de viaje por camino
+Resultado: las salidas del contenido son simétricas y el viaje cobra cada camino una sola vez. Esto reemplaza, del bloque 3a, la nota de "Estado de escena" sobre las ciudades sin caminos en `salidas` y las notas de "Viaje" sobre el costo por camino.
+
+### Grafo simétrico
+- Cada escena de ciudad lista en `salidas` los caminos que la conectan: mercado (norte), plaza (norte y este), archivo (sur), biblioteca (sur), aula (este). La taberna sigue conectada solo a la plaza.
+- Los tres caminos ya listaban a sus ciudades y a su lugar de camino; no cambiaron.
+- El validador exige salidas simétricas: si A lista a B, B lista a A. También rechaza una escena que se lista a sí misma y una salida repetida. Son errores que bloquean.
+- La regla de vecina ahora vale en los dos sentidos entre ciudad y camino: un evento grave en el camino del norte sube un nivel el mercado, la plaza y el lago.
+- La ruta de un viaje sigue las `salidas` tal como están. Ya no hace falta tomarlas en los dos sentidos.
+
+### Costo de viaje por camino
+- Cada tramo entre un camino y una escena de ciudad cuesta la mitad de las horas de ese camino. Los tramos dentro de una ciudad y entre un camino y su lugar de camino no suman horas en un viaje por camino.
+- Cruzar un camino de ciudad a ciudad usa sus dos tramos: las horas completas, una vez (36, 44 o 52).
+- Detenerse en el camino y seguir: mitad al entrar y mitad al salir. Ardenhall a camino del norte, 18; camino del norte a Lareth, 18; total 36, igual que el viaje directo.
+- Volver al punto de partida desde el camino: también la mitad. Ardenhall a camino del norte y vuelta a Ardenhall, 18 + 18.
+- La mitad se redondea hacia arriba en horas. El cruce completo cobra las horas exactas del camino aunque sean impares. Con el contenido actual las tres son pares.
+- Una ruta que pasa por más de un camino suma cada camino una vez, completo si lo cruza y por la mitad si empieza o termina en él. Del camino del norte a Halenor: 18 + 44 = 62, por Lareth.
+- Se elige la ruta con menos horas. Con las mismas horas, la que pasa por menos escenas.
+- El costo no depende de por dónde entró el jugador al camino: no se guarda el origen del viaje.
+- Los lugares de camino (lago, puente, cruce) están sobre su camino: ir del lago al camino del norte cuesta 0 horas, y del lago a Lareth o a Ardenhall, 18. Que moverse entre el camino y su lugar no gaste reloj queda a revisar en el bloque 3b.
+- Viajar desde una ciudad a otra saliendo de la escena que no toca el camino (del archivo a Lareth) no suma la hora dentro de la ciudad.

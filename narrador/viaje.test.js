@@ -68,21 +68,81 @@ describe('viaje — por camino', () => {
     }
   });
 
-  test('desde la otra escena de la ciudad no se suma la hora dentro de la ciudad', () => {
-    // El camino del norte sale del mercado; desde el archivo cuesta lo mismo.
-    assert.equal(viaje('ciudad_lareth', 'escena_archivo_real').horas, 36);
-    assert.equal(viaje('ciudad_halenor', 'escena_mercado_circular').horas, 52);
+  test('Ardenhall -> Lareth directo: 36 horas', () => {
+    assert.equal(viaje('ciudad_lareth', 'escena_mercado_circular').horas, 36);
   });
 
-  test('destino camino: las horas de ese camino', () => {
-    assert.deepEqual(viaje('escena_camino_norte', 'escena_mercado_circular'), {
+  test('Ardenhall -> camino del norte -> Lareth: 36 horas en total, no 72', () => {
+    const ida = viaje('escena_camino_norte', 'escena_mercado_circular');
+    const resto = viaje('ciudad_lareth', 'escena_camino_norte');
+    assert.deepEqual(ida, {
       tipo: TIPOS_VIAJE.POR_CAMINO,
-      horas: 36,
+      horas: 18,
       caminos: ['escena_camino_norte'],
       escenaLlegada: 'escena_camino_norte',
     });
-    assert.equal(viaje('escena_camino_este', 'escena_plaza_cambistas').horas, 44);
-    assert.equal(viaje('escena_camino_sur', 'escena_biblioteca_publica').horas, 52);
+    assert.equal(resto.horas, 18);
+    assert.equal(resto.escenaLlegada, 'escena_plaza_cambistas');
+    assert.equal(ida.horas + resto.horas, 36);
+  });
+
+  test('camino del norte -> Ardenhall (vuelta): 18 horas', () => {
+    const vuelta = viaje('ciudad_ardenhall', 'escena_camino_norte');
+    assert.equal(vuelta.horas, 18);
+    assert.equal(vuelta.escenaLlegada, 'escena_mercado_circular');
+    // Ida y vuelta a mitad de ruta: mitad al entrar + mitad al salir.
+    assert.equal(viaje('escena_camino_norte', 'escena_mercado_circular').horas + vuelta.horas, 36);
+  });
+
+  test('detenerse en cualquier camino no duplica el costo', () => {
+    for (const [camino, a, b, horas] of [
+      ['escena_camino_norte', 'escena_mercado_circular', 'ciudad_lareth', 36],
+      ['escena_camino_este', 'escena_plaza_cambistas', 'ciudad_halenor', 44],
+      ['escena_camino_sur', 'escena_archivo_real', 'ciudad_halenor', 52],
+    ]) {
+      assert.equal(viaje(camino, a).horas + viaje(b, camino).horas, horas, camino);
+      assert.equal(viaje(b, a).horas, horas, camino);
+    }
+  });
+
+  test('mitad de un camino de horas impares: redondea hacia arriba, y el cruce completo no suma de más', () => {
+    const c = { ...contenido, reglas: { ...contenido.reglas, viajeHorasPorCamino: { ...contenido.reglas.viajeHorasPorCamino, escena_camino_norte: 35 } } };
+    assert.equal(clasificarViaje('escena_camino_norte', 'escena_mercado_circular', c).horas, 18);
+    assert.equal(clasificarViaje('ciudad_ardenhall', 'escena_camino_norte', c).horas, 18);
+    assert.equal(clasificarViaje('ciudad_lareth', 'escena_mercado_circular', c).horas, 35);
+  });
+
+  test('rutas de un camino: Ardenhall -> Halenor por el sur (52) y Lareth -> Halenor por el este (44)', () => {
+    assert.deepEqual(viaje('ciudad_halenor', 'escena_mercado_circular').caminos, ['escena_camino_sur']);
+    assert.equal(viaje('ciudad_halenor', 'escena_mercado_circular').horas, 52);
+    assert.deepEqual(viaje('ciudad_halenor', 'escena_taberna_lareth').caminos, ['escena_camino_este']);
+    assert.equal(viaje('ciudad_halenor', 'escena_taberna_lareth').horas, 44);
+  });
+
+  test('ruta que cruza dos caminos: suma cada camino una vez', () => {
+    // Del mercado al camino del este: norte completo (36) + mitad del este (22).
+    const r = viaje('escena_camino_este', 'escena_mercado_circular');
+    assert.equal(r.horas, 58);
+    assert.deepEqual(r.caminos, ['escena_camino_norte', 'escena_camino_este']);
+    // Del camino del norte a Halenor: mitad del norte (18) + este completo (44), por Lareth.
+    const s = viaje('ciudad_halenor', 'escena_camino_norte');
+    assert.equal(s.horas, 62);
+    assert.deepEqual(s.caminos, ['escena_camino_norte', 'escena_camino_este']);
+    // Sin el camino del sur, de Ardenhall a Halenor se va por el norte y el este: 36 + 44.
+    const sinSur = {
+      ...contenido,
+      escenas: contenido.escenas
+        .filter((e) => e.id !== 'escena_camino_sur')
+        .map((e) => ({ ...e, salidas: e.salidas.filter((x) => x !== 'escena_camino_sur') })),
+    };
+    const t = clasificarViaje('ciudad_halenor', 'escena_mercado_circular', sinSur);
+    assert.equal(t.horas, 80);
+    assert.deepEqual(t.caminos, ['escena_camino_norte', 'escena_camino_este']);
+  });
+
+  test('desde la otra escena de la ciudad no se suma la hora dentro de la ciudad', () => {
+    assert.equal(viaje('ciudad_lareth', 'escena_archivo_real').horas, 36);
+    assert.equal(viaje('ciudad_ardenhall', 'escena_taberna_lareth').horas, 36);
   });
 
   test('escena de otra ciudad: llega a esa escena, con las horas del camino', () => {
@@ -92,17 +152,11 @@ describe('viaje — por camino', () => {
     assert.equal(r.escenaLlegada, 'escena_taberna_lareth');
   });
 
-  test('si no hay camino directo, se suman los caminos de la ruta más corta', () => {
-    // Al camino del este no se llega desde Ardenhall sin pasar por otro camino: norte (36) + este (44).
-    const r = viaje('escena_camino_este', 'escena_mercado_circular');
-    assert.equal(r.horas, 80);
-    assert.deepEqual(r.caminos, ['escena_camino_norte', 'escena_camino_este']);
-  });
-
-  test('desde un camino: cuenta el camino de partida', () => {
-    assert.equal(viaje('ciudad_lareth', 'escena_camino_norte').horas, 36);
-    assert.equal(viaje('ciudad_lareth', 'escena_lago_espejos').horas, 36);
-    assert.equal(viaje('ciudad_halenor', 'escena_camino_norte').horas, 80);
+  test('lugares de camino: están sobre el camino', () => {
+    // Del lago al camino del norte no hay tramo de ciudad: 0 horas.
+    assert.equal(viaje('escena_camino_norte', 'escena_lago_espejos').horas, 0);
+    assert.equal(viaje('ciudad_lareth', 'escena_lago_espejos').horas, 18);
+    assert.equal(viaje('ciudad_ardenhall', 'escena_lago_espejos').horas, 18);
   });
 
   test('las horas salen de reglas.viajeHorasPorCamino', () => {

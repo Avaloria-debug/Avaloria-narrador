@@ -97,6 +97,30 @@ describe('estado de escena — contenido real', () => {
     assert.equal(estadoDeEscena('escena_mercado_circular', activos, contenido), 'tranquilo');
   });
 
+  test('evento grave en el camino del norte: sube un nivel el mercado y la plaza, y nada más', () => {
+    const activos = [activo('evento_emboscada_norte', 'escena_camino_norte')];
+    assert.equal(estadoDeEscena('escena_camino_norte', activos, contenido), 'combate');
+    assert.equal(estadoDeEscena('escena_mercado_circular', activos, contenido), 'social');
+    assert.equal(estadoDeEscena('escena_plaza_cambistas', activos, contenido), 'social');
+    assert.equal(estadoDeEscena('escena_lago_espejos', activos, contenido), 'social');
+    // A dos saltos no llega.
+    assert.equal(estadoDeEscena('escena_archivo_real', activos, contenido), 'tranquilo');
+    assert.equal(estadoDeEscena('escena_taberna_lareth', activos, contenido), 'tranquilo');
+  });
+
+  test('con evento propio, el camino grave sube un solo nivel', () => {
+    const activos = [
+      activo('evento_emboscada_norte', 'escena_camino_norte'),
+      activo('evento_deuda_impaga', 'escena_plaza_cambistas'), // tenso
+    ];
+    assert.equal(estadoDeEscena('escena_plaza_cambistas', activos, contenido), 'peligroso');
+  });
+
+  test('un evento grave en la ciudad también sube el camino', () => {
+    const activos = [activo('evento_guardias_persiguen', 'escena_mercado_circular')];
+    assert.equal(estadoDeEscena('escena_camino_norte', activos, contenido), 'social');
+  });
+
   test('la tormenta de verano es neutra', () => {
     const activos = [activo('evento_tormenta_verano', 'escena_camino_sur')];
     assert.equal(estadoDeEscena('escena_camino_sur', activos, contenido), 'tranquilo');

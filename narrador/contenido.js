@@ -171,6 +171,17 @@ export function validarContenido(contenido) {
     if (!Array.isArray(e.salidas)) err(`${e.id}: salidas no es una lista`);
     for (const s of lista(e.salidas)) refEscena(s, `${e.id}.salidas`);
   }
+  // Salidas simétricas: si A lista a B, B lista a A.
+  const salidasDe = new Map(lista(contenido.escenas).filter(esObjeto).map((e) => [e.id, lista(e.salidas)]));
+  for (const [id, salidas] of salidasDe) {
+    if (salidas.includes(id)) err(`${id}.salidas: la escena se lista a sí misma`);
+    if (new Set(salidas).size !== salidas.length) err(`${id}.salidas: salida repetida`);
+    for (const s of salidas) {
+      if (s !== id && salidasDe.has(s) && !salidasDe.get(s).includes(id)) {
+        err(`${id}.salidas: ${s} no tiene a ${id} en sus salidas`);
+      }
+    }
+  }
 
   // --- NPCs ---
   for (const n of lista(contenido.npcs)) {
