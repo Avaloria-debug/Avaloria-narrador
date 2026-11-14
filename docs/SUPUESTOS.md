@@ -88,6 +88,16 @@ Decisiones tomadas sin preguntar. Son reversibles. El código y el contenido se 
 - Toda referencia a un id (escena, NPC, objeto, evento, verbo, destino, conocimiento) es un error del validador y bloquea. Los `avisos` quedan solo para observaciones que no son referencias; hoy hay una: fin por acción sin verbos.
 - Si el valor coincide con el nombre de una escena, NPC, objeto o evento (sin distinguir tildes ni mayúsculas), el error dice cuál es el id. Para NPCs también se reconoce el primer nombre.
 - `efectos[].conocimientoId` tiene que ser el `id` de un conocimiento del NPC del mismo efecto.
-- Sin corregir, para revisar. No son NPC, escena ni objeto, y el validador no los revisa:
-  - `requiereMarca` de Elia y Oren dice `Marca "leyó"`. El id de la marca en `reglas.marcas` es `leyo`.
-  - `objetos[].conocimientoDesbloquea` es texto libre en los 12 objetos narrativos, y no coincide letra por letra con el `contenido` del conocimiento del NPC. Solo el conocimiento de Hollis tiene `id`.
+
+## Bloque 1 — ids de conocimientos y marcas
+- `requiereMarca` de Elia y Oren pasó de `Marca "leyó"` a `leyo`, el id de `reglas.marcas`.
+- Cada conocimiento de NPC tiene `id` con el formato `conocimiento_<nombre>_<n>` (por ejemplo `conocimiento_maren_1`). Hollis mantiene `conocimiento_sendero_sin_vigilancia`. Hoy cada NPC tiene un solo conocimiento, así que todos los nuevos terminan en `_1`.
+- En los 12 objetos narrativos, `conocimientoDesbloquea` pasó de texto a id. Resultado: los 12 tienen equivalente y ninguno quedó sin asignar, porque cada NPC asociado tiene un único conocimiento y el texto del objeto era una versión corta del mismo. No se inventó ningún conocimiento.
+- Otras referencias a conocimientos, revisadas y sin cambios: el efecto `habilita` de `evento_tormenta_verano` y `reglas.conocimientoSenderoSinVigilancia` usan `conocimiento_sendero_sin_vigilancia`, que existe en Hollis.
+- El texto corto que tenía cada objeto se perdió al pasar a id. El texto para el jugador es el `contenido` del conocimiento del NPC.
+- Validador, todo como error:
+  - Cada conocimiento tiene `id` con prefijo `conocimiento_`, único en todo el contenido.
+  - `requiereMarca` existe en `reglas.marcas`.
+  - `conocimientoDesbloquea` es el id de un conocimiento del `npcAsociado` del mismo objeto. Es obligatorio en los objetos narrativos.
+  - `reglas.marcas.*` (`activaCon.verbo`, `activaCon.escenaId`, `usadaPor`) y `reglas.conocimientoSenderoSinVigilancia` referencian ids existentes.
+- El validador no exige el formato `conocimiento_<nombre>_<n>` completo, solo el prefijo, para admitir el id de Hollis.

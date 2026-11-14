@@ -137,12 +137,27 @@ export function validarContenido(contenido) {
   const refVerbo = (v, donde) => {
     if (!verbos.has(v)) err(`${donde}: verbo inexistente ${JSON.stringify(v)}`);
   };
-  // Conocimientos con id propio, por NPC.
+  // Conocimientos: id obligatorio, con formato y único en todo el contenido.
   const conocimientosPorNpc = new Map();
+  const conocimientoVisto = new Map();
   for (const n of lista(contenido.npcs)) {
     if (!esObjeto(n)) continue;
-    conocimientosPorNpc.set(n.id, new Set(lista(n.conocimientos).map((k) => k?.id).filter(Boolean)));
+    const propios = new Set();
+    conocimientosPorNpc.set(n.id, propios);
+    for (const [i, k] of lista(n.conocimientos).entries()) {
+      const donde = `${n.id}.conocimientos[${i}]`;
+      const id = esObjeto(k) ? k.id : undefined;
+      if (typeof id !== 'string' || !/^conocimiento_[a-z0-9_]+$/.test(id)) {
+        err(`${donde}: id de conocimiento inválido ${JSON.stringify(id)}`);
+      } else if (conocimientoVisto.has(id)) {
+        err(`${donde}: id de conocimiento repetido ${id} (ya está en ${conocimientoVisto.get(id)})`);
+      } else {
+        conocimientoVisto.set(id, donde);
+        propios.add(id);
+      }
+    }
   }
+  const marcas = esObjeto(contenido.reglas?.marcas) ? contenido.reglas.marcas : {};
 
   // --- Escenas ---
   for (const e of lista(contenido.escenas)) {
@@ -161,7 +176,11 @@ export function validarContenido(contenido) {
       for (const c of lista(n.movimiento.caminos)) refEscena(c, `${n.id}.movimiento.caminos`);
     }
     for (const [i, k] of lista(n.conocimientos).entries()) {
-      if (esObjeto(k) && k.requiereEvento != null) refEvento(k.requiereEvento, `${n.id}.conocimientos[${i}].requiereEvento`);
+      if (!esObjeto(k)) continue;
+      if (k.requiereEvento != null) refEvento(k.requiereEvento, `${n.id}.conocimientos[${i}].requiereEvento`);
+      if (k.requiereMarca != null && !Object.hasOwn(marcas, k.requiereMarca)) {
+        err(`${n.id}.conocimientos[${i}].requiereMarca: marca inexistente ${JSON.stringify(k.requiereMarca)}`);
+      }
     }
   }
 
@@ -172,6 +191,13 @@ export function validarContenido(contenido) {
     if (o.escenaVenta != null) refEscena(o.escenaVenta, `${o.id}.escenaVenta`);
     if (o.escenaAparece != null) refEscena(o.escenaAparece, `${o.id}.escenaAparece`);
     if (o.tipo === 'narrativo' || o.npcAsociado != null) refNpc(o.npcAsociado, `${o.id}.npcAsociado`);
+    if (o.tipo === 'narrativo' || o.conocimientoDesbloquea != null) {
+      if (!conocimientosPorNpc.get(o.npcAsociado)?.has(o.conocimientoDesbloquea)) {
+        err(
+          `${o.id}.conocimientoDesbloquea: conocimiento inexistente ${JSON.stringify(o.conocimientoDesbloquea)} en ${JSON.stringify(o.npcAsociado)}`,
+        );
+      }
+    }
     for (const v of lista(o.utilizableComo)) refVerbo(v, `${o.id}.utilizableComo`);
   }
 
@@ -236,6 +262,25 @@ export function validarContenido(contenido) {
     const esperados = new Set([...ids.intenciones, ...BLOQUES_EXTRA]);
     for (const clave of Object.keys(plantillas)) {
       if (!esperados.has(clave)) err(`plantillas: bloque sin intención ${clave}`);
+    }
+  }
+
+  // --- Reglas: marcas y conocimiento del sendero ---
+  for (const [marcaId, m] of Object.entries(marcas)) {
+    const donde = `reglas.marcas.${marcaId}`;
+    if (esObjeto(m?.activaCon)) {
+      if (m.activaCon.verbo != null) refVerbo(m.activaCon.verbo, `${donde}.activaCon.verbo`);
+      if (m.activaCon.escenaId != null) refEscena(m.activaCon.escenaId, `${donde}.activaCon.escenaId`);
+    }
+    for (const npcId of lista(m?.usadaPor)) refNpc(npcId, `${donde}.usadaPor`);
+  }
+  const sendero = contenido.reglas?.conocimientoSenderoSinVigilancia;
+  if (esObjeto(sendero)) {
+    const donde = 'reglas.conocimientoSenderoSinVigilancia';
+    if (sendero.npcId != null) refNpc(sendero.npcId, `${donde}.npcId`);
+    if (sendero.requiereEvento != null) refEvento(sendero.requiereEvento, `${donde}.requiereEvento`);
+    if (!conocimientosPorNpc.get(sendero.npcId)?.has(sendero.id)) {
+      err(`${donde}.id: conocimiento inexistente ${JSON.stringify(sendero.id)} en ${JSON.stringify(sendero.npcId)}`);
     }
   }
 

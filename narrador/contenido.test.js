@@ -234,6 +234,70 @@ describe('contenido — nombres en lugar de ids', () => {
   });
 });
 
+describe('contenido — conocimientos y marcas', () => {
+  const npc = (c, id) => c.npcs.find((n) => n.id === id);
+  const objeto = (c, id) => c.objetos.find((o) => o.id === id);
+
+  test('archivo real: ids de conocimiento, marca leyo y narrativos por id', () => {
+    assert.equal(npc(base, 'maren_archivista').conocimientos[0].id, 'conocimiento_maren_1');
+    assert.equal(npc(base, 'hollis_pastor').conocimientos[0].id, 'conocimiento_sendero_sin_vigilancia');
+    assert.equal(npc(base, 'elia_bibliotecaria').conocimientos[0].requiereMarca, 'leyo');
+    assert.equal(npc(base, 'oren_peregrino').conocimientos[0].requiereMarca, 'leyo');
+    const narrativos = base.objetos.filter((o) => o.tipo === 'narrativo');
+    assert.equal(narrativos.length, 12);
+    for (const o of narrativos) {
+      assert.equal(o.conocimientoDesbloquea, npc(base, o.npcAsociado).conocimientos[0].id, o.id);
+    }
+  });
+
+  test('requiereMarca tiene que existir en reglas.marcas', () => {
+    const c = copia();
+    npc(c, 'elia_bibliotecaria').conocimientos[0].requiereMarca = 'Marca "leyó"';
+    hay(c, /elia_bibliotecaria\.conocimientos\[0\]\.requiereMarca: marca inexistente/);
+    const d = copia();
+    delete d.reglas.marcas.leyo;
+    hay(d, /requiereMarca: marca inexistente "leyo"/);
+    const e = copia();
+    npc(e, 'maren_archivista').conocimientos[0].requiereMarca = 'constructor';
+    hay(e, /requiereMarca: marca inexistente "constructor"/);
+  });
+
+  test('conocimientoDesbloquea: id inexistente, texto libre, faltante o de otro NPC', () => {
+    for (const valor of ['conocimiento_fantasma_1', 'Dónde está la copia del tratado', undefined, 'conocimiento_serel_1']) {
+      const c = copia();
+      objeto(c, 'objeto_sello_archivo').conocimientoDesbloquea = valor;
+      hay(c, /objeto_sello_archivo\.conocimientoDesbloquea: conocimiento inexistente/);
+    }
+  });
+
+  test('id de conocimiento repetido entre NPCs o dentro del mismo NPC', () => {
+    const c = copia();
+    npc(c, 'serel_panadero').conocimientos[0].id = 'conocimiento_maren_1';
+    hay(c, /serel_panadero\.conocimientos\[0\]: id de conocimiento repetido conocimiento_maren_1/);
+    const d = copia();
+    const m = npc(d, 'maren_archivista');
+    m.conocimientos.push({ ...m.conocimientos[0] });
+    hay(d, /maren_archivista\.conocimientos\[1\]: id de conocimiento repetido/);
+  });
+
+  test('conocimiento sin id o con id mal formado', () => {
+    const c = copia();
+    delete npc(c, 'maren_archivista').conocimientos[0].id;
+    hay(c, /maren_archivista\.conocimientos\[0\]: id de conocimiento inválido/);
+    const d = copia();
+    npc(d, 'maren_archivista').conocimientos[0].id = 'Tratado de las Dos Coronas';
+    hay(d, /id de conocimiento inválido/);
+  });
+
+  test('reglas: usadaPor de la marca y conocimiento del sendero', () => {
+    const c = copia();
+    c.reglas.marcas.leyo.usadaPor.push('Elia');
+    c.reglas.conocimientoSenderoSinVigilancia.id = 'conocimiento_otro';
+    hay(c, /reglas\.marcas\.leyo\.usadaPor: "Elia" es un nombre, no un id; va elia_bibliotecaria/);
+    hay(c, /reglas\.conocimientoSenderoSinVigilancia\.id: conocimiento inexistente/);
+  });
+});
+
 describe('contenido — plantillas', () => {
   test('cada intención necesita exito, fallo y neutro', () => {
     for (const r of RESULTADOS) {
