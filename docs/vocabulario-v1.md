@@ -106,9 +106,10 @@ Costo del viaje, en horas del reloj:
 | Regla | Valor | Cuándo |
 |---|---|---|
 | `reglas.viajeHorasIntraCiudad` | 1 | El destino es una escena de la misma ciudad que la escena actual |
-| `reglas.viajeHorasPorCamino` | 36, 44 o 52 según el camino | Cualquier otro destino |
+| `reglas.viajeHorasPorCamino` | 36, 44 o 52 según el camino | Cualquier otro destino. Se suman las horas de cada camino de la ruta |
+| — | 0 | El destino es la escena actual, o la ciudad donde ya está el jugador |
 
-Tipos de viaje en el código: `intra_ciudad`, `por_camino`, `misma_escena`.
+Tipos de viaje en el código: `intra_ciudad`, `por_camino`, `misma_escena` (con motivo `ya_en_destino`), `sin_ruta`.
 
 ### 5c. Pseudo-verbos
 
@@ -228,7 +229,25 @@ Valores de `motivo` cuando el código reformula. Cada uno tiene su texto en `pla
 | `falta_destino` | `viajar` sin un destino válido |
 | `destino_ambiguo` | La frase nombra dos o más destinos |
 
-`plantillas.reformulacion` tiene además la clave `repetir_segunda`, para pedir la segunda intención de una frase. El único placeholder de este bloque es `{nombres}`.
+`plantillas.reformulacion` tiene además dos claves que no son motivos de la comprensión:
+
+| Clave | Cuándo |
+|---|---|
+| `repetir_segunda` | Para pedir la segunda intención de una frase |
+| `ya_en_destino` | El jugador viaja a la escena o a la ciudad donde ya está |
+
+Placeholders de este bloque: `{nombres}` y, en `ya_en_destino`, `{lugar}`.
+
+### 13c. Eventos activos y reloj
+
+| Elemento | Forma |
+|---|---|
+| Reloj | `{ dia, hora }`, con `hora` en formato `HH:MM`. Empieza en día 1, 08:00 |
+| Evento activo | `{ id, escenaId, turnosRestantes, horaFin }` |
+| `turnosRestantes` | Entero mayor que 0, o `null` si no termina por turnos |
+| `horaFin` | Reloj `{ dia, hora }`, o `null` si no termina por hora |
+| Motivo de cierre | `tiempo`, `hora`, `accion` |
+| Duración (`duracion.tipo`) | `turnos`, `horas`, `hasta_hora`, `hasta_accion`, `hasta_salida_escena` |
 
 Los textos del jugador se guardan tal cual. Los valores de esta tabla son los únicos permitidos.
 

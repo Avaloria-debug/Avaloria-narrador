@@ -11,6 +11,7 @@ export const CONTEOS = Object.freeze({
 });
 
 import { BLOQUE_REFORMULACION, CLAVES_REFORMULACION } from './motivos.js';
+import { esHora, relojInicial } from './reloj.js';
 
 export const RESULTADOS = Object.freeze(['exito', 'fallo', 'neutro']);
 export const BLOQUES_EXTRA = Object.freeze(['revelar_conocimiento', 'mostrar_narrativo']);
@@ -54,6 +55,7 @@ export const TIPOS_DISPARO = Object.freeze(['azar', 'hora', 'accion']);
 export const DESTINOS_CIUDAD = Object.freeze(['ciudad_ardenhall', 'ciudad_lareth', 'ciudad_halenor']);
 // vocabulario-v1.md, sección 5c: pseudo-verbos. Solo valen en `fin.verbos` y `duracion` de eventos.
 export const PSEUDO_VERBOS = Object.freeze(['salir_escena']);
+export const TIPOS_DURACION = Object.freeze(['turnos', 'horas', 'hasta_hora', 'hasta_accion', 'hasta_salida_escena']);
 export const TIPOS_EFECTO = Object.freeze(['disposicion', 'bloqueo', 'habilita', 'precio']);
 
 const esObjeto = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -251,12 +253,36 @@ export function validarContenido(contenido) {
       if (ev.disparo.escena != null) refEscena(ev.disparo.escena, `${ev.id}.disparo.escena`);
       for (const s of lista(ev.disparo.escenas)) refEscena(s, `${ev.id}.disparo.escenas`);
       if (ev.disparo.objetivo != null) refNpc(ev.disparo.objetivo, `${ev.id}.disparo.objetivo`);
+      if (ev.disparo.tipo === 'azar' && !(typeof ev.disparo.p === 'number' && ev.disparo.p > 0 && ev.disparo.p <= 1)) {
+        err(`${ev.id}.disparo.p: no es una probabilidad entre 0 y 1`);
+      }
+      if (ev.disparo.tipo === 'hora' && !esHora(ev.disparo.valor)) err(`${ev.id}.disparo.valor: no es una hora HH:MM`);
+      if (ev.disparo.tipo === 'accion' && ev.disparo.verbo == null) err(`${ev.id}.disparo: disparo por acción sin verbo`);
     }
     if (!esObjeto(ev.fin) || !TIPOS_FIN.includes(ev.fin.tipo)) {
       err(`${ev.id}: fin inválido`);
     } else {
       for (const v of lista(ev.fin.verbos)) refVerboDeFin(v, `${ev.id}.fin.verbos`);
       if (ev.fin.tipo === 'accion' && lista(ev.fin.verbos).length === 0) aviso(`${ev.id}.fin: fin por acción sin verbos`);
+    }
+    if (!esObjeto(ev.duracion) || !TIPOS_DURACION.includes(ev.duracion.tipo)) {
+      err(`${ev.id}: duracion inválida`);
+    } else {
+      const d = ev.duracion;
+      if ((d.tipo === 'turnos' || d.tipo === 'horas') && !(Number.isInteger(d.n) && d.n > 0)) {
+        err(`${ev.id}.duracion.n: no es un entero mayor que 0`);
+      }
+      if (d.tipo === 'hasta_hora' && !esHora(d.valor)) err(`${ev.id}.duracion.valor: no es una hora HH:MM`);
+      const fin = esObjeto(ev.fin) ? ev.fin : {};
+      if (fin.valor != null && !esHora(fin.valor)) err(`${ev.id}.fin.valor: no es una hora HH:MM`);
+      // Fin por hora: hace falta una hora fija o una duración en horas.
+      if (fin.tipo === 'hora' && fin.valor == null && d.tipo !== 'hasta_hora' && d.tipo !== 'horas') {
+        err(`${ev.id}: fin por hora sin hora ni duración en horas`);
+      }
+      // Fin por tiempo: hace falta una duración en turnos u horas.
+      if (fin.tipo === 'tiempo' && d.tipo !== 'turnos' && d.tipo !== 'horas') {
+        err(`${ev.id}: fin por tiempo sin duración en turnos ni horas`);
+      }
     }
     if (esObjeto(ev.duracion)) {
       // Acepta `verbo` (uno) o `verbos` (lista).
@@ -321,6 +347,21 @@ export function validarContenido(contenido) {
   }
 
   // --- Reglas: viaje dentro de la ciudad ---
+  if (esObjeto(contenido.reglas)) {
+    try {
+      relojInicial(contenido);
+    } catch {
+      err('reglas.relojInicial: no trae una hora HH:MM');
+    }
+    const porCamino = contenido.reglas.viajeHorasPorCamino;
+    if (!esObjeto(porCamino)) err('reglas.viajeHorasPorCamino: falta o no es un objeto');
+    else {
+      for (const [escenaId, horas] of Object.entries(porCamino)) {
+        refEscena(escenaId, 'reglas.viajeHorasPorCamino');
+        if (!(typeof horas === 'number' && horas > 0)) err(`reglas.viajeHorasPorCamino.${escenaId}: no es un número mayor que 0`);
+      }
+    }
+  }
   const horasIntra = contenido.reglas?.viajeHorasIntraCiudad;
   if (esObjeto(contenido.reglas) && !(typeof horasIntra === 'number' && horasIntra > 0)) {
     err(`reglas.viajeHorasIntraCiudad: falta o no es un número mayor que 0`);
@@ -334,7 +375,7 @@ export function validarContenido(contenido) {
   return { ok: errores.length === 0, errores, avisos, conteos };
 }
 
-// plantillas.reformulacion: una clave por motivo de decidir(), más repetir_segunda.
+// plantillas.reformulacion: una clave por motivo de decidir(), más repetir_segunda y ya_en_destino.
 function validarReformulacion(bloque, err) {
   const donde = `plantillas.${BLOQUE_REFORMULACION}`;
   if (!esObjeto(bloque)) {

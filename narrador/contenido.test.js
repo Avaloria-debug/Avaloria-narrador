@@ -351,7 +351,8 @@ describe('contenido — alias de NPC', () => {
 describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
   test('archivo real: una clave por motivo, más repetir_segunda', () => {
     assert.deepEqual(Object.keys(base.plantillas.reformulacion).sort(), [...CLAVES_REFORMULACION].sort());
-    assert.equal(CLAVES_REFORMULACION.length, 12);
+    assert.equal(CLAVES_REFORMULACION.length, 13);
+    assert.deepEqual(base.plantillas.reformulacion.ya_en_destino, ['Ya estás en {lugar}.']);
   });
 
   test('el bloque reformulacion no cuenta entre los 26 bloques de resultado', () => {
@@ -392,6 +393,48 @@ describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
       c.reglas.viajeHorasIntraCiudad = valor;
       hay(c, /reglas\.viajeHorasIntraCiudad: falta o no es un número mayor que 0/);
     }
+  });
+});
+
+describe('contenido — reloj, viaje y forma de los eventos', () => {
+  const evento = (c, id) => c.eventos.find((e) => e.id === id);
+
+  test('reglas.relojInicial trae una hora', () => {
+    const c = copia();
+    c.reglas.relojInicial = 'a la mañana';
+    hay(c, /reglas\.relojInicial: no trae una hora HH:MM/);
+  });
+
+  test('reglas.viajeHorasPorCamino: escenas existentes y horas mayores que 0', () => {
+    const c = copia();
+    c.reglas.viajeHorasPorCamino.escena_camino_oeste = 10;
+    c.reglas.viajeHorasPorCamino.escena_camino_sur = 0;
+    hay(c, /reglas\.viajeHorasPorCamino: escena inexistente "escena_camino_oeste"/);
+    hay(c, /reglas\.viajeHorasPorCamino\.escena_camino_sur: no es un número mayor que 0/);
+  });
+
+  test('disparo: probabilidad, hora y verbo', () => {
+    const c = copia();
+    evento(c, 'evento_mercado_aglomeracion').disparo.p = 1.5;
+    evento(c, 'evento_festividad_plaza').disparo.valor = '7 de la mañana';
+    delete evento(c, 'evento_huida_colinas').disparo.verbo;
+    hay(c, /evento_mercado_aglomeracion\.disparo\.p: no es una probabilidad/);
+    hay(c, /evento_festividad_plaza\.disparo\.valor: no es una hora HH:MM/);
+    hay(c, /evento_huida_colinas\.disparo: disparo por acción sin verbo/);
+  });
+
+  test('duración y fin', () => {
+    const c = copia();
+    evento(c, 'evento_mercado_aglomeracion').duracion = { tipo: 'turnos', n: 0 };
+    evento(c, 'evento_festividad_plaza').duracion = { tipo: 'hasta_hora', valor: '25:00' };
+    evento(c, 'evento_lluvia_suave').duracion = { tipo: 'turnos', n: 3 };
+    evento(c, 'evento_huida_colinas').duracion = { tipo: 'hasta_accion', verbo: 'huir' };
+    evento(c, 'evento_cierre_puerta').duracion = { tipo: 'un rato' };
+    hay(c, /evento_mercado_aglomeracion\.duracion\.n: no es un entero mayor que 0/);
+    hay(c, /evento_festividad_plaza\.duracion\.valor: no es una hora HH:MM/);
+    hay(c, /evento_lluvia_suave: fin por hora sin hora ni duración en horas/);
+    hay(c, /evento_huida_colinas: fin por tiempo sin duración en turnos ni horas/);
+    hay(c, /evento_cierre_puerta: duracion inválida/);
   });
 });
 

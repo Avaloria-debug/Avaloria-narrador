@@ -183,3 +183,47 @@ Resultado: los 11 motivos de `decidir()` y `repetir_segunda` tienen texto en `pl
 - `narrador/viaje.js` clasifica el viaje: `intra_ciudad` (cuesta `reglas.viajeHorasIntraCiudad`), `por_camino` (las horas las calcula el bloque 3 con `reglas.viajeHorasPorCamino`) y `misma_escena` (el destino es la escena actual; 0 horas).
 - Qué pasa cuando el destino es la escena actual, y si un destino por camino es alcanzable, lo decide el motor del bloque 3.
 - El validador exige `reglas.viajeHorasIntraCiudad` como número mayor que 0.
+
+## Bloque 3a — reloj, eventos y estado de escena
+Resultado: `narrador/reloj.js`, `narrador/eventos.js`, `narrador/estadoEscena.js` y `narrador/viaje.js`. Los 70 eventos del contenido se activan y se cierran sin error. No hay turnos, efectos sobre NPCs ni movimiento de NPCs: eso es el bloque 3b.
+
+### Reloj
+- La hora inicial se lee de `reglas.relojInicial`, que es un texto ("mañana (08:00) del primer día"): se toma el `HH:MM` que trae.
+- `avanzar` acepta fracciones de hora y redondea al minuto. No acepta horas negativas.
+- "El reloj llega a una hora" significa que esa hora cae después del reloj anterior y hasta el reloj nuevo, incluido. Vale para saltos de varios días.
+
+### Eventos
+- Un evento activo es de una escena: `{ id, escenaId, turnosRestantes, horaFin }`. El mismo evento puede estar activo en dos escenas a la vez.
+- `horaFin` es un reloj `{ dia, hora }`, no un `HH:MM` suelto como sugiere `cierre-diseno-v1.md`. Con viajes de 36 a 52 horas, la hora sola no dice de qué día es.
+- Disparo por azar: solo en la escena donde está el jugador, si es una escena del evento. Se consulta el `rng` una vez por evento candidato, en el orden del contenido.
+- Disparo por hora: en todas las escenas del evento, esté donde esté el jugador. Si el reloj saltó y el evento ya habría terminado dentro del salto, no se activa.
+- La hora inicial de la partida (08:00) dispara eventos solo si se pide con `incluirInicio`. Lo usa el primer turno.
+- Disparo por acción: en la escena donde el jugador actuó. Respeta `disparo.objetivo` (el NPC de la acción) y `disparo.escena` o `disparo.escenas`.
+- Si hay varios candidatos y queda un solo lugar en la escena, entra el primero en el orden del contenido.
+- Un evento no se dispara dos veces en la misma escena mientras está activo, ni en el mismo turno en que se cerró.
+- En cada turno primero se cierran eventos y después se disparan. Un cierre libera lugar para un disparo en el mismo turno.
+- Fin por tiempo: los turnos se descuentan a todos los eventos activos, también a los de escenas donde no está el jugador. El turno en que se dispara no cuenta.
+- Fin por acción: el verbo tiene que ejecutarse en la escena del evento y no terminar en `fallo`. Un huir fallido no termina el combate.
+- Fin por acción con duración en turnos (`evento_deuda_impaga`): termina por lo que pase primero.
+- Los verbos de cierre salen de `fin.verbos` y de `duracion.verbo` o `duracion.verbos`.
+- `salir_escena` se cumple cuando el jugador termina el turno en una escena distinta de aquella donde actuó.
+- Un evento activo cuyo id ya no está en el contenido se cierra.
+- Los efectos de los eventos (`disposicion`, `bloqueo`, `habilita`, `precio`) no se aplican todavía. Queda para el bloque 3b.
+- El validador ahora revisa la forma de cada evento: `disparo.p` entre 0 y 1, horas en `HH:MM`, verbo en el disparo por acción, `duracion.tipo` válido, y que el fin por hora o por tiempo tenga con qué calcularse.
+
+### Estado de escena
+- Vecinas de una escena: las de su lista `salidas`. Se mira el estado propio de la vecina (sus eventos), no el que ya subió por otra vecina. El efecto no se encadena.
+- En el contenido, las escenas de ciudad no tienen a los caminos en `salidas` (el mercado solo sale al archivo), pero los caminos sí tienen a las ciudades. Por eso un evento grave en un camino no sube el estado de la ciudad, y uno en la ciudad sí sube el del camino. No se corrigió; a revisar.
+
+### Viaje
+- Destino igual a la escena actual, o la ciudad donde ya está el jugador: 0 horas y motivo `ya_en_destino`. El texto es "Ya estás en {lugar}.", en `plantillas.reformulacion.ya_en_destino`. No es un motivo de `decidir()`: lo usa el motor.
+- Para armar la ruta, las salidas valen en los dos sentidos (por lo dicho arriba: las ciudades no listan los caminos).
+- Las horas de un viaje por camino son la suma de `reglas.viajeHorasPorCamino` de cada camino de la ruta con menos horas. Entre dos ciudades siempre hay un camino directo: 36, 44 o 52.
+- Cuenta también el camino de partida y el de llegada. Consecuencias, a revisar:
+  - Ir de una ciudad a su camino cuesta las horas completas del camino (36 al camino del norte).
+  - Seguir desde ese camino a la ciudad cuesta otra vez las horas completas. Detenerse en el camino duplica el costo: 72 horas en lugar de 36.
+  - Ir de un camino a un lugar de camino (el lago) cuesta las horas del camino.
+  - Alternativa simple si no se quiere eso: cobrar la mitad de las horas al entrar al camino y la otra mitad al salir.
+- Viajar a una ciudad llega a la escena de esa ciudad donde desemboca el camino (a Lareth por el norte se llega a la plaza). Viajar a una escena de otra ciudad llega directo a esa escena, sin sumar la hora dentro de la ciudad.
+- `sin_ruta`: el destino no existe o no hay cómo llegar. Con el contenido actual no pasa.
+- Si un evento bloquea el viaje (`evento_cierre_puerta`), lo decide el bloque 3b.

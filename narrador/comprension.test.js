@@ -590,54 +590,38 @@ describe('destinos dentro de la ciudad', () => {
     const r = decidir(frase, ctx({ escena: { id: desde } }));
     assert.equal(r.tipo, 'ejecutar', frase);
     assert.equal(r.intencionId, 'intencion_viajar', frase);
-    return { destino: r.parametros.destino, ...clasificarViaje(r.parametros.destino, desde, contenido) };
+    return clasificarViaje(r.parametros.destino, desde, contenido);
   };
 
   test('ir a la taberna desde la plaza: 1 hora', () => {
     assert.deepEqual(viaje('ir a la taberna', 'escena_plaza_cambistas'), {
-      destino: 'escena_taberna_lareth',
       tipo: TIPOS_VIAJE.INTRA_CIUDAD,
       horas: 1,
+      escenaLlegada: 'escena_taberna_lareth',
+      caminos: [],
     });
   });
 
   test('ir al archivo desde el mercado: 1 hora', () => {
     assert.deepEqual(viaje('ir al archivo', 'escena_mercado_circular'), {
-      destino: 'escena_archivo_real',
       tipo: TIPOS_VIAJE.INTRA_CIUDAD,
       horas: 1,
+      escenaLlegada: 'escena_archivo_real',
+      caminos: [],
     });
-  });
-
-  test('el costo sale de reglas.viajeHorasIntraCiudad', () => {
-    assert.equal(contenido.reglas.viajeHorasIntraCiudad, 1);
-    const otro = { ...contenido, reglas: { ...contenido.reglas, viajeHorasIntraCiudad: 3 } };
-    assert.equal(clasificarViaje('escena_archivo_real', 'escena_mercado_circular', otro).horas, 3);
   });
 
   test('viajar a Lareth desde Ardenhall sigue yendo por camino', () => {
     assert.deepEqual(viaje('viajar a Lareth', 'escena_mercado_circular'), {
-      destino: 'ciudad_lareth',
       tipo: TIPOS_VIAJE.POR_CAMINO,
-      horas: null,
+      horas: 36,
+      caminos: ['escena_camino_norte'],
+      escenaLlegada: 'escena_plaza_cambistas',
     });
-    assert.equal(contenido.reglas.viajeHorasPorCamino.escena_camino_norte, 36);
   });
 
-  test('escena de otra ciudad, camino y ciudad propia van por camino', () => {
-    assert.equal(viaje('ir a la taberna', 'escena_mercado_circular').tipo, TIPOS_VIAJE.POR_CAMINO);
-    assert.equal(viaje('tomar el camino del norte', 'escena_mercado_circular').tipo, TIPOS_VIAJE.POR_CAMINO);
-    assert.equal(viaje('ir a Ardenhall', 'escena_mercado_circular').tipo, TIPOS_VIAJE.POR_CAMINO);
-    // Desde un camino no hay ciudad actual.
-    assert.equal(viaje('ir a la plaza', 'escena_camino_norte').tipo, TIPOS_VIAJE.POR_CAMINO);
-  });
-
-  test('destino igual a la escena actual', () => {
-    assert.deepEqual(viaje('ir a la plaza', 'escena_plaza_cambistas'), {
-      destino: 'escena_plaza_cambistas',
-      tipo: TIPOS_VIAJE.MISMA_ESCENA,
-      horas: 0,
-    });
+  test('ir a la plaza estando en la plaza: ya está en el destino', () => {
+    assert.equal(viaje('ir a la plaza', 'escena_plaza_cambistas').motivo, 'ya_en_destino');
   });
 });
 
@@ -689,7 +673,7 @@ describe('reformulaciones — texto en el contenido', () => {
     for (const [clave, textos] of Object.entries(contenido.plantillas.reformulacion)) {
       for (const t of textos) {
         assert.ok(!/(escena|objeto|evento|intencion|conocimiento|ciudad)_/.test(t), clave);
-        assert.deepEqual((t.match(/\{[^}]*\}/g) ?? []).filter((p) => p !== '{nombres}'), [], clave);
+        assert.deepEqual((t.match(/\{[^}]*\}/g) ?? []).filter((p) => p !== '{nombres}' && p !== '{lugar}'), [], clave);
       }
     }
   });

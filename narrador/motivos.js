@@ -20,5 +20,8 @@ export const REPETIR_SEGUNDA = 'repetir_segunda';
 // Bloque de plantillas.
 export const BLOQUE_REFORMULACION = 'reformulacion';
 
+// Viajar a la escena o a la ciudad donde el jugador ya está (viaje.js).
+export const YA_EN_DESTINO = 'ya_en_destino';
+
 /** Claves que tienen que existir en plantillas.reformulacion. */
-export const CLAVES_REFORMULACION = Object.freeze([...Object.values(MOTIVOS), REPETIR_SEGUNDA]);
+export const CLAVES_REFORMULACION = Object.freeze([...Object.values(MOTIVOS), REPETIR_SEGUNDA, YA_EN_DESTINO]);
