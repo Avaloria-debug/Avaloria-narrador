@@ -1,0 +1,128 @@
+# COMPRENSIÓN DEL TEXTO LIBRE — Versión 1 — Crónicas de Avaloria
+
+Define cómo el código interpreta lo que escribe el jugador. Complementa a `catalogo-intenciones-v1.md`, que define las formas. Usa los ids de `vocabulario-v1.md`.
+
+---
+
+## 1. Pipeline
+
+1. **Normalizar:** minúsculas, sin tildes, sin signos de puntuación, espacios simples.
+2. **Tokenizar:** separar en palabras.
+3. **Quitar palabras vacías:** a, al, el, la, los, las, un, una, de, del, en, con, por, para, que, le, lo, y.
+4. **Buscar intención** (sección 2).
+5. **Resolver parámetros** (secciones 3 y 4).
+6. **Decidir:** ejecutar, reformular una vez, o pasar a IA.
+
+---
+
+## 2. Coincidencia de intención
+
+### 2.1 Tolerancia a typos, por palabra
+- Palabra de 3 letras o menos: coincidencia exacta.
+- Palabra de 4 letras: distancia de edición ≤ 1.
+- Palabra de más de 4 letras: distancia de edición ≤ 2.
+
+### 2.2 Formas de varias palabras
+Cada forma del catálogo se tokeniza igual que la entrada (sin palabras vacías). Una forma coincide si todas sus palabras aparecen **en orden** dentro de la entrada, cada una con la tolerancia de 2.1. Se permite que haya otras palabras entre medio.
+
+Ejemplos:
+- "calmá la sitiacion" coincide con "calmar la situación" (calmá → calmar, sitiacion → situación: distancia 1 y 2).
+- "ir a la plaza" coincide con la forma "ir a" de viajar, pero la palabra "plaza" no es un destino válido (ver 2.4).
+
+### 2.3 Prioridad entre intenciones
+- Gana la forma que coincide con más palabras.
+- Si empatan, gana la que aparece primero en la frase.
+- Si la frase trae dos intenciones, se responde a la primera y se pide repetir la segunda (regla del catálogo).
+
+### 2.4 Viajar
+El parámetro destino es una escena de camino o una ciudad, reconocida por nombre o por la ciudad (por ejemplo, "Ardenhall", "Lareth", "Halenor"). Si la frase trae "viajar" con un lugar que no es destino, se reformula: "¿A qué ciudad querés ir?"
+
+---
+
+## 3. Resolver NPC
+
+### 3.1 Solo se consideran NPCs presentes en la escena actual
+Un NPC que está en otra escena no se busca. Si el jugador lo nombra y no está, el código responde: "No lo ves por acá."
+
+### 3.2 Alias por NPC
+Cada NPC tiene un nombre, un rol y alias. El código compara la frase contra estos términos (con la tolerancia de 2.1):
+
+| NPC | Alias |
+|---|---|
+| `maren_archivista` | maren, archivista, orst |
+| `serel_panadero` | serel, panadero, norlen |
+| `ivor_cambista` | ivor, cambista, aster, prestamista |
+| `naela_tabernera` | naela, tabernera, riven |
+| `tiren_docente` | tiren, docente, profesor, selvan |
+| `elia_bibliotecaria` | elia, bibliotecaria, miren |
+| `brenn_arriero` | brenn, arriero, holt, caravana |
+| `ysolde_pescadora` | ysolde, pescadora, varn |
+| `dario_guardia` | dario, guardia, aduanero, keth |
+| `sarin_mensajera` | sarin, mensajera, tolle |
+| `hollis_pastor` | hollis, pastor, dren |
+| `oren_peregrino` | oren, peregrino, basil |
+
+*Supuesto menor: "guardia" en la aduana apunta a Darío. Si después hay otro guardia en otra escena, no hay conflicto porque solo se buscan los NPCs presentes.*
+
+### 3.3 Resultado de la búsqueda
+- **Un NPC coincide** → es el objetivo.
+- **Ninguno coincide** → si el verbo lo necesita, se reformula: "¿Con quién?"
+- **Dos o más coinciden** → ver 4.
+
+---
+
+## 4. Parámetros faltantes y empates
+
+Los verbos se dividen en dos grupos.
+
+### 4.1 Verbos que exigen elegir a la persona
+Solo `hablar_con`. Si el jugador no nombra a nadie, nunca se elige por él:
+- Sin NPC en la escena → "No hay nadie con quien hablar acá."
+- Un NPC en la escena y ningún nombre → se reformula: "¿Con quién querés hablar?"
+- Dos o más → se reformula con los nombres de los presentes: "¿Con cuál de los dos: Maren o Serel?" *(El código muestra solo los nombres, nunca los números.)*
+
+### 4.2 Verbos que pueden elegir por el jugador
+`ayudar`, `negociar`, `presionar`, `atacar`, `emboscar`, `defender`, `distraer`, `observar`.
+
+- Sin NPC nombrado, con un solo NPC presente → ese NPC.
+- Sin NPC nombrado, con dos o más presentes → se usa `resolverNpcObjetivo` (menor relación, con reporte de ambigüedad), como ya está definido.
+- Sin NPC presente → se ejecuta sin objetivo, si el verbo lo permite (por ejemplo, observar), o se reformula.
+
+### 4.3 Objetos
+`usar` y `examinar` exigen un objeto.
+- Sin objeto nombrado y un solo objeto aplicable en la escena o en el inventario → ese objeto.
+- Varios → reformulación: "¿Qué querés usar?"
+- Sin ninguno → "No tenés nada para usar."
+
+`comprar` y `atacar` (con arma) aceptan objeto opcional. Sin objeto, se usa el que corresponda por defecto, o se reformula si no hay ninguno.
+
+### 4.4 Empates de nombre o alias
+Si dos NPCs o dos objetos coinciden con la misma palabra, el código **reformula**, en vez de elegir por distancia. Esto reemplaza la regla anterior de "nombre más corto", porque elegir mal sin avisar es peor que preguntar.
+
+---
+
+## 5. Reformulación
+
+- Solo una vez por turno.
+- Texto breve y natural, sin mencionar ids ni la palabra "intención".
+- Si la segunda entrada tampoco se entiende, pasa a la IA (narrador de última instancia).
+
+Ejemplos de texto: "No entendí bien. ¿Podés decirlo de otra forma?" o la reformulación específica de la sección 4.
+
+---
+
+## 6. Qué registra el código
+
+Cada entrada de texto libre que no se resolvió por código en la primera pasada queda marcada como `intento_reformulacion: true` en el registro, y se guarda la frase de la segunda pasada. El resultado de la comprensión se guarda en `intencion_detectada` (el id, o `null`).
+
+---
+
+## 7. Verificación
+
+- Un texto con typo en una palabra larga ("calmá la sitiacion") se resuelve por código.
+- "Hablá con el panadero" resuelve a `serel_panadero` si está en la plaza.
+- "Hablá con" sin nombre, con dos NPCs presentes, reformula.
+- "Atacar" con dos NPCs presentes, sin nombre, usa `resolverNpcObjetivo`.
+- "Usar" sin objeto y con dos objetos, reformula.
+- "Ir a la plaza" no viaja: reformula el destino.
+- Una frase con dos intenciones responde a la primera y pide la segunda.
