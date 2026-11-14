@@ -4,10 +4,8 @@ import { readFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { exigirContenidoValido } from './contenido.js';
 
-// Ubicación documentada primero; ubicación real en el repo después (ver SUPUESTOS.md).
 export const RUTAS_CONTENIDO = Object.freeze([
   fileURLToPath(new URL('../data/contenido/contenido-v3.json', import.meta.url)),
-  fileURLToPath(new URL('../contenido-v3.json', import.meta.url)),
 ]);
 
 /** Lee y parsea el contenido sin validarlo. */

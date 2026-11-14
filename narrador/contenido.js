@@ -48,6 +48,10 @@ export const TIPOS_OBJETO = Object.freeze(['arma', 'herramienta', 'consumible', 
 export const CATEGORIAS_EVENTO = Object.freeze([...ESTADOS_ESCENA, 'neutro']);
 export const TIPOS_FIN = Object.freeze(['tiempo', 'hora', 'accion']);
 export const TIPOS_DISPARO = Object.freeze(['azar', 'hora', 'accion']);
+// vocabulario-v1.md, sección 5b: destinos de viaje que no son escenas.
+export const DESTINOS_CIUDAD = Object.freeze(['ciudad_ardenhall', 'ciudad_lareth', 'ciudad_halenor']);
+// vocabulario-v1.md, sección 5c: pseudo-verbos. Solo valen en `fin.verbos` y `duracion` de eventos.
+export const PSEUDO_VERBOS = Object.freeze(['salir_escena']);
 export const TIPOS_EFECTO = Object.freeze(['disposicion', 'bloqueo', 'habilita', 'precio']);
 
 const esObjeto = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -105,6 +109,9 @@ export function validarContenido(contenido) {
   const refEscena = (id, donde, avisar = err) => {
     if (!ids.escenas.has(id)) avisar(`${donde}: escena inexistente ${JSON.stringify(id)}`);
   };
+  const refVerboDeFin = (v, donde) => {
+    if (!verbos.has(v) && !PSEUDO_VERBOS.includes(v)) aviso(`${donde}: verbo inexistente ${JSON.stringify(v)}`);
+  };
   const refVerbo = (v, donde, avisar = err) => {
     if (!verbos.has(v)) avisar(`${donde}: verbo inexistente ${JSON.stringify(v)}`);
   };
@@ -157,13 +164,19 @@ export function validarContenido(contenido) {
     } else {
       if (ev.disparo.verbo != null) refVerbo(ev.disparo.verbo, `${ev.id}.disparo.verbo`, aviso);
       if (ev.disparo.escena != null) refEscena(ev.disparo.escena, `${ev.id}.disparo.escena`, aviso);
+      for (const s of lista(ev.disparo.escenas)) refEscena(s, `${ev.id}.disparo.escenas`, aviso);
     }
     if (!esObjeto(ev.fin) || !TIPOS_FIN.includes(ev.fin.tipo)) {
       err(`${ev.id}: fin inválido`);
     } else {
-      for (const v of lista(ev.fin.verbos)) refVerbo(v, `${ev.id}.fin.verbos`, aviso);
+      for (const v of lista(ev.fin.verbos)) refVerboDeFin(v, `${ev.id}.fin.verbos`);
+      if (ev.fin.tipo === 'accion' && lista(ev.fin.verbos).length === 0) aviso(`${ev.id}.fin: fin por acción sin verbos`);
     }
-    if (esObjeto(ev.duracion) && ev.duracion.verbo != null) refVerbo(ev.duracion.verbo, `${ev.id}.duracion.verbo`, aviso);
+    if (esObjeto(ev.duracion)) {
+      // Acepta `verbo` (uno) o `verbos` (lista).
+      if (ev.duracion.verbo != null) refVerboDeFin(ev.duracion.verbo, `${ev.id}.duracion.verbo`);
+      for (const v of lista(ev.duracion.verbos)) refVerboDeFin(v, `${ev.id}.duracion.verbos`);
+    }
 
     if (!Array.isArray(ev.efectos)) err(`${ev.id}: efectos no es una lista`);
     for (const [i, ef] of lista(ev.efectos).entries()) {
@@ -175,7 +188,7 @@ export function validarContenido(contenido) {
       if (ef.npcId != null && !ids.npcs.has(ef.npcId)) aviso(`${donde}: NPC inexistente ${JSON.stringify(ef.npcId)}`);
       if (ef.objetoId != null && !ids.objetos.has(ef.objetoId)) aviso(`${donde}: objeto inexistente ${JSON.stringify(ef.objetoId)}`);
       if (ef.escenaId != null) refEscena(ef.escenaId, `${donde}.escenaId`, aviso);
-      if (ef.destino != null) refEscena(ef.destino, `${donde}.destino`, aviso);
+      if (ef.destino != null && !DESTINOS_CIUDAD.includes(ef.destino)) refEscena(ef.destino, `${donde}.destino`, aviso);
       if (ef.verbo != null) refVerbo(ef.verbo, `${donde}.verbo`, aviso);
     }
   }

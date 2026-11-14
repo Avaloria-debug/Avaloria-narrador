@@ -114,8 +114,45 @@ describe('contenido — referencias', () => {
     assert.ok(r.avisos.some((a) => /efectos\[\d+\]: NPC inexistente "nadie"/.test(a)));
   });
 
-  test('el archivo real tiene 13 avisos conocidos (ver SUPUESTOS.md)', () => {
-    assert.equal(validarContenido(base).avisos.length, 13);
+  test('el archivo real no tiene avisos', () => {
+    assert.deepEqual(validarContenido(base).avisos, []);
+  });
+
+  const avisa = (c, patron) => {
+    const r = validarContenido(c);
+    assert.equal(r.ok, true);
+    assert.ok(r.avisos.some((a) => patron.test(a)), `sin aviso ${patron}: ${r.avisos.join(' | ')}`);
+  };
+  const evento = (c, id) => c.eventos.find((e) => e.id === id);
+
+  test('destino acepta ciudad_* del vocabulario y rechaza otros', () => {
+    const c = copia();
+    evento(c, 'evento_cierre_puerta').efectos[0].destino = 'ciudad_halenor';
+    assert.deepEqual(validarContenido(c).avisos, []);
+    evento(c, 'evento_cierre_puerta').efectos[0].destino = 'ciudad_fantasma';
+    avisa(c, /destino: escena inexistente "ciudad_fantasma"/);
+  });
+
+  test('salir_escena vale en fin.verbos, no como verbo de intención', () => {
+    assert.ok(evento(base, 'evento_patrulla_busqueda').fin.verbos.includes('salir_escena'));
+    const c = copia();
+    c.intenciones[0].verbo = 'salir_escena';
+    hay(c, /verbo inexistente "salir_escena"/);
+  });
+
+  test('duracion.verbos es una lista de verbos', () => {
+    assert.deepEqual(evento(base, 'evento_emboscada_sur').duracion.verbos, ['huir', 'rendirse']);
+    const c = copia();
+    evento(c, 'evento_emboscada_sur').duracion.verbos = ['huir_o_rendirse'];
+    avisa(c, /duracion\.verbos: verbo inexistente/);
+  });
+
+  test('disparo.escenas y fin por acción sin verbos', () => {
+    const c = copia();
+    evento(c, 'evento_guardias_persiguen').disparo.escenas = ['ciudad'];
+    evento(c, 'evento_lucha_caseta').fin.verbos = [];
+    avisa(c, /disparo\.escenas: escena inexistente "ciudad"/);
+    avisa(c, /evento_lucha_caseta\.fin: fin por acción sin verbos/);
   });
 });
 

@@ -83,6 +83,26 @@ Cada intención tiene un **id de intención** (`intencion_<verbo>`) y un **id de
 
 **Nota de nombres:** `intencion_calmar` y `calmar_la_situacion` no coinciden en el sufijo. Es el único caso. Se mantiene así porque ya está en los datos. El id de verbo es el que vale para transiciones.
 
+### 5b. Destinos de viaje
+
+Formato: `ciudad_<nombre>`. No son escenas: nombran una ciudad entera como destino de un viaje. Se usan en `destino` de los efectos de evento (por ejemplo, el bloqueo de `viajar` hacia una ciudad).
+
+| Id | Ciudad |
+|---|---|
+| `ciudad_ardenhall` | Ardenhall |
+| `ciudad_lareth` | Lareth |
+| `ciudad_halenor` | Halenor |
+
+### 5c. Pseudo-verbos
+
+No son intenciones: el jugador no los elige y no tienen plantillas. Solo valen en `fin.verbos` y en `duracion` de eventos.
+
+| Id | Significado |
+|---|---|
+| `salir_escena` | El jugador deja la escena del evento, por cualquier verbo que lo mueva |
+
+En `fin` y `duracion`, los verbos van siempre como lista de ids (`verbos: ["huir", "rendirse"]`). No se combinan en un solo valor.
+
 ---
 
 ## 6. Resultados de una acción
