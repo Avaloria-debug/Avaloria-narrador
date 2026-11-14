@@ -101,3 +101,50 @@ Decisiones tomadas sin preguntar. Son reversibles. El código y el contenido se 
   - `conocimientoDesbloquea` es el id de un conocimiento del `npcAsociado` del mismo objeto. Es obligatorio en los objetos narrativos.
   - `reglas.marcas.*` (`activaCon.verbo`, `activaCon.escenaId`, `usadaPor`) y `reglas.conocimientoSenderoSinVigilancia` referencian ids existentes.
 - El validador no exige el formato `conocimiento_<nombre>_<n>` completo, solo el prefijo, para admitir el id de Hollis.
+
+## Bloque 2 — comprensión del texto libre
+Resultado: `narrador/comprension.js` implementa `docs/comprension-v1.md`. Los alias de NPC están en el contenido (campo `alias`) y el validador los revisa.
+
+### Alias
+- El validador exige `alias` en cada NPC: lista no vacía de textos no vacíos, sin repetidos dentro del NPC. Dos NPCs no comparten alias si pueden coincidir en una escena. Las escenas posibles de un NPC son su escena inicial más los caminos de su movimiento.
+- Los alias se comparan sin tildes ni mayúsculas.
+
+### Texto de las reformulaciones (falta en el contenido)
+- `comprension.js` no escribe texto para el jugador. Devuelve un `motivo` y, si hace falta, los nombres a mostrar (`datos.nombres`).
+- Los textos de `comprension-v1.md` ("¿Con quién querés hablar?", "No lo ves por acá.", "¿A qué ciudad querés ir?", etc.) no están en `plantillas` del contenido. Por la regla de no escribir narración fuera de `plantillas`, no se pusieron en el código. Hay que agregarlos al contenido antes del bloque 4, con un bloque por motivo.
+- Motivos: `no_entendido`, `intencion_ambigua`, `sin_npcs`, `falta_npc`, `npc_ambiguo`, `npc_ausente`, `sin_objetos`, `falta_objeto`, `objeto_ambiguo`, `falta_destino`, `destino_ambiguo`.
+- Tampoco hay plantilla para pedir que se repita la segunda intención de una frase. `decidir` la informa en `repetirIntencionId`.
+
+### Typos e intención
+- La tolerancia se calcula con el largo de la palabra más corta de las dos (la escrita y la del catálogo). Una palabra de 3 letras nunca coincide con una de 4 por typo.
+- La distancia es Levenshtein simple: cambiar dos letras de lugar cuenta 2.
+- Formas que comparten palabras de la frase compiten entre sí, con este orden: más palabras; después, la forma completa (con sus palabras vacías) presente en la frase; después, la que aparece primero; después, menos typos. El segundo criterio separa "irme" (retirarse) de "irme a" (viajar), que sin palabras vacías son iguales.
+- Formas que no comparten palabras son dos intenciones en la misma frase: se responde a la primera por posición y la segunda va en `repetirIntencionId`.
+- Si dos intenciones distintas empatan en todo, se reformula (`intencion_ambigua`). Con el catálogo actual no pasa.
+- "me voy a Halenor" se entiende como retirarse, porque "me voy" es una forma de retirarse en el catálogo.
+
+### NPC
+- Los términos de un NPC son las palabras de su nombre y sus alias. No se usan las palabras del rol, porque chocan con nombres de escenas y objetos ("Archivo", "aduana").
+- Dos o más NPCs presentes nombrados en la frase: se reformula, aunque uno coincida exacto y el otro por typo.
+- "No lo ves por acá" (`npc_ausente`): solo si el ausente está escrito exacto. Con tolerancia, palabras comunes se confunden con nombres de NPCs que no están.
+- `hablar_con` con un solo NPC presente y sin nombre también pregunta (`falta_npc`), como dice la sección 4.1.
+- Sin NPC presente, se ejecutan sin objetivo `observar`, `defender` y `distraer` (los que el contenido marca "NPC opcional"). `ayudar`, `negociar`, `presionar`, `atacar` y `emboscar` reformulan (`sin_npcs`).
+- `usar` toma un NPC solo si el jugador lo nombra.
+- Con dos o más presentes se llama a `resolverNpcObjetivo` de la beta (`core/orquestador`), con los NPCs adaptados a su forma. No se le pasa el motor de eventos, así que la regla "fuente de amenaza" no se aplica todavía; queda para el bloque 3.
+
+### Objeto
+- Un objeto está nombrado si la frase trae la primera palabra de su nombre ("pan", "mapa", "espada"). Entre varios nombrados gana el que coincide con más palabras del nombre; si empatan, se reformula.
+- `examinar` sin objetos aplicables se ejecuta sobre la escena (el contenido dice "objeto o escena").
+- `atacar`: sin armas ataca sin arma; con varias y ninguna nombrada usa la primera de la lista que recibe. `comprar`: con varios y ninguno nombrado reformula; sin ninguno reformula.
+- `negociar` toma un objeto solo si el jugador lo nombra.
+- Quién arma la lista de objetos aplicables (escena e inventario, por verbo) es el motor del bloque 3.
+
+### Viajar
+- Destinos: las 3 escenas de camino con `viajeHoras` y las 3 ciudades (`ciudad_*`). Los lugares de camino (lago, puente, cruce) no son destino de viajar.
+- Un camino se reconoce por su nombre completo ("camino del norte") o por su dirección sola si está escrita exacta ("norte"). Una ciudad, por su nombre, con tolerancia a typos.
+- El nombre de una escena de ciudad ("Mercado Circular") no vale como destino. Por eso no hay forma de pasar por texto entre dos escenas de la misma ciudad. A revisar en el bloque 3.
+- Si el destino es alcanzable desde la escena actual lo decide el motor del bloque 3.
+
+### Decisión
+- En la segunda pasada del turno (`reformulacionPrevia`), todo lo que en la primera sería reformulación pasa a IA, incluidas las respuestas como "No hay nadie con quien hablar acá".
+- El texto del jugador nunca vuelve en la salida de `decidir`.
