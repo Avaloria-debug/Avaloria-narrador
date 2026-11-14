@@ -66,3 +66,17 @@ Decisiones tomadas sin preguntar. Son reversibles. El código y el contenido se 
 - Explorar tiene 2 plantillas neutras. Las demás intenciones tienen 1. Se conservó así.
 - Presionar: éxito +5 de relación y -1 de disposición. Fallo -15 y disposición fijada en -2. Esto cambia el código de Fase 4.
 - Atacar y Emboscar: -40 de relación, disposición fijada en -2, y bloquean conocimientos para siempre.
+
+## Bloque 1 — contenido (carga y validación)
+- Los documentos y `contenido-v3.json` están en la raíz del repo, no en `docs/` ni en `data/contenido/` como dice CLAUDE.md. No se movieron. El cargador busca primero `data/contenido/contenido-v3.json` y después `contenido-v3.json` en la raíz.
+- Los supuestos nuevos se anotan acá (raíz), porque `docs/SUPUESTOS.md` no existe. No se creó `SUPUESTOS-v3.md`.
+- El validador separa `errores` (comprobaciones de la sección 5.1 del prompt maestro; bloquean) de `avisos` (referencias secundarias; no bloquean). El contenido pasa sin errores y con 13 avisos.
+- Los 13 avisos son inconsistencias de `contenido-v3.json`. No se corrigieron. Van al informe final:
+  - `ivor_cambista` y `dario_guardia`: `conocimientos[0].requiereEvento` es texto libre ("Evento de deuda impaga activo", "Evento de disputa en la aduana activo"), no `evento_deuda_impaga` ni `evento_disputa_aduana`.
+  - `evento_cierre_puerta.efectos[0].destino` = `ciudad_ardenhall`: no es un id de escena.
+  - `evento_guardias_persiguen.disparo.escena` = `ciudad` y `evento_huida_colinas.disparo.escena` = `cruce_colinas`: no son ids de escena.
+  - `evento_patrulla_busqueda.fin.verbos` incluye `salir_escena`: no es un id de verbo.
+  - `duracion.verbo` = `huir_o_rendirse` en 7 eventos de combate (emboscadas sur, este, norte y lago, duelo del puente, asalto a la taberna, lucha en la caseta): no es un id de verbo.
+- Cómo tratar cada aviso en el motor (por ejemplo, leer `huir_o_rendirse` como `huir` o `rendirse`) queda para el bloque 3.
+- La clave `resultado_<verbo>_<resultado>` se resuelve por id de verbo, con la tabla de `vocabulario-v1.md` sección 5. Por eso `resultado_calmar_la_situacion_exito` va a `plantillas.intencion_calmar.exito`.
+- `cargarContenido.js` usa `node:fs`. La carga en el navegador (por `fetch`) queda para la integración con el HTML: sin verificar.
