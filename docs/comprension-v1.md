@@ -35,7 +35,23 @@ Ejemplos:
 - Si la frase trae dos intenciones, se responde a la primera y se pide repetir la segunda (regla del catálogo).
 
 ### 2.4 Viajar
-El parámetro destino es una escena de camino o una ciudad, reconocida por nombre o por la ciudad (por ejemplo, "Ardenhall", "Lareth", "Halenor"). Si la frase trae "viajar" con un lugar que no es destino, se reformula: "¿A qué ciudad querés ir?"
+El parámetro destino es uno de estos tres:
+
+| Destino | Id | Cómo se reconoce |
+|---|---|---|
+| Ciudad | `ciudad_ardenhall`, `ciudad_lareth`, `ciudad_halenor` | Por el nombre de la ciudad ("Ardenhall", "Lareth", "Halenor"). |
+| Escena de camino | `escena_camino_norte`, `escena_camino_este`, `escena_camino_sur` | Por el nombre completo ("camino del norte"), o por la dirección sola si está escrita exacta ("norte"). |
+| Escena de ciudad | las 6 escenas con ciudad (mercado, archivo, plaza, taberna, biblioteca, aula) | Por la primera palabra del nombre de la escena ("taberna", "archivo"). |
+
+Los nombres se comparan sin tildes y con la tolerancia de 2.1. Los lugares de camino (lago, puente, cruce) no son destino.
+
+Si la frase nombra una escena y su propia ciudad ("la biblioteca de Halenor"), el destino es la escena. Si nombra dos destinos distintos, se reformula con los nombres.
+
+**Costo:**
+- Escena de la misma ciudad que la escena actual: `reglas.viajeHorasIntraCiudad` (1 hora del reloj).
+- Cualquier otro destino (otra ciudad, una escena de otra ciudad, un camino): se viaja por los caminos, con `reglas.viajeHorasPorCamino`.
+
+Si la frase trae "viajar" con un lugar que no es destino, se reformula: "¿A dónde querés ir?"
 
 ---
 
@@ -124,5 +140,5 @@ Cada entrada de texto libre que no se resolvió por código en la primera pasada
 - "Hablá con" sin nombre, con dos NPCs presentes, reformula.
 - "Atacar" con dos NPCs presentes, sin nombre, usa `resolverNpcObjetivo`.
 - "Usar" sin objeto y con dos objetos, reformula.
-- "Ir a la plaza" no viaja: reformula el destino.
+- "Ir al lago" no viaja: reformula el destino. ("Ir a la plaza" sí viaja: la plaza es una escena de ciudad, ver 2.4.)
 - Una frase con dos intenciones responde a la primera y pide la segunda.

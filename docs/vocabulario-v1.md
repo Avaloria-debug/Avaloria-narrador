@@ -93,6 +93,23 @@ Formato: `ciudad_<nombre>`. No son escenas: nombran una ciudad entera como desti
 | `ciudad_lareth` | Lareth |
 | `ciudad_halenor` | Halenor |
 
+El parámetro destino de `viajar` acepta tres tipos de id:
+
+| Tipo | Ids |
+|---|---|
+| Ciudad | `ciudad_ardenhall`, `ciudad_lareth`, `ciudad_halenor` |
+| Escena de camino | `escena_camino_norte`, `escena_camino_este`, `escena_camino_sur` |
+| Escena de ciudad | `escena_mercado_circular`, `escena_archivo_real`, `escena_plaza_cambistas`, `escena_taberna_lareth`, `escena_biblioteca_publica`, `escena_aula_cartografia` |
+
+Costo del viaje, en horas del reloj:
+
+| Regla | Valor | Cuándo |
+|---|---|---|
+| `reglas.viajeHorasIntraCiudad` | 1 | El destino es una escena de la misma ciudad que la escena actual |
+| `reglas.viajeHorasPorCamino` | 36, 44 o 52 según el camino | Cualquier otro destino |
+
+Tipos de viaje en el código: `intra_ciudad`, `por_camino`, `misma_escena`.
+
 ### 5c. Pseudo-verbos
 
 No son intenciones: el jugador no los elige y no tienen plantillas. Solo valen en `fin.verbos` y en `duracion` de eventos.
@@ -192,6 +209,26 @@ Acá `neutro` es una categoría de evento, no un resultado ni un estado.
 | `revision` | `pendiente`, `aprobada`, `descartada` |
 | `intento_reformulacion` | `true`, `false` |
 | `intencion_detectada` | id de intención, o `null` |
+
+### 13b. Motivos de reformulación
+
+Valores de `motivo` cuando el código reformula. Cada uno tiene su texto en `plantillas.reformulacion` del contenido.
+
+| Motivo | Cuándo |
+|---|---|
+| `no_entendido` | La frase no trae ninguna intención |
+| `intencion_ambigua` | Dos intenciones empatan |
+| `sin_npcs` | El verbo necesita a alguien y no hay nadie en la escena |
+| `falta_npc` | `hablar_con` sin nombre |
+| `npc_ambiguo` | La frase nombra a dos o más presentes |
+| `npc_ausente` | La frase nombra a alguien que no está en la escena |
+| `sin_objetos` | El verbo necesita un objeto y no hay ninguno |
+| `falta_objeto` | Hay varios objetos y la frase no nombra ninguno |
+| `objeto_ambiguo` | La frase nombra dos o más objetos |
+| `falta_destino` | `viajar` sin un destino válido |
+| `destino_ambiguo` | La frase nombra dos o más destinos |
+
+`plantillas.reformulacion` tiene además la clave `repetir_segunda`, para pedir la segunda intención de una frase. El único placeholder de este bloque es `{nombres}`.
 
 Los textos del jugador se guardan tal cual. Los valores de esta tabla son los únicos permitidos.
 

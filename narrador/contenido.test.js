@@ -10,6 +10,7 @@ import {
   RESULTADOS,
   VERBO_A_INTENCION,
 } from './contenido.js';
+import { CLAVES_REFORMULACION } from './motivos.js';
 
 let base;
 before(async () => {
@@ -344,6 +345,53 @@ describe('contenido — alias de NPC', () => {
     const c = copia();
     npc(c, 'serel_panadero').alias.push('archivista');
     assert.deepEqual(errores(c), []);
+  });
+});
+
+describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
+  test('archivo real: una clave por motivo, más repetir_segunda', () => {
+    assert.deepEqual(Object.keys(base.plantillas.reformulacion).sort(), [...CLAVES_REFORMULACION].sort());
+    assert.equal(CLAVES_REFORMULACION.length, 12);
+  });
+
+  test('el bloque reformulacion no cuenta entre los 26 bloques de resultado', () => {
+    assert.equal(Object.keys(base.plantillas).length, 27);
+    assert.equal(validarContenido(base).conteos.plantillas, 26);
+  });
+
+  test('falta el bloque', () => {
+    const c = copia();
+    delete c.plantillas.reformulacion;
+    hay(c, /plantillas: falta el bloque reformulacion/);
+  });
+
+  test('falta un motivo o repetir_segunda: error que bloquea', () => {
+    for (const clave of CLAVES_REFORMULACION) {
+      const c = copia();
+      delete c.plantillas.reformulacion[clave];
+      const r = validarContenido(c);
+      assert.equal(r.ok, false, clave);
+      assert.ok(r.errores.includes(`plantillas.reformulacion: sin texto para ${clave}`), clave);
+    }
+  });
+
+  test('lista vacía, texto vacío y clave que no es un motivo', () => {
+    const c = copia();
+    c.plantillas.reformulacion.sin_npcs = [];
+    c.plantillas.reformulacion.npc_ausente = ['  '];
+    c.plantillas.reformulacion.otro_motivo = ['¿Qué?'];
+    hay(c, /plantillas\.reformulacion: sin texto para sin_npcs/);
+    hay(c, /plantillas\.reformulacion\.npc_ausente: texto vacío o no textual/);
+    hay(c, /plantillas\.reformulacion: clave sin motivo otro_motivo/);
+  });
+
+  test('reglas.viajeHorasIntraCiudad: obligatorio y mayor que 0', () => {
+    assert.equal(base.reglas.viajeHorasIntraCiudad, 1);
+    for (const valor of [undefined, 0, -1, '1', null]) {
+      const c = copia();
+      c.reglas.viajeHorasIntraCiudad = valor;
+      hay(c, /reglas\.viajeHorasIntraCiudad: falta o no es un número mayor que 0/);
+    }
   });
 });
 

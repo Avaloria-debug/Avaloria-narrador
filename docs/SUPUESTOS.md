@@ -148,3 +148,38 @@ Resultado: `narrador/comprension.js` implementa `docs/comprension-v1.md`. Los al
 ### Decisión
 - En la segunda pasada del turno (`reformulacionPrevia`), todo lo que en la primera sería reformulación pasa a IA, incluidas las respuestas como "No hay nadie con quien hablar acá".
 - El texto del jugador nunca vuelve en la salida de `decidir`.
+
+## Bloque 2.5 — reformulaciones y destinos dentro de la ciudad
+Resultado: los 11 motivos de `decidir()` y `repetir_segunda` tienen texto en `plantillas.reformulacion`. `viajar` acepta escenas de ciudad, con 1 hora de costo dentro de la misma ciudad. Esto reemplaza dos notas del bloque 2: "Texto de las reformulaciones (falta en el contenido)" y "El nombre de una escena de ciudad no vale como destino".
+
+### Reformulaciones
+- `plantillas.reformulacion` tiene una clave por motivo y cada clave es una lista de frases. No tiene `exito`, `fallo` ni `neutro`.
+- El bloque `reformulacion` no cuenta entre los 26 bloques de plantillas de resultado. `plantillas` tiene 27 claves.
+- Los motivos están en `narrador/motivos.js`, para que el validador y la comprensión usen la misma lista.
+- Placeholder nuevo: `{nombres}`, la lista de nombres a mostrar. Si una clave tiene una frase con `{nombres}` y otra sin él, la narración (bloque 4) usa la que corresponda según haya nombres o no.
+- Textos tomados de `comprension-v1.md`:
+  - `no_entendido`: "No entendí bien. ¿Podés decirlo de otra forma?"
+  - `falta_npc`: "¿Con quién querés hablar?"
+  - `npc_ausente`: "No lo ves por acá."
+- Textos escritos para este bloque, a revisar por Tomás:
+  - `intencion_ambigua`: "No me quedó claro qué querés hacer. ¿Podés decirlo de otra forma?"
+  - `falta_npc` (con nombres): "¿Con cuál: {nombres}?" El documento dice "¿Con cuál de los dos: Maren o Serel?", que no sirve con tres presentes.
+  - `npc_ambiguo`: "¿A cuál te referís: {nombres}?"
+  - `falta_objeto`: "¿Cuál querés?" y "¿Cuál querés: {nombres}?"
+  - `objeto_ambiguo`: "¿Cuál de estos: {nombres}?"
+  - `destino_ambiguo`: "¿A dónde querés ir: {nombres}?"
+  - `repetir_segunda`: "¿Me repetís lo segundo?"
+- Textos del documento que se cambiaron, porque el motivo vale para más de un verbo:
+  - `sin_npcs`: "No hay nadie acá." El documento dice "No hay nadie con quien hablar acá.", pero el motivo también sale con ayudar, negociar, presionar, atacar y emboscar.
+  - `sin_objetos`: "No tenés nada para eso." El documento dice "No tenés nada para usar.", pero el motivo también sale con comprar.
+  - `falta_objeto`: el documento dice "¿Qué querés usar?", pero el motivo también sale con examinar y comprar.
+  - `falta_destino`: "¿A dónde querés ir?" El documento decía "¿A qué ciudad querés ir?"; ahora el destino también puede ser una escena.
+- Si se quieren los textos exactos del documento, hay que separar esos motivos por verbo.
+
+### Destinos dentro de la ciudad
+- Una escena de ciudad se reconoce por la primera palabra de su nombre (mercado, archivo, plaza, taberna, biblioteca, aula). Las escenas no tienen alias en el contenido y no se agregaron.
+- "Ir a la plaza" ahora viaja a la Plaza de los Cambistas. El caso de la sección 7 de `comprension-v1.md` se cambió por "Ir al lago", que sigue sin ser destino.
+- Si la frase nombra una escena y su propia ciudad, gana la escena. Con una escena y otra ciudad, se reformula.
+- `narrador/viaje.js` clasifica el viaje: `intra_ciudad` (cuesta `reglas.viajeHorasIntraCiudad`), `por_camino` (las horas las calcula el bloque 3 con `reglas.viajeHorasPorCamino`) y `misma_escena` (el destino es la escena actual; 0 horas).
+- Qué pasa cuando el destino es la escena actual, y si un destino por camino es alcanzable, lo decide el motor del bloque 3.
+- El validador exige `reglas.viajeHorasIntraCiudad` como número mayor que 0.

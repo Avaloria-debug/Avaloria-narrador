@@ -15,6 +15,8 @@ import {
   PALABRAS_VACIAS,
   MOTIVOS,
 } from './comprension.js';
+import { REPETIR_SEGUNDA } from './motivos.js';
+import { clasificarViaje, TIPOS_VIAJE } from './viaje.js';
 
 let contenido;
 let intenciones;
@@ -188,18 +190,41 @@ describe('sección 2.3 — prioridad entre intenciones', () => {
 });
 
 describe('sección 2.4 — viajar', () => {
-  test('destinos: los 3 caminos y las 3 ciudades', () => {
-    assert.deepEqual(
-      destinosDeViaje(contenido.escenas).map((d) => d.id).sort(),
-      [
-        'ciudad_ardenhall',
-        'ciudad_halenor',
-        'ciudad_lareth',
-        'escena_camino_este',
-        'escena_camino_norte',
-        'escena_camino_sur',
-      ],
-    );
+  test('destinos: 3 caminos, 3 ciudades y 6 escenas de ciudad', () => {
+    const porTipo = (tipo) => destinosDeViaje(contenido.escenas).filter((d) => d.tipo === tipo).map((d) => d.id).sort();
+    assert.deepEqual(porTipo('camino'), ['escena_camino_este', 'escena_camino_norte', 'escena_camino_sur']);
+    assert.deepEqual(porTipo('ciudad'), ['ciudad_ardenhall', 'ciudad_halenor', 'ciudad_lareth']);
+    assert.deepEqual(porTipo('escena'), [
+      'escena_archivo_real',
+      'escena_aula_cartografia',
+      'escena_biblioteca_publica',
+      'escena_mercado_circular',
+      'escena_plaza_cambistas',
+      'escena_taberna_lareth',
+    ]);
+  });
+
+  test('escena de ciudad por la primera palabra de su nombre, sin tildes y con typo', () => {
+    const casos = {
+      'ir a la taberna': 'escena_taberna_lareth',
+      'ir al archivo': 'escena_archivo_real',
+      'ir a la plaza': 'escena_plaza_cambistas',
+      'volver al mercado': 'escena_mercado_circular',
+      'ir a la bibliotéca': 'escena_biblioteca_publica',
+      'ir al aula de cartografía': 'escena_aula_cartografia',
+      'ir a la tabenra': 'escena_taberna_lareth',
+      'ir a la Taberna de la Campana Tardía': 'escena_taberna_lareth',
+    };
+    for (const [frase, id] of Object.entries(casos)) {
+      assert.deepEqual(resolverDestino(frase, contenido.escenas), { estado: 'resuelto', destino: id }, frase);
+    }
+  });
+
+  test('la escena gana sobre su propia ciudad; con otra ciudad hay dos destinos', () => {
+    assert.equal(resolverDestino('ir a la biblioteca de Halenor', contenido.escenas).destino, 'escena_biblioteca_publica');
+    const r = resolverDestino('ir a la biblioteca o a Lareth', contenido.escenas);
+    assert.equal(r.motivo, MOTIVOS.DESTINO_AMBIGUO);
+    assert.deepEqual(r.datos.nombres.sort(), ['Biblioteca pública de Halenor', 'Lareth']);
   });
 
   test('ciudad por nombre, con typo', () => {
@@ -217,12 +242,13 @@ describe('sección 2.4 — viajar', () => {
   });
 
   test('lugar que no es destino: reformula', () => {
-    assert.deepEqual(resolverDestino('ir a la plaza', contenido.escenas), {
+    assert.deepEqual(resolverDestino('ir al lago', contenido.escenas), {
       estado: 'reformular',
       motivo: MOTIVOS.FALTA_DESTINO,
       datos: { nombres: [] },
     });
-    assert.equal(resolverDestino('ir al lago de espejos', contenido.escenas).motivo, MOTIVOS.FALTA_DESTINO);
+    assert.equal(resolverDestino('ir al puente de la aduana', contenido.escenas).motivo, MOTIVOS.FALTA_DESTINO);
+    assert.equal(resolverDestino('ir a la casa', contenido.escenas).motivo, MOTIVOS.FALTA_DESTINO);
   });
 
   test('dos destinos en la frase: reformula con los nombres', () => {
@@ -536,12 +562,18 @@ describe('sección 7 — verificación', () => {
     });
   });
 
-  test('"Ir a la plaza" no viaja: reformula el destino', () => {
-    assert.deepEqual(decidir('Ir a la plaza', ctx()), {
+  test('"Ir al lago" no viaja: reformula el destino', () => {
+    assert.deepEqual(decidir('Ir al lago', ctx()), {
       tipo: 'reformular',
       motivo: MOTIVOS.FALTA_DESTINO,
       intencionId: 'intencion_viajar',
       datos: { nombres: [] },
+    });
+  });
+
+  test('"Ir a la plaza" viaja a la Plaza de los Cambistas', () => {
+    assert.deepEqual(decidir('Ir a la plaza', ctx({ escena: { id: 'escena_taberna_lareth' } })).parametros, {
+      destino: 'escena_plaza_cambistas',
     });
   });
 
@@ -550,6 +582,116 @@ describe('sección 7 — verificación', () => {
     assert.equal(r.tipo, 'ejecutar');
     assert.equal(r.intencionId, 'intencion_descansar');
     assert.equal(r.repetirIntencionId, 'intencion_explorar');
+  });
+});
+
+describe('destinos dentro de la ciudad', () => {
+  const viaje = (frase, desde) => {
+    const r = decidir(frase, ctx({ escena: { id: desde } }));
+    assert.equal(r.tipo, 'ejecutar', frase);
+    assert.equal(r.intencionId, 'intencion_viajar', frase);
+    return { destino: r.parametros.destino, ...clasificarViaje(r.parametros.destino, desde, contenido) };
+  };
+
+  test('ir a la taberna desde la plaza: 1 hora', () => {
+    assert.deepEqual(viaje('ir a la taberna', 'escena_plaza_cambistas'), {
+      destino: 'escena_taberna_lareth',
+      tipo: TIPOS_VIAJE.INTRA_CIUDAD,
+      horas: 1,
+    });
+  });
+
+  test('ir al archivo desde el mercado: 1 hora', () => {
+    assert.deepEqual(viaje('ir al archivo', 'escena_mercado_circular'), {
+      destino: 'escena_archivo_real',
+      tipo: TIPOS_VIAJE.INTRA_CIUDAD,
+      horas: 1,
+    });
+  });
+
+  test('el costo sale de reglas.viajeHorasIntraCiudad', () => {
+    assert.equal(contenido.reglas.viajeHorasIntraCiudad, 1);
+    const otro = { ...contenido, reglas: { ...contenido.reglas, viajeHorasIntraCiudad: 3 } };
+    assert.equal(clasificarViaje('escena_archivo_real', 'escena_mercado_circular', otro).horas, 3);
+  });
+
+  test('viajar a Lareth desde Ardenhall sigue yendo por camino', () => {
+    assert.deepEqual(viaje('viajar a Lareth', 'escena_mercado_circular'), {
+      destino: 'ciudad_lareth',
+      tipo: TIPOS_VIAJE.POR_CAMINO,
+      horas: null,
+    });
+    assert.equal(contenido.reglas.viajeHorasPorCamino.escena_camino_norte, 36);
+  });
+
+  test('escena de otra ciudad, camino y ciudad propia van por camino', () => {
+    assert.equal(viaje('ir a la taberna', 'escena_mercado_circular').tipo, TIPOS_VIAJE.POR_CAMINO);
+    assert.equal(viaje('tomar el camino del norte', 'escena_mercado_circular').tipo, TIPOS_VIAJE.POR_CAMINO);
+    assert.equal(viaje('ir a Ardenhall', 'escena_mercado_circular').tipo, TIPOS_VIAJE.POR_CAMINO);
+    // Desde un camino no hay ciudad actual.
+    assert.equal(viaje('ir a la plaza', 'escena_camino_norte').tipo, TIPOS_VIAJE.POR_CAMINO);
+  });
+
+  test('destino igual a la escena actual', () => {
+    assert.deepEqual(viaje('ir a la plaza', 'escena_plaza_cambistas'), {
+      destino: 'escena_plaza_cambistas',
+      tipo: TIPOS_VIAJE.MISMA_ESCENA,
+      horas: 0,
+    });
+  });
+});
+
+describe('reformulaciones — texto en el contenido', () => {
+  test('hay 11 motivos y cada uno tiene texto', () => {
+    assert.equal(Object.keys(MOTIVOS).length, 11);
+    for (const motivo of Object.values(MOTIVOS)) {
+      const textos = contenido.plantillas.reformulacion[motivo];
+      assert.ok(Array.isArray(textos) && textos.length > 0, motivo);
+      for (const t of textos) assert.ok(typeof t === 'string' && t.trim() !== '', motivo);
+    }
+  });
+
+  test('repetir_segunda tiene texto', () => {
+    assert.ok(contenido.plantillas.reformulacion[REPETIR_SEGUNDA].length > 0);
+  });
+
+  test('todo motivo que devuelve decidir() tiene texto', () => {
+    const dos = [npc('ivor_cambista'), npc('serel_panadero')];
+    const panes = [objeto('objeto_pan_duro'), objeto('objeto_pan_fresco')];
+    const empate = [
+      { id: 'intencion_a', verbo: 'explorar', formas: ['saltar'] },
+      { id: 'intencion_b', verbo: 'descansar', formas: ['saltar'] },
+    ];
+    const casos = [
+      ['hola', ctx()],
+      ['saltar', ctx({ intenciones: empate })],
+      ['hablar con', ctx()],
+      ['hablar con', ctx({ npcsPresentes: dos })],
+      ['hablar con ivor y serel', ctx({ npcsPresentes: dos })],
+      ['hablar con maren', ctx({ npcsPresentes: dos })],
+      ['usar', ctx()],
+      ['usar', ctx({ objetosAplicables: [objeto('objeto_cuerda'), objeto('objeto_daga')] })],
+      ['usar el pan', ctx({ objetosAplicables: panes })],
+      ['ir al lago', ctx()],
+      ['viajar a Lareth o a Halenor', ctx()],
+    ];
+    const vistos = new Set();
+    for (const [frase, c] of casos) {
+      const r = decidir(frase, c);
+      assert.equal(r.tipo, 'reformular', frase);
+      assert.ok(contenido.plantillas.reformulacion[r.motivo]?.length > 0, `${frase}: ${r.motivo}`);
+      vistos.add(r.motivo);
+    }
+    assert.deepEqual([...vistos].sort(), Object.values(MOTIVOS).sort());
+  });
+
+  test('los textos no traen ids ni placeholders desconocidos', () => {
+    for (const [clave, textos] of Object.entries(contenido.plantillas.reformulacion)) {
+      for (const t of textos) {
+        assert.ok(!/(escena|objeto|evento|intencion|conocimiento|ciudad)_/.test(t), clave);
+        assert.deepEqual((t.match(/\{[^}]*\}/g) ?? []).filter((p) => p !== '{nombres}'), [], clave);
+      }
+    }
   });
 });
 

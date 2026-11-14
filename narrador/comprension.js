@@ -4,6 +4,9 @@
 // El texto del jugador solo se lee: nunca vuelve en los datos de salida.
 import { resolverNpcObjetivo } from '../core/orquestador/resolverNpcObjetivo.js';
 import { DESTINOS_CIUDAD } from './contenido.js';
+import { MOTIVOS } from './motivos.js';
+
+export { MOTIVOS };
 
 // Sección 1, paso 3.
 export const PALABRAS_VACIAS = Object.freeze([
@@ -27,20 +30,6 @@ export const VERBOS_OBJETO_EXIGIDO = Object.freeze(['usar', 'examinar']);
 export const VERBOS_OBJETO_OPCIONAL = Object.freeze(['comprar', 'atacar']);
 // Solo toman un objeto si el jugador lo nombra.
 export const VERBOS_OBJETO_SOLO_NOMBRADO = Object.freeze(['negociar']);
-
-export const MOTIVOS = Object.freeze({
-  NO_ENTENDIDO: 'no_entendido',
-  INTENCION_AMBIGUA: 'intencion_ambigua',
-  SIN_NPCS: 'sin_npcs',
-  FALTA_NPC: 'falta_npc',
-  NPC_AMBIGUO: 'npc_ambiguo',
-  NPC_AUSENTE: 'npc_ausente',
-  SIN_OBJETOS: 'sin_objetos',
-  FALTA_OBJETO: 'falta_objeto',
-  OBJETO_AMBIGUO: 'objeto_ambiguo',
-  FALTA_DESTINO: 'falta_destino',
-  DESTINO_AMBIGUO: 'destino_ambiguo',
-});
 
 // ---------------------------------------------------------------------------
 // Sección 1: normalizar y tokenizar
@@ -333,26 +322,42 @@ export function resolverObjeto(texto, verbo, objetosAplicables) {
 // Sección 2.4: destino de viajar
 // ---------------------------------------------------------------------------
 
+const idDeCiudad = (ciudad) => `ciudad_${normalizar(ciudad).replace(/ /g, '_')}`;
+
 /**
- * Destinos posibles: las escenas de camino con horas de viaje y las ciudades (`ciudad_*`).
+ * Destinos posibles, de tres tipos:
+ * - `camino`: escenas de camino con horas de viaje.
+ * - `ciudad`: las ciudades (`ciudad_*`).
+ * - `escena`: escenas de ciudad (las que tienen `ciudad`).
  * @param {{id: string, nombre: string, ciudad?: string|null, viajeHoras?: number}[]} escenas
  */
 export function destinosDeViaje(escenas) {
   const destinos = [];
   const ciudades = new Set();
   for (const e of escenas ?? []) {
+    const terminos = tokenizar(e.nombre);
     if (typeof e.viajeHoras === 'number') {
-      const nombre = tokenizar(e.nombre);
-      // Se reconoce por el nombre completo, o por la última palabra sola si está escrita exacta ("norte").
-      destinos.push({ id: e.id, nombre: e.nombre, terminos: nombre, exacto: nombre.at(-1) });
+      destinos.push({ id: e.id, tipo: 'camino', nombre: e.nombre, terminos });
     }
-    if (typeof e.ciudad === 'string' && e.ciudad !== '' && !ciudades.has(e.ciudad)) {
-      ciudades.add(e.ciudad);
-      const id = `ciudad_${normalizar(e.ciudad).replace(/ /g, '_')}`;
-      if (DESTINOS_CIUDAD.includes(id)) destinos.push({ id, nombre: e.ciudad, terminos: tokenizar(e.ciudad), exacto: null });
+    if (typeof e.ciudad === 'string' && e.ciudad !== '') {
+      const ciudadId = idDeCiudad(e.ciudad);
+      destinos.push({ id: e.id, tipo: 'escena', nombre: e.nombre, terminos, ciudadId });
+      if (!ciudades.has(e.ciudad) && DESTINOS_CIUDAD.includes(ciudadId)) {
+        ciudades.add(e.ciudad);
+        destinos.push({ id: ciudadId, tipo: 'ciudad', nombre: e.ciudad, terminos: tokenizar(e.ciudad) });
+      }
     }
   }
   return destinos;
+}
+
+function nombraDestino(entrada, d) {
+  const trae = (t) => entrada.some((p) => coincidePalabra(p, t) >= 0);
+  // Camino: nombre completo, o su dirección sola si está escrita exacta ("norte").
+  if (d.tipo === 'camino') return d.terminos.every(trae) || entrada.includes(d.terminos.at(-1));
+  // Escena de ciudad: la primera palabra de su nombre ("taberna", "archivo").
+  if (d.tipo === 'escena') return d.terminos.length > 0 && trae(d.terminos[0]);
+  return d.terminos.every(trae);
 }
 
 /**
@@ -361,11 +366,10 @@ export function destinosDeViaje(escenas) {
  */
 export function resolverDestino(texto, escenas) {
   const entrada = tokenizar(texto);
-  const hallados = destinosDeViaje(escenas).filter(
-    (d) =>
-      d.terminos.every((t) => entrada.some((p) => coincidePalabra(p, t) >= 0)) ||
-      (d.exacto !== null && entrada.includes(d.exacto)),
-  );
+  let hallados = destinosDeViaje(escenas).filter((d) => nombraDestino(entrada, d));
+  // "la biblioteca de Halenor": la escena gana sobre su propia ciudad.
+  const ciudadesDeEscenas = new Set(hallados.filter((d) => d.tipo === 'escena').map((d) => d.ciudadId));
+  hallados = hallados.filter((d) => !(d.tipo === 'ciudad' && ciudadesDeEscenas.has(d.id)));
   if (hallados.length === 1) return { estado: 'resuelto', destino: hallados[0].id };
   return {
     estado: 'reformular',

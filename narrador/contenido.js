@@ -10,6 +10,8 @@ export const CONTEOS = Object.freeze({
   plantillas: 26,
 });
 
+import { BLOQUE_REFORMULACION, CLAVES_REFORMULACION } from './motivos.js';
+
 export const RESULTADOS = Object.freeze(['exito', 'fallo', 'neutro']);
 export const BLOQUES_EXTRA = Object.freeze(['revelar_conocimiento', 'mostrar_narrativo']);
 
@@ -86,7 +88,8 @@ export function validarContenido(contenido) {
   }
   const plantillas = esObjeto(contenido.plantillas) ? contenido.plantillas : null;
   if (!plantillas) err('plantillas: falta o no es un objeto');
-  conteos.plantillas = plantillas ? Object.keys(plantillas).length : 0;
+  // El conteo es de bloques de resultado; el bloque de reformulaciones va aparte.
+  conteos.plantillas = plantillas ? Object.keys(plantillas).filter((k) => k !== BLOQUE_REFORMULACION).length : 0;
   if (!esObjeto(contenido.transiciones)) err('transiciones: falta o no es un objeto');
   if (!esObjeto(contenido.reglas)) err('reglas: falta o no es un objeto');
 
@@ -291,7 +294,8 @@ export function validarContenido(contenido) {
   }
   if (plantillas) {
     for (const extra of BLOQUES_EXTRA) validarBloque(plantillas, extra, err);
-    const esperados = new Set([...ids.intenciones, ...BLOQUES_EXTRA]);
+    validarReformulacion(plantillas[BLOQUE_REFORMULACION], err);
+    const esperados = new Set([...ids.intenciones, ...BLOQUES_EXTRA, BLOQUE_REFORMULACION]);
     for (const clave of Object.keys(plantillas)) {
       if (!esperados.has(clave)) err(`plantillas: bloque sin intención ${clave}`);
     }
@@ -316,12 +320,38 @@ export function validarContenido(contenido) {
     }
   }
 
+  // --- Reglas: viaje dentro de la ciudad ---
+  const horasIntra = contenido.reglas?.viajeHorasIntraCiudad;
+  if (esObjeto(contenido.reglas) && !(typeof horasIntra === 'number' && horasIntra > 0)) {
+    err(`reglas.viajeHorasIntraCiudad: falta o no es un número mayor que 0`);
+  }
+
   // --- Transiciones ---
   if (esObjeto(contenido.transiciones)) {
     for (const v of Object.keys(contenido.transiciones)) refVerbo(v, 'transiciones');
   }
 
   return { ok: errores.length === 0, errores, avisos, conteos };
+}
+
+// plantillas.reformulacion: una clave por motivo de decidir(), más repetir_segunda.
+function validarReformulacion(bloque, err) {
+  const donde = `plantillas.${BLOQUE_REFORMULACION}`;
+  if (!esObjeto(bloque)) {
+    err(`plantillas: falta el bloque ${BLOQUE_REFORMULACION}`);
+    return;
+  }
+  for (const clave of CLAVES_REFORMULACION) {
+    const textos = Object.hasOwn(bloque, clave) ? bloque[clave] : undefined;
+    if (!Array.isArray(textos) || textos.length === 0) {
+      err(`${donde}: sin texto para ${clave}`);
+    } else if (textos.some((t) => typeof t !== 'string' || t.trim() === '')) {
+      err(`${donde}.${clave}: texto vacío o no textual`);
+    }
+  }
+  for (const clave of Object.keys(bloque)) {
+    if (!CLAVES_REFORMULACION.includes(clave)) err(`${donde}: clave sin motivo ${clave}`);
+  }
 }
 
 function validarBloque(plantillas, clave, err) {
