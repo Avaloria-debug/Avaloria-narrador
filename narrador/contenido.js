@@ -184,6 +184,38 @@ export function validarContenido(contenido) {
     }
   }
 
+  // --- Alias de NPC (comprension-v1.md, sección 3.2) ---
+  // Dos NPCs que pueden coincidir en una escena no comparten alias.
+  // Las escenas posibles de un NPC son la inicial más los caminos de su movimiento.
+  const aliasPorEscena = new Map();
+  for (const n of lista(contenido.npcs)) {
+    if (!esObjeto(n)) continue;
+    if (!Array.isArray(n.alias) || n.alias.length === 0) {
+      err(`${n.id}: alias falta o no es una lista con valores`);
+      continue;
+    }
+    const propios = new Set();
+    for (const a of n.alias) {
+      if (typeof a !== 'string' || a.trim() === '') {
+        err(`${n.id}.alias: alias vacío o no textual`);
+        continue;
+      }
+      const k = clave(a);
+      if (propios.has(k)) err(`${n.id}.alias: alias repetido ${JSON.stringify(a)}`);
+      propios.add(k);
+    }
+    const escenasPosibles = new Set([n.escenaInicialId, ...(esObjeto(n.movimiento) ? lista(n.movimiento.caminos) : [])]);
+    for (const escenaId of escenasPosibles) {
+      if (!aliasPorEscena.has(escenaId)) aliasPorEscena.set(escenaId, new Map());
+      const enEscena = aliasPorEscena.get(escenaId);
+      for (const k of propios) {
+        const otro = enEscena.get(k);
+        if (otro && otro !== n.id) err(`${n.id}.alias: ${JSON.stringify(k)} también es alias de ${otro} en ${escenaId}`);
+        else enEscena.set(k, n.id);
+      }
+    }
+  }
+
   // --- Objetos ---
   for (const o of lista(contenido.objetos)) {
     if (!esObjeto(o)) continue;

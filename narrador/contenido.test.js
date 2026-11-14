@@ -298,6 +298,55 @@ describe('contenido — conocimientos y marcas', () => {
   });
 });
 
+describe('contenido — alias de NPC', () => {
+  const npc = (c, id) => c.npcs.find((n) => n.id === id);
+
+  test('archivo real: los 12 NPCs tienen los alias de comprension-v1.md', () => {
+    assert.deepEqual(npc(base, 'ivor_cambista').alias, ['ivor', 'cambista', 'aster', 'prestamista']);
+    assert.deepEqual(npc(base, 'dario_guardia').alias, ['dario', 'guardia', 'aduanero', 'keth']);
+    for (const n of base.npcs) assert.ok(n.alias.length >= 3, n.id);
+  });
+
+  test('alias faltante, vacío, no lista o con valores inválidos', () => {
+    for (const valor of [undefined, [], 'maren', null]) {
+      const c = copia();
+      npc(c, 'maren_archivista').alias = valor;
+      hay(c, /maren_archivista: alias falta o no es una lista/);
+    }
+    for (const valor of ['', '   ', 7, null]) {
+      const c = copia();
+      npc(c, 'maren_archivista').alias.push(valor);
+      hay(c, /maren_archivista\.alias: alias vacío o no textual/);
+    }
+  });
+
+  test('alias repetido dentro del mismo NPC', () => {
+    const c = copia();
+    npc(c, 'maren_archivista').alias.push('Máren');
+    hay(c, /maren_archivista\.alias: alias repetido/);
+  });
+
+  test('alias repetido entre NPCs de la misma escena', () => {
+    const c = copia();
+    npc(c, 'serel_panadero').escenaInicialId = 'escena_archivo_real';
+    npc(c, 'serel_panadero').alias.push('Archivista');
+    hay(c, /serel_panadero\.alias: "archivista" también es alias de maren_archivista en escena_archivo_real/);
+  });
+
+  test('cuenta las escenas a las que un NPC se mueve', () => {
+    const c = copia();
+    // Sarin rota por el camino del sur, donde está Hollis.
+    npc(c, 'sarin_mensajera').alias.push('pastor');
+    hay(c, /hollis_pastor\.alias: "pastor" también es alias de sarin_mensajera en escena_camino_sur/);
+  });
+
+  test('el mismo alias en escenas distintas no es un error', () => {
+    const c = copia();
+    npc(c, 'serel_panadero').alias.push('archivista');
+    assert.deepEqual(errores(c), []);
+  });
+});
+
 describe('contenido — plantillas', () => {
   test('cada intención necesita exito, fallo y neutro', () => {
     for (const r of RESULTADOS) {
