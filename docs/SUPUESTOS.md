@@ -80,6 +80,14 @@ Decisiones tomadas sin preguntar. Son reversibles. El código y el contenido se 
 - `evento_lucha_caseta` tenía `fin.verbos` vacío. Se completó con `["huir", "rendirse"]`, igual que su duración y que la regla "un combate termina cuando el jugador huye o se rinde".
 - `disparo` acepta `escena` (una) o `escenas` (lista). `duracion` acepta `verbo` (uno) o `verbos` (lista).
 - `salir_escena` se cumple cuando el jugador cambia de escena por cualquier verbo. La implementación queda para el bloque 3.
-- Sin corregir, para revisar: `disparo.objetivo` usa nombres y no ids en dos eventos (`"Naela"` y `"Darío"`, en lugar de `naela_tabernera` y `dario_guardia`). El validador no revisa `objetivo`.
 - La clave `resultado_<verbo>_<resultado>` se resuelve por id de verbo, con la tabla de `vocabulario-v1.md` sección 5. Por eso `resultado_calmar_la_situacion_exito` va a `plantillas.intencion_calmar.exito`.
 - `cargarContenido.js` usa `node:fs`. La carga en el navegador (por `fetch`) queda para la integración con el HTML: sin verificar.
+
+## Bloque 1 — referencias por id
+- `disparo.objetivo` es un id de NPC. Se corrigieron los dos casos: `evento_cierre_taberna` (`naela_tabernera`) y `evento_lucha_caseta` (`dario_guardia`).
+- Toda referencia a un id (escena, NPC, objeto, evento, verbo, destino, conocimiento) es un error del validador y bloquea. Los `avisos` quedan solo para observaciones que no son referencias; hoy hay una: fin por acción sin verbos.
+- Si el valor coincide con el nombre de una escena, NPC, objeto o evento (sin distinguir tildes ni mayúsculas), el error dice cuál es el id. Para NPCs también se reconoce el primer nombre.
+- `efectos[].conocimientoId` tiene que ser el `id` de un conocimiento del NPC del mismo efecto.
+- Sin corregir, para revisar. No son NPC, escena ni objeto, y el validador no los revisa:
+  - `requiereMarca` de Elia y Oren dice `Marca "leyó"`. El id de la marca en `reglas.marcas` es `leyo`.
+  - `objetos[].conocimientoDesbloquea` es texto libre en los 12 objetos narrativos, y no coincide letra por letra con el `contenido` del conocimiento del NPC. Solo el conocimiento de Hollis tiene `id`.

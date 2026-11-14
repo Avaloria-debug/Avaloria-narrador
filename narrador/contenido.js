@@ -59,8 +59,9 @@ const lista = (v) => (Array.isArray(v) ? v : []);
 
 /**
  * Valida el contenido. No lanza: devuelve todo lo encontrado.
- * `errores`: comprobaciones de la sección 5.1 del prompt maestro. Bloquean.
- * `avisos`: referencias secundarias (efectos, disparo, fin, duración, requiereEvento). No bloquean.
+ * `errores`: conteos, estructura, plantillas y toda referencia a un id (escena, NPC, objeto,
+ *   evento, verbo, destino, conocimiento). Un nombre donde va un id es un error. Bloquean.
+ * `avisos`: observaciones que no son referencias (por ejemplo, fin por acción sin verbos). No bloquean.
  * @returns {{ ok: boolean, errores: string[], avisos: string[], conteos: Record<string, number> }}
  */
 export function validarContenido(contenido) {
@@ -106,15 +107,42 @@ export function validarContenido(contenido) {
     ids[clave] = vistos;
   }
   const verbos = new Set(Object.keys(VERBO_A_INTENCION));
-  const refEscena = (id, donde, avisar = err) => {
-    if (!ids.escenas.has(id)) avisar(`${donde}: escena inexistente ${JSON.stringify(id)}`);
+  // Nombre para el jugador -> id, para señalar cuando se usó un nombre donde va un id.
+  // Los NPCs también se buscan por su primer nombre ("Darío" -> dario_guardia).
+  const clave = (t) => String(t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+  const nombres = { escenas: new Map(), npcs: new Map(), objetos: new Map(), eventos: new Map() };
+  for (const [tipo, mapa] of Object.entries(nombres)) {
+    for (const item of lista(contenido[tipo])) {
+      if (!esObjeto(item) || typeof item.nombre !== 'string') continue;
+      mapa.set(clave(item.nombre), item.id);
+      if (tipo === 'npcs') mapa.set(clave(item.nombre.split(' ')[0]), item.id);
+    }
+  }
+  const ref = (tipo, etiqueta) => (id, donde) => {
+    if (ids[tipo].has(id)) return;
+    const sugerido = typeof id === 'string' ? nombres[tipo].get(clave(id)) : undefined;
+    err(
+      sugerido
+        ? `${donde}: ${JSON.stringify(id)} es un nombre, no un id; va ${sugerido}`
+        : `${donde}: ${etiqueta} inexistente ${JSON.stringify(id)}`,
+    );
   };
+  const refEscena = ref('escenas', 'escena');
+  const refNpc = ref('npcs', 'NPC');
+  const refObjeto = ref('objetos', 'objeto');
+  const refEvento = ref('eventos', 'evento');
   const refVerboDeFin = (v, donde) => {
-    if (!verbos.has(v) && !PSEUDO_VERBOS.includes(v)) aviso(`${donde}: verbo inexistente ${JSON.stringify(v)}`);
+    if (!verbos.has(v) && !PSEUDO_VERBOS.includes(v)) err(`${donde}: verbo inexistente ${JSON.stringify(v)}`);
   };
-  const refVerbo = (v, donde, avisar = err) => {
-    if (!verbos.has(v)) avisar(`${donde}: verbo inexistente ${JSON.stringify(v)}`);
+  const refVerbo = (v, donde) => {
+    if (!verbos.has(v)) err(`${donde}: verbo inexistente ${JSON.stringify(v)}`);
   };
+  // Conocimientos con id propio, por NPC.
+  const conocimientosPorNpc = new Map();
+  for (const n of lista(contenido.npcs)) {
+    if (!esObjeto(n)) continue;
+    conocimientosPorNpc.set(n.id, new Set(lista(n.conocimientos).map((k) => k?.id).filter(Boolean)));
+  }
 
   // --- Escenas ---
   for (const e of lista(contenido.escenas)) {
@@ -133,9 +161,7 @@ export function validarContenido(contenido) {
       for (const c of lista(n.movimiento.caminos)) refEscena(c, `${n.id}.movimiento.caminos`);
     }
     for (const [i, k] of lista(n.conocimientos).entries()) {
-      if (esObjeto(k) && k.requiereEvento != null && !ids.eventos.has(k.requiereEvento)) {
-        aviso(`${n.id}.conocimientos[${i}].requiereEvento: evento inexistente ${JSON.stringify(k.requiereEvento)}`);
-      }
+      if (esObjeto(k) && k.requiereEvento != null) refEvento(k.requiereEvento, `${n.id}.conocimientos[${i}].requiereEvento`);
     }
   }
 
@@ -145,9 +171,7 @@ export function validarContenido(contenido) {
     if (!TIPOS_OBJETO.includes(o.tipo)) err(`${o.id}: tipo inválido ${JSON.stringify(o.tipo)}`);
     if (o.escenaVenta != null) refEscena(o.escenaVenta, `${o.id}.escenaVenta`);
     if (o.escenaAparece != null) refEscena(o.escenaAparece, `${o.id}.escenaAparece`);
-    if (o.tipo === 'narrativo' && !ids.npcs.has(o.npcAsociado)) {
-      err(`${o.id}.npcAsociado: NPC inexistente ${JSON.stringify(o.npcAsociado)}`);
-    }
+    if (o.tipo === 'narrativo' || o.npcAsociado != null) refNpc(o.npcAsociado, `${o.id}.npcAsociado`);
     for (const v of lista(o.utilizableComo)) refVerbo(v, `${o.id}.utilizableComo`);
   }
 
@@ -162,9 +186,10 @@ export function validarContenido(contenido) {
     if (!esObjeto(ev.disparo) || !TIPOS_DISPARO.includes(ev.disparo.tipo)) {
       err(`${ev.id}: disparo inválido`);
     } else {
-      if (ev.disparo.verbo != null) refVerbo(ev.disparo.verbo, `${ev.id}.disparo.verbo`, aviso);
-      if (ev.disparo.escena != null) refEscena(ev.disparo.escena, `${ev.id}.disparo.escena`, aviso);
-      for (const s of lista(ev.disparo.escenas)) refEscena(s, `${ev.id}.disparo.escenas`, aviso);
+      if (ev.disparo.verbo != null) refVerbo(ev.disparo.verbo, `${ev.id}.disparo.verbo`);
+      if (ev.disparo.escena != null) refEscena(ev.disparo.escena, `${ev.id}.disparo.escena`);
+      for (const s of lista(ev.disparo.escenas)) refEscena(s, `${ev.id}.disparo.escenas`);
+      if (ev.disparo.objetivo != null) refNpc(ev.disparo.objetivo, `${ev.id}.disparo.objetivo`);
     }
     if (!esObjeto(ev.fin) || !TIPOS_FIN.includes(ev.fin.tipo)) {
       err(`${ev.id}: fin inválido`);
@@ -185,11 +210,14 @@ export function validarContenido(contenido) {
         err(`${donde}: tipo inválido`);
         continue;
       }
-      if (ef.npcId != null && !ids.npcs.has(ef.npcId)) aviso(`${donde}: NPC inexistente ${JSON.stringify(ef.npcId)}`);
-      if (ef.objetoId != null && !ids.objetos.has(ef.objetoId)) aviso(`${donde}: objeto inexistente ${JSON.stringify(ef.objetoId)}`);
-      if (ef.escenaId != null) refEscena(ef.escenaId, `${donde}.escenaId`, aviso);
-      if (ef.destino != null && !DESTINOS_CIUDAD.includes(ef.destino)) refEscena(ef.destino, `${donde}.destino`, aviso);
-      if (ef.verbo != null) refVerbo(ef.verbo, `${donde}.verbo`, aviso);
+      if (ef.npcId != null) refNpc(ef.npcId, `${donde}.npcId`);
+      if (ef.objetoId != null) refObjeto(ef.objetoId, `${donde}.objetoId`);
+      if (ef.escenaId != null) refEscena(ef.escenaId, `${donde}.escenaId`);
+      if (ef.destino != null && !DESTINOS_CIUDAD.includes(ef.destino)) refEscena(ef.destino, `${donde}.destino`);
+      if (ef.verbo != null) refVerbo(ef.verbo, `${donde}.verbo`);
+      if (ef.conocimientoId != null && !conocimientosPorNpc.get(ef.npcId)?.has(ef.conocimientoId)) {
+        err(`${donde}.conocimientoId: conocimiento inexistente ${JSON.stringify(ef.conocimientoId)} en ${JSON.stringify(ef.npcId)}`);
+      }
     }
   }
 

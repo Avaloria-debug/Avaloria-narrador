@@ -78,7 +78,7 @@ describe('contenido — referencias', () => {
   test('escena de un NPC', () => {
     const c = copia();
     c.npcs[0].escenaInicialId = 'Archivo Real';
-    hay(c, /escenaInicialId: escena inexistente/);
+    hay(c, /escenaInicialId: "Archivo Real" es un nombre, no un id; va escena_archivo_real/);
   });
 
   test('escenas de un evento: inexistente y vacías', () => {
@@ -93,7 +93,7 @@ describe('contenido — referencias', () => {
     const c = copia();
     const o = c.objetos.find((x) => x.tipo === 'narrativo');
     o.npcAsociado = 'Ysolde Varn';
-    hay(c, /npcAsociado: NPC inexistente/);
+    hay(c, /npcAsociado: "Ysolde Varn" es un nombre, no un id; va ysolde_pescadora/);
   });
 
   test('verbo de una intención: inexistente o cruzado', () => {
@@ -105,13 +105,11 @@ describe('contenido — referencias', () => {
     hay(d, /corresponde a intencion_usar/);
   });
 
-  test('efecto de evento con NPC inexistente: aviso, no error', () => {
+  test('efecto de evento con NPC inexistente es un error', () => {
     const c = copia();
     const ev = c.eventos.find((e) => e.efectos.some((f) => f.npcId));
     ev.efectos.find((f) => f.npcId).npcId = 'nadie';
-    const r = validarContenido(c);
-    assert.equal(r.ok, true);
-    assert.ok(r.avisos.some((a) => /efectos\[\d+\]: NPC inexistente "nadie"/.test(a)));
+    hay(c, /efectos\[\d+\]\.npcId: NPC inexistente "nadie"/);
   });
 
   test('el archivo real no tiene avisos', () => {
@@ -120,7 +118,6 @@ describe('contenido — referencias', () => {
 
   const avisa = (c, patron) => {
     const r = validarContenido(c);
-    assert.equal(r.ok, true);
     assert.ok(r.avisos.some((a) => patron.test(a)), `sin aviso ${patron}: ${r.avisos.join(' | ')}`);
   };
   const evento = (c, id) => c.eventos.find((e) => e.id === id);
@@ -130,7 +127,7 @@ describe('contenido — referencias', () => {
     evento(c, 'evento_cierre_puerta').efectos[0].destino = 'ciudad_halenor';
     assert.deepEqual(validarContenido(c).avisos, []);
     evento(c, 'evento_cierre_puerta').efectos[0].destino = 'ciudad_fantasma';
-    avisa(c, /destino: escena inexistente "ciudad_fantasma"/);
+    hay(c, /destino: escena inexistente "ciudad_fantasma"/);
   });
 
   test('salir_escena vale en fin.verbos, no como verbo de intención', () => {
@@ -144,15 +141,96 @@ describe('contenido — referencias', () => {
     assert.deepEqual(evento(base, 'evento_emboscada_sur').duracion.verbos, ['huir', 'rendirse']);
     const c = copia();
     evento(c, 'evento_emboscada_sur').duracion.verbos = ['huir_o_rendirse'];
-    avisa(c, /duracion\.verbos: verbo inexistente/);
+    hay(c, /duracion\.verbos: verbo inexistente/);
   });
 
   test('disparo.escenas y fin por acción sin verbos', () => {
     const c = copia();
     evento(c, 'evento_guardias_persiguen').disparo.escenas = ['ciudad'];
     evento(c, 'evento_lucha_caseta').fin.verbos = [];
-    avisa(c, /disparo\.escenas: escena inexistente "ciudad"/);
+    hay(c, /disparo\.escenas: escena inexistente "ciudad"/);
     avisa(c, /evento_lucha_caseta\.fin: fin por acción sin verbos/);
+  });
+});
+
+describe('contenido — nombres en lugar de ids', () => {
+  const evento = (c, id) => c.eventos.find((e) => e.id === id);
+
+  test('disparo.objetivo del archivo real usa ids de NPC', () => {
+    assert.equal(evento(base, 'evento_cierre_taberna').disparo.objetivo, 'naela_tabernera');
+    assert.equal(evento(base, 'evento_lucha_caseta').disparo.objetivo, 'dario_guardia');
+  });
+
+  test('disparo.objetivo con primer nombre, nombre completo o id inexistente falla', () => {
+    for (const [valor, patron] of [
+      ['Darío', /disparo\.objetivo: "Darío" es un nombre, no un id; va dario_guardia/],
+      ['dario', /disparo\.objetivo: "dario" es un nombre, no un id; va dario_guardia/],
+      [base.npcs[0].nombre, /disparo\.objetivo: .* es un nombre, no un id; va maren_archivista/],
+      ['nadie_guardia', /disparo\.objetivo: NPC inexistente "nadie_guardia"/],
+      ['escena_puente_aduana', /disparo\.objetivo: NPC inexistente/],
+    ]) {
+      const c = copia();
+      evento(c, 'evento_lucha_caseta').disparo.objetivo = valor;
+      const r = validarContenido(c);
+      assert.equal(r.ok, false);
+      assert.ok(r.errores.some((e) => patron.test(e)), `${valor}: ${r.errores.join(' | ')}`);
+    }
+  });
+
+  test('un nombre falla en cada campo de referencia', () => {
+    const escena = base.escenas[0];
+    const npc = base.npcs[0];
+    const objeto = base.objetos[0];
+    const ev = base.eventos[0];
+    const conEfecto = (c, campo) => c.eventos.flatMap((e) => e.efectos).find((f) => f[campo] != null);
+    const casos = [
+      ['escenas.salidas', (c) => c.escenas[1].salidas.push(escena.nombre), escena.id],
+      ['npcs.movimiento.caminos', (c) => c.npcs.find((n) => n.movimiento).movimiento.caminos.push(escena.nombre), escena.id],
+      ['npcs.conocimientos.requiereEvento', (c) => (c.npcs[0].conocimientos[0].requiereEvento = ev.nombre), ev.id],
+      ['objetos.escenaVenta', (c) => (c.objetos[0].escenaVenta = escena.nombre), escena.id],
+      ['objetos.escenaAparece', (c) => (c.objetos[0].escenaAparece = escena.nombre), escena.id],
+      ['objetos.npcAsociado', (c) => (c.objetos[0].npcAsociado = npc.nombre), npc.id],
+      ['eventos.escenas', (c) => c.eventos[0].escenas.push(escena.nombre), escena.id],
+      ['eventos.disparo.escena', (c) => (c.eventos[0].disparo.escena = escena.nombre), escena.id],
+      ['eventos.disparo.escenas', (c) => (c.eventos[0].disparo.escenas = [escena.nombre]), escena.id],
+      ['eventos.efectos.npcId', (c) => (conEfecto(c, 'npcId').npcId = npc.nombre), npc.id],
+      ['eventos.efectos.objetoId', (c) => (conEfecto(c, 'objetoId').objetoId = objeto.nombre), objeto.id],
+      ['eventos.efectos.escenaId', (c) => (conEfecto(c, 'escenaId').escenaId = escena.nombre), escena.id],
+      ['eventos.efectos.destino', (c) => (conEfecto(c, 'destino').destino = escena.nombre), escena.id],
+    ];
+    for (const [campo, romper, id] of casos) {
+      const c = copia();
+      romper(c);
+      const r = validarContenido(c);
+      assert.equal(r.ok, false, campo);
+      assert.ok(
+        r.errores.some((e) => e.includes(`es un nombre, no un id; va ${id}`)),
+        `${campo}: ${r.errores.join(' | ')}`,
+      );
+    }
+  });
+
+  test('los nombres se reconocen sin tildes ni mayúsculas', () => {
+    const c = copia();
+    c.npcs[0].escenaInicialId = 'ARCHIVO REAL';
+    hay(c, /va escena_archivo_real/);
+  });
+
+  test('verbos con nombre de la interfaz fallan en eventos', () => {
+    const c = copia();
+    evento(c, 'evento_lucha_caseta').disparo.verbo = 'Atacar';
+    evento(c, 'evento_lucha_caseta').fin.verbos = ['Huir'];
+    c.objetos[0].utilizableComo = ['Defender'];
+    hay(c, /disparo\.verbo: verbo inexistente "Atacar"/);
+    hay(c, /fin\.verbos: verbo inexistente "Huir"/);
+    hay(c, /utilizableComo: verbo inexistente "Defender"/);
+  });
+
+  test('conocimientoId de un efecto tiene que existir en ese NPC', () => {
+    const c = copia();
+    const ef = c.eventos.flatMap((e) => e.efectos).find((f) => f.conocimientoId);
+    ef.conocimientoId = 'Sendero sin vigilancia en las colinas';
+    hay(c, /conocimientoId: conocimiento inexistente/);
   });
 });
 
