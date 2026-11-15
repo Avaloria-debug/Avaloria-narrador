@@ -292,3 +292,18 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 ### Confirmado
 - viajar queda fuera de costoHorasPorVerbo; su costo sale de la ruta y un viaje fallido cuesta 0.
 - calmar_la_situacion con éxito: +10 de relación y +1 de disposición.
+
+## Bloque 4: narración por plantillas
+- `narrador/narracion.js` no escribe texto propio: elige una plantilla, completa los placeholders y, si hay más de una frase, las une con un espacio.
+- La ventana de aperturas no se guarda en este módulo: `narrarTurno` la recibe y devuelve la nueva (últimas 5). Dónde se guarda lo decide el contrato público (bloque 7). `turno.js` no llama a la narración todavía.
+- Apertura: la primera palabra del texto ya completado, en minúsculas y sin signos. Si la plantilla empieza con `{npc}`, la apertura es la primera palabra del nombre del NPC.
+- El contenido trae como mucho dos plantillas por resultado. Si todas las aperturas posibles están en la ventana, se usa la que se usó hace más tiempo: con la misma acción y el mismo resultado tres veces seguidas, la repetición no se puede evitar. Falta en el contenido: más variantes por resultado.
+- Valores: `{npc}` y `{objeto}` son el `nombre` del contenido, tal cual (sin artículo: "Usás Antorcha"). `{lugar}` es el destino en un viaje y, en el resto, la escena donde se actuó. `{conocimiento}` es el `contenido` del conocimiento revelado en el turno. `{nombres}` es la lista unida con ", ".
+- Un valor vacío, con llaves o de un placeholder desconocido cuenta como faltante.
+- Si ninguna plantilla de la clave se puede completar (o la clave no existe), se usa `plantillas.reformulacion.no_entendido` y el resultado lo marca con `respaldo: true`.
+- Mostrar un objeto narrativo a su NPC (usar, con NPC) usa el bloque `mostrar_narrativo` en vez de `intencion_usar`.
+- Si en el turno se reveló un conocimiento, después de la frase de la acción va una de `revelar_conocimiento.exito`. Las plantillas `fallo` y `neutro` de `revelar_conocimiento` no se usan por ahora.
+- Viajar a donde ya se está usa `plantillas.reformulacion.ya_en_destino`. Si quedó una segunda acción sin hacer, al final va `repetir_segunda`.
+- Solo la primera frase cuenta como apertura; las siguientes evitan repetirla.
+- Turnos `ia` y `error`: sin texto (null). El texto de la IA es del bloque 5.
+- No se narran todavía los eventos disparados o cerrados, el movimiento de NPCs ni los motivos de fallo (sin dinero, bloqueado): el contenido no trae plantillas para eso.
