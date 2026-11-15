@@ -18,7 +18,7 @@
 - A verificar con una clave real antes de cerrar: parámetros y cabeceras de Groq, conteo real de tokens y si el razonamiento consume los 120 tokens de salida.
 
 ## Bloque 5c: pendientes antes de publicar
-- **ADMIN_UID (sigue pendiente, lo hace Tomás)**: en `firestore.rules`, reemplazar `REEMPLAZAR_POR_TU_UID` por el UID de Firebase de la cuenta de Tomás (y la misma constante en `tests/reglas/registros.rules.test.js`). Hasta entonces nadie puede leer registros.
+- UID de administrador: cargada en `firestore.rules` (y en `tests/reglas/registros.rules.test.js`). Reglas probadas en el emulador con esa UID, 12/12.
 - Choque de ids entre partidas: resuelto. El id en Firestore es `reg_<codigoPartida>_<número de 6 dígitos>`. Un rechazo permanente pasa a `cola.fallidos()` y no traba la cola; reenviar un registro ya enviado cuenta como enviado.
 - La interfaz tiene que pasar el `codigoPartida` de la partida al crear la cola (`crearColaFirestore(cliente, { codigoPartida })`), y decidir qué hace con `cola.fallidos()` (hoy solo quedan en memoria, con su motivo).
 - Si se intenta enviar sin sesión anónima iniciada, Firestore rechaza con permission-denied y los registros pasan a fallidos: después de iniciar sesión, `cola.reintentarFallidos()` los devuelve a la cola.

@@ -27,7 +27,7 @@ service cloud.firestore {
     // Uid de la cuenta del administrador: el único que puede leer registros.
     // REEMPLAZAR antes de publicar (docs/PENDIENTES.md).
     function ADMIN_UID() {
-      return 'REEMPLAZAR_POR_TU_UID';
+      return 'JTkIQD54BXeT9pRGdvJ9KLgiP5I3';
     }
 
     function camposDeRegistro() {

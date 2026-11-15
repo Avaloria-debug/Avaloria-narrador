@@ -442,3 +442,8 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - "Ya existe con ese id cuenta como enviado": el jugador no puede leer registros, así que no hay forma de consultar si el documento existe. Se resolvió en las reglas: `update` se acepta solo si el documento queda idéntico (no cambia nada). Es un cambio respecto de "update: false" del bloque 5c; cualquier modificación real sigue rechazada. Si ya existe un documento distinto con ese id, es un rechazo permanente.
 - Rechazo permanente: registro inválido, o error de Firestore `permission-denied` o `invalid-argument`. Cualquier otro error se trata como pasajero (red) y se reintenta. `already-exists` cuenta como enviado.
 - Los fallidos no se reenvían solos ni se descartan: quedan en `cola.fallidos()` con motivo y registro, y `cola.reintentarFallidos()` los devuelve a la cola.
+
+## UID de administrador
+- La UID cargada en `firestore.rules` (función `ADMIN_UID`) es la de la cuenta del administrador: es la única que puede leer la colección `registros`. El usuario anónimo (el jugador) puede crear registros, pero no tiene permiso de lectura.
+- La misma UID se cargó en `tests/reglas/registros.rules.test.js`, porque la prueba de lectura la necesita.
+- El comentario de `firestore.rules` que dice "REEMPLAZAR antes de publicar" quedó viejo: no se tocó porque el pedido fue cambiar solo la UID.

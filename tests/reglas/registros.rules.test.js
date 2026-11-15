@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 const HOST = process.env.FIRESTORE_EMULATOR_HOST;
-const ADMIN_UID = 'REEMPLAZAR_POR_TU_UID';
+const ADMIN_UID = 'JTkIQD54BXeT9pRGdvJ9KLgiP5I3';
 
 const registro = (numero = 123, cambios = {}) => ({
   id: `reg_ABCDEF_${String(numero).padStart(6, '0')}`,
