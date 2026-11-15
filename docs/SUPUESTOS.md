@@ -480,3 +480,19 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
   - "contame lo del pozo viejo del norte" viajaba: "viejo" coincidía con "viajá" por la tolerancia a typos (2 letras). Ahora viajar pide una forma con una letra de diferencia como máximo.
   - "irme al norte" iba a retirarse: la forma completa "irme a" no coincidía con "al". Para comparar formas completas, "al" y "del" valen como "a" y "de".
 - Tests existentes que cambiaron: los que usaban "hola, ¿qué tal?" como frase no entendida ahora usan "hola, buenas tardes" (la primera ya es una consulta), y el conteo de claves de `plantillas` pasó de 27 a 28.
+
+## Palabras clave reconciliadas con los diccionarios
+- Las `palabrasClave` de los 12 conocimientos de `data/contenido/contenido-v3.json` se reemplazaron por la lista del pedido (exacta, en minúsculas y sin tildes). Cambiaron las de Ivor, Naela, Tiren, Elia, Ysolde, Dario y Sarin; las otras cinco quedaron igual. Esto reemplaza la propuesta anotada en "Consultas de tema". `version` sigue en `v3.1`.
+- Validador: cada conocimiento tiene entre 2 y 5 palabras, sin repetir, y una palabra no puede estar en dos conocimientos. Se comparan en minúsculas y sin espacios alrededor; todas son errores que bloquean. No se validó que estén sin tilde.
+
+## Diccionarios (`narrador/diccionarios.js`)
+- No hay un documento de formato: el formato de cada archivo se dedujo de los cinco archivos de `data/diccionarios/`.
+  - `diccionario-lexico`: forma | id | tipo. Tipos de verbo (`infinitivo`, `conjugada`, `sinonimo`, `coloquial`, `regional`) piden un id de intención; `objeto`, `npc` y `escena` piden un id de esa clase (escena acepta también `ciudad_*`).
+  - `ortografia-tipeo`: escrita | correcta | tipo. 13 tipos de error más `valida`; en `valida` las dos columnas son iguales.
+  - `frases-patrones`: patrón | intención o categoría (`consulta`, `multi`, `ignorar`) | parámetros | ejemplo. Parámetros: `-` o `clave=id ; clave=id`, con claves `npc`, `objeto`, `destino`, `tema`, `primera`, `segunda`. `tema` acepta NPC, objeto, escena, ciudad, evento o conocimiento.
+  - `contexto-palabras`: palabra | sentido | id o `-` | estado. Estado: `siempre`, un estado de escena o un id de escena.
+  - `temas-conocimiento`: en el bloque `## Conocimientos`, id de conocimiento | temas separados por `;`. En los otros bloques, tema | NPCs separados por `;`, o `*` por todos.
+- "Líneas válidas" de `entradas`: las líneas de datos del archivo (ni vacías ni títulos), incluidas las que después se descartan. Así una línea descartada da un solo error, no dos.
+- `cargados` y `descartados` son listas (entradas con su número de línea; descartadas con texto y motivo), no cantidades. `errores` es una lista de textos.
+- No se valida que los placeholders del patrón (`{npc}`) tengan su parámetro, ni que el título de la sección coincida con las entradas.
+- La lectura por `fetch` en el navegador está sin verificar. El módulo no está conectado a `comprension.js` ni a `index.js`.

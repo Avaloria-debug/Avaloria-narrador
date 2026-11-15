@@ -19,6 +19,7 @@ export const BLOQUES_EXTRA = Object.freeze(['revelar_conocimiento', 'mostrar_nar
 export const BLOQUE_NO_SE = 'no_se';
 export const MIN_VARIANTES_NO_SE = 2;
 export const MIN_PALABRAS_CLAVE = 2;
+export const MAX_PALABRAS_CLAVE = 5;
 
 // vocabulario-v1.md, sección 5: id de verbo -> id de intención.
 export const VERBO_A_INTENCION = Object.freeze({
@@ -158,6 +159,7 @@ export function validarContenido(contenido) {
   // Conocimientos: id obligatorio, con formato y único en todo el contenido.
   const conocimientosPorNpc = new Map();
   const conocimientoVisto = new Map();
+  const palabraClaveVista = new Map();
   for (const n of lista(contenido.npcs)) {
     if (!esObjeto(n)) continue;
     const propios = new Set();
@@ -173,12 +175,24 @@ export function validarContenido(contenido) {
         conocimientoVisto.set(id, donde);
         propios.add(id);
       }
-      // Palabras de tema para las consultas: al menos 2, textos no vacíos y distintos.
+      // Palabras de tema para las consultas: entre 2 y 5, textos no vacíos, sin repetir,
+      // y ninguna puede estar en otro conocimiento (no se sabría de cuál se pregunta).
       const claves = esObjeto(k) && Array.isArray(k.palabrasClave) ? k.palabrasClave : [];
-      const validas = new Set(claves.filter((c) => typeof c === 'string' && c.trim() !== '').map((c) => c.trim().toLowerCase()));
-      if (validas.size < MIN_PALABRAS_CLAVE || validas.size !== claves.length) {
-        err(`${donde}.palabrasClave: hacen falta al menos ${MIN_PALABRAS_CLAVE} palabras distintas y no vacías`);
+      const limpias = claves.map((c) => (typeof c === 'string' ? c.trim().toLowerCase() : ''));
+      if (limpias.length < MIN_PALABRAS_CLAVE || limpias.length > MAX_PALABRAS_CLAVE || limpias.includes('')) {
+        err(`${donde}.palabrasClave: hacen falta entre ${MIN_PALABRAS_CLAVE} y ${MAX_PALABRAS_CLAVE} palabras no vacías`);
       }
+      const propias = new Set();
+      for (const c of limpias) {
+        if (c === '') continue;
+        if (propias.has(c)) {
+          err(`${donde}.palabrasClave: la palabra ${JSON.stringify(c)} está repetida`);
+        } else if (palabraClaveVista.has(c)) {
+          err(`${donde}.palabrasClave: la palabra ${JSON.stringify(c)} ya está en ${palabraClaveVista.get(c)}`);
+        }
+        propias.add(c);
+      }
+      for (const c of propias) if (!palabraClaveVista.has(c)) palabraClaveVista.set(c, donde);
     }
   }
   const marcas = esObjeto(contenido.reglas?.marcas) ? contenido.reglas.marcas : {};

@@ -161,12 +161,52 @@ describe('validador: palabrasClave y no_se', () => {
     assert.deepEqual(v.errores, []);
     assert.deepEqual(v.avisos, []);
   });
-  test('cada conocimiento necesita al menos 2 palabras clave', async () => {
-    for (const valor of [undefined, [], ['harina'], ['harina', 'harina'], ['harina', '']]) {
-      const c = await copia();
-      c.npcs[1].conocimientos[0].palabrasClave = valor;
-      assert.ok(validarContenido(c).errores.some((e) => e.includes('palabrasClave')), JSON.stringify(valor));
+  const conClaves = async (valor, otro) => {
+    const c = await copia();
+    c.npcs[1].conocimientos[0].palabrasClave = valor;
+    if (otro) c.npcs[0].conocimientos[0].palabrasClave = otro;
+    return validarContenido(c).errores.filter((e) => e.includes('palabrasClave'));
+  };
+  test('palabrasClave: menos de 2 es un error', async () => {
+    for (const valor of [undefined, [], ['harina'], ['harina', '']]) {
+      assert.equal((await conClaves(valor)).length, 1, JSON.stringify(valor));
     }
+  });
+  test('palabrasClave: más de 5 es un error; 2 y 5 valen', async () => {
+    assert.match((await conClaves(['uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis']))[0], /entre 2 y 5/);
+    assert.deepEqual(await conClaves(['uno', 'dos']), []);
+    assert.deepEqual(await conClaves(['uno', 'dos', 'tres', 'cuatro', 'cinco']), []);
+  });
+  test('palabrasClave: una palabra repetida en el mismo conocimiento es un error', async () => {
+    const errores = await conClaves(['harina', 'precio', 'Harina']);
+    assert.equal(errores.length, 1);
+    assert.match(errores[0], /"harina" está repetida/);
+  });
+  test('palabrasClave: la misma palabra en dos conocimientos distintos es un error que bloquea', async () => {
+    const c = await copia();
+    c.npcs[1].conocimientos[0].palabrasClave = ['harina', 'tratado'];
+    const v = validarContenido(c);
+    assert.equal(v.ok, false);
+    const errores = v.errores.filter((e) => e.includes('palabrasClave'));
+    assert.equal(errores.length, 1);
+    assert.match(errores[0], /"tratado" ya está en maren_archivista\.conocimientos\[0\]/);
+  });
+  test('palabrasClave del contenido real: las reconciliadas con los diccionarios', async () => {
+    const reales = Object.fromEntries((await copia()).npcs.flatMap((n) => n.conocimientos.map((k) => [k.id, k.palabrasClave])));
+    assert.deepEqual(reales, {
+      conocimiento_maren_1: ['tratado', 'copia', 'guerra', 'coronas'],
+      conocimiento_serel_1: ['harina', 'precio', 'proveedor'],
+      conocimiento_ivor_1: ['deuda', 'deudas', 'prestamista'],
+      conocimiento_naela_1: ['mercader', 'averiguaciones', 'forastero'],
+      conocimiento_tiren_1: ['ruta', 'atajo', 'cartografia'],
+      conocimiento_elia_1: ['libro', 'retirado', 'solicitante'],
+      conocimiento_brenn_1: ['posada', 'escondida'],
+      conocimiento_ysolde_1: ['isla', 'primavera', 'aves'],
+      conocimiento_dario_1: ['soborno', 'sobornos', 'coima', 'aduana'],
+      conocimiento_sarin_1: ['carta', 'semana', 'destinatario'],
+      conocimiento_sendero_sin_vigilancia: ['sendero', 'colinas', 'vigilancia'],
+      conocimiento_oren_1: ['roble', 'firma'],
+    });
   });
   test('no_se tiene que existir con dos variantes', async () => {
     for (const valor of [undefined, [], [contenido.plantillas.no_se[0]], ['Nadie sabe nada.', 'Ni idea.']]) {
