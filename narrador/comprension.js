@@ -126,6 +126,8 @@ function buscarEnOrden(entrada, forma) {
 // Sección 2: coincidencia de intención
 // ---------------------------------------------------------------------------
 
+const CONTRACCIONES = Object.freeze({ al: 'a', del: 'de' });
+
 function parametrosPendientesDe(verbo) {
   const pendientes = [];
   if (verbo === 'viajar') pendientes.push('destino');
@@ -150,7 +152,8 @@ function compararCandidatos(a, b) {
  */
 export function coincidirIntencion(texto, intenciones) {
   const entrada = tokenizar(texto);
-  const entradaCompleta = palabras(texto);
+  // Para la forma completa, "al" y "del" valen como "a" y "de": "irme al norte" trae la forma "irme a".
+  const entradaCompleta = palabras(texto).map((p) => CONTRACCIONES[p] ?? p);
   if (entrada.length === 0 || !Array.isArray(intenciones)) return null;
 
   // Mejor forma de cada intención.
@@ -384,6 +387,62 @@ export function resolverDestino(texto, escenas) {
 }
 
 // ---------------------------------------------------------------------------
+// Preguntas y consultas de tema
+// ---------------------------------------------------------------------------
+
+// Palabras que marcan una pregunta aunque falte el signo. Se comparan en minúsculas y con su tilde:
+// "cómo" pregunta, "como" no.
+export const PALABRAS_PREGUNTA = Object.freeze(['cómo', 'cuál', 'sabés', 'sabes', 'conviene']);
+
+// Distancia total máxima entre la frase y una forma de viajar.
+export const TOLERANCIA_VERBO_VIAJE = 1;
+
+/** ¿La frase trae una forma de viajar con, a lo sumo, una letra de diferencia? */
+function verboDeViajeClaro(texto, intenciones) {
+  const entrada = tokenizar(texto);
+  return (intenciones ?? [])
+    .filter((i) => i.verbo === 'viajar')
+    .flatMap((i) => i.formas ?? [])
+    .some((forma) => {
+      const m = buscarEnOrden(entrada, tokenizar(forma));
+      return m !== null && m.distancia <= TOLERANCIA_VERBO_VIAJE;
+    });
+}
+
+/** ¿La frase es una pregunta? Trae un signo de pregunta o una palabra interrogativa. */
+export function esPregunta(texto) {
+  if (typeof texto !== 'string') return false;
+  if (/[?¿]/.test(texto)) return true;
+  return texto.normalize('NFC').toLowerCase().split(/[^\p{L}\p{N}]+/u).some((p) => PALABRAS_PREGUNTA.includes(p));
+}
+
+/**
+ * A quién se le pregunta y por qué tema.
+ * - NPC: el nombrado entre los presentes; si no se nombra a nadie, cualquiera de los presentes.
+ * - Tema: el conocimiento con más `palabrasClave` en la frase (coincidencia exacta, ya normalizada).
+ *   Con empate, el primero.
+ * - Sin tema: el primer NPC nombrado o, si no, el primero presente. Sin NPCs, `npcId` es null.
+ * @param {string} texto
+ * @param {{id: string, nombre: string, alias?: string[], conocimientos?: {id: string, palabrasClave?: string[]}[]}[]} npcsPresentes
+ * @returns {{ npcId: string|null, conocimientoId: string|null }}
+ */
+export function resolverConsulta(texto, npcsPresentes) {
+  const presentes = npcsPresentes ?? [];
+  const entrada = palabras(texto);
+  const nombrados = presentes.filter((n) => nombraA(entrada, n));
+  const candidatos = nombrados.length > 0 ? nombrados : presentes;
+  let mejor = null;
+  for (const n of candidatos) {
+    for (const k of n.conocimientos ?? []) {
+      const puntos = new Set((k.palabrasClave ?? []).map(normalizar).filter((c) => c !== '' && entrada.includes(c))).size;
+      if (puntos > 0 && (!mejor || puntos > mejor.puntos)) mejor = { npcId: n.id, conocimientoId: k.id, puntos };
+    }
+  }
+  if (mejor) return { npcId: mejor.npcId, conocimientoId: mejor.conocimientoId };
+  return { npcId: candidatos[0]?.id ?? null, conocimientoId: null };
+}
+
+// ---------------------------------------------------------------------------
 // Sección 1, paso 6: decidir
 // ---------------------------------------------------------------------------
 
@@ -401,7 +460,9 @@ export function resolverDestino(texto, escenas) {
  * }} contexto `reformulacionPrevia`: ya se reformuló en este turno.
  * @returns {{ tipo: 'ejecutar', intencionId: string, parametros: object, repetirIntencionId: string|null, reportes: object[] }
  *   | { tipo: 'reformular', motivo: string, intencionId: string|null, datos: object }
+ *   | { tipo: 'consulta', npcId: string|null, conocimientoId: string|null }
  *   | { tipo: 'ia', intencionId: string|null }}
+ * `consulta`: una pregunta que no se ejecuta como acción. Una pregunta nunca dispara viajar.
  */
 export function decidir(texto, contexto = {}) {
   const coincidencia = coincidirIntencion(texto, contexto.intenciones);
@@ -410,6 +471,21 @@ export function decidir(texto, contexto = {}) {
   // Sección 5: una sola reformulación por turno. Después, IA.
   const reformular = (motivo, datos = {}) =>
     contexto.reformulacionPrevia ? { tipo: 'ia', intencionId } : { tipo: 'reformular', motivo, intencionId, datos };
+
+  // Preguntas: sin intención, con verbo de viaje o sobre un tema de un NPC presente, son consultas.
+  if (esPregunta(texto)) {
+    const consulta = resolverConsulta(texto, contexto.npcsPresentes);
+    if (!coincidencia || coincidencia.verbo === 'viajar' || consulta.conocimientoId !== null) {
+      return { tipo: 'consulta', ...consulta };
+    }
+  }
+
+  // Viajar pide un verbo de viaje claro: con más de una letra de diferencia ("viejo" por "viajá") no viaja.
+  if (coincidencia?.verbo === 'viajar' && !verboDeViajeClaro(texto, contexto.intenciones)) {
+    const r = reformular(MOTIVOS.NO_ENTENDIDO);
+    r.intencionId = null;
+    return r;
+  }
 
   if (!coincidencia) return reformular(MOTIVOS.NO_ENTENDIDO);
   if (coincidencia.empateCon.length > 0) {

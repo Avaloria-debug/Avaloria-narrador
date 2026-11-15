@@ -15,6 +15,10 @@ import { esHora, relojInicial } from './reloj.js';
 
 export const RESULTADOS = Object.freeze(['exito', 'fallo', 'neutro']);
 export const BLOQUES_EXTRA = Object.freeze(['revelar_conocimiento', 'mostrar_narrativo']);
+// Respuesta de un NPC a una pregunta sobre un tema que no conoce: lista de textos con {npc}.
+export const BLOQUE_NO_SE = 'no_se';
+export const MIN_VARIANTES_NO_SE = 2;
+export const MIN_PALABRAS_CLAVE = 2;
 
 // vocabulario-v1.md, sección 5: id de verbo -> id de intención.
 export const VERBO_A_INTENCION = Object.freeze({
@@ -100,7 +104,7 @@ export function validarContenido(contenido) {
   const plantillas = esObjeto(contenido.plantillas) ? contenido.plantillas : null;
   if (!plantillas) err('plantillas: falta o no es un objeto');
   // El conteo es de bloques de resultado; el bloque de reformulaciones va aparte.
-  conteos.plantillas = plantillas ? Object.keys(plantillas).filter((k) => k !== BLOQUE_REFORMULACION).length : 0;
+  conteos.plantillas = plantillas ? Object.keys(plantillas).filter((k) => k !== BLOQUE_REFORMULACION && k !== BLOQUE_NO_SE).length : 0;
   if (!esObjeto(contenido.transiciones)) err('transiciones: falta o no es un objeto');
   if (!esObjeto(contenido.reglas)) err('reglas: falta o no es un objeto');
 
@@ -168,6 +172,12 @@ export function validarContenido(contenido) {
       } else {
         conocimientoVisto.set(id, donde);
         propios.add(id);
+      }
+      // Palabras de tema para las consultas: al menos 2, textos no vacíos y distintos.
+      const claves = esObjeto(k) && Array.isArray(k.palabrasClave) ? k.palabrasClave : [];
+      const validas = new Set(claves.filter((c) => typeof c === 'string' && c.trim() !== '').map((c) => c.trim().toLowerCase()));
+      if (validas.size < MIN_PALABRAS_CLAVE || validas.size !== claves.length) {
+        err(`${donde}.palabrasClave: hacen falta al menos ${MIN_PALABRAS_CLAVE} palabras distintas y no vacías`);
       }
     }
   }
@@ -359,7 +369,12 @@ export function validarContenido(contenido) {
   if (plantillas) {
     for (const extra of BLOQUES_EXTRA) validarBloque(plantillas, extra, err);
     validarReformulacion(plantillas[BLOQUE_REFORMULACION], err);
-    const esperados = new Set([...ids.intenciones, ...BLOQUES_EXTRA, BLOQUE_REFORMULACION]);
+    const noSe = Array.isArray(plantillas[BLOQUE_NO_SE]) ? plantillas[BLOQUE_NO_SE] : [];
+    const noSeValidas = new Set(noSe.filter((t) => typeof t === 'string' && t.trim() !== '' && t.includes('{npc}')));
+    if (noSeValidas.size < MIN_VARIANTES_NO_SE || noSeValidas.size !== noSe.length) {
+      err(`plantillas.${BLOQUE_NO_SE}: hacen falta al menos ${MIN_VARIANTES_NO_SE} variantes distintas, con {npc}`);
+    }
+    const esperados = new Set([...ids.intenciones, ...BLOQUES_EXTRA, BLOQUE_REFORMULACION, BLOQUE_NO_SE]);
     for (const clave of Object.keys(plantillas)) {
       if (!esperados.has(clave)) err(`plantillas: bloque sin intención ${clave}`);
     }

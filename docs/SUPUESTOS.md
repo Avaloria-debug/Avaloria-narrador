@@ -458,3 +458,25 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - La cola es `crearColaDeRegistros` sin validar al agregar y con un `enviar` que nunca se llama: solo acumula.
 - El aviso de IA agotada no se muestra como texto aparte: se ve `sin_ia` en los errores del panel.
 - La lógica pura está en `narrador/prueba/panel.js` (con test); `app.js` solo toca el DOM y se prueba a mano.
+
+## Diagnóstico de `sin_ia` (`narrador/sinIa.test.js`)
+- El test pasó sin tocar `narrar()`: sin clave, el segundo texto no entendido devuelve `tipo: narracion`, la plantilla `no_entendido` y `ia: sin_ia: sin_clave` en `errores`. No había fallo en el código.
+- Lo que puede parecer un fallo al probar a mano: el primer texto no entendido es una reformulación y no trae errores; `sin_ia` aparece recién en el segundo. El tercero vuelve a ser reformulación sin errores (una reformulación por turno).
+- Con las consultas de tema (abajo), la frase del ejemplo ("¿qué opinás de la lluvia que viene del lago?") es una pregunta: si hay un NPC en la escena, la responde él con `no_se` y no llega a la IA. Por eso el test usa una frase sin pregunta en la escena inicial, y la pregunta en una escena sin NPCs (camino del este, 18:00).
+
+## Consultas de tema, `no_se` y viajar frente a preguntas
+- "npcs.json" del pedido son los NPCs de `data/contenido/contenido-v3.json`: el narrador no usa `data/fixtures/npcs.json`. `CLAUDE.md` dice no tocar el contenido; se tocó porque el pedido lo exige: se agregó `palabrasClave` a los 12 conocimientos y el bloque `plantillas.no_se`. No se cambió `version` (sigue `v3.1`), para no disparar el aviso de versión en partidas guardadas.
+- Las `palabrasClave` de Serel son las del pedido. Las de los otros 11 conocimientos las elegí del texto de cada conocimiento y quedan a aprobar por Tomás (paso C de `docs/PENDIENTES.md`). Evité palabras que son destinos de viaje ("norte", "lago").
+- Pregunta: la frase trae `?` o `¿`, o una de estas palabras: "cómo", "cuál", "sabés", "sabes", "conviene". Se comparan con su tilde: "como" sin tilde no es pregunta ("trabajo como panadero"). No se agregaron otras interrogativas ("qué", "quién", "dónde"): sin signo, no cuentan.
+- Una pregunta es consulta si no coincide con ninguna intención, si la intención es viajar, o si trae palabras clave de un conocimiento de un NPC presente. Una pregunta con otra intención y sin tema sigue como antes ("¿puedo hablar con Serel?" es hablar_con).
+- Palabras clave: coincidencia exacta de la palabra, sin tilde y sin tolerancia a typos (con tolerancia, "cerca" coincidía con "carta"). Alcanza con una palabra clave. Si hay varios conocimientos, gana el que tiene más palabras en la frase.
+- A quién se le pregunta: al NPC nombrado; si no se nombra a nadie, al que conoce el tema; si nadie lo conoce, al primero presente.
+- Respuestas: se puede revelar -> `revelar_conocimiento.exito` y queda revelado. Ya revelado, o sin umbral, evento o marca -> `revelar_conocimiento.fallo` ("no te cuenta nada nuevo por ahora"). Sin tema, o con los conocimientos del NPC bloqueados (lo atacaron) -> `no_se`.
+- Una consulta no gasta tiempo, no dispara eventos, no mueve NPCs y no cambia relación ni disposición. Se registra con ruta `grupo_1`, sin intención.
+- Pregunta sin ningún NPC en la escena: no hay `{npc}` para `no_se`, así que sigue como frase no entendida (reformulación y, a la segunda, IA). Tampoco viaja.
+- Las dos variantes de `no_se` empiezan con el nombre del NPC, así que la ventana de aperturas elegía siempre la misma. Para `no_se` se elige al azar entre las variantes.
+- Viajar: los verbos son las formas de `intencion_viajar` del contenido. "camino" solo no es una forma (están "ponerme en camino" y "tomar el camino a"): como "Camino del norte" es un destino, tomarlo como verbo haría viajar a "contame del camino del norte".
+- Dos fallos que destaparon los tests y se corrigieron en `comprension.js`:
+  - "contame lo del pozo viejo del norte" viajaba: "viejo" coincidía con "viajá" por la tolerancia a typos (2 letras). Ahora viajar pide una forma con una letra de diferencia como máximo.
+  - "irme al norte" iba a retirarse: la forma completa "irme a" no coincidía con "al". Para comparar formas completas, "al" y "del" valen como "a" y "de".
+- Tests existentes que cambiaron: los que usaban "hola, ¿qué tal?" como frase no entendida ahora usan "hola, buenas tardes" (la primera ya es una consulta), y el conteo de claves de `plantillas` pasó de 27 a 28.
