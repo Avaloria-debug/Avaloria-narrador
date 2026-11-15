@@ -1,30 +1,31 @@
-## Bloque 3b: cerrado
-- npcs.js, conocimientos.js, efectosEventos.js y movimientoNpcs.js fueron revisados sin errores (commit 9b0bb5b).
-- Costo en reloj de cada acción: resuelto en el contenido (`reglas.costoHorasPorVerbo`) y anotado en docs/SUPUESTOS.md.
-- Correcciones hechas fuera de resolver/turno en este bloque: "ayudar" vs "saludar" (coincidencia exacta gana), lugares de camino como destino de viajar, evento por hora con duración en turnos que venció durante un viaje.
+# Pendientes
 
-## Bloque 4: narración por plantillas (hecho)
-- Leer prompt v3, sección 5.5, y plantillas de data/contenido/contenido-v3.json.
-- Implementar narrador/narracion.js: placeholders {npc}, {objeto}, {lugar}, {conocimiento}, {nombres}.
-- Ventana de 5 aperturas sin repetir.
-- Si falta un valor de placeholder, elegir una plantilla que no lo necesite.
-- Reformulaciones: usar plantillas.reformulacion (ya existen).
-- Tests: placeholders, variación de aperturas, falta de valor, reformulaciones.
+El narrador por código está completo en código y probado de punta a punta (`narrador/integracionFinal.test.js`). Lo que sigue es lo que falta fuera del código: no se puede comprobar desde el repo.
 
-## Bloque 5
-- 5a (hecho): cliente de la IA (narrador/ia.js) y registro con cola local (narrador/registro.js).
-- 5b (hecho): contrato público en narrador/index.js (crearPartida, cargarPartida, narrar).
-- 5c (hecho): Firestore. Adaptador (narrador/registroFirestore.js), reglas (firestore.rules) y cola conectada: `narrar` encola el registro si recibe `opciones.cola`.
-- A verificar con una clave real antes de cerrar: parámetros y cabeceras de Groq, conteo real de tokens y si el razonamiento consume los 120 tokens de salida.
+## 1. Prueba en navegador real
+- Cargar `narrador/index.js` como módulo en un navegador: carga del contenido por `fetch`, `crypto` y `TextEncoder`.
+- Guardar y cargar el estado con IndexedDB real (hasta ahora, solo con un IndexedDB falso).
+- SDK web de Firebase en navegador y sesión anónima. El adaptador se probó con el SDK real, pero en Node y contra el emulador.
 
-## Bloque 5c: pendientes antes de publicar
-- UID de administrador: cargada en `firestore.rules` (y en `tests/reglas/registros.rules.test.js`). Reglas probadas en el emulador con esa UID, 12/12.
-- Choque de ids entre partidas: resuelto. El id en Firestore es `reg_<codigoPartida>_<número de 6 dígitos>`. Un rechazo permanente pasa a `cola.fallidos()` y no traba la cola; reenviar un registro ya enviado cuenta como enviado.
-- La interfaz tiene que pasar el `codigoPartida` de la partida al crear la cola (`crearColaFirestore(cliente, { codigoPartida })`), y decidir qué hace con `cola.fallidos()` (hoy solo quedan en memoria, con su motivo).
-- Si se intenta enviar sin sesión anónima iniciada, Firestore rechaza con permission-denied y los registros pasan a fallidos: después de iniciar sesión, `cola.reintentarFallidos()` los devuelve a la cola.
-- Reglas: probadas en el emulador (12 pruebas en verde, 2026-11-15, con el id nuevo). Sin verificar en el proyecto real ni en el simulador de la consola. No se publicó nada.
-- Las pruebas de reglas se saltean en `npm test` (no hay emulador). Para correrlas: ver el encabezado de `tests/reglas/registros.rules.test.js`. Sus dependencias no están en `package.json`.
-- SDK web de Firebase en navegador y sesión anónima: sin verificar. El adaptador se probó con el SDK real en Node contra el emulador.
-- Integración con el HTML: no hecha. La interfaz tiene que crear el cliente (`{ db, doc, setDoc }`), iniciar sesión anónima, crear la cola con `crearColaFirestore(cliente, { codigoPartida })`, pasarla a `narrar` en `opciones.cola` y llamar a `cola.enviarPendientes()`.
-- La cola vive en memoria: si se cierra la página con registros sin enviar, se pierden. Guardarla en IndexedDB queda para la integración.
-- Hay dos archivos de reglas: `firestore.rules` (raíz, partidas + registros) y `persistencia/firestore.rules` (solo partidas, sin tocar). El que se publica es el de la raíz.
+## 2. Groq real
+- Confirmar con una clave real el nombre del parámetro de tokens de salida (hoy `max_completion_tokens`), la URL, el modelo y las cabeceras.
+- Confirmar los límites: conteo real de tokens (el del código es una aproximación), si el razonamiento consume los tokens de salida, y las cabeceras y mensajes del 429 del límite diario.
+
+## 3. Firebase real
+- Probar `firestore.rules` (el de la raíz: partidas + registros) en el proyecto real o en el simulador de la consola, y recién después publicarlo. Hasta ahora: emulador, 12/12. No se publicó nada.
+- La UID de administrador ya está cargada en las reglas. El comentario "REEMPLAZAR antes de publicar" de `firestore.rules` quedó viejo y se puede borrar.
+- `persistencia/firestore.rules` (solo partidas) no es el que se publica.
+- Marcar `revision` y `notas` de un registro se hace desde la consola o el Admin SDK: las reglas no dejan modificar registros.
+- Las pruebas de reglas no corren en `npm test` (no hay emulador). Cómo correrlas: encabezado de `tests/reglas/registros.rules.test.js`.
+
+## 4. Integración con el HTML
+- Conectar la interfaz con `crearPartida`, `cargarPartida` y `narrar`. No se tocó `ui/` ni `index.html`.
+- Registros: crear el cliente (`{ db, doc, setDoc }`), iniciar sesión anónima, crear la cola con `crearColaFirestore(cliente, { codigoPartida })`, pasarla a `narrar` en `opciones.cola` y llamar a `cola.enviarPendientes()`.
+- Decidir qué hace la interfaz con `cola.fallidos()`. Si se envía antes de iniciar sesión, los registros caen ahí; `cola.reintentarFallidos()` los devuelve a la cola.
+- La cola vive en memoria: si se cierra la página con registros sin enviar, se pierden. Guardarla (por ejemplo en IndexedDB) es parte de la integración.
+- Mostrar el aviso de IA agotada cuando `errores` trae `sin_ia`, y sacar los avisos de `estado.avisos` una vez mostrados.
+- Pantalla de la clave de Groq: textos en `docs/onboarding-v1.md`.
+
+## 5. Política de privacidad
+- Los registros guardan el texto completo del jugador. Antes de compartir el juego fuera del grupo actual hay que definir la política de privacidad y el texto de consentimiento (`docs/sistema-registro-aprendizaje-narrador.md`, sección 6).
+- Hasta entonces, solo la cuenta de administrador lee los registros.
