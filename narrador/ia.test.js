@@ -13,6 +13,7 @@ import {
   SIN_IA,
   MAX_TOKENS_SALIDA,
   MAX_CARACTERES_SALIDA,
+  MAX_CARACTERES_FRASE,
   MAX_TOKENS_RESPUESTA_API,
   contarOraciones,
   MAX_TOKENS_CONTEXTO,
@@ -299,13 +300,34 @@ describe('ia — contexto', () => {
   test('si con 2 acciones sigue pasando de 250, falla', async () => {
     const enormes = ACCIONES.map((a) => `${a} ${'y siguió un rato largo dando vueltas por ahí '.repeat(10)}`);
     assert.throws(() => armarContexto(contexto({ ultimasAcciones: enormes })), ErrorDeContexto);
-    assert.throws(() => armarContexto(contexto({ frase: 'hola '.repeat(400) })), /el contexto mide \d+ tokens estimados y el máximo es 250/);
+    assert.throws(() => armarContexto(contexto({ ultimasAcciones: enormes })), /el contexto mide \d+ tokens estimados y el máximo es 250/);
     // En la llamada: no se llama a Groq y el llamador usa plantilla.
     const http = httpFalso([ok('no')]);
-    const r = await pedir(http, { contexto: contexto({ frase: 'hola '.repeat(400) }) });
+    const r = await pedir(http, { contexto: contexto({ ultimasAcciones: enormes }) });
     assert.deepEqual([r.ok, r.texto, r.error, r.motivo], [false, null, null, 'contexto_largo']);
     assert.equal(http.llamadas.length, 0);
     assert.equal(r.tokens.dentroDelTope, false);
+  });
+
+  test('la frase del jugador se recorta a 240 caracteres antes de armar el contexto', async () => {
+    assert.equal(MAX_CARACTERES_FRASE, 240);
+    const larga = 'hola '.repeat(400);
+    const c = armarContexto(contexto({ frase: larga, ultimasAcciones: [] }));
+    assert.ok(c.texto.endsWith(`\n${larga.slice(0, 240)}`));
+    assert.ok(!c.texto.includes(larga.slice(0, 241)));
+    assert.ok(c.tokens <= MAX_TOKENS_CONTEXTO);
+    // Una frase larga ya no da contexto_largo: con las acciones normales entra (recortando a 2 si hace falta).
+    for (const escena of contenido.escenas) {
+      const d = datosDeContexto(partida(escena.id), contenido, { frase: larga, ultimasAcciones: ACCIONES });
+      assert.ok(armarContexto(d).tokens <= MAX_TOKENS_CONTEXTO, escena.id);
+    }
+    const http = httpFalso([ok('No te sigo, che.')]);
+    const r = await pedir(http, { contexto: contexto({ frase: larga }) });
+    assert.equal(r.ok, true);
+    assert.equal(http.llamadas.length, 1);
+    // Una frase de 240 o menos va entera.
+    const justa = 'a'.repeat(240);
+    assert.ok(armarContexto(contexto({ frase: justa, ultimasAcciones: [] })).texto.endsWith(`\n${justa}`));
   });
 
   test('toma como mucho las últimas 3 acciones', () => {

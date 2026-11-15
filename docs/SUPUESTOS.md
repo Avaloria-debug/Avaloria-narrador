@@ -381,3 +381,46 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - Consecuencia: una frase del jugador muy larga (del orden de 300 caracteres o más, según la escena) no llega a la IA y se responde con plantilla.
 - Los tokens reales (`usage` de la respuesta) se comparan con el tope de 800 cuando haya una clave real; hasta entonces todo es estimación. El resultado de cada llamada ya informa `tokens.total` y `tokens.dentroDelTope`.
 - El texto final sigue limitado a 600 caracteres y 1 a 3 oraciones.
+
+## Bloque 5b: contrato público (`narrador/index.js`)
+
+### Frase del jugador en la IA
+- La frase del jugador se recorta a 240 caracteres antes de armar el contexto de la IA. El registro guarda la frase completa.
+- El motivo `contexto_largo` ya no se da por una frase larga: solo queda para un contexto que sigue pasando de 250 tokens con 2 acciones (acciones muy largas). Con la frase en 240 caracteres y acciones normales, el contexto entra en las 12 escenas. Esto reemplaza la nota anterior sobre frases largas.
+
+### Contenido
+- `index.js` carga y valida el contenido una vez, al importarse (con `await` de módulo). En Node lo lee de disco. Sin verificar: en el navegador lo pide con `fetch` a `../data/contenido/contenido-v3.json`.
+- Si el contenido no valida, el módulo no carga.
+
+### crearPartida
+- Sin eventos activos, como pide el contrato. Consecuencia: el evento por hora de las 08:00 del día 1 (la feria de intercambio) no arranca activo; se dispara recién a las 08:00 del día 2. `estadoInicial` de `estado.js` sí lo activaba; el contrato lo saca.
+- Los NPCs arrancan con lo que dice el contenido (`relacionInicial`, `disposicionInicial`), que hoy es relación 0 y neutral para los 12.
+- Azar: generador sembrado (mulberry32, `narrador/azar.js`). Con semilla, la partida es reproducible: mismas entradas, mismos resultados y mismos textos. Sin semilla, la semilla sale de `Math.random`; es el único uso de azar del sistema en el narrador.
+- El estado guarda el estado del generador en `semilla` y cada turno lo avanza.
+
+### Estado: campos que se suman a la forma de cierre-diseno-v1.md (sección 5)
+- `reformulacionPendiente` (ya estaba), `ventanaAperturas` (últimas 5 aperturas), `ultimosTurnos` (últimas 3 acciones hechas, como texto), `numeroRegistro` (cuántos registros lleva la partida), `iaAgotadaDia` (día real en que se agotó el límite diario de la IA, o null), `avisos` y `semilla`.
+- `ultimosTurnos` no guarda el texto del jugador: guarda una etiqueta armada con la primera forma de la intención y los nombres del NPC, objeto o destino ("Hablar con Serel Norlen"). Es lo que va en `ultimos_turnos` del registro y en las últimas acciones del contexto de la IA. Solo suman las acciones ejecutadas, no las reformulaciones ni los turnos de IA.
+- La numeración de registros vive en el estado (`reg_000001` es el primero de la partida) y sigue al cargar. Esto reemplaza la nota anterior sobre la numeración por sesión.
+
+### cargarPartida
+- Acepta el objeto o su texto JSON. Forma mínima: `version` ("v1"), `jugador` (escena, bronce, plata), `reloj`, `npcs`, `eventosActivos`, `inventario`, `marcas`. Si falta algo, lanza un error.
+- Los campos que no son de la forma mínima se completan con su valor por defecto. Los campos desconocidos se descartan (por ejemplo, `temor` de un guardado viejo).
+- Misma versión de contenido: una escena desconocida o un NPC que falta es un error.
+- Versión distinta (o sin versión): saca los eventos, objetos, marcas, NPCs y conocimientos que ya no existen; agrega los NPCs nuevos en su estado inicial; si la escena no existe, vuelve a la escena inicial. Actualiza `versionContenido` y agrega a `estado.avisos` `{ tipo: "version_contenido", guardada, actual }`. El aviso queda en el estado (no se repite) hasta que la interfaz lo saque.
+- El estado es un objeto plano: pasa por IndexedDB (clon estructurado) y por JSON sin perder campos. El test usa `almacenIndexedDB.js` con un IndexedDB falso; en un navegador real, sin verificar.
+
+### narrar
+- Es asíncrona (devuelve una promesa) porque la IA es una llamada de red. Nunca rechaza.
+- No duplica la comprensión: llama a `ejecutarTurno`, que ya decide entre ejecutar, reformular o IA, y sobre ese resultado arma el texto y el registro.
+- Opciones además de `groqKey`, para tests: `http` (por defecto `fetch`), `esperar` y `ahora` (por defecto el reloj del sistema).
+- Tipos de salida: `narracion` (acción narrada por plantilla, o turno de IA respondido por plantilla), `reformulacion`, `dialogo_ia` (texto de la IA ya validado) y `error` (entrada o estado inválidos, o error interno).
+- En `error` el estado vuelve sin cambios, no hay registro y el texto es la plantilla `no_entendido`.
+- Turno de IA sin clave, sin cupo o con fallo: el texto es la plantilla `reformulacion.no_entendido`, tipo `narracion`, y `errores` trae el motivo (`ia: sin_ia: sin_clave`, `ia: cupo`, `ia: salida_invalida: id`, etc.). El registro va a grupo_2 con origen `codigo`.
+- "El cupo lo permite": si Groq informa el límite diario agotado, el estado guarda el día (`iaAgotadaDia`, fecha real en UTC) y no se vuelve a llamar hasta el día siguiente. Una clave inválida no se recuerda: se vuelve a probar en el próximo turno de IA.
+- El aviso al jugador de que se agotó la IA ("Se agotó el narrador de IA por hoy...") no lo devuelve `narrar`: no está en las plantillas. La interfaz lo muestra al ver `sin_ia` en `errores`.
+- NPC de la IA: el primero presente en la escena.
+- `errores` son códigos para el log, no texto para el jugador. Si llega la clave dentro de un mensaje de error, se reemplaza por `***`.
+- Antes de devolver, el texto se revisa (sin llaves, corchetes, `<` `>` ni palabras con guion bajo). Si no pasa, se usa la plantilla `no_entendido` y se anota `texto_invalido`.
+- La IA no cambia el mundo: en un turno de IA solo cambian `reformulacionPendiente`, la ventana, el número de registro, `iaAgotadaDia` y la semilla.
+- `narrar` devuelve el registro pero no lo encola ni lo envía: eso lo conecta el bloque 5c (Firestore) o la interfaz, con la cola de `registro.js`.
