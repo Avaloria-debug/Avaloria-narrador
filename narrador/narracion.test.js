@@ -177,23 +177,32 @@ describe('narración — ventana de aperturas', () => {
     assert.equal(otra.apertura, 'usás');
   });
 
-  test('tres turnos seguidos con la misma acción no repiten la apertura', () => {
+  test('tres turnos seguidos con la misma acción y el mismo resultado no repiten la apertura', () => {
+    const clave = 'plantillas.intencion_usar.exito';
+    const valores = { objeto: 'Antorcha', lugar: 'Mercado Circular' };
+    const posibles = new Set(
+      contenido.plantillas.intencion_usar.exito.map((p) => completar(p, valores)).filter(Boolean).map(aperturaDe),
+    );
+    assert.ok(
+      posibles.size >= 3,
+      `falta contenido en ${clave}: hacen falta 3 aperturas distintas para no repetir en tres turnos y hay ${posibles.size} (${[...posibles].join(', ')})`,
+    );
     for (let semilla = 1; semilla <= 30; semilla++) {
       const rng = rngSembrado(semilla);
-      let estado = partida({ inventario: [{ objetoId: 'objeto_espada_rota', usosRestantes: 3 }] });
+      let estado = partida({ inventario: [{ objetoId: 'objeto_antorcha', usosRestantes: 5 }] });
       let aperturas = [];
       const usadas = [];
-      // El contenido trae hasta dos plantillas por resultado: los tres turnos mezclan resultados.
-      for (const azar of [0.1, 0.1, 0.9]) {
-        const t = ejecutarTurno(estado, { tipo: 'boton', intencionId: 'intencion_atacar', parametros: { npcId: 'serel_panadero', objetoId: 'objeto_espada_rota' } }, { contenido, rng: rngDe([azar]) });
+      for (let i = 0; i < 3; i++) {
+        const t = turnoDe(estado, 'usar la antorcha');
         assert.equal(t.tipo, 'accion');
+        assert.equal(t.accion.resultado, 'exito');
         const r = narrarTurno(t, { contenido, rng, aperturas });
         limpio(r.texto);
         usadas.push(r.aperturas.at(-1));
         aperturas = r.aperturas;
         estado = t.estado;
       }
-      assert.equal(new Set(usadas).size, 3, `semilla ${semilla}: ${usadas.join(', ')}`);
+      assert.equal(new Set(usadas).size, 3, `${clave}, semilla ${semilla}: aperturas repetidas (${usadas.join(', ')})`);
       assert.deepEqual(aperturas, usadas);
     }
   });
