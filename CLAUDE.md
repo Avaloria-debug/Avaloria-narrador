@@ -50,7 +50,8 @@ Cada commit tiene que dejar la suite en verde.
 
 ## Estado
 - Diseño y contenido: cerrados.
-- Código del narrador: pendiente. Empezar por el bloque 1.
+- Narrador por código: completo en código (bloques 1 a 7, registros en Firestore y prueba de punta a punta en `narrador/integracionFinal.test.js`).
+- Pendiente de integración: navegador real, Groq real, Firebase real, HTML y política de privacidad. Detalle en `docs/PENDIENTES.md`.
 
 ## Cuándo correr tests
 - Mientras cambiás un módulo: solo su archivo de test (node --test narrador/<modulo>.test.js).

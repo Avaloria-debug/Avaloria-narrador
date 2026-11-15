@@ -12,7 +12,7 @@ Reglas fijas:
 
 ## 2. Escalera de resolución (orden obligatorio)
 1. **Código entiende.** Responde al instante con una respuesta del narrador de código. Registra en Grupo 1.
-2. **Código no entiende.** Pide al jugador que lo diga de forma más específica, una sola vez, con texto breve y natural. No registra nada todavía.
+2. **Código no entiende.** Pide al jugador que lo diga de forma más específica, una sola vez, con texto breve y natural. Registra con ruta `reformulacion`.
 3. **Código sigue sin entender.** Pasa al narrador IA con un contexto compacto. Registra en Grupo 2 con la respuesta que dio la IA.
 
 Meta: el código resuelve al menos el 80% de los textos libres en la primera pasada o tras el reintento. Se mide con el set de prueba de la sección 5.
@@ -39,7 +39,7 @@ Cada turno con texto libre genera un registro en JSON, una línea por registro, 
 ```
 
 Valores permitidos:
-- `ruta`: `grupo_1` (código) o `grupo_2` (IA).
+- `ruta`: `grupo_1` (código), `grupo_2` (IA) o `reformulacion` (el código pidió reformular).
 - `origen_respuesta`: `codigo` o `ia`.
 - `intencion_detectada`: id de intención del catálogo, o `null` si no hubo coincidencia.
 - `revision`: `pendiente`, `aprobada` o `descartada`. Solo Tomás la cambia.
