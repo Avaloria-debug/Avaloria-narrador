@@ -64,6 +64,12 @@ const lista = (v) => (Array.isArray(v) ? v : []);
 // Plantillas distintas que necesita cada intención en exito y en fallo.
 export const MIN_VARIANTES = 3;
 
+/** Apertura de una plantilla: su primera palabra, en minúsculas y sin signos. Un placeholder cuenta como palabra. */
+export function aperturaDePlantilla(plantilla) {
+  const palabra = String(plantilla).trim().split(/\s+/)[0] ?? '';
+  return palabra.toLowerCase().replace(/[^\p{L}\p{N}{}]/gu, '');
+}
+
 /**
  * Valida el contenido. No lanza: devuelve todo lo encontrado.
  * `errores`: conteos, estructura, plantillas y toda referencia a un id (escena, NPC, objeto,
@@ -338,6 +344,14 @@ export function validarContenido(contenido) {
         const distintas = new Set(textos.filter((t) => typeof t === 'string').map((t) => t.trim())).size;
         if (distintas < MIN_VARIANTES) {
           err(`plantillas.${it.id}.${r}: tiene ${distintas} plantillas distintas; hacen falta al menos ${MIN_VARIANTES}`);
+        }
+        // La apertura (primera palabra) no se repite dentro de la clave.
+        const vistas = new Set();
+        for (const t of textos) {
+          if (typeof t !== 'string' || t.trim() === '') continue;
+          const apertura = aperturaDePlantilla(t);
+          if (vistas.has(apertura)) err(`plantillas.${it.id}.${r}: la apertura ${JSON.stringify(apertura)} se repite`);
+          vistas.add(apertura);
         }
       }
     }

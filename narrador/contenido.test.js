@@ -434,6 +434,20 @@ describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
     assert.deepEqual(errores(c), []);
   });
 
+  test('la apertura no se repite entre las plantillas de exito ni entre las de fallo', () => {
+    assert.deepEqual(errores(base), []);
+    let c = copia();
+    c.plantillas.intencion_usar.exito[2] = `Usás otra cosa y ${c.plantillas.intencion_usar.exito[2]}`;
+    hay(c, /plantillas\.intencion_usar\.exito: la apertura "usás" se repite/);
+    c = copia();
+    c.plantillas.intencion_hablar_con.fallo = ['{npc} calla.', '¡{npc}, nada!', 'Sin ganas, {npc} contesta.'];
+    hay(c, /plantillas\.intencion_hablar_con\.fallo: la apertura "\{npc\}" se repite/);
+    // neutro no entra en la regla.
+    c = copia();
+    c.plantillas.intencion_explorar.neutro = ['Caminás un rato.', 'Caminás otro rato.'];
+    assert.deepEqual(errores(c), []);
+  });
+
   test('sin temor en el contenido', () => {
     assert.ok(!/temor/i.test(JSON.stringify(base)));
   });

@@ -311,5 +311,24 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 ### Tercera plantilla por intención
 - Las 48 frases agregadas (una de éxito y una de fallo por cada una de las 24 intenciones) son las aprobadas por Tomás. Se copiaron tal cual. `neutro` no se tocó.
 - Validador: toda intención tiene al menos 3 plantillas distintas en exito y en fallo (error que bloquea).
-- La parte "la apertura no se repite entre ellas" no se pudo activar: 16 claves la incumplen con las frases aprobadas (lista en docs/PENDIENTES.md). No se cambió ninguna frase.
-- En esas claves, tres turnos seguidos con el mismo resultado repiten apertura. El test de tres turnos usa `intencion_usar.exito`, que sí tiene tres aperturas distintas.
+
+### Aperturas distintas por clave
+- Validador: dentro de exito y dentro de fallo de cada intención, la apertura (primera palabra, sin signos ni mayúsculas) no se repite. Es error que bloquea. Una plantilla que empieza con un placeholder tiene ese placeholder como apertura. `neutro` y los bloques sin intención no entran en la regla.
+- Frases cambiadas, dictadas por Tomás. Son 17 reemplazos en 16 claves (`intencion_ocultarse.exito` lleva dos):
+  - `intencion_hablar_con.exito`: "{npc} deja lo que hace y te presta atención." → "Dejando lo que hace, {npc} te presta atención."
+  - `intencion_hablar_con.fallo`: "{npc} responde seco y se da vuelta." → "Con tono seco, {npc} se da vuelta."
+  - `intencion_observar.fallo`: "Mirás a tu alrededor, pero no ves nada que llame la atención." → "Mirando alrededor, no ves nada que llame la atención."
+  - `intencion_comprar.exito`: "Pagás el precio justo y {objeto} es tuyo." → "Con el precio justo, {objeto} es tuyo."
+  - `intencion_ayudar.fallo`: "{npc} te agradece el gesto, aunque no lo necesita." → "Agradecido, {npc} te dice que no hace falta."
+  - `intencion_presionar.exito`: "{npc} te obedece a regañadientes." → "A regañadientes, te obedece {npc}."
+  - `intencion_presionar.fallo`: "{npc} se planta y no se deja empujar." → "Se planta {npc} y no se deja empujar."
+  - `intencion_retirarse.fallo`: "Querés irte, pero todavía hay algo que te retiene." → "Todavía hay algo que te retiene, así que no te vas."
+  - `intencion_huir.fallo`: "Intentás escapar, pero el suelo resbala y no avanzás." → "El suelo resbala y no avanzás."
+  - `intencion_emboscar.fallo`: "La trampa se activa tarde y {npc} la evita." → "Tarde, {npc} evita la trampa."
+  - `intencion_ocultarse.exito`: "Te quedás quieto detrás de algo y pasás desapercibido." → "Quieto detrás de algo, pasás desapercibido."
+  - `intencion_ocultarse.exito`: "Te deslizás detrás de algo y nadie te ve." → "Deslizándote detrás de algo, nadie te ve."
+  - `intencion_avanzar_cautela.fallo`: "Avanzás con cuidado, pero una piedra suelta te delata." → "Una piedra suelta te delata al avanzar."
+  - `intencion_abortar.exito`: "Das marcha atrás y dejás el plan a un lado." → "Sin problemas, dejás el plan a un lado."
+  - `intencion_abortar.fallo`: "Querés abortar, pero ya no hay forma de volver atrás." → "Ya no hay forma de volver atrás, así que seguís."
+  - `intencion_defender.fallo`: "Intentás cubrirte, pero el golpe llega igual." → "El golpe llega igual, sin cubrirte a tiempo."
+  - `intencion_rendirse.fallo`: "Querés rendirte, pero el otro sigue atacando." → "El otro sigue atacando y no hay forma de parar."
