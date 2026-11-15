@@ -288,3 +288,7 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - Con costo 0 el reloj no avanza: los eventos por turnos y por azar siguen corriendo turno a turno; los de hora y el movimiento de NPCs, solo cuando avanza el reloj.
 - Temor: eliminado del código, del estado y del contenido. Calmar la situación con éxito sube la disposición en 1 (`disposicionExito: 1` en `transiciones`); con fallo no la cambia. El delta de relación de calmar (10 / 0) queda como estaba en el contenido.
 - Oro y plata: el jugador no los consigue en v1. Trabajar paga solo bronce. El arco corto (1 de oro) no se puede comprar y la plata inicial no se repone.
+
+### Confirmado
+- viajar queda fuera de costoHorasPorVerbo; su costo sale de la ruta y un viaje fallido cuesta 0.
+- calmar_la_situacion con éxito: +10 de relación y +1 de disposición.

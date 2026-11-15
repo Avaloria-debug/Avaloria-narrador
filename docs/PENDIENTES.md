@@ -1,7 +1,12 @@
-## Pendiente del bloque 3b
-- Revisar npcs.js, conocimientos.js, efectosEventos.js y movimientoNpcs.js (quedaron en el commit "resolver y turno" sin revisión).
-- Decidir y registrar en docs/SUPUESTOS.md:
-  1. Costo en reloj de cada acción (hoy: 1 hora constante en el código, no en el contenido).
-  2. Temor: ningún evento ni transición lo sube en el contenido actual.
-  3. Oro y reposición de plata: el jugador no puede conseguirlos en v1.
+## Bloque 3b: cerrado
+- npcs.js, conocimientos.js, efectosEventos.js y movimientoNpcs.js fueron revisados sin errores (commit 9b0bb5b).
+- Costo en reloj de cada acción: resuelto en el contenido (`reglas.costoHorasPorVerbo`) y anotado en docs/SUPUESTOS.md.
 - Correcciones hechas fuera de resolver/turno en este bloque: "ayudar" vs "saludar" (coincidencia exacta gana), lugares de camino como destino de viajar, evento por hora con duración en turnos que venció durante un viaje.
+
+## Bloque 4: narración por plantillas
+- Leer prompt v3, sección 5.5, y plantillas de data/contenido/contenido-v3.json.
+- Implementar narrador/narracion.js: placeholders {npc}, {objeto}, {lugar}, {conocimiento}, {nombres}.
+- Ventana de 5 aperturas sin repetir.
+- Si falta un valor de placeholder, elegir una plantilla que no lo necesite.
+- Reformulaciones: usar plantillas.reformulacion (ya existen).
+- Tests: placeholders, variación de aperturas, falta de valor, reformulaciones.
