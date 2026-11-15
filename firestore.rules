@@ -25,7 +25,8 @@ service cloud.firestore {
     // ---- Registros del narrador ----
 
     // Uid de la cuenta del administrador: el único que puede leer registros.
-    // REEMPLAZAR antes de publicar (docs/PENDIENTES.md).
+    // La UID de administrador ya está cargada. Las reglas no se publican hasta probarlas
+    // en el simulador de la consola (docs/PENDIENTES.md).
     function ADMIN_UID() {
       return 'JTkIQD54BXeT9pRGdvJ9KLgiP5I3';
     }
