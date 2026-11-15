@@ -435,3 +435,10 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - Id del documento: `reg_` más 6 dígitos; las reglas aceptan de 6 a 12 por si una partida pasa de 999999.
 - `firestore.rules` de la raíz copia sin cambios el bloque de partidas de `persistencia/firestore.rules`, que no se tocó. Se agregó `firebase.json` solo para que el emulador encuentre las reglas.
 - La lectura la hace solo el administrador; como `update` está prohibido para todos, marcar `revision` y `notas` se hace fuera de las reglas (consola o Admin SDK).
+
+## Registros: id por partida y cola sin bloqueo
+- El estado del narrador no guarda el código de partida, así que el registro que devuelve `narrar` sigue con su id corto (`reg_000123`). El adaptador de Firestore arma el id largo (`reg_ABCDEF_000123`) con el `codigoPartida` que recibe al crearse, y lo escribe en el documento y en su campo `id`. Esto reemplaza "Id del documento: `reg_` más 6 dígitos" de arriba.
+- El código de partida se valida con `esCodigoPartidaValido` de `persistencia/codigoPartida.js`; sin un código válido, el adaptador no se crea.
+- "Ya existe con ese id cuenta como enviado": el jugador no puede leer registros, así que no hay forma de consultar si el documento existe. Se resolvió en las reglas: `update` se acepta solo si el documento queda idéntico (no cambia nada). Es un cambio respecto de "update: false" del bloque 5c; cualquier modificación real sigue rechazada. Si ya existe un documento distinto con ese id, es un rechazo permanente.
+- Rechazo permanente: registro inválido, o error de Firestore `permission-denied` o `invalid-argument`. Cualquier otro error se trata como pasajero (red) y se reintenta. `already-exists` cuenta como enviado.
+- Los fallidos no se reenvían solos ni se descartan: quedan en `cola.fallidos()` con motivo y registro, y `cola.reintentarFallidos()` los devuelve a la cola.

@@ -152,10 +152,10 @@ export function registroDeTurno({ entrada, turno, estadoAntes, estadoEscena, res
 /**
  * Cola local de registros, en memoria. `enviar(registro)` se inyecta: si rechaza, el registro
  * queda en la cola con su motivo y se reintenta en el próximo envío. Se envía en orden, de a uno.
- * - Fallo común (red, permisos): frena el envío; el resto espera al próximo lote.
- * - Fallo con `invalido === true` (el registro no cumple la forma): no se envía, queda en la cola
- *   con su motivo y no frena a los que siguen.
- * No se pierden registros mientras la cola exista.
+ * - Fallo pasajero (red): frena el envío; ese registro y el resto esperan al próximo lote.
+ * - Rechazo permanente (error con `invalido === true` o `permanente === true`: no cumple la forma,
+ *   o lo rechazó una regla): sale de la cola, pasa a la lista de fallidos con su motivo y la cola sigue.
+ * No se pierden registros mientras la cola exista: están enviados, pendientes o en fallidos.
  * @param {{ enviar: (registro: object) => Promise<void>, numeroInicial?: number, validarAlAgregar?: boolean }} opciones
  *   `validarAlAgregar: false` deja la validación a `enviar` (así la conecta narrador/registroFirestore.js).
  */
@@ -163,6 +163,7 @@ export function crearColaDeRegistros({ enviar, numeroInicial = 1, validarAlAgreg
   if (typeof enviar !== 'function') throw new TypeError('crearColaDeRegistros necesita una función enviar');
   let cola = [];
   const motivos = new Map();
+  let fallidos = [];
   let siguiente = numeroInicial;
   let enviados = 0;
   let enCurso = null;
@@ -175,8 +176,13 @@ export function crearColaDeRegistros({ enviar, numeroInicial = 1, validarAlAgreg
         await enviar(JSON.parse(JSON.stringify(registro)));
       } catch (e) {
         const motivo = e instanceof Error ? e.message : String(e);
+        if (e?.invalido === true || e?.permanente === true) {
+          cola = cola.filter((r) => r !== registro);
+          motivos.delete(registro);
+          fallidos = [...fallidos, { id: registro?.id ?? null, motivo, registro }];
+          continue;
+        }
         motivos.set(registro, motivo);
-        if (e?.invalido === true) continue;
         error = motivo;
         break;
       }
@@ -211,12 +217,22 @@ export function crearColaDeRegistros({ enviar, numeroInicial = 1, validarAlAgreg
     motivosPendientes() {
       return cola.filter((r) => motivos.has(r)).map((r) => ({ id: r?.id ?? null, motivo: motivos.get(r) }));
     },
+    /** Registros rechazados de forma permanente: `[{ id, motivo, registro }]`. No se reenvían solos. */
+    fallidos() {
+      return JSON.parse(JSON.stringify(fallidos));
+    },
+    /** Devuelve los fallidos a la cola (por ejemplo, después de corregir la sesión o las reglas). */
+    reintentarFallidos() {
+      cola = [...cola, ...fallidos.map((f) => f.registro)];
+      fallidos = [];
+      return cola.length;
+    },
     /** Cantidad enviada desde que existe la cola. */
     totalEnviados() {
       return enviados;
     },
     /**
-     * Envía lo pendiente, en orden. Frena en el primer fallo de envío y deja el resto en la cola.
+     * Envía lo pendiente, en orden. Frena en el primer fallo pasajero y deja el resto en la cola.
      * Si ya hay un envío en curso, devuelve ese mismo.
      * @returns {Promise<{ enviados: number, pendientes: number, error: string|null }>}
      */

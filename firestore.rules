@@ -65,11 +65,15 @@ service cloud.firestore {
     }
 
     match /registros/{idRegistro} {
+      // Id: reg_<codigoPartida>_<número>, por ejemplo reg_ABCDEF_000123.
       allow create: if request.auth != null
-                    && idRegistro.matches('reg_[0-9]{6,12}')
+                    && idRegistro.matches('reg_[2-9A-HJKMNP-Z]{6}_[0-9]{6,12}')
                     && registroValido(request.resource.data, idRegistro);
       allow read: if request.auth != null && request.auth.uid == ADMIN_UID();
-      allow update, delete: if false;
+      // Sin cambios a registros ya enviados. Lo único que se acepta es reescribir el documento
+      // idéntico: es el reintento de un envío cuya respuesta se perdió, y no modifica nada.
+      allow update: if request.auth != null && request.resource.data == resource.data;
+      allow delete: if false;
     }
   }
 }
