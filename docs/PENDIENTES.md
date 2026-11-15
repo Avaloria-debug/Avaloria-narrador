@@ -10,3 +10,8 @@
 - Si falta un valor de placeholder, elegir una plantilla que no lo necesite.
 - Reformulaciones: usar plantillas.reformulacion (ya existen).
 - Tests: placeholders, variación de aperturas, falta de valor, reformulaciones.
+
+## Bloque 5
+- 5a (hecho): cliente de la IA (narrador/ia.js) y registro con cola local (narrador/registro.js).
+- 5b y 5c (pendiente): contrato público y Firestore.
+- A verificar con una clave real antes de cerrar: parámetros y cabeceras de Groq, conteo real de tokens y si el razonamiento consume los 120 tokens de salida.
