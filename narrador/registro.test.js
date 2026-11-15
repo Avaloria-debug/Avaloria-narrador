@@ -93,7 +93,7 @@ describe('registro — forma', () => {
     });
     assert.deepEqual(Object.keys(r), [...CAMPOS_REGISTRO]);
     assert.deepEqual(validarRegistro(r, permitidos), []);
-    assert.deepEqual(Object.values(RUTAS), ['grupo_1', 'grupo_2']);
+    assert.deepEqual(Object.values(RUTAS), ['grupo_1', 'grupo_2', 'reformulacion']);
     assert.deepEqual(Object.values(ORIGENES), ['codigo', 'ia']);
     assert.deepEqual(Object.values(REVISIONES), ['pendiente', 'aprobada', 'descartada']);
     assert.equal(JSON.stringify(r).includes('\n'), false);
@@ -170,8 +170,11 @@ describe('registro — un registro por turno con texto libre', () => {
       [registros[0].ruta, registros[0].origen_respuesta, registros[0].intencion_detectada, registros[0].intento_reformulacion],
       ['grupo_1', 'codigo', 'intencion_hablar_con', false],
     );
-    // Reformulación: la responde el código, sin intención.
-    assert.deepEqual([registros[2].ruta, registros[2].origen_respuesta, registros[2].intencion_detectada], ['grupo_1', 'codigo', null]);
+    // Reformulación: ruta propia; la responde el código, sin intención.
+    assert.deepEqual(
+      [registros[2].ruta, registros[2].origen_respuesta, registros[2].intencion_detectada, registros[2].intento_reformulacion],
+      ['reformulacion', 'codigo', null, false],
+    );
     assert.ok(contenido.plantillas.reformulacion.no_entendido.includes(registros[2].respuesta_mostrada));
     // Segundo intento sin entender: pasa a la IA.
     assert.deepEqual(
@@ -179,6 +182,30 @@ describe('registro — un registro por turno con texto libre', () => {
       ['grupo_2', 'ia', null, true],
     );
     assert.equal(registros[3].respuesta_mostrada, 'No lo sé, che.');
+  });
+
+  test('reformular y después entender: ruta reformulacion, y el turno que resuelve va a grupo_1 con intento_reformulacion', () => {
+    const uno = jugar(partida(), 'hablar', 1);
+    assert.equal(uno.turno.tipo, 'reformular');
+    assert.deepEqual(
+      [uno.registro.ruta, uno.registro.origen_respuesta, uno.registro.intencion_detectada, uno.registro.intento_reformulacion],
+      ['reformulacion', 'codigo', 'intencion_hablar_con', false],
+    );
+    assert.ok(contenido.plantillas.reformulacion[uno.turno.motivo].some((p) => p === uno.registro.respuesta_mostrada || p.includes('{')));
+    assert.deepEqual(validarRegistro(uno.registro, permitidos), []);
+    const dos = jugar(uno.turno.estado, 'hablar con serel', 2);
+    assert.equal(dos.turno.tipo, 'accion');
+    assert.deepEqual(
+      [dos.registro.ruta, dos.registro.origen_respuesta, dos.registro.intencion_detectada, dos.registro.intento_reformulacion],
+      ['grupo_1', 'codigo', 'intencion_hablar_con', true],
+    );
+    // El turno siguiente ya no viene de una reformulación.
+    assert.equal(jugar(dos.turno.estado, 'descansar', 3).registro.intento_reformulacion, false);
+  });
+
+  test('la ruta reformulacion no admite origen ia', () => {
+    assert.throws(() => crearRegistro(base({ ruta: 'reformulacion', origenRespuesta: 'ia', intencionDetectada: null })), /reformulacion con origen_respuesta ia/);
+    assert.deepEqual(validarRegistro(crearRegistro(base({ ruta: 'reformulacion', intencionDetectada: null }))), []);
   });
 
   test('si la IA no respondió y se mostró una plantilla: grupo_2 con origen codigo', () => {

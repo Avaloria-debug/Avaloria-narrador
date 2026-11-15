@@ -12,7 +12,9 @@ import {
   URL_GROQ,
   SIN_IA,
   MAX_TOKENS_SALIDA,
-  MIN_TOKENS_CONTEXTO,
+  MAX_CARACTERES_SALIDA,
+  MAX_TOKENS_RESPUESTA_API,
+  contarOraciones,
   MAX_TOKENS_CONTEXTO,
   TOPE_TOKENS_POR_LLAMADA,
 } from './ia.js';
@@ -76,7 +78,9 @@ describe('ia — llamada', () => {
     assert.equal(cuerpo.model, 'openai/gpt-oss-120b');
     assert.equal(cuerpo.model, MODELO);
     assert.equal(cuerpo.reasoning_effort, 'low');
-    assert.equal(cuerpo.max_completion_tokens, 120);
+    assert.equal(cuerpo.max_completion_tokens, 400);
+    assert.equal(cuerpo.max_completion_tokens, MAX_TOKENS_RESPUESTA_API);
+    assert.ok(!('max_tokens' in cuerpo));
     assert.deepEqual(cuerpo.messages.map((m) => m.role), ['system', 'user']);
     assert.equal(cuerpo.messages[0].content, MENSAJE_SISTEMA);
     assert.ok(cuerpo.messages[1].content.endsWith(FRASE));
@@ -102,7 +106,8 @@ describe('ia — llamada', () => {
     ['con corchetes', 'Te digo algo [en voz baja].', 'corchetes'],
     ['con placeholder', 'Hola, {npc} te saluda.', 'placeholder'],
     ['con etiqueta', '<b>No</b> lo sé.', 'etiqueta'],
-    ['demasiado larga', 'No lo sé. '.repeat(60), 'largo'],
+    ['de más de 600 caracteres', `${'a'.repeat(601)}.`, 'largo'],
+    ['de más de 3 oraciones', 'No lo sé. No me consta. Preguntale a otro. Chau.', 'oraciones'],
   ]) {
     test(`salida ${nombre}: devuelve null para que el llamador use plantilla`, async () => {
       const http = httpFalso([ok(salida)]);
@@ -124,9 +129,15 @@ describe('ia — llamada', () => {
     assert.equal(validarSalida(null).motivo, 'vacia');
     assert.equal(validarSalida('Mirá ] esto').motivo, 'corchetes');
     assert.equal(validarSalida('Mirá } esto').motivo, 'placeholder');
-    const justa = 'a'.repeat(MAX_TOKENS_SALIDA * 3);
-    assert.equal(validarSalida(justa).ok, true);
-    assert.equal(validarSalida('a'.repeat(MAX_TOKENS_SALIDA * 4)).motivo, 'largo');
+    assert.equal(MAX_CARACTERES_SALIDA, 600);
+    assert.equal(validarSalida('a'.repeat(600)).ok, true);
+    assert.equal(validarSalida('a'.repeat(601)).motivo, 'largo');
+    assert.equal(validarSalida(`  ${'a'.repeat(600)}  `).ok, true);
+    assert.equal(validarSalida('Uno. Dos. Tres.').ok, true);
+    assert.equal(validarSalida('¿Qué decís? ¡Ni idea! No sé...').ok, true);
+    assert.equal(validarSalida('Uno. Dos. Tres. Cuatro.').motivo, 'oraciones');
+    assert.equal(contarOraciones('Sin punto final'), 1);
+    assert.equal(contarOraciones('Mirá... no sé. Preguntale a Serel'), 3);
   });
 
   test('necesita un cliente http', async () => {
@@ -256,13 +267,12 @@ describe('ia — contexto', () => {
     }
   });
 
-  test('contexto completo de cada escena: entre 150 y 250 tokens estimados', () => {
+  test('contexto completo de cada escena: no pasa de 250 tokens estimados', () => {
     for (const escena of contenido.escenas) {
       const d = datosDeContexto(partida(escena.id), contenido, { frase: FRASE, ultimasAcciones: ACCIONES });
       const c = armarContexto(d);
-      assert.ok(c.tokens >= MIN_TOKENS_CONTEXTO && c.tokens <= MAX_TOKENS_CONTEXTO, `${escena.id}: ${c.tokens} tokens`);
+      assert.ok(c.tokens > 0 && c.tokens <= MAX_TOKENS_CONTEXTO, `${escena.id}: ${c.tokens} tokens`);
       assert.equal(c.tokens, estimarTokens(c.texto));
-      assert.equal(c.enRango, true);
       assert.equal(c.acciones, 3);
       assert.equal(c.fraseRecortada, false);
     }
@@ -278,12 +288,6 @@ describe('ia — contexto', () => {
     assert.ok(enorme.tokens <= MAX_TOKENS_CONTEXTO, `${enorme.tokens}`);
     assert.equal(enorme.fraseRecortada, true);
     assert.equal(enorme.acciones, 0);
-  });
-
-  test('con poco para decir no rellena: queda por debajo de 150 y lo informa', () => {
-    const c = armarContexto(datosDeContexto(partida(), contenido, { frase: 'hola' }));
-    assert.ok(c.tokens < MIN_TOKENS_CONTEXTO);
-    assert.equal(c.enRango, false);
   });
 
   test('toma como mucho las últimas 3 acciones', () => {

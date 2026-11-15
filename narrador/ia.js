@@ -13,8 +13,12 @@ export const URL_GROQ = 'https://api.groq.com/openai/v1/chat/completions';
 export const MODELO = 'openai/gpt-oss-120b';
 export const REASONING_EFFORT = 'low';
 
+// Presupuesto de salida del diseño (120 tokens). Se aplica sobre el texto final, como caracteres y oraciones.
 export const MAX_TOKENS_SALIDA = 120;
-export const MIN_TOKENS_CONTEXTO = 150;
+export const MAX_CARACTERES_SALIDA = 600;
+export const MAX_ORACIONES_SALIDA = 3;
+// Límite que se le manda a la API: deja lugar al razonamiento del modelo.
+export const MAX_TOKENS_RESPUESTA_API = 400;
 export const MAX_TOKENS_CONTEXTO = 250;
 export const TOPE_TOKENS_POR_LLAMADA = 800;
 export const MAX_ACCIONES_CONTEXTO = 3;
@@ -38,6 +42,7 @@ export const MOTIVOS_SALIDA = Object.freeze({
   ETIQUETA: 'etiqueta',
   ID: 'id',
   LARGO: 'largo',
+  ORACIONES: 'oraciones',
 });
 
 // Mensaje de sistema: fijo, igual en todas las llamadas y en todas las partidas.
@@ -133,14 +138,14 @@ function lineasDeContexto(d, { acciones, conExtras, largoFrase }) {
  * últimas acciones, eventos activos (solo nombres) y la frase del jugador, tal cual.
  * Nunca pasa de 250 tokens estimados: si se pasa, recorta las últimas acciones (3, 2, 1, 0),
  * después saca la descripción, el momento, las salidas y los otros presentes, y al final corta la frase.
- * No rellena: con poco para decir puede quedar por debajo de 150 (`enRango` lo informa).
+ * No tiene mínimo: con poco para decir, queda corto.
  * @param {{
  *   escena: { nombre: string, ciudad?: string, estado: string, descripcion?: string, salidas?: string[] },
  *   npc?: { nombre: string, rol?: string, personalidad?: string, disposicion: string|number }|null,
  *   otrosPresentes?: { nombre: string, disposicion: string|number }[],
  *   momento?: string, ultimasAcciones?: string[], eventos?: string[], frase: string,
  * }} datos
- * @returns {{ texto: string, tokens: number, enRango: boolean, acciones: number, fraseRecortada: boolean }}
+ * @returns {{ texto: string, tokens: number, acciones: number, fraseRecortada: boolean }}
  */
 export function armarContexto(datos) {
   const d = datos ?? {};
@@ -170,15 +175,21 @@ export function armarContexto(datos) {
   return {
     texto,
     tokens,
-    enRango: tokens >= MIN_TOKENS_CONTEXTO && tokens <= MAX_TOKENS_CONTEXTO,
     acciones: elegido.acciones,
     fraseRecortada,
   };
 }
 
+/** Oraciones de un texto: tramos que terminan en punto, signo de cierre o puntos suspensivos. */
+export function contarOraciones(texto) {
+  return String(texto ?? '')
+    .split(/[.!?…]+(?=\s|$)/)
+    .filter((tramo) => /[\p{L}\p{N}]/u.test(tramo)).length;
+}
+
 /**
- * Valida el texto que devolvió la IA: no vacío, sin corchetes, sin placeholders, sin etiquetas,
- * sin ids (palabras con guion bajo) y dentro del largo (120 tokens estimados).
+ * Valida el texto final que devolvió la IA: no vacío, sin corchetes, sin placeholders, sin etiquetas,
+ * sin ids (palabras con guion bajo) y dentro del largo (600 caracteres como máximo, 1 a 3 oraciones).
  * @returns {{ ok: boolean, motivo: string|null, texto: string }}
  */
 export function validarSalida(salida) {
@@ -189,7 +200,8 @@ export function validarSalida(salida) {
   if (/[[\]]/.test(texto)) return no(MOTIVOS_SALIDA.CORCHETES);
   if (/<[^>]*>/.test(texto) || /[<>]/.test(texto)) return no(MOTIVOS_SALIDA.ETIQUETA);
   if (/[\p{L}\p{N}]_[\p{L}\p{N}]/u.test(texto) || /(^|\s)_|_(\s|$)/.test(texto)) return no(MOTIVOS_SALIDA.ID);
-  if (estimarTokens(texto) > MAX_TOKENS_SALIDA) return no(MOTIVOS_SALIDA.LARGO);
+  if (texto.length > MAX_CARACTERES_SALIDA) return no(MOTIVOS_SALIDA.LARGO);
+  if (contarOraciones(texto) > MAX_ORACIONES_SALIDA) return no(MOTIVOS_SALIDA.ORACIONES);
   return { ok: true, motivo: null, texto };
 }
 
@@ -198,7 +210,7 @@ export function cuerpoDeLlamada(textoContexto) {
   return {
     model: MODELO,
     reasoning_effort: REASONING_EFFORT,
-    max_completion_tokens: MAX_TOKENS_SALIDA,
+    max_completion_tokens: MAX_TOKENS_RESPUESTA_API,
     messages: [
       { role: 'system', content: MENSAJE_SISTEMA },
       { role: 'user', content: textoContexto },

@@ -362,3 +362,12 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - Cola: en memoria, envía en orden y de a uno; frena en el primer fallo y deja el resto. Se pierde si se cierra la pestaña. La numeración de registros la lleva la cola y arranca en 1 por sesión; cómo se continúa entre sesiones queda para 5b/5c.
 - Envío de prueba: `enviadorANube` guarda los registros de una partida en un documento `registros_<código>` con el contrato de la nube en memoria de la beta. Reenviar un registro que ya está no lo duplica. La forma real en Firestore es del bloque 5c.
 - Ni `ia.js` ni `registro.js` están conectados a `turno.js`: los une el contrato público.
+
+### Ajustes del bloque 5a: límites de tokens y registro de reformulación
+- La llamada manda `max_completion_tokens: 400`, para dejar lugar al razonamiento del modelo. Sin verificar: no se comprobó en la documentación de Groq que ese sea el nombre del parámetro para `openai/gpt-oss-120b`.
+- El límite de 120 tokens de salida se aplica sobre el texto final: 600 caracteres como máximo y de 1 a 3 oraciones. Si se pasa, el texto se descarta y el llamador usa plantilla. Una oración es un tramo que termina en punto, signo de cierre o puntos suspensivos; el último tramo cuenta aunque no cierre.
+- El mínimo de 150 tokens de contexto ya no es requisito. Se mantiene el máximo de 250. El contexto no se rellena.
+- Con 400 tokens de salida posibles, el uso real de una llamada puede pasar el tope de 800 (380 + 250 + 400). El resultado lo informa en `tokens.dentroDelTope` cuando la respuesta trae `usage`; la estimación solo cuenta el texto final. A medir con una clave real.
+- Registro: `ruta` suma el valor `reformulacion`. El turno en que el código pide reformular genera un registro con esa ruta, origen `codigo` y la pregunta de reformulación como respuesta. Motivo: todo dato llega a Firestore, también las frases que el código no entendió a la primera, que son las que sirven para mejorar la comprensión.
+- El turno que resuelve la frase después va a `grupo_1` (o `grupo_2` si pasó a la IA) con `intento_reformulacion: true`.
+- Se cambiaron `docs/vocabulario-v1.md` (sección 13) y la escalera de `docs/sistema-registro-aprendizaje-narrador.md` para decir lo mismo. Esto reemplaza la nota anterior sobre la diferencia con la escalera.

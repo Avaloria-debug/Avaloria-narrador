@@ -207,7 +207,7 @@ Acá `neutro` es una categoría de evento, no un resultado ni un estado.
 
 | Campo | Valores |
 |---|---|
-| `ruta` | `grupo_1` (código), `grupo_2` (IA) |
+| `ruta` | `grupo_1` (código), `grupo_2` (IA), `reformulacion` (el código pidió reformular) |
 | `origen_respuesta` | `codigo`, `ia` |
 | `revision` | `pendiente`, `aprobada`, `descartada` |
 | `intento_reformulacion` | `true`, `false` |

@@ -5,7 +5,7 @@
 // - Sin Firestore: el envío se inyecta. `enviadorANube` adapta la nube en memoria de la beta.
 import { normalizar } from './comprension.js';
 
-export const RUTAS = Object.freeze({ GRUPO_1: 'grupo_1', GRUPO_2: 'grupo_2' });
+export const RUTAS = Object.freeze({ GRUPO_1: 'grupo_1', GRUPO_2: 'grupo_2', REFORMULACION: 'reformulacion' });
 export const ORIGENES = Object.freeze({ CODIGO: 'codigo', IA: 'ia' });
 export const REVISIONES = Object.freeze({ PENDIENTE: 'pendiente', APROBADA: 'aprobada', DESCARTADA: 'descartada' });
 export const MAX_ULTIMOS_TURNOS = 3;
@@ -80,7 +80,9 @@ export function validarRegistro(registro, permitidos = {}) {
   if (permitidos.estadosEscena && typeof r.estado_escena === 'string' && !permitidos.estadosEscena.includes(r.estado_escena)) {
     errores.push(`estado_escena: valor no permitido ${JSON.stringify(r.estado_escena)}`);
   }
-  if (r.ruta === RUTAS.GRUPO_1 && r.origen_respuesta === ORIGENES.IA) errores.push('ruta grupo_1 con origen_respuesta ia');
+  if (r.ruta !== RUTAS.GRUPO_2 && Object.values(RUTAS).includes(r.ruta) && r.origen_respuesta === ORIGENES.IA) {
+    errores.push(`ruta ${r.ruta} con origen_respuesta ia`);
+  }
   if (r.origen_respuesta === ORIGENES.IA && r.intencion_detectada !== null) errores.push('origen_respuesta ia con intencion_detectada');
   return errores;
 }
@@ -90,7 +92,7 @@ export function validarRegistro(registro, permitidos = {}) {
  * Un registro incompleto o con valores no permitidos es un error.
  * @param {{
  *   numero: number, fecha: Date|string|number, escena: string, estadoEscena: string, ultimosTurnos?: string[],
- *   textoJugador: string, ruta: 'grupo_1'|'grupo_2', intentoReformulacion?: boolean,
+ *   textoJugador: string, ruta: 'grupo_1'|'grupo_2'|'reformulacion', intentoReformulacion?: boolean,
  *   intencionDetectada?: string|null, origenRespuesta: 'codigo'|'ia', respuestaMostrada: string,
  * }} datos
  */
@@ -119,7 +121,8 @@ export function crearRegistro(datos) {
 
 /**
  * Registro de un turno ya resuelto. Solo los turnos con texto libre se registran: un botón devuelve null.
- * - Turno resuelto por el código (acción o reformulación): grupo_1, origen codigo.
+ * - Turno resuelto por el código, sin reformulación ni IA: grupo_1, origen codigo.
+ * - Turno en que el código pide reformular: ruta reformulacion, origen codigo.
  * - Turno que pasó a la IA: grupo_2, sin intención; origen ia, o codigo si se mostró una plantilla.
  * @param {{
  *   entrada: { tipo: 'texto'|'boton', texto?: string }, turno: { tipo: string, intencionId?: string|null },
@@ -138,7 +141,7 @@ export function registroDeTurno({ entrada, turno, estadoAntes, estadoEscena, res
     estadoEscena,
     ultimosTurnos,
     textoJugador: entrada.texto,
-    ruta: porIa ? RUTAS.GRUPO_2 : RUTAS.GRUPO_1,
+    ruta: porIa ? RUTAS.GRUPO_2 : turno?.tipo === 'reformular' ? RUTAS.REFORMULACION : RUTAS.GRUPO_1,
     intentoReformulacion: estadoAntes.reformulacionPendiente === true,
     intencionDetectada: porIa ? null : turno?.intencionId ?? null,
     origenRespuesta: porIa ? origenRespuesta ?? ORIGENES.CODIGO : ORIGENES.CODIGO,
