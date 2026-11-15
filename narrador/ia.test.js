@@ -16,7 +16,11 @@ import {
   MAX_TOKENS_RESPUESTA_API,
   contarOraciones,
   MAX_TOKENS_CONTEXTO,
-  TOPE_TOKENS_POR_LLAMADA,
+  TOPE_TOKENS_LLAMADA,
+  MAX_TOKENS_SISTEMA,
+  PRESUPUESTO,
+  verificarPresupuesto,
+  ErrorDeContexto,
 } from './ia.js';
 import { estadoInicial } from './estado.js';
 import { leerContenido } from './cargarContenido.js';
@@ -58,6 +62,9 @@ function esperaFalsa() {
   esperar.esperas = esperas;
   return esperar;
 }
+/** Tokens estimados del contexto con esas acciones, sin el recorte (dos acciones más la que se saca). */
+const lineasCon = (acciones) =>
+  armarContexto(contexto({ ultimasAcciones: acciones.slice(1) })).tokens + estimarTokens(`\n- ${acciones[0]}`);
 const pedir = (http, extra = {}) => pedirRespuestaIA({ groqKey: CLAVE, contexto: contexto(), http, esperar: esperaFalsa(), ...extra });
 
 describe('ia — llamada', () => {
@@ -78,7 +85,7 @@ describe('ia — llamada', () => {
     assert.equal(cuerpo.model, 'openai/gpt-oss-120b');
     assert.equal(cuerpo.model, MODELO);
     assert.equal(cuerpo.reasoning_effort, 'low');
-    assert.equal(cuerpo.max_completion_tokens, 400);
+    assert.equal(cuerpo.max_completion_tokens, 200);
     assert.equal(cuerpo.max_completion_tokens, MAX_TOKENS_RESPUESTA_API);
     assert.ok(!('max_tokens' in cuerpo));
     assert.deepEqual(cuerpo.messages.map((m) => m.role), ['system', 'user']);
@@ -96,7 +103,7 @@ describe('ia — llamada', () => {
     assert.notEqual(a[1].content, b[1].content);
     assert.deepEqual(cuerpoDeLlamada('x').messages[0], { role: 'system', content: MENSAJE_SISTEMA });
     const t = estimarTokens(MENSAJE_SISTEMA);
-    assert.ok(t >= 300 && t <= 400, `mensaje de sistema: ${t} tokens estimados`);
+    assert.ok(t <= 350, `mensaje de sistema: ${t} tokens estimados`);
   });
 
   for (const [nombre, salida, detalle] of [
@@ -274,20 +281,31 @@ describe('ia — contexto', () => {
       assert.ok(c.tokens > 0 && c.tokens <= MAX_TOKENS_CONTEXTO, `${escena.id}: ${c.tokens} tokens`);
       assert.equal(c.tokens, estimarTokens(c.texto));
       assert.equal(c.acciones, 3);
-      assert.equal(c.fraseRecortada, false);
     }
   });
 
-  test('nunca pasa de 250: primero recorta las acciones a 2, y al final la frase', () => {
-    const largas = ACCIONES.map((a) => `${a} ${'y siguió un rato largo dando vueltas por ahí '.repeat(3)}`);
-    const dos = armarContexto(contexto({ ultimasAcciones: largas }));
-    assert.ok(dos.tokens <= MAX_TOKENS_CONTEXTO);
-    assert.ok(dos.acciones < 3);
-    assert.ok(dos.texto.endsWith(FRASE));
-    const enorme = armarContexto(contexto({ frase: 'hola '.repeat(2000) }));
-    assert.ok(enorme.tokens <= MAX_TOKENS_CONTEXTO, `${enorme.tokens}`);
-    assert.equal(enorme.fraseRecortada, true);
-    assert.equal(enorme.acciones, 0);
+  test('contexto de más de 250 tokens: se recorta a las últimas 2 acciones', () => {
+    const largas = ['primera', 'segunda', 'tercera'].map((a) => `${a} ${'y dio una vuelta '.repeat(9)}`.trim());
+    const tres = lineasCon(largas);
+    const c = armarContexto(contexto({ ultimasAcciones: largas }));
+    assert.ok(tres > MAX_TOKENS_CONTEXTO, `con 3 acciones: ${tres}`);
+    assert.equal(c.acciones, 2);
+    assert.ok(c.tokens <= MAX_TOKENS_CONTEXTO);
+    assert.ok(!c.texto.includes('primera'));
+    assert.ok(c.texto.includes('- segunda') && c.texto.includes('- tercera'));
+    assert.ok(c.texto.endsWith(FRASE));
+  });
+
+  test('si con 2 acciones sigue pasando de 250, falla', async () => {
+    const enormes = ACCIONES.map((a) => `${a} ${'y siguió un rato largo dando vueltas por ahí '.repeat(10)}`);
+    assert.throws(() => armarContexto(contexto({ ultimasAcciones: enormes })), ErrorDeContexto);
+    assert.throws(() => armarContexto(contexto({ frase: 'hola '.repeat(400) })), /el contexto mide \d+ tokens estimados y el máximo es 250/);
+    // En la llamada: no se llama a Groq y el llamador usa plantilla.
+    const http = httpFalso([ok('no')]);
+    const r = await pedir(http, { contexto: contexto({ frase: 'hola '.repeat(400) }) });
+    assert.deepEqual([r.ok, r.texto, r.error, r.motivo], [false, null, null, 'contexto_largo']);
+    assert.equal(http.llamadas.length, 0);
+    assert.equal(r.tokens.dentroDelTope, false);
   });
 
   test('toma como mucho las últimas 3 acciones', () => {
@@ -334,7 +352,29 @@ describe('ia — tokens', () => {
   });
 
   test('el peor caso estimado entra en el tope: sistema + 250 de contexto + 120 de salida', () => {
-    assert.ok(estimarTokens(MENSAJE_SISTEMA) + MAX_TOKENS_CONTEXTO + MAX_TOKENS_SALIDA <= TOPE_TOKENS_POR_LLAMADA);
+    assert.ok(estimarTokens(MENSAJE_SISTEMA) + MAX_TOKENS_CONTEXTO + MAX_TOKENS_SALIDA <= TOPE_TOKENS_LLAMADA);
+  });
+
+  test('presupuesto: 350 de sistema + 250 de contexto + 200 de salida no pasa de 800', () => {
+    assert.deepEqual([MAX_TOKENS_SISTEMA, MAX_TOKENS_CONTEXTO, MAX_TOKENS_RESPUESTA_API, TOPE_TOKENS_LLAMADA], [350, 250, 200, 800]);
+    assert.ok(MAX_TOKENS_SISTEMA + MAX_TOKENS_CONTEXTO + MAX_TOKENS_RESPUESTA_API <= TOPE_TOKENS_LLAMADA);
+    assert.equal(PRESUPUESTO.peorCaso, 800);
+    assert.equal(PRESUPUESTO.sistema, estimarTokens(MENSAJE_SISTEMA));
+    assert.ok(PRESUPUESTO.sistema <= 350);
+    assert.deepEqual(verificarPresupuesto(), { ...PRESUPUESTO });
+  });
+
+  test('mensaje de sistema de más de 350 tokens estimados: falla', () => {
+    const largo = 'a'.repeat(350 * 3.5 + 1);
+    assert.equal(estimarTokens(largo), 351);
+    assert.throws(() => verificarPresupuesto({ mensajeSistema: largo }), /el mensaje de sistema mide 351 tokens estimados y el máximo es 350/);
+    assert.doesNotThrow(() => verificarPresupuesto({ mensajeSistema: 'a'.repeat(350 * 3.5) }));
+  });
+
+  test('si la entrada máxima más la salida máxima superan el tope: falla', () => {
+    assert.throws(() => verificarPresupuesto({ maxSalida: 201 }), /supera el tope de 800 tokens por llamada/);
+    assert.throws(() => verificarPresupuesto({ maxContexto: 251 }), /350 \+ 251 \+ 200 = 801/);
+    assert.throws(() => verificarPresupuesto({ tope: 799 }), /supera el tope de 799/);
   });
 
   test('los fallos también informan tokens', async () => {

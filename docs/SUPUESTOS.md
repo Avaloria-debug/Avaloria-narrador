@@ -371,3 +371,13 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - Registro: `ruta` suma el valor `reformulacion`. El turno en que el código pide reformular genera un registro con esa ruta, origen `codigo` y la pregunta de reformulación como respuesta. Motivo: todo dato llega a Firestore, también las frases que el código no entendió a la primera, que son las que sirven para mejorar la comprensión.
 - El turno que resuelve la frase después va a `grupo_1` (o `grupo_2` si pasó a la IA) con `intento_reformulacion: true`.
 - Se cambiaron `docs/vocabulario-v1.md` (sección 13) y la escalera de `docs/sistema-registro-aprendizaje-narrador.md` para decir lo mismo. Esto reemplaza la nota anterior sobre la diferencia con la escalera.
+
+### Tope de tokens por llamada, cerrado a 800
+- Cálculo: 350 de mensaje de sistema + 250 de contexto + 200 de salida = 800. `TOPE_TOKENS_LLAMADA = 800`.
+- La llamada manda `max_completion_tokens: 200`. Sigue sin verificar en la documentación de Groq que ese sea el nombre del parámetro para `openai/gpt-oss-120b`. Esto reemplaza el 400 de la nota anterior.
+- Mensaje de sistema: máximo 350 tokens estimados. Medía 380; se acortó sin cambiar las reglas y ahora mide 348 (un token cada 3,5 caracteres).
+- Al cargar `narrador/ia.js` se comprueba el presupuesto: si el mensaje de sistema pasa de 350, o si 350 + 250 + 200 supera el tope, el módulo lanza un error y no carga. No se comprueba en cada llamada.
+- Contexto: máximo 250 tokens estimados. Si se pasa con 3 acciones, se recorta a las últimas 2. Si sigue pasando, falla: `armarContexto` lanza `ErrorDeContexto` y `pedirRespuestaIA` no llama a Groq y devuelve `texto: null` con motivo `contexto_largo`, para que el llamador use plantilla. Ya no se recortan los demás datos ni la frase del jugador. Esto reemplaza la nota anterior sobre el recorte.
+- Consecuencia: una frase del jugador muy larga (del orden de 300 caracteres o más, según la escena) no llega a la IA y se responde con plantilla.
+- Los tokens reales (`usage` de la respuesta) se comparan con el tope de 800 cuando haya una clave real; hasta entonces todo es estimación. El resultado de cada llamada ya informa `tokens.total` y `tokens.dentroDelTope`.
+- El texto final sigue limitado a 600 caracteres y 1 a 3 oraciones.
