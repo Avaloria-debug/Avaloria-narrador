@@ -1,0 +1,75 @@
+// Reglas de Firestore de Crónicas de Avaloria.
+// Verificadas en el emulador de Firestore (2026-11-15) con tests/reglas/registros.rules.test.js.
+// SIN VERIFICAR en el proyecto real ni en el simulador de la consola.
+// No se publica nada desde el repo: este archivo solo queda listo.
+//
+// El bloque de partidas es el de persistencia/firestore.rules, sin cambios.
+// El bloque de registros es del narrador (docs/prompt-maestro-fable-narrador-v3.md, 5.8).
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /partidas/{codigo} {
+      allow read: if request.auth != null
+                  && codigo.matches('[2-9A-HJKMNP-Z]{6}');
+      allow create, update: if request.auth != null
+                  && codigo.matches('[2-9A-HJKMNP-Z]{6}')
+                  && request.resource.data.codigoPartida == codigo
+                  && request.resource.data.keys().hasOnly([
+                       'versionEsquema', 'codigoPartida', 'ultimaModificacion',
+                       'jugador', 'npcs', 'escenas', 'eventos', 'sucesos',
+                       'estadoMundo', 'estadoInternoNPCs', 'estadoInternoSucesos'
+                     ]);
+      allow delete: if false;
+    }
+
+    // ---- Registros del narrador ----
+
+    // Uid de la cuenta del administrador: el único que puede leer registros.
+    // REEMPLAZAR antes de publicar (docs/PENDIENTES.md).
+    function ADMIN_UID() {
+      return 'REEMPLAZAR_POR_TU_UID';
+    }
+
+    function camposDeRegistro() {
+      return ['id', 'fecha', 'escena', 'estado_escena', 'ultimos_turnos', 'texto_jugador', 'ruta',
+              'intento_reformulacion', 'intencion_detectada', 'origen_respuesta', 'respuesta_mostrada',
+              'revision', 'notas', 'contaminacion'];
+    }
+
+    function turnoValido(turnos, i) {
+      return turnos.size() <= i || (turnos[i] is string && turnos[i].size() <= 200);
+    }
+
+    // Forma del registro: docs/vocabulario-v1.md, sección 13. Mismos límites que narrador/registroFirestore.js.
+    // Tamaño: los límites por campo suman menos de 16 KB (6000 + 4000 bytes de texto; el resto, menos de 4 KB).
+    function registroValido(d, idDocumento) {
+      return d.keys().hasOnly(camposDeRegistro())
+          && d.keys().hasAll(camposDeRegistro())
+          && d.id is string && d.id == idDocumento
+          && d.fecha is string && d.fecha.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}')
+          && d.escena is string && d.escena.size() > 0 && d.escena.size() <= 100
+          && d.estado_escena is string && d.estado_escena.size() > 0 && d.estado_escena.size() <= 100
+          && d.ultimos_turnos is list && d.ultimos_turnos.size() <= 3
+          && turnoValido(d.ultimos_turnos, 0) && turnoValido(d.ultimos_turnos, 1) && turnoValido(d.ultimos_turnos, 2)
+          && d.texto_jugador is string && d.texto_jugador.size() > 0 && d.texto_jugador.toUtf8().size() <= 6000
+          && d.ruta in ['grupo_1', 'grupo_2', 'reformulacion']
+          && d.intento_reformulacion is bool
+          && (d.intencion_detectada == null
+              || (d.intencion_detectada is string && d.intencion_detectada.size() > 0 && d.intencion_detectada.size() <= 100))
+          && d.origen_respuesta in ['codigo', 'ia']
+          && (d.origen_respuesta == 'codigo' || (d.ruta == 'grupo_2' && d.intencion_detectada == null))
+          && d.respuesta_mostrada is string && d.respuesta_mostrada.size() > 0 && d.respuesta_mostrada.toUtf8().size() <= 4000
+          && d.revision == 'pendiente'
+          && d.notas == ''
+          && d.contaminacion is bool;
+    }
+
+    match /registros/{idRegistro} {
+      allow create: if request.auth != null
+                    && idRegistro.matches('reg_[0-9]{6,12}')
+                    && registroValido(request.resource.data, idRegistro);
+      allow read: if request.auth != null && request.auth.uid == ADMIN_UID();
+      allow update, delete: if false;
+    }
+  }
+}

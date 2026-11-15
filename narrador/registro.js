@@ -2,7 +2,7 @@
 // Formato: docs/sistema-registro-aprendizaje-narrador.md (sección 3) y docs/vocabulario-v1.md (sección 13).
 // - El texto del jugador se guarda completo, sin limpieza. Solo se lee: nunca es respuesta ni instrucción.
 // - Un registro solo lleva los campos de su formato: nada más (por ejemplo, la clave de Groq) puede entrar.
-// - Sin Firestore: el envío se inyecta. `enviadorANube` adapta la nube en memoria de la beta.
+// - El envío se inyecta. `enviadorANube` adapta la nube en memoria de la beta; Firestore: narrador/registroFirestore.js.
 import { normalizar } from './comprension.js';
 
 export const RUTAS = Object.freeze({ GRUPO_1: 'grupo_1', GRUPO_2: 'grupo_2', REFORMULACION: 'reformulacion' });
@@ -151,13 +151,18 @@ export function registroDeTurno({ entrada, turno, estadoAntes, estadoEscena, res
 
 /**
  * Cola local de registros, en memoria. `enviar(registro)` se inyecta: si rechaza, el registro
- * queda en la cola y se reintenta en el próximo envío. Se envía en orden, de a uno.
+ * queda en la cola con su motivo y se reintenta en el próximo envío. Se envía en orden, de a uno.
+ * - Fallo común (red, permisos): frena el envío; el resto espera al próximo lote.
+ * - Fallo con `invalido === true` (el registro no cumple la forma): no se envía, queda en la cola
+ *   con su motivo y no frena a los que siguen.
  * No se pierden registros mientras la cola exista.
- * @param {{ enviar: (registro: object) => Promise<void>, numeroInicial?: number }} opciones
+ * @param {{ enviar: (registro: object) => Promise<void>, numeroInicial?: number, validarAlAgregar?: boolean }} opciones
+ *   `validarAlAgregar: false` deja la validación a `enviar` (así la conecta narrador/registroFirestore.js).
  */
-export function crearColaDeRegistros({ enviar, numeroInicial = 1 } = {}) {
+export function crearColaDeRegistros({ enviar, numeroInicial = 1, validarAlAgregar = true } = {}) {
   if (typeof enviar !== 'function') throw new TypeError('crearColaDeRegistros necesita una función enviar');
   let cola = [];
+  const motivos = new Map();
   let siguiente = numeroInicial;
   let enviados = 0;
   let enCurso = null;
@@ -165,16 +170,19 @@ export function crearColaDeRegistros({ enviar, numeroInicial = 1 } = {}) {
   async function vaciar() {
     let enviadosAhora = 0;
     let error = null;
-    while (cola.length > 0) {
-      const registro = cola[0];
+    for (const registro of [...cola]) {
       try {
         await enviar(JSON.parse(JSON.stringify(registro)));
       } catch (e) {
-        error = e instanceof Error ? e.message : String(e);
+        const motivo = e instanceof Error ? e.message : String(e);
+        motivos.set(registro, motivo);
+        if (e?.invalido === true) continue;
+        error = motivo;
         break;
       }
       // Sale de la cola recién cuando el envío terminó bien.
       cola = cola.filter((r) => r !== registro);
+      motivos.delete(registro);
       enviadosAhora++;
       enviados++;
     }
@@ -188,21 +196,27 @@ export function crearColaDeRegistros({ enviar, numeroInicial = 1 } = {}) {
     },
     /** Agrega un registro a la cola. No lo envía. */
     agregar(registro) {
-      const errores = validarRegistro(registro);
-      if (errores.length > 0) throw new Error(`registro incompleto: ${errores.join('; ')}`);
-      cola = [...cola, JSON.parse(JSON.stringify(registro))];
+      if (validarAlAgregar) {
+        const errores = validarRegistro(registro);
+        if (errores.length > 0) throw new Error(`registro incompleto: ${errores.join('; ')}`);
+      }
+      cola = [...cola, JSON.parse(JSON.stringify(registro ?? null))];
       return cola.length;
     },
     /** Copia de los registros que faltan enviar, en orden. */
     pendientes() {
       return JSON.parse(JSON.stringify(cola));
     },
+    /** Por qué siguen en la cola los registros cuyo último envío falló: `[{ id, motivo }]`. */
+    motivosPendientes() {
+      return cola.filter((r) => motivos.has(r)).map((r) => ({ id: r?.id ?? null, motivo: motivos.get(r) }));
+    },
     /** Cantidad enviada desde que existe la cola. */
     totalEnviados() {
       return enviados;
     },
     /**
-     * Envía lo pendiente, en orden. Frena en el primer fallo y deja el resto en la cola.
+     * Envía lo pendiente, en orden. Frena en el primer fallo de envío y deja el resto en la cola.
      * Si ya hay un envío en curso, devuelve ese mismo.
      * @returns {Promise<{ enviados: number, pendientes: number, error: string|null }>}
      */

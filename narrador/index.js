@@ -234,7 +234,9 @@ function fechaActual(ahora) {
  * @param {{
  *   groqKey?: string|null,
  *   http?: Function, esperar?: (ms: number) => Promise<void>, ahora?: () => Date|number|string,
+ *   cola?: { agregar: (registro: object) => unknown },
  * }} [opciones] `http`, `esperar` y `ahora` son para tests: por defecto, `fetch` y el reloj del sistema.
+ *   `cola`: la cola de registros (narrador/registroFirestore.js); si llega, el registro del turno se encola.
  * @returns {Promise<{
  *   texto: string, estado: object, tipo: 'narracion'|'reformulacion'|'dialogo_ia'|'error',
  *   registro: object|null, errores: string[],
@@ -355,6 +357,14 @@ export async function narrar(estado, entrada, opciones = {}) {
         numeroRegistro += 1;
       } catch (e) {
         anotar(ERRORES.REGISTRO, e instanceof Error ? e.message : '');
+      }
+      // Cola de envío (narrador/registroFirestore.js), si la interfaz la pasa. Solo encola: no envía.
+      if (registro && typeof opciones?.cola?.agregar === 'function') {
+        try {
+          opciones.cola.agregar(registro);
+        } catch (e) {
+          anotar(ERRORES.REGISTRO, e instanceof Error ? e.message : '');
+        }
       }
     }
 

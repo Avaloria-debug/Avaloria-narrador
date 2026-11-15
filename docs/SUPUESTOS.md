@@ -424,3 +424,14 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - Antes de devolver, el texto se revisa (sin llaves, corchetes, `<` `>` ni palabras con guion bajo). Si no pasa, se usa la plantilla `no_entendido` y se anota `texto_invalido`.
 - La IA no cambia el mundo: en un turno de IA solo cambian `reformulacionPendiente`, la ventana, el número de registro, `iaAgotadaDia` y la semilla.
 - `narrar` devuelve el registro pero no lo encola ni lo envía: eso lo conecta el bloque 5c (Firestore) o la interfaz, con la cola de `registro.js`.
+
+## Bloque 5c: Firestore
+- `narrar` encola el registro solo si recibe la cola en `opciones.cola`; sin cola, se comporta como antes. Encola y no envía: el envío lo dispara la interfaz con `cola.enviarPendientes()`. Esto reemplaza la nota de arriba ("no lo encola ni lo envía"). Si la cola falla, `narrar` no lanza: lo anota en `errores`.
+- El cliente de Firestore es `{ db, doc, setDoc }` (las funciones del SDK web modular). El módulo no lo crea ni inicia sesión.
+- `enviarLote` envía de a un documento, no con un lote atómico: así el fallo de uno no arrastra a los demás.
+- En la cola, un registro inválido queda con su motivo (`motivosPendientes()`), no se envía y no frena a los siguientes. Un fallo de red sí frena el lote, para mantener el orden. La cola conectada no valida al agregar: valida al enviar.
+- Además de la sección 13, para enviar se exige `revision: pendiente` y `notas` vacías (solo Tomás las cambia) y el campo `contaminacion` del bloque 5a.
+- Tamaño: las reglas no pueden medir el documento, así que acotan cada campo: `texto_jugador` 6000 bytes, `respuesta_mostrada` 4000 bytes, ids 100 caracteres, hasta 3 `ultimos_turnos` de 200 caracteres. La suma queda por debajo de 16 KB. Un texto del jugador más largo no se envía y queda en la cola con motivo.
+- Id del documento: `reg_` más 6 dígitos; las reglas aceptan de 6 a 12 por si una partida pasa de 999999.
+- `firestore.rules` de la raíz copia sin cambios el bloque de partidas de `persistencia/firestore.rules`, que no se tocó. Se agregó `firebase.json` solo para que el emulador encuentre las reglas.
+- La lectura la hace solo el administrador; como `update` está prohibido para todos, marcar `revision` y `notas` se hace fuera de las reglas (consola o Admin SDK).
