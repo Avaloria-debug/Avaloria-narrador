@@ -29,3 +29,17 @@ El narrador por código está completo en código y probado de punta a punta (`n
 ## 5. Política de privacidad
 - Los registros guardan el texto completo del jugador. Antes de compartir el juego fuera del grupo actual hay que definir la política de privacidad y el texto de consentimiento (`docs/sistema-registro-aprendizaje-narrador.md`, sección 6).
 - Hasta entonces, solo la cuenta de administrador lee los registros.
+
+## 6. Página de prueba aislada (`narrador/prueba/`)
+No es la interfaz de Avaloria: no usa `ui/`, `index.html` ni Firestore. Sirve para probar el narrador a mano en un navegador.
+
+Cómo se abre:
+1. En la raíz del repo: `python -m http.server 8000` (o `python3`). No sirve abrir el archivo con doble clic: los módulos ES y el `fetch` del contenido necesitan un servidor.
+2. En el navegador: `http://localhost:8000/narrador/prueba/`.
+3. "Crear partida". Después, escribir en el campo de texto o usar los botones de intención (NPC, objeto y destino son opcionales; viajar necesita destino).
+4. "Guardar" y "Cargar" usan IndexedDB del navegador (base `narrador_prueba`).
+5. Clave de Groq (opcional): pegarla y "Guardar clave". Queda en `localStorage` de ese navegador y solo se envía a la API de Groq. Sin clave, el narrador funciona en modo código.
+6. El panel muestra el texto, el tipo, los errores, los tokens de la llamada a la IA (si hubo) y el registro del turno. Los registros se acumulan en la cola en memoria: se pierden al recargar.
+
+Comprobado en Chromium (automático, sin persona): carga del contenido por `fetch`, botones, texto libre, IndexedDB real (guardar, recargar, cargar) y `localStorage`. La llamada a Groq se probó con una respuesta simulada.
+Sin verificar: Groq real desde el navegador (clave real, CORS, forma de `usage`), y otros navegadores.

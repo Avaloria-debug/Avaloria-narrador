@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Narrador — página de prueba</title>
+<style>
+  body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; max-width: 900px; margin-inline: auto; line-height: 1.4; }
+  h1 { font-size: 1.2rem; } h2 { font-size: 1rem; margin: 0 0 6px; }
+  section { border: 1px solid #8888; border-radius: 6px; padding: 12px; margin-bottom: 12px; }
+  .fila { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 6px; }
+  input[type=text], input[type=password] { flex: 1; min-width: 180px; padding: 6px; }
+  button { padding: 6px 10px; cursor: pointer; }
+  button:disabled { cursor: default; }
+  pre { background: #8882; padding: 8px; overflow: auto; margin: 4px 0 10px; white-space: pre-wrap; word-break: break-word; }
+  #texto { font-size: 1.05rem; min-height: 1.4em; }
+  .nota { font-size: .85rem; opacity: .75; }
+  dt { font-weight: 600; margin-top: 8px; } dd { margin: 0; }
+</style>
+</head>
+<body>
+<h1>Narrador — página de prueba</h1>
+<p class="nota">Página aislada: no es la interfaz de Avaloria. Sin Firestore: los registros quedan en memoria.</p>
+
+<section>
+  <h2>Partida</h2>
+  <div class="fila">
+    <button id="crear">Crear partida</button>
+    <button id="guardar" disabled>Guardar</button>
+    <button id="cargar">Cargar</button>
+    <span id="aviso" class="nota"></span>
+  </div>
+  <div id="resumen" class="nota"></div>
+</section>
+
+<section>
+  <h2>Clave de Groq</h2>
+  <div class="fila">
+    <input id="clave" type="password" autocomplete="off" spellcheck="false" placeholder="gsk_...">
+    <button id="guardarClave">Guardar clave</button>
+    <button id="borrarClave">Borrar clave</button>
+  </div>
+  <div class="nota">Se guarda en localStorage de este navegador. Solo se envía a la API de Groq.</div>
+</section>
+
+<section>
+  <h2>Turno</h2>
+  <form id="formTexto" class="fila">
+    <input id="entrada" type="text" autocomplete="off" placeholder="Escribí qué hacés" disabled>
+    <button id="enviar" disabled>Enviar</button>
+  </form>
+  <div class="fila">
+    <label>NPC <select id="npc"></select></label>
+    <label>Objeto <select id="objeto"></select></label>
+    <label>Destino <select id="destino"></select></label>
+  </div>
+  <div id="intenciones" class="fila"></div>
+</section>
+
+<section>
+  <h2>Panel</h2>
+  <dl>
+    <dt>Texto del narrador</dt><dd id="texto"></dd>
+    <dt>Tipo de respuesta</dt><dd id="tipo"></dd>
+    <dt>Errores</dt><dd><pre id="errores"></pre></dd>
+    <dt>Tokens de la llamada a la IA</dt><dd><pre id="tokens"></pre></dd>
+    <dt>Registro del turno</dt><dd><pre id="registro"></pre></dd>
+    <dt>Cola en memoria</dt><dd id="cola"></dd>
+  </dl>
+</section>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

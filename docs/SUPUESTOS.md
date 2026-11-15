@@ -447,3 +447,14 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - La UID cargada en `firestore.rules` (función `ADMIN_UID`) es la de la cuenta del administrador: es la única que puede leer la colección `registros`. El usuario anónimo (el jugador) puede crear registros, pero no tiene permiso de lectura.
 - La misma UID se cargó en `tests/reglas/registros.rules.test.js`, porque la prueba de lectura la necesita.
 - El comentario de `firestore.rules` que dice "REEMPLAZAR antes de publicar" quedó viejo: no se tocó porque el pedido fue cambiar solo la UID.
+
+## Página de prueba (`narrador/prueba/`)
+- "Intenciones de la escena actual": el contenido no asigna intenciones a escenas, así que se muestra un botón por cada una de las 24 intenciones. Lo que cambia con la escena son las listas de NPC presentes, objetos aplicables y destinos.
+- Destinos del botón viajar: las `salidas` de la escena actual. Para ir a otro destino se usa el texto libre.
+- La etiqueta de cada botón es la primera forma de la intención. Los rótulos de la página (botones, títulos, avisos de guardado) no son narración y están en el HTML y en `app.js`.
+- Tokens: `narrar` no devuelve los tokens, así que la página pasa su propio `http` (el `fetch` del navegador) y lee `usage` de la respuesta de Groq. Si hubo reintento, se suman. Solo se anota el estado HTTP y el uso; nunca el pedido ni la clave.
+- La partida se guarda como texto JSON en IndexedDB, base `narrador_prueba`, clave `partida` (una sola partida). No usa el servicio de persistencia de la beta ni códigos de partida.
+- La clave de Groq se guarda en `localStorage` bajo `narrador_prueba_groq_key`.
+- La cola es `crearColaDeRegistros` sin validar al agregar y con un `enviar` que nunca se llama: solo acumula.
+- El aviso de IA agotada no se muestra como texto aparte: se ve `sin_ia` en los errores del panel.
+- La lógica pura está en `narrador/prueba/panel.js` (con test); `app.js` solo toca el DOM y se prueba a mano.
