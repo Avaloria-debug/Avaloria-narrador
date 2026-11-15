@@ -51,3 +51,8 @@ Cada commit tiene que dejar la suite en verde.
 ## Estado
 - Diseño y contenido: cerrados.
 - Código del narrador: pendiente. Empezar por el bloque 1.
+
+## Cuándo correr tests
+- Mientras cambiás un módulo: solo su archivo de test (node --test narrador/<modulo>.test.js).
+- Al cerrar un bloque o antes de un commit que se sube: npm test completo y node narrador/validarContenido.js.
+- No corras la suite completa por cada cambio chico.
