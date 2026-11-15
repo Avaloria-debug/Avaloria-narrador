@@ -134,10 +134,11 @@ function parametrosPendientesDe(verbo) {
   return pendientes;
 }
 
-// Orden de 2.3: más palabras; después, la forma completa (con sus palabras vacías)
-// presente en la frase; después, la que aparece primero; después, menos typos.
+// Orden de 2.3: más palabras; después, menos typos (una coincidencia exacta le gana a una
+// con typo); después, la forma completa (con sus palabras vacías) presente en la frase;
+// después, la que aparece primero.
 function compararCandidatos(a, b) {
-  return b.palabras - a.palabras || b.formaCompleta - a.formaCompleta || a.inicio - b.inicio || a.distancia - b.distancia;
+  return b.palabras - a.palabras || a.distancia - b.distancia || b.formaCompleta - a.formaCompleta || a.inicio - b.inicio;
 }
 
 /**
@@ -329,6 +330,7 @@ const idDeCiudad = (ciudad) => `ciudad_${normalizar(ciudad).replace(/ /g, '_')}`
  * - `camino`: escenas de camino con horas de viaje.
  * - `ciudad`: las ciudades (`ciudad_*`).
  * - `escena`: escenas de ciudad (las que tienen `ciudad`).
+ * - `lugar`: lugares de camino (sin ciudad y sin horas de viaje).
  * @param {{id: string, nombre: string, ciudad?: string|null, viajeHoras?: number}[]} escenas
  */
 export function destinosDeViaje(escenas) {
@@ -338,6 +340,9 @@ export function destinosDeViaje(escenas) {
     const terminos = tokenizar(e.nombre);
     if (typeof e.viajeHoras === 'number') {
       destinos.push({ id: e.id, tipo: 'camino', nombre: e.nombre, terminos });
+    }
+    if (typeof e.viajeHoras !== 'number' && !(typeof e.ciudad === 'string' && e.ciudad !== '')) {
+      destinos.push({ id: e.id, tipo: 'lugar', nombre: e.nombre, terminos });
     }
     if (typeof e.ciudad === 'string' && e.ciudad !== '') {
       const ciudadId = idDeCiudad(e.ciudad);
@@ -355,8 +360,8 @@ function nombraDestino(entrada, d) {
   const trae = (t) => entrada.some((p) => coincidePalabra(p, t) >= 0);
   // Camino: nombre completo, o su dirección sola si está escrita exacta ("norte").
   if (d.tipo === 'camino') return d.terminos.every(trae) || entrada.includes(d.terminos.at(-1));
-  // Escena de ciudad: la primera palabra de su nombre ("taberna", "archivo").
-  if (d.tipo === 'escena') return d.terminos.length > 0 && trae(d.terminos[0]);
+  // Escena de ciudad o lugar de camino: la primera palabra de su nombre ("taberna", "lago").
+  if (d.tipo === 'escena' || d.tipo === 'lugar') return d.terminos.length > 0 && trae(d.terminos[0]);
   return d.terminos.every(trae);
 }
 

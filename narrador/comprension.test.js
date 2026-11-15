@@ -242,13 +242,22 @@ describe('sección 2.4 — viajar', () => {
   });
 
   test('lugar que no es destino: reformula', () => {
-    assert.deepEqual(resolverDestino('ir al lago', contenido.escenas), {
+    assert.deepEqual(resolverDestino('ir a la casa', contenido.escenas), {
       estado: 'reformular',
       motivo: MOTIVOS.FALTA_DESTINO,
       datos: { nombres: [] },
     });
-    assert.equal(resolverDestino('ir al puente de la aduana', contenido.escenas).motivo, MOTIVOS.FALTA_DESTINO);
-    assert.equal(resolverDestino('ir a la casa', contenido.escenas).motivo, MOTIVOS.FALTA_DESTINO);
+    assert.equal(resolverDestino('ir a la montaña', contenido.escenas).motivo, MOTIVOS.FALTA_DESTINO);
+  });
+
+  test('lugar de camino por la primera palabra de su nombre', () => {
+    assert.equal(resolverDestino('ir al lago', contenido.escenas).destino, 'escena_lago_espejos');
+    assert.equal(resolverDestino('ir al puente de la aduana', contenido.escenas).destino, 'escena_puente_aduana');
+    assert.equal(resolverDestino('ir al cruce', contenido.escenas).destino, 'escena_cruce_colinas');
+    assert.deepEqual(
+      destinosDeViaje(contenido.escenas).filter((d) => d.tipo === 'lugar').map((d) => d.id).sort(),
+      ['escena_cruce_colinas', 'escena_lago_espejos', 'escena_puente_aduana'],
+    );
   });
 
   test('dos destinos en la frase: reformula con los nombres', () => {
@@ -562,8 +571,8 @@ describe('sección 7 — verificación', () => {
     });
   });
 
-  test('"Ir al lago" no viaja: reformula el destino', () => {
-    assert.deepEqual(decidir('Ir al lago', ctx()), {
+  test('"Ir a la casa" no viaja: reformula el destino', () => {
+    assert.deepEqual(decidir('Ir a la casa', ctx()), {
       tipo: 'reformular',
       motivo: MOTIVOS.FALTA_DESTINO,
       intencionId: 'intencion_viajar',
@@ -599,6 +608,7 @@ describe('destinos dentro de la ciudad', () => {
       horas: 1,
       escenaLlegada: 'escena_taberna_lareth',
       caminos: [],
+      escenasDeRuta: ['escena_taberna_lareth'],
     });
   });
 
@@ -608,6 +618,7 @@ describe('destinos dentro de la ciudad', () => {
       horas: 1,
       escenaLlegada: 'escena_archivo_real',
       caminos: [],
+      escenasDeRuta: ['escena_archivo_real'],
     });
   });
 
@@ -617,6 +628,7 @@ describe('destinos dentro de la ciudad', () => {
       horas: 36,
       caminos: ['escena_camino_norte'],
       escenaLlegada: 'escena_plaza_cambistas',
+      escenasDeRuta: ['escena_camino_norte', 'escena_plaza_cambistas'],
     });
   });
 
@@ -656,7 +668,7 @@ describe('reformulaciones — texto en el contenido', () => {
       ['usar', ctx()],
       ['usar', ctx({ objetosAplicables: [objeto('objeto_cuerda'), objeto('objeto_daga')] })],
       ['usar el pan', ctx({ objetosAplicables: panes })],
-      ['ir al lago', ctx()],
+      ['ir a la casa', ctx()],
       ['viajar a Lareth o a Halenor', ctx()],
     ];
     const vistos = new Set();
@@ -703,5 +715,20 @@ describe('decidir — contexto', () => {
     const antes = structuredClone(c);
     decidir('atacar al panadero', c);
     assert.deepEqual(c, antes);
+  });
+});
+
+describe('sección 2.3 — una coincidencia exacta le gana a una con typo', () => {
+  test('"ayudar a Maren" es ayudar, no "saludar a" con typo', () => {
+    assert.equal(coincidirIntencion('ayudar a Maren', intenciones).intencionId, 'intencion_ayudar');
+    assert.equal(coincidirIntencion('saludar a Maren', intenciones).intencionId, 'intencion_hablar_con');
+  });
+
+  test('toda forma seguida de un nombre de NPC resuelve a su intención', () => {
+    for (const intencion of intenciones) {
+      for (const forma of intencion.formas) {
+        assert.equal(coincidirIntencion(`${forma} Ysolde`, intenciones)?.intencionId, intencion.id, forma);
+      }
+    }
   });
 });

@@ -386,12 +386,15 @@ describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
     hay(c, /plantillas\.reformulacion: clave sin motivo otro_motivo/);
   });
 
-  test('reglas.viajeHorasIntraCiudad: obligatorio y mayor que 0', () => {
+  test('reglas.viajeHorasIntraCiudad y viajeHorasLugarCamino: obligatorios y mayores que 0', () => {
     assert.equal(base.reglas.viajeHorasIntraCiudad, 1);
-    for (const valor of [undefined, 0, -1, '1', null]) {
-      const c = copia();
-      c.reglas.viajeHorasIntraCiudad = valor;
-      hay(c, /reglas\.viajeHorasIntraCiudad: falta o no es un número mayor que 0/);
+    assert.equal(base.reglas.viajeHorasLugarCamino, 1);
+    for (const regla of ['viajeHorasIntraCiudad', 'viajeHorasLugarCamino']) {
+      for (const valor of [undefined, 0, -1, '1', null]) {
+        const c = copia();
+        c.reglas[regla] = valor;
+        hay(c, new RegExp(`reglas\\.${regla}: falta o no es un número mayor que 0`));
+      }
     }
   });
 });

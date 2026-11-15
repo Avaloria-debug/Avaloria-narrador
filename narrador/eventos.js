@@ -136,8 +136,12 @@ export function dispararEventos(activos, datos) {
     if (excluidos.has(`${evento.id}@${escenaId}`)) return;
     if (estaActivo(resultado, evento.id, escenaId) || !cupo(resultado, escenaId)) return;
     const activo = activarEvento(evento, escenaId, inicio);
-    // Empezó y terminó dentro del mismo salto de reloj.
-    if (activo.horaFin && comparar(inicio, reloj) < 0 && yaPaso(reloj, activo.horaFin)) return;
+    // Empezó y terminó dentro del mismo salto de reloj. Para un evento por turnos,
+    // cada turno se cuenta como una hora.
+    if (comparar(inicio, reloj) < 0) {
+      if (activo.horaFin && yaPaso(reloj, activo.horaFin)) return;
+      if (activo.turnosRestantes !== null && comparar(reloj, inicio) >= activo.turnosRestantes * 60) return;
+    }
     resultado.push(activo);
     disparados.push(activo);
   };

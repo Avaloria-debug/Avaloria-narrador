@@ -100,6 +100,7 @@ El parámetro destino de `viajar` acepta tres tipos de id:
 | Ciudad | `ciudad_ardenhall`, `ciudad_lareth`, `ciudad_halenor` |
 | Escena de camino | `escena_camino_norte`, `escena_camino_este`, `escena_camino_sur` |
 | Escena de ciudad | `escena_mercado_circular`, `escena_archivo_real`, `escena_plaza_cambistas`, `escena_taberna_lareth`, `escena_biblioteca_publica`, `escena_aula_cartografia` |
+| Lugar de camino | `escena_lago_espejos`, `escena_puente_aduana`, `escena_cruce_colinas` |
 
 Costo del viaje, en horas del reloj:
 
@@ -107,6 +108,7 @@ Costo del viaje, en horas del reloj:
 |---|---|---|
 | `reglas.viajeHorasIntraCiudad` | 1 | El destino es una escena de la misma ciudad que la escena actual |
 | `reglas.viajeHorasPorCamino` | 36, 44 o 52 según el camino | Cualquier otro destino. Se suman las horas de cada camino de la ruta |
+| `reglas.viajeHorasLugarCamino` | 1 | Cada tramo entre un lugar de camino y su camino |
 | — | 0 | El destino es la escena actual, o la ciudad donde ya está el jugador |
 
 Tipos de viaje en el código: `intra_ciudad`, `por_camino`, `misma_escena` (con motivo `ya_en_destino`), `sin_ruta`.

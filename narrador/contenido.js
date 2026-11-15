@@ -373,9 +373,11 @@ export function validarContenido(contenido) {
       }
     }
   }
-  const horasIntra = contenido.reglas?.viajeHorasIntraCiudad;
-  if (esObjeto(contenido.reglas) && !(typeof horasIntra === 'number' && horasIntra > 0)) {
-    err(`reglas.viajeHorasIntraCiudad: falta o no es un número mayor que 0`);
+  for (const regla of ['viajeHorasIntraCiudad', 'viajeHorasLugarCamino']) {
+    const horas = contenido.reglas?.[regla];
+    if (esObjeto(contenido.reglas) && !(typeof horas === 'number' && horas > 0)) {
+      err(`reglas.${regla}: falta o no es un número mayor que 0`);
+    }
   }
 
   // --- Transiciones ---

@@ -118,7 +118,7 @@ Resultado: `narrador/comprension.js` implementa `docs/comprension-v1.md`. Los al
 ### Typos e intención
 - La tolerancia se calcula con el largo de la palabra más corta de las dos (la escrita y la del catálogo). Una palabra de 3 letras nunca coincide con una de 4 por typo.
 - La distancia es Levenshtein simple: cambiar dos letras de lugar cuenta 2.
-- Formas que comparten palabras de la frase compiten entre sí, con este orden: más palabras; después, la forma completa (con sus palabras vacías) presente en la frase; después, la que aparece primero; después, menos typos. El segundo criterio separa "irme" (retirarse) de "irme a" (viajar), que sin palabras vacías son iguales.
+- Formas que comparten palabras de la frase compiten entre sí, con este orden: más palabras; después, menos typos; después, la forma completa (con sus palabras vacías) presente en la frase; después, la que aparece primero. El segundo criterio hace que una coincidencia exacta le gane a una con typo ("ayudar a Maren" es ayudar, no "saludar a" con dos letras cambiadas; corregido en el bloque 3b). El tercero separa "irme" (retirarse) de "irme a" (viajar), que sin palabras vacías son iguales.
 - Formas que no comparten palabras son dos intenciones en la misma frase: se responde a la primera por posición y la segunda va en `repetirIntencionId`.
 - Si dos intenciones distintas empatan en todo, se reformula (`intencion_ambigua`). Con el catálogo actual no pasa.
 - "me voy a Halenor" se entiende como retirarse, porque "me voy" es una forma de retirarse en el catálogo.
@@ -249,3 +249,34 @@ Resultado: las salidas del contenido son simétricas y el viaje cobra cada camin
 - El costo no depende de por dónde entró el jugador al camino: no se guarda el origen del viaje.
 - Los lugares de camino (lago, puente, cruce) están sobre su camino: ir del lago al camino del norte cuesta 0 horas, y del lago a Lareth o a Ardenhall, 18. Que moverse entre el camino y su lugar no gaste reloj queda a revisar en el bloque 3b.
 - Viajar desde una ciudad a otra saliendo de la escena que no toca el camino (del archivo a Lareth) no suma la hora dentro de la ciudad.
+
+## Bloque 3b — resolver y turno
+Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, con sus tests. El turno devuelve resultados estructurados, sin texto. `turno.js` usa `npcs.js`, `conocimientos.js`, `efectosEventos.js` y `movimientoNpcs.js`; esos cuatro módulos ya están escritos y con tests, y su revisión queda para la próxima sesión.
+
+### Viaje
+- `reglas.viajeHorasLugarCamino = 1`: cada tramo entre un lugar de camino (lago, puente, cruce) y su camino cuesta 1 hora. El validador lo exige. Del lago a Lareth: 1 + 18 = 19. Reemplaza la nota del bloque 3a.1 que dejaba ese tramo en 0.
+- Los lugares de camino ahora son destino de `viajar` por texto, por la primera palabra de su nombre ("ir al lago"). Sin eso no había forma de llegar por texto a Ysolde, Darío ni Oren. El caso "no es destino" de `comprension-v1.md` pasó a ser "ir a la casa".
+
+### Resolver
+- Horas de reloj por acción que no es viaje: 1. No está en el contenido ni en los documentos; es la constante `HORAS_POR_ACCION` de `resolver.js`. Sin esto el reloj solo avanzaría al viajar y los eventos por hora casi no se dispararían. A revisar: conviene pasarla a `reglas`.
+- Una reformulación y un turno que pasa a IA no gastan reloj. Viajar al lugar donde ya se está, tampoco.
+- Con chequeo (60% de éxito): los 9 verbos de `transiciones`, más huir, ocultarse, avanzar con cautela, explorar, observar y examinar un objeto.
+- Sin chequeo: trabajar (éxito), comprar (éxito o fallo según el dinero), usar (éxito), viajar (éxito, o fallo si está bloqueado o no hay ruta), leer (éxito si activa la marca; si no, neutro), examinar sin objeto (neutro), descansar, retirarse, abortar y rendirse (neutro).
+- Comprar: el objeto tiene que venderse en la escena actual. Se paga en la moneda del precio, sin conversión. El jugador no tiene oro y nada en el contenido da plata después del inicio: el arco corto (1 de oro) no se puede comprar, y la plata inicial (0 a 5) no se repone. A revisar.
+- Usar: vale para cualquier objeto del inventario y para un objeto narrativo de la escena donde aparece (los narrativos no se compran ni se levantan). Gasta un uso si el objeto tiene usos; al llegar a 0 sale del inventario. La brújula no tiene usos y no se gasta.
+- Un objeto del inventario que acompaña a otro verbo con chequeo (atacar con un arma, negociar ofreciendo algo) también gasta un uso. Examinar no gasta.
+- Huir con éxito mueve a la primera escena de `salidas` de la escena actual y cuesta 1 hora, no el costo de viaje.
+- Un viaje bloqueado o sin ruta falla, no mueve y cuesta 1 hora.
+- Una acción bloqueada por un evento falla sin chequeo y sin efectos sobre el NPC.
+
+### Turno
+- Estado: el de `cierre-diseno-v1.md` sección 5, más `temor` en cada NPC y `reformulacionPendiente`. La posición de los NPCs no se guarda: sale del reloj.
+- Al crear el estado se disparan los eventos por hora de las 08:00 (hoy, la feria de intercambio). El azar empieza en el primer turno.
+- Botones: usan las mismas reglas de parámetros que el texto. Un botón nunca pasa a IA: siempre reformula.
+- Usar un objeto narrativo se lo muestra a su NPC asociado si está en la escena, sin nombrarlo. Si revela, el resultado es éxito; si no, fallo.
+- Hablar con éxito revela el primer conocimiento del NPC que cumpla sus condiciones, contando la relación ya actualizada en ese turno.
+- Negociar "con valor" (15 en vez de 10): cuando el jugador ofrece un objeto que tiene a mano.
+- Calmar la situación no elige NPC por texto: solo actúa sobre un NPC si llega por botón con `npcId`.
+- Temor: el campo existe y calmar lo baja, pero nada en el contenido lo sube. A definir.
+- Un evento por hora con duración en turnos que se habría disparado durante un salto de reloj no se activa si pasaron más horas que sus turnos (cada turno se cuenta como una hora).
+- `resolverNpcObjetivo` sigue sin la regla "fuente de amenaza" de la beta.

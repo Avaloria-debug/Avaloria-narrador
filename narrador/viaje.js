@@ -20,8 +20,8 @@ const idDeCiudad = (ciudad) =>
  * Ruta con menos horas entre la escena actual y cualquiera de las escenas meta.
  *
  * Costo: cada tramo entre un camino y una escena de ciudad cuesta la mitad de las horas
- * de ese camino (reglas.viajeHorasPorCamino). Los demás tramos (dentro de la ciudad, o
- * entre un camino y un lugar de camino) no suman.
+ * de ese camino (reglas.viajeHorasPorCamino). Cada tramo entre un camino y su lugar de
+ * camino cuesta reglas.viajeHorasLugarCamino. Los tramos dentro de la ciudad no suman.
  * - Cruzar un camino de ciudad a ciudad: sus dos tramos, o sea sus horas completas, una vez.
  * - Entrar a un camino y quedarse, o salir de un camino donde ya se estaba: la mitad,
  *   redondeada hacia arriba.
@@ -37,9 +37,16 @@ function rutaPorCamino(origenId, metas, contenido) {
     if (esCamino(b) && ciudadDe(porId.get(a)) !== null) return b;
     return null;
   };
+  const horasLugar = contenido.reglas?.viajeHorasLugarCamino ?? 0;
+  // ¿El tramo une un camino con un lugar de camino (escena sin ciudad que no es camino)?
+  const esTramoDeLugar = (a, b) => {
+    const lugar = (id) => !esCamino(id) && ciudadDe(porId.get(id)) === null;
+    return (esCamino(a) && lugar(b)) || (esCamino(b) && lugar(a));
+  };
   const costoTramo = (a, b) => {
     const camino = caminoDelTramo(a, b);
-    return camino === null ? 0 : horasCamino[camino] / 2;
+    if (camino !== null) return horasCamino[camino] / 2;
+    return esTramoDeLugar(a, b) ? horasLugar : 0;
   };
 
   const mejor = new Map([[origenId, { horas: 0, camino: [origenId] }]]);
@@ -71,16 +78,19 @@ function rutaPorCamino(origenId, metas, contenido) {
 
   // Horas por camino: completas si la ruta usa sus dos tramos; la mitad, hacia arriba, si usa uno.
   const tramos = new Map();
+  let horasDeLugares = 0;
   for (let i = 1; i < elegida.camino.length; i++) {
     const camino = caminoDelTramo(elegida.camino[i - 1], elegida.camino[i]);
     if (camino !== null) tramos.set(camino, (tramos.get(camino) ?? 0) + 1);
+    else if (esTramoDeLugar(elegida.camino[i - 1], elegida.camino[i])) horasDeLugares += horasLugar;
   }
-  let horas = 0;
+  let horas = horasDeLugares;
   for (const [camino, n] of tramos) horas += n >= 2 ? horasCamino[camino] : Math.ceil(horasCamino[camino] / 2);
   return {
     horas,
     caminos: elegida.camino.filter(esCamino),
     escenaLlegada: elegida.escenaLlegada,
+    escenasDeRuta: elegida.camino.slice(1),
   };
 }
 
@@ -88,7 +98,8 @@ function rutaPorCamino(origenId, metas, contenido) {
  * @param {string} destino id de escena o `ciudad_*`
  * @param {string} escenaActualId
  * @param {{ escenas: object[], reglas: object }} contenido
- * @returns {{ tipo: string, horas: number|null, escenaLlegada: string|null, caminos: string[], motivo?: string }}
+ * @returns {{ tipo: string, horas: number|null, escenaLlegada: string|null, caminos: string[],
+ *   escenasDeRuta: string[], motivo?: string }} `escenasDeRuta`: escenas por las que pasa, sin la de partida.
  *   `misma_escena`: el jugador ya está en el destino (la escena, o una escena de esa ciudad). 0 horas, motivo `ya_en_destino`.
  *   `intra_ciudad`: otra escena de la ciudad de la escena actual. Cuesta reglas.viajeHorasIntraCiudad.
  *   `por_camino`: cualquier otro destino. Cuesta la suma de las horas de los caminos de la ruta, cada uno una vez
@@ -100,11 +111,18 @@ export function clasificarViaje(destino, escenaActualId, contenido) {
   const actual = escenas.find((e) => e.id === escenaActualId);
   const meta = escenas.find((e) => e.id === destino);
   const metas = meta ? [meta.id] : escenas.filter((e) => ciudadDe(e) && idDeCiudad(e.ciudad) === destino).map((e) => e.id);
-  const sinRuta = { tipo: TIPOS_VIAJE.SIN_RUTA, horas: null, escenaLlegada: null, caminos: [] };
+  const sinRuta = { tipo: TIPOS_VIAJE.SIN_RUTA, horas: null, escenaLlegada: null, caminos: [], escenasDeRuta: [] };
   if (!actual || metas.length === 0) return sinRuta;
 
   if (metas.includes(escenaActualId)) {
-    return { tipo: TIPOS_VIAJE.MISMA_ESCENA, horas: 0, escenaLlegada: escenaActualId, caminos: [], motivo: YA_EN_DESTINO };
+    return {
+      tipo: TIPOS_VIAJE.MISMA_ESCENA,
+      horas: 0,
+      escenaLlegada: escenaActualId,
+      caminos: [],
+      escenasDeRuta: [],
+      motivo: YA_EN_DESTINO,
+    };
   }
   if (meta && ciudadDe(actual) !== null && ciudadDe(actual) === ciudadDe(meta)) {
     return {
@@ -112,6 +130,7 @@ export function clasificarViaje(destino, escenaActualId, contenido) {
       horas: contenido.reglas.viajeHorasIntraCiudad,
       escenaLlegada: meta.id,
       caminos: [],
+      escenasDeRuta: [meta.id],
     };
   }
   const ruta = rutaPorCamino(escenaActualId, metas, contenido);

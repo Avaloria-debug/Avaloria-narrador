@@ -549,3 +549,24 @@ describe('eventos — prueba de carga con los 70 del contenido', () => {
     assert.ok(cierres > 100);
   });
 });
+
+describe('eventos — por hora y con duración en turnos, tras un salto de reloj', () => {
+  const datos = (antes, despues) => ({
+    contenido: { ...contenido, eventos: [contenido.eventos.find((e) => e.id === 'evento_cierre_puerta')] },
+    relojAntes: antes,
+    reloj: despues,
+    rng: () => 0.99,
+    escenaJugadorId: 'escena_plaza_cambistas',
+  });
+
+  test('si pasaron más horas que sus turnos, no se activa', () => {
+    // Cierre de la puerta: 19:00, 5 turnos. Llegar a la 01:00 es 6 horas después.
+    assert.deepEqual(dispararEventos([], datos({ dia: 1, hora: '13:00' }, { dia: 2, hora: '01:00' })).disparados, []);
+  });
+
+  test('si pasaron menos horas que sus turnos, se activa', () => {
+    const res = dispararEventos([], datos({ dia: 1, hora: '13:00' }, { dia: 1, hora: '22:00' }));
+    assert.equal(res.disparados.length, 2);
+    assert.equal(res.disparados[0].turnosRestantes, 5);
+  });
+});

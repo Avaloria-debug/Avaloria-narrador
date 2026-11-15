@@ -16,6 +16,7 @@ describe('viaje — ya en destino', () => {
       horas: 0,
       escenaLlegada: 'escena_plaza_cambistas',
       caminos: [],
+      escenasDeRuta: [],
       motivo: 'ya_en_destino',
     });
     assert.equal(viaje('escena_camino_sur', 'escena_camino_sur').motivo, YA_EN_DESTINO);
@@ -41,7 +42,13 @@ describe('viaje — dentro de la ciudad', () => {
       ['escena_taberna_lareth', 'escena_plaza_cambistas'],
       ['escena_biblioteca_publica', 'escena_aula_cartografia'],
     ]) {
-      assert.deepEqual(viaje(hasta, desde), { tipo: TIPOS_VIAJE.INTRA_CIUDAD, horas: 1, escenaLlegada: hasta, caminos: [] });
+      assert.deepEqual(viaje(hasta, desde), {
+        tipo: TIPOS_VIAJE.INTRA_CIUDAD,
+        horas: 1,
+        escenaLlegada: hasta,
+        caminos: [],
+        escenasDeRuta: [hasta],
+      });
     }
     const otro = { ...contenido, reglas: { ...contenido.reglas, viajeHorasIntraCiudad: 3 } };
     assert.equal(clasificarViaje('escena_archivo_real', 'escena_mercado_circular', otro).horas, 3);
@@ -64,6 +71,7 @@ describe('viaje — por camino', () => {
         horas,
         caminos: [camino],
         escenaLlegada: llegada,
+        escenasDeRuta: [camino, llegada],
       });
     }
   });
@@ -80,6 +88,7 @@ describe('viaje — por camino', () => {
       horas: 18,
       caminos: ['escena_camino_norte'],
       escenaLlegada: 'escena_camino_norte',
+      escenasDeRuta: ['escena_camino_norte'],
     });
     assert.equal(resto.horas, 18);
     assert.equal(resto.escenaLlegada, 'escena_plaza_cambistas');
@@ -152,11 +161,36 @@ describe('viaje — por camino', () => {
     assert.equal(r.escenaLlegada, 'escena_taberna_lareth');
   });
 
-  test('lugares de camino: están sobre el camino', () => {
-    // Del lago al camino del norte no hay tramo de ciudad: 0 horas.
-    assert.equal(viaje('escena_camino_norte', 'escena_lago_espejos').horas, 0);
-    assert.equal(viaje('ciudad_lareth', 'escena_lago_espejos').horas, 18);
-    assert.equal(viaje('ciudad_ardenhall', 'escena_lago_espejos').horas, 18);
+  test('lugar de camino: 1 hora entre el lugar y su camino', () => {
+    assert.equal(contenido.reglas.viajeHorasLugarCamino, 1);
+    for (const [lugar, camino] of [
+      ['escena_lago_espejos', 'escena_camino_norte'],
+      ['escena_puente_aduana', 'escena_camino_este'],
+      ['escena_cruce_colinas', 'escena_camino_sur'],
+    ]) {
+      assert.equal(viaje(camino, lugar).horas, 1, lugar);
+      assert.equal(viaje(lugar, camino).horas, 1, lugar);
+      assert.equal(viaje(lugar, camino).escenaLlegada, lugar);
+    }
+  });
+
+  test('lugar de camino: se suma a la mitad del camino', () => {
+    // Del lago a Lareth: 1 hasta el camino + 18 de medio camino del norte.
+    assert.equal(viaje('ciudad_lareth', 'escena_lago_espejos').horas, 19);
+    assert.equal(viaje('ciudad_ardenhall', 'escena_lago_espejos').horas, 19);
+    assert.equal(viaje('escena_lago_espejos', 'escena_mercado_circular').horas, 19);
+    // Del lago al puente: 1 + 18 (norte) + 22 (este) + 1.
+    assert.equal(viaje('escena_puente_aduana', 'escena_lago_espejos').horas, 42);
+    const otro = { ...contenido, reglas: { ...contenido.reglas, viajeHorasLugarCamino: 3 } };
+    assert.equal(clasificarViaje('escena_lago_espejos', 'escena_camino_norte', otro).horas, 3);
+  });
+
+  test('escenasDeRuta: las escenas por las que pasa, sin la de partida', () => {
+    assert.deepEqual(viaje('ciudad_lareth', 'escena_mercado_circular').escenasDeRuta, [
+      'escena_camino_norte',
+      'escena_plaza_cambistas',
+    ]);
+    assert.deepEqual(viaje('escena_archivo_real', 'escena_mercado_circular').escenasDeRuta, ['escena_archivo_real']);
   });
 
   test('las horas salen de reglas.viajeHorasPorCamino', () => {
@@ -167,7 +201,7 @@ describe('viaje — por camino', () => {
 
 describe('viaje — sin ruta', () => {
   test('destino o escena actual inexistentes', () => {
-    const sin = { tipo: TIPOS_VIAJE.SIN_RUTA, horas: null, escenaLlegada: null, caminos: [] };
+    const sin = { tipo: TIPOS_VIAJE.SIN_RUTA, horas: null, escenaLlegada: null, caminos: [], escenasDeRuta: [] };
     assert.deepEqual(viaje('escena_fantasma', 'escena_mercado_circular'), sin);
     assert.deepEqual(viaje('ciudad_fantasma', 'escena_mercado_circular'), sin);
     assert.deepEqual(viaje('ciudad_lareth', 'escena_fantasma'), sin);
