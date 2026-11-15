@@ -417,6 +417,23 @@ describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
     }
   });
 
+  test('toda intención tiene al menos 3 plantillas distintas en exito y en fallo', () => {
+    for (const it of base.intenciones) {
+      for (const r of ['exito', 'fallo']) assert.equal(new Set(base.plantillas[it.id][r]).size, 3, `${it.id}.${r}`);
+    }
+    let c = copia();
+    c.plantillas.intencion_usar.exito.pop();
+    hay(c, /plantillas\.intencion_usar\.exito: tiene 2 plantillas distintas; hacen falta al menos 3/);
+    c = copia();
+    c.plantillas.intencion_viajar.fallo[2] = c.plantillas.intencion_viajar.fallo[0];
+    hay(c, /plantillas\.intencion_viajar\.fallo: tiene 2 plantillas distintas; hacen falta al menos 3/);
+    // neutro y los bloques sin intención no entran en la regla.
+    c = copia();
+    c.plantillas.intencion_usar.neutro = [c.plantillas.intencion_usar.neutro[0]];
+    c.plantillas.mostrar_narrativo.exito = [c.plantillas.mostrar_narrativo.exito[0]];
+    assert.deepEqual(errores(c), []);
+  });
+
   test('sin temor en el contenido', () => {
     assert.ok(!/temor/i.test(JSON.stringify(base)));
   });

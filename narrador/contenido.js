@@ -61,6 +61,9 @@ export const TIPOS_EFECTO = Object.freeze(['disposicion', 'bloqueo', 'habilita',
 const esObjeto = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 const lista = (v) => (Array.isArray(v) ? v : []);
 
+// Plantillas distintas que necesita cada intención en exito y en fallo.
+export const MIN_VARIANTES = 3;
+
 /**
  * Valida el contenido. No lanza: devuelve todo lo encontrado.
  * `errores`: conteos, estructura, plantillas y toda referencia a un id (escena, NPC, objeto,
@@ -328,6 +331,16 @@ export function validarContenido(contenido) {
     }
     if (!Array.isArray(it.formas) || it.formas.length === 0) err(`${it.id}: sin formas`);
     if (plantillas) validarBloque(plantillas, it.id, err);
+    // Variantes: al menos 3 plantillas distintas en exito y en fallo.
+    if (plantillas && esObjeto(plantillas[it.id])) {
+      for (const r of ['exito', 'fallo']) {
+        const textos = Array.isArray(plantillas[it.id][r]) ? plantillas[it.id][r] : [];
+        const distintas = new Set(textos.filter((t) => typeof t === 'string').map((t) => t.trim())).size;
+        if (distintas < MIN_VARIANTES) {
+          err(`plantillas.${it.id}.${r}: tiene ${distintas} plantillas distintas; hacen falta al menos ${MIN_VARIANTES}`);
+        }
+      }
+    }
   }
   if (plantillas) {
     for (const extra of BLOQUES_EXTRA) validarBloque(plantillas, extra, err);

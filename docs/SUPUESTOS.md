@@ -297,7 +297,7 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - `narrador/narracion.js` no escribe texto propio: elige una plantilla, completa los placeholders y, si hay más de una frase, las une con un espacio.
 - La ventana de aperturas no se guarda en este módulo: `narrarTurno` la recibe y devuelve la nueva (últimas 5). Dónde se guarda lo decide el contrato público (bloque 7). `turno.js` no llama a la narración todavía.
 - Apertura: la primera palabra del texto ya completado, en minúsculas y sin signos. Si la plantilla empieza con `{npc}`, la apertura es la primera palabra del nombre del NPC.
-- El contenido trae como mucho dos plantillas por resultado. Si todas las aperturas posibles están en la ventana, se usa la que se usó hace más tiempo: con la misma acción y el mismo resultado tres veces seguidas, la repetición no se puede evitar. Falta en el contenido: más variantes por resultado.
+- Cada intención tiene 3 plantillas en exito y 3 en fallo. Si todas las aperturas posibles están en la ventana, se usa la que se usó hace más tiempo.
 - Valores: `{npc}` y `{objeto}` son el `nombre` del contenido, tal cual (sin artículo: "Usás Antorcha"). `{lugar}` es el destino en un viaje y, en el resto, la escena donde se actuó. `{conocimiento}` es el `contenido` del conocimiento revelado en el turno. `{nombres}` es la lista unida con ", ".
 - Un valor vacío, con llaves o de un placeholder desconocido cuenta como faltante.
 - Si ninguna plantilla de la clave se puede completar (o la clave no existe), se usa `plantillas.reformulacion.no_entendido` y el resultado lo marca con `respaldo: true`.
@@ -307,3 +307,9 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - Solo la primera frase cuenta como apertura; las siguientes evitan repetirla.
 - Turnos `ia` y `error`: sin texto (null). El texto de la IA es del bloque 5.
 - No se narran todavía los eventos disparados o cerrados, el movimiento de NPCs ni los motivos de fallo (sin dinero, bloqueado): el contenido no trae plantillas para eso.
+
+### Tercera plantilla por intención
+- Las 48 frases agregadas (una de éxito y una de fallo por cada una de las 24 intenciones) son las aprobadas por Tomás. Se copiaron tal cual. `neutro` no se tocó.
+- Validador: toda intención tiene al menos 3 plantillas distintas en exito y en fallo (error que bloquea).
+- La parte "la apertura no se repite entre ellas" no se pudo activar: 16 claves la incumplen con las frases aprobadas (lista en docs/PENDIENTES.md). No se cambió ninguna frase.
+- En esas claves, tres turnos seguidos con el mismo resultado repiten apertura. El test de tres turnos usa `intencion_usar.exito`, que sí tiene tres aperturas distintas.
