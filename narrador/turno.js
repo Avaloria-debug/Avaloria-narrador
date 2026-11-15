@@ -16,7 +16,6 @@ export const TIPOS_TURNO = Object.freeze({ ACCION: 'accion', REFORMULAR: 'reform
 export const TIPOS_EFECTO_NPC = Object.freeze({
   RELACION: 'relacion', // { npcId, delta, valor }
   DISPOSICION: 'disposicion', // { npcId, delta, valor }
-  TEMOR: 'temor', // { npcId, delta, valor }
   CONOCIMIENTOS_BLOQUEADOS: 'conocimientos_bloqueados', // { npcId }
   CONOCIMIENTO_REVELADO: 'conocimiento_revelado', // { npcId, conocimientoId, por: 'conversacion'|'narrativo' }
   NARRATIVO_SIN_CONOCIMIENTO: 'narrativo_sin_conocimiento', // { npcId, objetoId, motivo }
@@ -130,7 +129,6 @@ function efectosSobreNpc(estado, accion, resolucion, contenido, conValor) {
   if (cambios.disposicion !== 0) {
     efectos.push({ tipo: TIPOS_EFECTO_NPC.DISPOSICION, npcId, delta: cambios.disposicion, valor: npc.disposicion });
   }
-  if (cambios.temor !== 0) efectos.push({ tipo: TIPOS_EFECTO_NPC.TEMOR, npcId, delta: cambios.temor, valor: npc.temor });
   if (cambios.bloqueoConocimientos) efectos.push({ tipo: TIPOS_EFECTO_NPC.CONOCIMIENTOS_BLOQUEADOS, npcId });
 
   let resultado = resolucion.resultado;

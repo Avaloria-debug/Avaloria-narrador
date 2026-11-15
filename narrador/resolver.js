@@ -6,8 +6,10 @@ import { eventoQueBloquea, precioEfectivo } from './efectosEventos.js';
 import { enteroEntre } from './estado.js';
 
 export const PROBABILIDAD_EXITO = 0.6;
-// Horas de reloj que gasta una acción que no es un viaje.
-export const HORAS_POR_ACCION = 1;
+/** Horas de reloj que gasta un verbo, según `reglas.costoHorasPorVerbo`. Un viaje cuesta lo que diga la ruta. */
+export function costoHorasDeVerbo(verbo, contenido) {
+  return contenido?.reglas?.costoHorasPorVerbo?.[verbo] ?? 0;
+}
 
 // Acciones con chequeo de éxito o fallo.
 export const VERBOS_CON_CHEQUEO = Object.freeze([
@@ -73,7 +75,7 @@ export function resolverAccion(estado, accion, { contenido, rng }) {
     verbo,
     resultado,
     efectos,
-    costoHoras: HORAS_POR_ACCION,
+    costoHoras: costoHorasDeVerbo(verbo, contenido),
     ...extra,
   });
   const bloqueadoPor = (eventoId, extra = {}) => {

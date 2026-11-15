@@ -5,7 +5,7 @@ import {
   aplicarEfectos,
   VERBOS_CON_CHEQUEO,
   PROBABILIDAD_EXITO,
-  HORAS_POR_ACCION,
+  costoHorasDeVerbo,
   MOTIVOS_FALLO,
 } from './resolver.js';
 import { estadoInicial } from './estado.js';
@@ -63,11 +63,11 @@ describe('resolver — acciones con chequeo', () => {
     }
   });
 
-  test('consulta el rng una sola vez y gasta una hora', () => {
+  test('consulta el rng una sola vez y gasta el costo del contenido', () => {
     const rng = rngDe([0.3]);
     const r = resolver(partida(), 'observar', {}, rng);
     assert.equal(rng.llamadas(), 1);
-    assert.equal(r.costoHoras, HORAS_POR_ACCION);
+    assert.equal(r.costoHoras, 0);
     assert.deepEqual(r.efectos, []);
   });
 
@@ -238,7 +238,7 @@ describe('resolver — huir', () => {
     assert.equal(r.escenaNueva, 'escena_archivo_real');
     assert.deepEqual(r.efectos, [{ tipo: 'movimiento', desde: 'escena_mercado_circular', hasta: 'escena_archivo_real' }]);
     assert.equal(aplicarEfectos(e, r.efectos).jugador.escenaId, 'escena_archivo_real');
-    assert.equal(r.costoHoras, HORAS_POR_ACCION);
+    assert.equal(r.costoHoras, 0);
   });
 
   test('con fallo no mueve', () => {
@@ -309,7 +309,7 @@ describe('resolver — viajar', () => {
     assert.equal(r.resultado, 'fallo');
     assert.equal(r.motivo, MOTIVOS_FALLO.BLOQUEADO);
     assert.equal(r.escenaNueva, undefined);
-    assert.equal(r.costoHoras, HORAS_POR_ACCION);
+    assert.equal(r.costoHoras, 0);
     assert.deepEqual(r.efectos, [{ tipo: 'bloqueo', eventoId: 'evento_derrumbe_camino' }]);
     // Por otro camino sí se puede.
     assert.equal(resolver(e, 'viajar', { destino: 'ciudad_halenor' }).resultado, 'exito');
@@ -358,5 +358,38 @@ describe('resolver — pureza', () => {
       aplicarEfectos(e, r.efectos);
     }
     assert.deepEqual(e, copia);
+  });
+});
+
+describe('resolver — costo de reloj por verbo', () => {
+  test('cada verbo sin viaje gasta lo que dice reglas.costoHorasPorVerbo', () => {
+    const costos = contenido.reglas.costoHorasPorVerbo;
+    assert.deepEqual(
+      Object.keys(costos).sort(),
+      [...new Set(contenido.intenciones.map((i) => i.verbo))].filter((v) => v !== 'viajar').sort(),
+    );
+    for (const intencion of contenido.intenciones) {
+      if (intencion.verbo === 'viajar') continue;
+      const r = resolverAccion(partida(), { intencionId: intencion.id, parametros: {} }, { contenido, rng: rngDe([0.1]) });
+      assert.equal(r.costoHoras, costos[intencion.verbo], intencion.verbo);
+    }
+    assert.equal(costos.descansar, 4);
+    assert.equal(costos.trabajar, 4);
+    assert.equal(costos.ayudar, 1);
+    assert.equal(costos.hablar_con, 0);
+  });
+
+  test('un verbo sin costo en el contenido gasta 0', () => {
+    assert.equal(costoHorasDeVerbo('viajar', contenido), 0);
+    assert.equal(costoHorasDeVerbo('descansar', { reglas: {} }), 0);
+  });
+
+  test('trabajar paga solo bronce', () => {
+    const e = partida();
+    const r = resolverAccion(e, { intencionId: 'intencion_trabajar', parametros: {} }, { contenido, rng: rngDe([0.5]) });
+    assert.deepEqual(r.efectos.map((x) => [x.tipo, x.moneda]), [['dinero', 'bronce']]);
+    const despues = aplicarEfectos(e, r.efectos);
+    assert.equal(despues.jugador.plata, e.jugador.plata);
+    assert.ok(!('oro' in despues.jugador));
   });
 });

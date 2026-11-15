@@ -265,18 +265,26 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - Comprar: el objeto tiene que venderse en la escena actual. Se paga en la moneda del precio, sin conversión. El jugador no tiene oro y nada en el contenido da plata después del inicio: el arco corto (1 de oro) no se puede comprar, y la plata inicial (0 a 5) no se repone. A revisar.
 - Usar: vale para cualquier objeto del inventario y para un objeto narrativo de la escena donde aparece (los narrativos no se compran ni se levantan). Gasta un uso si el objeto tiene usos; al llegar a 0 sale del inventario. La brújula no tiene usos y no se gasta.
 - Un objeto del inventario que acompaña a otro verbo con chequeo (atacar con un arma, negociar ofreciendo algo) también gasta un uso. Examinar no gasta.
-- Huir con éxito mueve a la primera escena de `salidas` de la escena actual y cuesta 1 hora, no el costo de viaje.
-- Un viaje bloqueado o sin ruta falla, no mueve y cuesta 1 hora.
+- Huir con éxito mueve a la primera escena de `salidas` de la escena actual y cuesta lo que diga `reglas.costoHorasPorVerbo.huir` (0), no el costo de viaje.
+- Un viaje bloqueado o sin ruta falla, no mueve y no gasta reloj.
 - Una acción bloqueada por un evento falla sin chequeo y sin efectos sobre el NPC.
 
 ### Turno
-- Estado: el de `cierre-diseno-v1.md` sección 5, más `temor` en cada NPC y `reformulacionPendiente`. La posición de los NPCs no se guarda: sale del reloj.
+- Estado: el de `cierre-diseno-v1.md` sección 5 más `reformulacionPendiente`. La posición de los NPCs no se guarda: sale del reloj.
 - Al crear el estado se disparan los eventos por hora de las 08:00 (hoy, la feria de intercambio). El azar empieza en el primer turno.
 - Botones: usan las mismas reglas de parámetros que el texto. Un botón nunca pasa a IA: siempre reformula.
 - Usar un objeto narrativo se lo muestra a su NPC asociado si está en la escena, sin nombrarlo. Si revela, el resultado es éxito; si no, fallo.
 - Hablar con éxito revela el primer conocimiento del NPC que cumpla sus condiciones, contando la relación ya actualizada en ese turno.
 - Negociar "con valor" (15 en vez de 10): cuando el jugador ofrece un objeto que tiene a mano.
 - Calmar la situación no elige NPC por texto: solo actúa sobre un NPC si llega por botón con `npcId`.
-- Temor: el campo existe y calmar lo baja, pero nada en el contenido lo sube. A definir.
 - Un evento por hora con duración en turnos que se habría disparado durante un salto de reloj no se activa si pasaron más horas que sus turnos (cada turno se cuenta como una hora).
 - `resolverNpcObjetivo` sigue sin la regla "fuente de amenaza" de la beta.
+
+## Decisiones tras la revisión del bloque 3b
+- Revisados `npcs.js`, `conocimientos.js`, `efectosEventos.js` y `movimientoNpcs.js`: sin errores.
+- Costo de reloj por acción: está en el contenido, en `reglas.costoHorasPorVerbo`. Ya no hay una constante de 1 hora en el código. Ayudar, usar y leer cuestan 1; descansar y trabajar, 4; el resto, 0.
+- `viajar` no va en `costoHorasPorVerbo`: su costo sale de la ruta. Un viaje que falla (bloqueado o sin ruta) cuesta 0.
+- El validador exige que todo verbo de intenciones, salvo `viajar`, tenga costo; que cada costo sea un entero mayor o igual que 0; y que no haya verbos que no existen.
+- Con costo 0 el reloj no avanza: los eventos por turnos y por azar siguen corriendo turno a turno; los de hora y el movimiento de NPCs, solo cuando avanza el reloj.
+- Temor: eliminado del código, del estado y del contenido. Calmar la situación con éxito sube la disposición en 1 (`disposicionExito: 1` en `transiciones`); con fallo no la cambia. El delta de relación de calmar (10 / 0) queda como estaba en el contenido.
+- Oro y plata: el jugador no los consigue en v1. Trabajar paga solo bronce. El arco corto (1 de oro) no se puede comprar y la plata inicial no se repone.

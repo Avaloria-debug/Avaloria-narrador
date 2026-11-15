@@ -28,7 +28,7 @@ const boton = (estado, intencionId, parametros, rng = rngDe([0.1])) =>
 const efecto = (turno, tipo) => turno.accion.efectos.find((e) => e.tipo === tipo);
 
 describe('turno — orden y forma del resultado', () => {
-  test('hablar con éxito: efectos sobre el NPC, reloj +1 hora, sin texto', () => {
+  test('hablar con éxito: efectos sobre el NPC, reloj sin avanzar, sin texto', () => {
     const e = partida();
     const t = texto(e, 'hablar con Serel');
     assert.equal(t.tipo, TIPOS_TURNO.ACCION);
@@ -39,8 +39,8 @@ describe('turno — orden y forma del resultado', () => {
       { tipo: 'relacion', npcId: 'serel_panadero', delta: 5, valor: 5 },
       { tipo: 'disposicion', npcId: 'serel_panadero', delta: 1, valor: 1 },
     ]);
-    assert.equal(t.accion.costoHoras, 1);
-    assert.deepEqual(t.estado.reloj, { dia: 1, hora: '09:00' });
+    assert.equal(t.accion.costoHoras, 0);
+    assert.deepEqual(t.estado.reloj, { dia: 1, hora: '08:00' });
     assert.equal(t.estado.npcs.serel_panadero.relacion, 5);
     assert.deepEqual(t.escena, { id: 'escena_mercado_circular', estado: 'tranquilo', npcs: [{ id: 'serel_panadero', disposicion: 1 }] });
     assert.ok(!('texto' in t));
@@ -189,13 +189,14 @@ describe('turno — atacar y emboscar', () => {
     assert.equal(t.estado.npcs.serel_panadero.relacion, -15);
   });
 
-  test('calmar: baja el temor antes que subir la disposición', () => {
-    const t = texto(partida({ npcs: { serel_panadero: { temor: 1 } } }), 'calmar la situación');
+  test('calmar: sube solo la disposición (y la relación del contenido), sin temor', () => {
+    const t = texto(partida(), 'calmar la situación');
     assert.equal(t.accion.parametros.npcId, undefined);
-    const conNpc = boton(partida({ npcs: { serel_panadero: { temor: 1 } } }), 'intencion_calmar', { npcId: 'serel_panadero' });
-    assert.equal(conNpc.estado.npcs.serel_panadero.temor, 0);
-    assert.equal(conNpc.estado.npcs.serel_panadero.disposicion, 0);
-    assert.deepEqual(efecto(conNpc, 'temor'), { tipo: 'temor', npcId: 'serel_panadero', delta: -1, valor: 0 });
+    const conNpc = boton(partida(), 'intencion_calmar', { npcId: 'serel_panadero' });
+    assert.equal(conNpc.estado.npcs.serel_panadero.disposicion, 1);
+    assert.ok(!('temor' in conNpc.estado.npcs.serel_panadero));
+    assert.equal(efecto(conNpc, 'temor'), undefined);
+    assert.deepEqual(efecto(conNpc, 'disposicion'), { tipo: 'disposicion', npcId: 'serel_panadero', delta: 1, valor: 1 });
   });
 });
 
@@ -382,10 +383,10 @@ describe('turno — efectos de eventos', () => {
     const e = partida({
       eventosActivos: [{ id: 'evento_feria_intercambio', escenaId: 'escena_mercado_circular', turnosRestantes: 2, horaFin: null }],
     });
-    const uno = texto(e, 'descansar');
+    const uno = texto(e, 'retirarse');
     assert.deepEqual(uno.escena.npcs, [{ id: 'serel_panadero', disposicion: 1 }]);
     assert.equal(uno.estado.npcs.serel_panadero.disposicion, 0);
-    const dos = texto(uno.estado, 'descansar');
+    const dos = texto(uno.estado, 'retirarse');
     assert.deepEqual(dos.eventos.cerrados.map((c) => c.id), ['evento_feria_intercambio']);
     assert.deepEqual(dos.escena.npcs, [{ id: 'serel_panadero', disposicion: 0 }]);
   });
@@ -429,7 +430,7 @@ describe('turno — efectos de eventos', () => {
     assert.equal(t.accion.resultado, 'fallo');
     assert.equal(t.accion.motivo, 'bloqueado');
     assert.equal(t.estado.jugador.escenaId, 'escena_camino_norte');
-    assert.deepEqual(t.estado.reloj, { dia: 1, hora: '09:00' });
+    assert.deepEqual(t.estado.reloj, { dia: 1, hora: '08:00' });
     // Dos turnos después la puerta está abierta.
     const abierto = texto(texto(t.estado, 'descansar').estado, 'ir a Ardenhall');
     assert.equal(abierto.accion.resultado, 'exito');
@@ -437,13 +438,13 @@ describe('turno — efectos de eventos', () => {
   });
 
   test('habilita: la tormenta habilita el conocimiento y al cerrarse deja de valer', () => {
-    const tormenta = { id: 'evento_tormenta_verano', escenaId: 'escena_lago_espejos', turnosRestantes: null, horaFin: { dia: 1, hora: '09:00' } };
+    const tormenta = { id: 'evento_tormenta_verano', escenaId: 'escena_lago_espejos', turnosRestantes: null, horaFin: { dia: 1, hora: '08:00' } };
     const e = partida({
       jugador: { escenaId: 'escena_camino_sur' },
       npcs: { hollis_pastor: { relacion: 20 } },
       eventosActivos: [tormenta],
     });
-    // Primer turno: 20 + 5 no llega al umbral (30) y la tormenta se cierra a las 09:00.
+    // Primer turno: 20 + 5 no llega al umbral (30) y la tormenta se cierra al final del turno.
     const uno = texto(e, 'hablar con Hollis');
     assert.equal(efecto(uno, 'conocimiento_revelado'), undefined);
     assert.deepEqual(uno.eventos.cerrados.map((c) => c.id), ['evento_tormenta_verano']);
@@ -453,7 +454,7 @@ describe('turno — efectos de eventos', () => {
   });
 
   test('precio: el pan fresco cuesta el doble mientras dura el evento', () => {
-    const caro = { id: 'evento_precio_pan_sube', escenaId: 'escena_mercado_circular', turnosRestantes: null, horaFin: { dia: 1, hora: '09:00' } };
+    const caro = { id: 'evento_precio_pan_sube', escenaId: 'escena_mercado_circular', turnosRestantes: null, horaFin: { dia: 1, hora: '08:00' } };
     const uno = texto(partida({ eventosActivos: [caro] }), 'comprar pan fresco');
     assert.equal(uno.estado.jugador.bronce, 180);
     assert.deepEqual(uno.eventos.cerrados.map((c) => c.id), ['evento_precio_pan_sube']);
@@ -561,7 +562,7 @@ describe('turno — prueba de carga', () => {
       for (const [id, n] of Object.entries(estado.npcs)) {
         assert.ok(n.relacion >= -100 && n.relacion <= 100, id);
         assert.ok(n.disposicion >= -2 && n.disposicion <= 2, id);
-        assert.ok(n.temor >= 0, id);
+        assert.ok(!('temor' in n), id);
         assert.ok(n.conocimientosRevelados.length <= 1, id);
         if (n.bloqueadoConocimientos) assert.ok(n.relacion <= 100);
       }

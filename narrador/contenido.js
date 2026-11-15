@@ -373,6 +373,21 @@ export function validarContenido(contenido) {
       }
     }
   }
+  // Todo verbo de intenciones tiene costo de reloj, salvo viajar (lo da la ruta).
+  const costos = contenido.reglas?.costoHorasPorVerbo;
+  if (!esObjeto(costos)) {
+    err('reglas.costoHorasPorVerbo: falta o no es un objeto');
+  } else {
+    const verbosDeIntenciones = new Set((Array.isArray(contenido.intenciones) ? contenido.intenciones : []).map((i) => i?.verbo));
+    for (const verbo of verbosDeIntenciones) {
+      if (verbo === 'viajar' || typeof verbo !== 'string') continue;
+      if (!(verbo in costos)) err(`reglas.costoHorasPorVerbo: falta el verbo ${JSON.stringify(verbo)}`);
+    }
+    for (const [verbo, horas] of Object.entries(costos)) {
+      if (!verbosDeIntenciones.has(verbo)) err(`reglas.costoHorasPorVerbo.${verbo}: no es un verbo de intenciones`);
+      if (!(Number.isInteger(horas) && horas >= 0)) err(`reglas.costoHorasPorVerbo.${verbo}: no es un entero mayor o igual que 0`);
+    }
+  }
   for (const regla of ['viajeHorasIntraCiudad', 'viajeHorasLugarCamino']) {
     const horas = contenido.reglas?.[regla];
     if (esObjeto(contenido.reglas) && !(typeof horas === 'number' && horas > 0)) {

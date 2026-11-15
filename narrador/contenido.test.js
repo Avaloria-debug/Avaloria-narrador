@@ -397,6 +397,29 @@ describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
       }
     }
   });
+
+  test('reglas.costoHorasPorVerbo: todo verbo de intenciones tiene costo, salvo viajar', () => {
+    assert.deepEqual(errores(base), []);
+    assert.ok(!('viajar' in base.reglas.costoHorasPorVerbo));
+    let c = copia();
+    delete c.reglas.costoHorasPorVerbo;
+    hay(c, /reglas\.costoHorasPorVerbo: falta o no es un objeto/);
+    c = copia();
+    delete c.reglas.costoHorasPorVerbo.descansar;
+    hay(c, /reglas\.costoHorasPorVerbo: falta el verbo "descansar"/);
+    c = copia();
+    c.reglas.costoHorasPorVerbo.volar = 1;
+    hay(c, /reglas\.costoHorasPorVerbo\.volar: no es un verbo de intenciones/);
+    for (const valor of [-1, 0.5, '1', null]) {
+      c = copia();
+      c.reglas.costoHorasPorVerbo.trabajar = valor;
+      hay(c, /reglas\.costoHorasPorVerbo\.trabajar: no es un entero mayor o igual que 0/);
+    }
+  });
+
+  test('sin temor en el contenido', () => {
+    assert.ok(!/temor/i.test(JSON.stringify(base)));
+  });
 });
 
 describe('contenido — reloj, viaje y forma de los eventos', () => {

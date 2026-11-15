@@ -18,7 +18,7 @@ before(async () => {
   T = contenido.transiciones;
 });
 
-const npc = (extra = {}) => ({ relacion: 0, disposicion: 0, temor: 0, bloqueadoConocimientos: false, conocimientosRevelados: [], ...extra });
+const npc = (extra = {}) => ({ relacion: 0, disposicion: 0, bloqueadoConocimientos: false, conocimientosRevelados: [], ...extra });
 const def = (sensibilidad) => ({ id: 'x', sensibilidad });
 const aplicar = (verbo, resultado, sens = 1, estado = npc(), opciones) =>
   aplicarTransicion(estado, def(sens), verbo, resultado, T, opciones).npc;
@@ -76,7 +76,7 @@ describe('npcs — relación: cada transición con sensibilidad 1, 1,5 y 0,5', (
     assert.equal(aplicarTransicion(base, def(1.5), 'hablar_con', 'neutro', T).npc, base);
     assert.equal(aplicarTransicion(base, def(1.5), 'descansar', 'exito', T).npc, base);
     assert.deepEqual(aplicarTransicion(base, def(1.5), 'descansar', 'exito', T).cambios, {
-      relacion: 0, disposicion: 0, temor: 0, bloqueoConocimientos: false,
+      relacion: 0, disposicion: 0, bloqueoConocimientos: false,
     });
   });
 
@@ -127,22 +127,17 @@ describe('npcs — disposición', () => {
     assert.equal(aplicar('presionar', 'exito', 1, npc({ disposicion: -2 })).disposicion, -2);
   });
 
-  test('calmar con éxito: con temor baja el temor; sin temor sube la disposición', () => {
-    const conTemor = aplicar('calmar_la_situacion', 'exito', 1, npc({ temor: 2, disposicion: -1 }));
-    assert.equal(conTemor.temor, 1);
-    assert.equal(conTemor.disposicion, -1);
-    assert.equal(conTemor.relacion, 10);
-    const otra = aplicar('calmar_la_situacion', 'exito', 1, conTemor);
-    assert.equal(otra.temor, 0);
-    assert.equal(otra.disposicion, -1);
-    const sinTemor = aplicar('calmar_la_situacion', 'exito', 1, otra);
-    assert.equal(sinTemor.temor, 0);
-    assert.equal(sinTemor.disposicion, 0);
+  test('calmar con éxito: sube la disposición en 1, hasta 2', () => {
+    const uno = aplicar('calmar_la_situacion', 'exito', 1, npc({ disposicion: -1 }));
+    assert.equal(uno.disposicion, 0);
+    assert.equal(uno.relacion, 10);
+    assert.ok(!('temor' in uno));
+    assert.equal(aplicar('calmar_la_situacion', 'exito', 1, npc({ disposicion: 2 })).disposicion, 2);
   });
 
   test('calmar con fallo: nada cambia', () => {
-    const n = aplicar('calmar_la_situacion', 'fallo', 1.5, npc({ temor: 1, disposicion: 1, relacion: 7 }));
-    assert.deepEqual(n, npc({ temor: 1, disposicion: 1, relacion: 7 }));
+    const n = aplicar('calmar_la_situacion', 'fallo', 1.5, npc({ disposicion: 1, relacion: 7 }));
+    assert.deepEqual(n, npc({ disposicion: 1, relacion: 7 }));
   });
 
   test('palabras de disposición', () => {

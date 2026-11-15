@@ -1,5 +1,5 @@
 // Efectos de una acción sobre un NPC, según `transiciones` del contenido.
-// Estado de un NPC: { relacion, disposicion, temor, bloqueadoConocimientos, conocimientosRevelados }.
+// Estado de un NPC: { relacion, disposicion, bloqueadoConocimientos, conocimientosRevelados }.
 import { deltaDisposicionPorEventos } from './efectosEventos.js';
 
 export const RELACION_MIN = -100;
@@ -30,7 +30,6 @@ export function npcInicial(npcDef) {
   return {
     relacion: clampRelacion(npcDef.relacionInicial ?? 0),
     disposicion: numeroDeDisposicion(npcDef.disposicionInicial),
-    temor: 0,
     bloqueadoConocimientos: false,
     conocimientosRevelados: [],
   };
@@ -47,18 +46,17 @@ export function disposicionEfectiva(npcId, npcEstado, eventosActivos, contenido)
  * - Disposición: `disposicion` fija, o `disposicionExito` / `disposicionFallo`, recortada a [-2, 2].
  *   Presionar con fallo la fija en -2.
  * - `bloqueaConocimientos`: bloquea los conocimientos del NPC para siempre.
- * - Calmar con éxito: si el NPC tiene temor, baja el temor; si no, sube la disposición.
  * @param {object} npcEstado
  * @param {{ sensibilidad: number }} npcDef
  * @param {string} verbo id de verbo
  * @param {'exito'|'fallo'|'neutro'} resultado
  * @param {object} transiciones `transiciones` del contenido
  * @param {{ conValor?: boolean }} [opciones] negociar ofreciendo un objeto
- * @returns {{ npc: object, cambios: { relacion: number, disposicion: number, temor: number, bloqueoConocimientos: boolean } }}
+ * @returns {{ npc: object, cambios: { relacion: number, disposicion: number, bloqueoConocimientos: boolean } }}
  */
 export function aplicarTransicion(npcEstado, npcDef, verbo, resultado, transiciones, { conValor = false } = {}) {
   const t = transiciones?.[verbo];
-  const sinCambios = { relacion: 0, disposicion: 0, temor: 0, bloqueoConocimientos: false };
+  const sinCambios = { relacion: 0, disposicion: 0, bloqueoConocimientos: false };
   if (!t || (resultado !== 'exito' && resultado !== 'fallo')) return { npc: npcEstado, cambios: sinCambios };
 
   const exito = resultado === 'exito';
@@ -66,14 +64,8 @@ export function aplicarTransicion(npcEstado, npcDef, verbo, resultado, transicio
   const relacion = clampRelacion(npcEstado.relacion + delta * (npcDef.sensibilidad ?? 1));
 
   let disposicion = npcEstado.disposicion;
-  let temor = npcEstado.temor ?? 0;
   if (typeof t.disposicion === 'number') {
     disposicion = t.disposicion;
-  } else if (verbo === 'calmar_la_situacion') {
-    if (exito) {
-      if (temor > 0) temor -= 1;
-      else disposicion += 1;
-    }
   } else if (verbo === 'presionar' && !exito) {
     disposicion = t.disposicionFallo;
   } else {
@@ -86,7 +78,6 @@ export function aplicarTransicion(npcEstado, npcDef, verbo, resultado, transicio
     ...npcEstado,
     relacion,
     disposicion,
-    temor,
     bloqueadoConocimientos: npcEstado.bloqueadoConocimientos || bloquea,
   };
   return {
@@ -94,7 +85,6 @@ export function aplicarTransicion(npcEstado, npcDef, verbo, resultado, transicio
     cambios: {
       relacion: relacion - npcEstado.relacion,
       disposicion: disposicion - npcEstado.disposicion,
-      temor: temor - (npcEstado.temor ?? 0),
       bloqueoConocimientos: bloquea && !npcEstado.bloqueadoConocimientos,
     },
   };
