@@ -29,7 +29,7 @@ IndexedDB (versionContenido; una transacción por turno):
 2. Pesos: tono = último ×0.3; = dos anteriores ×0.6; ×1/(1+partidas jugadas); escena inicial en origen ×1.2.
 3. Sorteo con semilla.
 
-Secuencia: siguen reloj, contadorHitos, relaciones, textosUsados, efectos_post, tags con decaimiento propio. Se borran cierres de caso y ranuras (qué conocimiento ocupaba p1–p3). pista_conocida se conserva con su nivel; si coincide con una ranura nueva, la ranura arranca con ese nivel, con máximo nivel 1. hitoPrevio = null. Arranque al entrar a escenas_origen o a los 6 turnos con gancho. Pool agotado → modo libre.
+Secuencia: siguen reloj, contadorHitos, relaciones, textosUsados, efectos_post, tags con decaimiento propio. Se borran cierres de caso y ranuras (qué conocimiento ocupaba p1–p3). pista_conocida se conserva con su nivel; si coincide con una ranura nueva, la ranura arranca con ese nivel, con máximo nivel 1. hitoPrevio = null. Arranque al entrar a escenas_origen o a las 6 h de reloj con gancho. Pool agotado → modo libre.
 
 ## 4. Instanciación
 
@@ -55,7 +55,7 @@ Ciclo por turno:
 5. Prioridad: reparación > bloquea ramas > menor id. Máx. 1 por turno.
 6. Al disparar: contadorHitos+1, hitoPrevio, efectos, bloqueos, decaimiento por hitos, texto.
 
-Fuera de escena: gancho; a 12 turnos, escena del NPC de ranura más cercano.
+Fuera de escena: gancho; a las 12 h de reloj, escena del NPC de ranura más cercano.
 
 Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar reparación; 24 h sin avance → pista nivel 1; finales bloqueados → neutro por abandono.
 
@@ -110,7 +110,7 @@ Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar rep
 | alerta_camino | 6 h | — | — |
 | sospecha_crimen, favor_casa_aster, favor_archivo, pacto_caso, alianza_npc | cierre de caso | — | — |
 
-Unidades: el decaimiento por horas y las 24 h de anti-traba usan el reloj del mundo y se evalúan solo cuando el reloj avanza; las acciones de 0 horas no los mueven. Hitos, ramas, arranque y entrega fuera de escena van por turnos o por condición.
+Unidades: el decaimiento por horas, las 24 h de anti-traba, las 6 h de arranque y las 12 h de entrega fuera de escena usan el reloj del mundo y se evalúan solo cuando el reloj avanza; las acciones de 0 horas no los mueven. Hitos y ramas van por turnos o por condición.
 
 Reparación: quita un tag medio/grave (rencor/desconfianza/miedo) del NPC, baja el resto 1 y levanta `bloqueadoConocimientos` de ese NPC. El hito de reparación es repetible, una vez por NPC. contadorHitos es global; sin caso activo (modo libre), el decaimiento por hitos cuenta turnos: 1 hito = 8 turnos. Los turnos salen de contadorTurnos, en el estado.
 

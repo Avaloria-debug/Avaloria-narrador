@@ -119,7 +119,7 @@ Al cerrar un caso (desenlace elegido), si la partida sigue:
 |---|---|
 | Elección | Mismo algoritmo 3.1, con el caso cerrado agregado a casosJugados y su tono al historial |
 | Reloj | Continúa. No se reinicia. |
-| Escena | El jugador queda donde estaba. El caso nuevo arranca cuando el jugador entra a una de sus escenas_origen o, a los 6 turnos, con un gancho en la escena actual |
+| Escena | El jugador queda donde estaba. El caso nuevo arranca cuando el jugador entra a una de sus escenas_origen o, a las 6 horas de reloj, con un gancho en la escena actual |
 | contadorHitos | Continúa (es global de la partida, alimenta decaimiento por hitos) |
 | hitoPrevio | Se reinicia a null para el caso nuevo |
 | hitosAlcanzados, hitosListos, hitosBloqueados | Se archivan con el casoId y se vacían |
@@ -189,7 +189,7 @@ Al elegir un caso:
 
 - Queda en hitosListos.
 - El narrador agrega un gancho en la escena actual (rumor, NPC que menciona algo, chisme_activo en la escena de entrega). El gancho sale de la tabla de reacciones, no de los textos de hito.
-- Si pasan 12 turnos sin entregarse y el hito admite escena alternativa, se mueve a la escena del NPC de ranura más cercano.
+- Si pasan 12 horas de reloj sin entregarse y el hito admite escena alternativa, se mueve a la escena del NPC de ranura más cercano.
 
 ### 4.4 Anti-traba
 
@@ -262,7 +262,7 @@ SUPUESTO: el parser actual del narrador clasifica la entrada en estos tipos por 
 ### 6.1 Relojes
 
 - Horas: reloj del mundo, evaluado solo cuando avanza. Las acciones de 0 horas no mueven el decaimiento por horas ni las 24 h de anti-traba.
-- Turnos: contadorTurnos, en el estado. Hitos, ramas, arranque y entrega fuera de escena van por turnos o por condición.
+- Turnos: contadorTurnos, en el estado. Hitos y ramas van por turnos o por condición. El arranque del caso (6 h) y la entrega fuera de escena (12 h) usan el reloj del mundo.
 - Hitos: contadorHitos (global de la partida), evaluado al disparar un hito.
 - Cierre de caso: al elegir desenlace.
 - Reparación: solo un hito con es_reparacion; es repetible, una vez por NPC.
@@ -531,7 +531,7 @@ caso_07 cierra a la hora 41 en escena_archivo_real con d_caso_07_1 (positivo). e
 4. Sorteo → caso_03 "La deuda del pastor" (melancolia), escenas_origen escena_cruce_colinas y escena_taberna_lareth.
 5. Instancia: primera vez para este jugador → cualquier firma; se elige p1 = conocimiento_sendero_sin_vigilancia (dueño hollis_pastor).
 6. Reloj sigue en 41; contadorHitos sigue en 7; hitoPrevio = null hasta que arranque.
-7. El jugador está en Ardenhall: a los 6 turnos sin entrar a una escena de origen, sarin_mensajera trae un gancho en la escena actual. Al entrar a escena_taberna_lareth, se dispara h1 de caso_03 y hitoPrevio = ese momento.
+7. El jugador está en Ardenhall: a las 6 horas de reloj sin entrar a una escena de origen, sarin_mensajera trae un gancho en la escena actual. Al entrar a escena_taberna_lareth, se dispara h1 de caso_03 y hitoPrevio = ese momento.
 
 ## 12. Validación de contenido
 
@@ -595,7 +595,7 @@ Code = escribir la lógica. Sonnet = escribir contenido, con revisión de Tomás
 - DECIDIDO: Entre casos en secuencia: se borran cierres de caso y ranuras (qué conocimiento ocupaba p1–p3); se conservan efectos_post, tags con decaimiento propio, relaciones, reloj, contadorHitos y pista_conocida.
 - DECIDIDO: Regla en 3.2: pista_conocida se conserva y, si coincide con una ranura nueva, la ranura arranca con ese nivel; el validador evita que dispare un final en el primer turno.
 - DECIDIDO: Sin límite de casos por partida; el pool no se repite dentro de la partida; agotado, modo libre.
-- DECIDIDO: El caso siguiente arranca al entrar a una de sus escenas de origen, o a los 6 turnos con un gancho en la escena actual.
+- DECIDIDO: El caso siguiente arranca al entrar a una de sus escenas de origen, o a las 6 horas de reloj con un gancho en la escena actual.
 - DECIDIDO: objeto_lupa_bronce y conocimiento_sello_doble son nuevos: se agregan a data/contenido/contenido-v3.json antes de validar el caso.
 
 - DECIDIDO: conocimiento_sendero_sin_vigilancia pertenece a hollis_pastor.
