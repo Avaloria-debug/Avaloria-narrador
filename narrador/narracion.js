@@ -11,6 +11,7 @@ export const SEPARADOR_NOMBRES = ', ';
 
 const BLOQUE_REVELAR = 'revelar_conocimiento';
 const BLOQUE_MOSTRAR = 'mostrar_narrativo';
+const BLOQUE_NO_SE = 'no_se';
 const PATRON = /\{([^{}]*)\}/g;
 
 const porId = (lista, id) => (lista ?? []).find((x) => x.id === id);
@@ -133,6 +134,8 @@ export function valoresDeAccion(accion, contenido) {
  *   Si en el turno se reveló un conocimiento, sigue una frase de `revelar_conocimiento`.
  *   Viajar a donde ya se está usa la reformulación `ya_en_destino`. Si quedó una segunda acción sin hacer, sigue `repetir_segunda`.
  * - `reformular`: plantilla del motivo.
+ * - `consulta`: si el NPC cuenta, `revelar_conocimiento.exito`; si no cuenta por ahora, `revelar_conocimiento.fallo`;
+ *   si no sabe del tema, `no_se`.
  * - `ia` y `error`: sin texto (null); no los narra este módulo.
  * @param {object} turno
  * @param {{ contenido: object, rng: () => number, aperturas?: string[] }} dependencias
@@ -150,6 +153,22 @@ export function narrarTurno(turno, { contenido, rng, aperturas = [] }) {
 
   if (turno?.tipo === 'reformular') {
     return salida([narrarReformulacion(contenido, turno.motivo, { nombres: turno.datos?.nombres }, opciones)]);
+  }
+  if (turno?.tipo === 'consulta' && turno.consulta) {
+    const { npcId, conocimientoId, resultado } = turno.consulta;
+    const npc = porId(contenido.npcs, npcId);
+    const valores = { npc: npc?.nombre, conocimiento: porId(npc?.conocimientos, conocimientoId)?.contenido };
+    if (resultado === 'no_se') {
+      // Todas las variantes abren con el nombre del NPC: la ventana de aperturas no sirve para alternarlas.
+      // Se elige al azar entre las que se pueden completar.
+      const textos = (Array.isArray(contenido?.plantillas?.[BLOQUE_NO_SE]) ? contenido.plantillas[BLOQUE_NO_SE] : [])
+        .map((p) => completar(p, valores))
+        .filter(Boolean);
+      if (textos.length === 0) return salida([{ ...respaldo(contenido, opciones), respaldo: true }]);
+      const texto = textos[Math.min(textos.length - 1, Math.floor(rng() * textos.length))];
+      return salida([{ texto, apertura: aperturaDe(texto), respaldo: false }]);
+    }
+    return salida([narrarResultado(contenido, BLOQUE_REVELAR, resultado, valores, opciones)]);
   }
   if (turno?.tipo !== 'accion' || !turno.accion) return { texto: null, aperturas: ventana, respaldo: false };
 

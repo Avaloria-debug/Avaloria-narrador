@@ -458,3 +458,56 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - La cola es `crearColaDeRegistros` sin validar al agregar y con un `enviar` que nunca se llama: solo acumula.
 - El aviso de IA agotada no se muestra como texto aparte: se ve `sin_ia` en los errores del panel.
 - La lógica pura está en `narrador/prueba/panel.js` (con test); `app.js` solo toca el DOM y se prueba a mano.
+
+## Diagnóstico de `sin_ia` (`narrador/sinIa.test.js`)
+- El test pasó sin tocar `narrar()`: sin clave, el segundo texto no entendido devuelve `tipo: narracion`, la plantilla `no_entendido` y `ia: sin_ia: sin_clave` en `errores`. No había fallo en el código.
+- Lo que puede parecer un fallo al probar a mano: el primer texto no entendido es una reformulación y no trae errores; `sin_ia` aparece recién en el segundo. El tercero vuelve a ser reformulación sin errores (una reformulación por turno).
+- Con las consultas de tema (abajo), la frase del ejemplo ("¿qué opinás de la lluvia que viene del lago?") es una pregunta: si hay un NPC en la escena, la responde él con `no_se` y no llega a la IA. Por eso el test usa una frase sin pregunta en la escena inicial, y la pregunta en una escena sin NPCs (camino del este, 18:00).
+
+## Consultas de tema, `no_se` y viajar frente a preguntas
+- "npcs.json" del pedido son los NPCs de `data/contenido/contenido-v3.json`: el narrador no usa `data/fixtures/npcs.json`. `CLAUDE.md` dice no tocar el contenido; se tocó porque el pedido lo exige: se agregó `palabrasClave` a los 12 conocimientos y el bloque `plantillas.no_se`. No se cambió `version` (sigue `v3.1`), para no disparar el aviso de versión en partidas guardadas.
+- Las `palabrasClave` de Serel son las del pedido. Las de los otros 11 conocimientos las elegí del texto de cada conocimiento y quedan a aprobar por Tomás (paso C de `docs/PENDIENTES.md`). Evité palabras que son destinos de viaje ("norte", "lago").
+- Pregunta: la frase trae `?` o `¿`, o una de estas palabras: "cómo", "cuál", "sabés", "sabes", "conviene". Se comparan con su tilde: "como" sin tilde no es pregunta ("trabajo como panadero"). No se agregaron otras interrogativas ("qué", "quién", "dónde"): sin signo, no cuentan.
+- Una pregunta es consulta si no coincide con ninguna intención, si la intención es viajar, o si trae palabras clave de un conocimiento de un NPC presente. Una pregunta con otra intención y sin tema sigue como antes ("¿puedo hablar con Serel?" es hablar_con).
+- Palabras clave: coincidencia exacta de la palabra, sin tilde y sin tolerancia a typos (con tolerancia, "cerca" coincidía con "carta"). Alcanza con una palabra clave. Si hay varios conocimientos, gana el que tiene más palabras en la frase.
+- A quién se le pregunta: al NPC nombrado; si no se nombra a nadie, al que conoce el tema; si nadie lo conoce, al primero presente.
+- Respuestas: se puede revelar -> `revelar_conocimiento.exito` y queda revelado. Ya revelado, o sin umbral, evento o marca -> `revelar_conocimiento.fallo` ("no te cuenta nada nuevo por ahora"). Sin tema, o con los conocimientos del NPC bloqueados (lo atacaron) -> `no_se`.
+- Una consulta no gasta tiempo, no dispara eventos, no mueve NPCs y no cambia relación ni disposición. Se registra con ruta `grupo_1`, sin intención.
+- Pregunta sin ningún NPC en la escena: no hay `{npc}` para `no_se`, así que sigue como frase no entendida (reformulación y, a la segunda, IA). Tampoco viaja.
+- Las dos variantes de `no_se` empiezan con el nombre del NPC, así que la ventana de aperturas elegía siempre la misma. Para `no_se` se elige al azar entre las variantes.
+- Viajar: los verbos son las formas de `intencion_viajar` del contenido. "camino" solo no es una forma (están "ponerme en camino" y "tomar el camino a"): como "Camino del norte" es un destino, tomarlo como verbo haría viajar a "contame del camino del norte".
+- Dos fallos que destaparon los tests y se corrigieron en `comprension.js`:
+  - "contame lo del pozo viejo del norte" viajaba: "viejo" coincidía con "viajá" por la tolerancia a typos (2 letras). Ahora viajar pide una forma con una letra de diferencia como máximo.
+  - "irme al norte" iba a retirarse: la forma completa "irme a" no coincidía con "al". Para comparar formas completas, "al" y "del" valen como "a" y "de".
+- Tests existentes que cambiaron: los que usaban "hola, ¿qué tal?" como frase no entendida ahora usan "hola, buenas tardes" (la primera ya es una consulta), y el conteo de claves de `plantillas` pasó de 27 a 28.
+
+## Palabras clave reconciliadas con los diccionarios
+- Las `palabrasClave` de los 12 conocimientos de `data/contenido/contenido-v3.json` se reemplazaron por la lista del pedido (exacta, en minúsculas y sin tildes). Cambiaron las de Ivor, Naela, Tiren, Elia, Ysolde, Dario y Sarin; las otras cinco quedaron igual. Esto reemplaza la propuesta anotada en "Consultas de tema". `version` sigue en `v3.1`.
+- Validador: cada conocimiento tiene entre 2 y 5 palabras, sin repetir, y una palabra no puede estar en dos conocimientos. Se comparan en minúsculas y sin espacios alrededor; todas son errores que bloquean. No se validó que estén sin tilde.
+
+## Diccionarios (`narrador/diccionarios.js`)
+- No hay un documento de formato: el formato de cada archivo se dedujo de los cinco archivos de `data/diccionarios/`.
+  - `diccionario-lexico`: forma | id | tipo. Tipos de verbo (`infinitivo`, `conjugada`, `sinonimo`, `coloquial`, `regional`) piden un id de intención; `objeto`, `npc` y `escena` piden un id de esa clase (escena acepta también `ciudad_*`).
+  - `ortografia-tipeo`: escrita | correcta | tipo. 13 tipos de error más `valida`; en `valida` las dos columnas son iguales.
+  - `frases-patrones`: patrón | intención o categoría (`consulta`, `multi`, `ignorar`) | parámetros | ejemplo. Parámetros: `-` o `clave=id ; clave=id`, con claves `npc`, `objeto`, `destino`, `tema`, `primera`, `segunda`. `tema` acepta NPC, objeto, escena, ciudad, evento o conocimiento.
+  - `contexto-palabras`: palabra | sentido | id o `-` | estado. Estado: `siempre`, un estado de escena o un id de escena.
+  - `temas-conocimiento`: en el bloque `## Conocimientos`, id de conocimiento | temas separados por `;`. En los otros bloques, tema | NPCs separados por `;`, o `*` por todos.
+- "Líneas válidas" de `entradas`: las líneas de datos del archivo (ni vacías ni títulos), incluidas las que después se descartan. Así una línea descartada da un solo error, no dos.
+- `cargados` y `descartados` son listas (entradas con su número de línea; descartadas con texto y motivo), no cantidades. `errores` es una lista de textos.
+- No se valida que los placeholders del patrón (`{npc}`) tengan su parámetro, ni que el título de la sección coincida con las entradas.
+- La lectura por `fetch` en el navegador está sin verificar. El módulo no está conectado a `comprension.js` ni a `index.js`.
+
+## Léxico y ortografía en la comprensión (`narrador/comprension.js`)
+- Prioridad al buscar la intención, con los diccionarios cargados: a) forma del catálogo exacta; b) forma del léxico; c) la frase corregida por ortografía, y de nuevo a y b; d) la tolerancia a typos de siempre. Sin diccionarios, o si no sirven, solo corre d, igual que antes (los tests lo comparan frase por frase).
+- Cuando hay una forma exacta del catálogo (a), el resultado es el de `coincidirIntencion` de siempre sobre esa frase: puede traer una segunda intención con typos ("comprá y descanza"). La frase no se corrige.
+- Léxico: solo los tipos de verbo (`infinitivo`, `conjugada`, `sinonimo`, `coloquial`, `regional`) dan intención. Las formas se comparan sin tildes, sin las palabras vacías de la sección 1 ("con", "a", "de"...), **exactas** (sin tolerancia a typos) y **con las palabras juntas**. Una forma de verbo del léxico cuyo id de intención no existe en el contenido se ignora.
+- Una forma del léxico con dos intenciones distintas queda empatada y se reformula con `intencion_ambigua`. El desempate normal sigue valiendo: si una de las formas trae más palabras de la frase ("rajar para" frente a "rajar"), gana esa. Con los diccionarios reales, "acechar" (observar o emboscar) se reformula; "dirigirme" e "irme" los resuelve antes el catálogo.
+- Objeto, NPC y escena del léxico no dan intención: nombran parámetros. Una forma completa (palabras juntas, exactas) en la frase nombra al NPC, al objeto o al destino, igual que su nombre. Para un objeto, suma tantos puntos como palabras tiene la forma. Se agrega a las reglas de siempre, no las reemplaza.
+- Ortografía: se compara normalizado (sin tildes, minúsculas), así que una entrada que difiere solo en la tilde (las de tipo `tilde` y varias de `voseo_mal`) no cambia nada y no cuenta como corrección. La frase corregida sale normalizada. Se prueba con la frase más larga primero (hay entradas de hasta 7 palabras).
+- No se corrige: una palabra `valida` (gana aunque la misma escrita figure también como error: es el caso de "aya"); una escrita con dos correcciones distintas (es el caso de "tien": "tiene" o "tiren"); ni una palabra suelta que sea palabra de un verbo del catálogo o del léxico ("ayuda", "ayudar", "ayer"). Esto último, además de no corregir cuando la frase ya trae una forma exacta, es lo que impide que la ortografía cambie el sentido de un verbo ya reconocido.
+- La frase corregida se usa para resolver los parámetros (NPC, objeto, destino) y las consultas de tema. La pregunta (`esPregunta`) se sigue mirando en la frase original, con sus signos y tildes.
+- Si la intención sale del léxico, no se aplica la prueba "un verbo de viaje con a lo sumo una letra de diferencia" de viajar: esa prueba es contra la tolerancia a typos y una forma del léxico ya es exacta.
+- Un diccionario que no cargó completo (archivo que falta, o con cualquier error, aunque sea una línea descartada o el conteo del front matter) no se usa entero, y ese diccionario solo: el léxico sigue sirviendo si falta la ortografía, y al revés. Es lo más simple y predecible; la alternativa (usar las líneas buenas) queda para después. `frases-patrones`, `contexto-palabras` y `temas-conocimiento` se cargan pero todavía no se usan en la comprensión.
+- Conexión: `narrador/index.js` carga los diccionarios al importarse (como el contenido) y se los pasa a `ejecutarTurno` y de ahí a `decidir`. `narrar(..., { diccionarios: null })` los apaga (para tests). Los botones no usan diccionarios. En el navegador la lectura por `fetch` está sin verificar; si falla, el narrador sigue con el catálogo solo.
+- El pedido decía 240 formas en el catálogo; en `contenido-v3.json` hay 239 (24 intenciones). El test las recorre todas.
+- Los nombres del pedido (`forma_mal`, `forma_bien`, `tipo_error`) son `escrita`, `correcta` y `tipo` en el código y en `docs/formato-diccionarios.md`.

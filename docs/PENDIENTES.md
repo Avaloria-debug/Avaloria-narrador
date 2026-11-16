@@ -43,3 +43,12 @@ Cómo se abre:
 
 Comprobado en Chromium (automático, sin persona): carga del contenido por `fetch`, botones, texto libre, IndexedDB real (guardar, recargar, cargar) y `localStorage`. La llamada a Groq se probó con una respuesta simulada.
 Sin verificar: Groq real desde el navegador (clave real, CORS, forma de `usage`), y otros navegadores.
+
+## 7. Consultas de tema: paso C (contenido, a aprobar por Tomás)
+- Hecho en código: A, la respuesta `no_se` cuando el NPC no conoce el tema; y B, `palabrasClave` en cada conocimiento para responder preguntas de tema.
+- Paso C, sin hacer: ampliar el contenido de conocimientos y de respuestas de tema (más conocimientos por NPC, más palabras clave, más variantes de `no_se`). Todo texto nuevo lo aprueba Tomás.
+- Las `palabrasClave` actuales, salvo las de Serel, son una primera propuesta y también quedan a aprobar.
+
+## 8. Futuro (sin implementar)
+- NPCs secundarios: con poco lore.
+- NPCs terciarios: sin importancia real.

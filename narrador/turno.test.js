@@ -84,7 +84,7 @@ describe('turno — orden y forma del resultado', () => {
 
 describe('turno — comprender', () => {
   test('reformula una vez; la segunda pasa a IA; no avanza el reloj', () => {
-    const uno = texto(partida(), 'hola, ¿qué tal?');
+    const uno = texto(partida(), 'hola, buenas tardes');
     assert.equal(uno.tipo, TIPOS_TURNO.REFORMULAR);
     assert.equal(uno.motivo, 'no_entendido');
     assert.equal(uno.estado.reformulacionPendiente, true);

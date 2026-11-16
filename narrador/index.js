@@ -15,7 +15,8 @@ import { narrarTurno, narrarReformulacion, VENTANA_APERTURAS, anotarApertura } f
 import { pedirRespuestaIA, datosDeContexto, validarSalida, SIN_IA, MOTIVOS_IA } from './ia.js';
 import { registroDeTurno, ORIGENES, MAX_ULTIMOS_TURNOS } from './registro.js';
 import { estadoDeEscena } from './estadoEscena.js';
-import { destinosDeViaje } from './comprension.js';
+import { destinosDeViaje, prepararDiccionarios } from './comprension.js';
+import { cargarDiccionarios } from './diccionarios.js';
 import { npcInicial, clampRelacion, clampDisposicion } from './npcs.js';
 import { esHora } from './reloj.js';
 import { MOTIVOS } from './motivos.js';
@@ -51,6 +52,13 @@ async function leerContenidoPorDefecto() {
 
 /** Contenido validado. Se carga una vez, al importar el módulo. */
 export const contenido = exigirContenidoValido(await leerContenidoPorDefecto());
+
+/**
+ * Diccionarios de la comprensión (léxico y ortografía), cargados una vez. `cargarDiccionarios` nunca lanza:
+ * si un archivo falta o trae errores, ese diccionario no se usa y el narrador sigue con el catálogo solo.
+ * SIN VERIFICAR: la carga por `fetch` en el navegador.
+ */
+export const diccionarios = prepararDiccionarios(await cargarDiccionarios(contenido), contenido.intenciones);
 
 const lista = (v) => (Array.isArray(v) ? v : []);
 const esObjeto = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -234,7 +242,7 @@ function fechaActual(ahora) {
  * @param {{
  *   groqKey?: string|null,
  *   http?: Function, esperar?: (ms: number) => Promise<void>, ahora?: () => Date|number|string,
- *   cola?: { agregar: (registro: object) => unknown },
+ *   cola?: { agregar: (registro: object) => unknown }, diccionarios?: object|null,
  * }} [opciones] `http`, `esperar` y `ahora` son para tests: por defecto, `fetch` y el reloj del sistema.
  *   `cola`: la cola de registros (narrador/registroFirestore.js); si llega, el registro del turno se encola.
  * @returns {Promise<{
@@ -275,7 +283,9 @@ export async function narrar(estado, entrada, opciones = {}) {
     const rng = crearRng(partida.semilla);
     const ventana = partida.ventanaAperturas;
 
-    const turno = ejecutarTurno(partida, entrada, { contenido, rng });
+    // `opciones.diccionarios`: para tests; `null` los apaga.
+    const dic = esObjeto(opciones) && 'diccionarios' in opciones ? opciones.diccionarios : diccionarios;
+    const turno = ejecutarTurno(partida, entrada, { contenido, rng, diccionarios: dic });
     if (turno.tipo === TIPOS_TURNO.ERROR) return error(ERRORES.ENTRADA_INVALIDA, turno.error);
 
     let texto = null;

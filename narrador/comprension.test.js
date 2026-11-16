@@ -486,13 +486,13 @@ describe('sección 4.4 — empates de nombre o alias', () => {
 
 describe('sección 5 — una reformulación por turno', () => {
   test('primera pasada: reformula; segunda: pasa a IA', () => {
-    assert.deepEqual(decidir('hola, ¿qué tal?', ctx()), {
+    assert.deepEqual(decidir('hola, buenas tardes', ctx()), {
       tipo: 'reformular',
       motivo: MOTIVOS.NO_ENTENDIDO,
       intencionId: null,
       datos: {},
     });
-    assert.deepEqual(decidir('hola, ¿qué tal?', ctx({ reformulacionPrevia: true })), { tipo: 'ia', intencionId: null });
+    assert.deepEqual(decidir('hola, buenas tardes', ctx({ reformulacionPrevia: true })), { tipo: 'ia', intencionId: null });
   });
 
   test('en la segunda pasada, un parámetro faltante también pasa a IA y conserva la intención', () => {

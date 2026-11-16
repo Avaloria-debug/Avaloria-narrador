@@ -5,19 +5,22 @@
 import { decidir, resolverNpc, resolverObjeto, MOTIVOS } from './comprension.js';
 import { resolverAccion, aplicarEfectos, objetoDisponible, entradaDeInventario, MOTIVOS_FALLO } from './resolver.js';
 import { aplicarTransicion, disposicionEfectiva } from './npcs.js';
-import { conocimientoARevelar, conocimientoPorNarrativo, revelar } from './conocimientos.js';
+import { conocimientoARevelar, conocimientoPorNarrativo, puedeRevelar, revelar, MOTIVOS_NO_REVELA } from './conocimientos.js';
 import { procesarEventos } from './eventos.js';
 import { estadoDeEscena } from './estadoEscena.js';
 import { avanzar } from './reloj.js';
 import { moverNpcs, npcsEnEscena } from './movimientoNpcs.js';
 
-export const TIPOS_TURNO = Object.freeze({ ACCION: 'accion', REFORMULAR: 'reformular', IA: 'ia', ERROR: 'error' });
+export const TIPOS_TURNO = Object.freeze({ ACCION: 'accion', CONSULTA: 'consulta', REFORMULAR: 'reformular', IA: 'ia', ERROR: 'error' });
+
+// Resultado de una consulta: el NPC cuenta el conocimiento, no lo cuenta por ahora, o no sabe del tema.
+export const RESULTADOS_CONSULTA = Object.freeze({ EXITO: 'exito', FALLO: 'fallo', NO_SE: 'no_se' });
 
 export const TIPOS_EFECTO_NPC = Object.freeze({
   RELACION: 'relacion', // { npcId, delta, valor }
   DISPOSICION: 'disposicion', // { npcId, delta, valor }
   CONOCIMIENTOS_BLOQUEADOS: 'conocimientos_bloqueados', // { npcId }
-  CONOCIMIENTO_REVELADO: 'conocimiento_revelado', // { npcId, conocimientoId, por: 'conversacion'|'narrativo' }
+  CONOCIMIENTO_REVELADO: 'conocimiento_revelado', // { npcId, conocimientoId, por: 'conversacion'|'narrativo'|'consulta' }
   NARRATIVO_SIN_CONOCIMIENTO: 'narrativo_sin_conocimiento', // { npcId, objetoId, motivo }
 });
 
@@ -30,6 +33,7 @@ export function npcsPresentes(estado, contenido) {
     nombre: n.nombre,
     alias: n.alias,
     relacion: estado.npcs[n.id]?.relacion ?? 0,
+    conocimientos: n.conocimientos ?? [],
   }));
 }
 
@@ -48,7 +52,7 @@ export function objetosAplicables(estado, contenido, verbo) {
 }
 
 /** Arma el contexto de la comprensión desde el estado. */
-function contextoDeComprension(estado, contenido) {
+function contextoDeComprension(estado, contenido, diccionarios = null) {
   return {
     intenciones: contenido.intenciones,
     escenas: contenido.escenas,
@@ -57,6 +61,7 @@ function contextoDeComprension(estado, contenido) {
     npcsAusentes: contenido.npcs,
     objetosAplicables: (verbo) => objetosAplicables(estado, contenido, verbo),
     reformulacionPrevia: estado.reformulacionPendiente === true,
+    ...(diccionarios ? { diccionarios } : {}),
   };
 }
 
@@ -101,10 +106,10 @@ function decidirBoton(entrada, estado, contenido) {
 }
 
 /** Paso 1: comprender. */
-function comprender(entrada, estado, contenido) {
+function comprender(entrada, estado, contenido, diccionarios) {
   if (entrada?.tipo === 'boton') return decidirBoton(entrada, estado, contenido);
   if (entrada?.tipo === 'texto' && typeof entrada.texto === 'string') {
-    return decidir(entrada.texto, contextoDeComprension(estado, contenido));
+    return decidir(entrada.texto, contextoDeComprension(estado, contenido, diccionarios));
   }
   return { tipo: 'error', error: 'entrada inválida' };
 }
@@ -157,12 +162,58 @@ function efectosSobreNpc(estado, accion, resolucion, contenido, conValor) {
 }
 
 /**
+ * Consulta de tema: una pregunta a un NPC presente. No gasta tiempo ni mueve eventos o NPCs.
+ * - Tema de un conocimiento del NPC que se puede revelar: lo cuenta y queda revelado (`exito`).
+ * - Tema de un conocimiento ya revelado o sin sus condiciones (umbral, evento, marca): `fallo`.
+ * - Sin tema, o con los conocimientos del NPC bloqueados: `no_se`.
+ * - Sin NPC presente no hay a quién preguntar: sigue como una frase no entendida.
+ */
+function ejecutarConsulta(estado, decision, contenido) {
+  const npcDef = porId(contenido.npcs, decision.npcId);
+  const npcEstado = npcDef ? estado.npcs[npcDef.id] : null;
+  if (!npcDef || !npcEstado) {
+    if (estado.reformulacionPendiente === true) {
+      return { tipo: TIPOS_TURNO.IA, estado: { ...estado, reformulacionPendiente: false }, intencionId: null };
+    }
+    return {
+      tipo: TIPOS_TURNO.REFORMULAR,
+      estado: { ...estado, reformulacionPendiente: true },
+      intencionId: null,
+      motivo: MOTIVOS.NO_ENTENDIDO,
+      datos: {},
+    };
+  }
+  const npcId = npcDef.id;
+  const conocimiento = porId(npcDef.conocimientos, decision.conocimientoId) ?? null;
+  const consulta = { npcId, conocimientoId: conocimiento?.id ?? null, resultado: RESULTADOS_CONSULTA.NO_SE, efectos: [] };
+  let npc = npcEstado;
+  if (conocimiento) {
+    const r = puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido);
+    if (r.puede) {
+      npc = revelar(npcEstado, conocimiento.id);
+      consulta.resultado = RESULTADOS_CONSULTA.EXITO;
+      consulta.efectos.push({ tipo: TIPOS_EFECTO_NPC.CONOCIMIENTO_REVELADO, npcId, conocimientoId: conocimiento.id, por: 'consulta' });
+    } else {
+      consulta.motivo = r.motivo;
+      if (r.motivo !== MOTIVOS_NO_REVELA.BLOQUEADO) consulta.resultado = RESULTADOS_CONSULTA.FALLO;
+    }
+  }
+  return {
+    tipo: TIPOS_TURNO.CONSULTA,
+    estado: { ...estado, reformulacionPendiente: false, npcs: { ...estado.npcs, [npcId]: npc } },
+    intencionId: null,
+    consulta,
+  };
+}
+
+/**
  * Ejecuta un turno.
  * @param {object} estado
  * @param {{ tipo: 'boton', intencionId: string, parametros?: object } | { tipo: 'texto', texto: string }} entrada
- * @param {{ contenido: object, rng: () => number }} dependencias
+ * @param {{ contenido: object, rng: () => number, diccionarios?: object }} dependencias `diccionarios`: los de la comprensión del texto libre (opcional)
  * @returns {{
- *   tipo: 'accion'|'reformular'|'ia'|'error', estado: object,
+ *   tipo: 'accion'|'consulta'|'reformular'|'ia'|'error', estado: object,
+ *   consulta?: { npcId: string, conocimientoId: string|null, resultado: 'exito'|'fallo'|'no_se', motivo?: string, efectos: object[] },
  *   intencionId?: string|null, motivo?: string, datos?: object, error?: string,
  *   accion?: { intencionId: string, verbo: string, parametros: object, resultado: string, motivo?: string,
  *     efectos: object[], costoHoras: number, escenaAnterior: string, escenaNueva: string, viaje?: object, precio?: object },
@@ -171,12 +222,13 @@ function efectosSobreNpc(estado, accion, resolucion, contenido, conValor) {
  *   repetirIntencionId?: string|null, reportes?: object[],
  * }}
  */
-export function ejecutarTurno(estado, entrada, { contenido, rng }) {
+export function ejecutarTurno(estado, entrada, { contenido, rng, diccionarios = null }) {
   if (typeof rng !== 'function') throw new TypeError('ejecutarTurno necesita un rng');
 
   // 1. Comprender.
-  const decision = comprender(entrada, estado, contenido);
+  const decision = comprender(entrada, estado, contenido, diccionarios);
   if (decision.tipo === 'error') return { tipo: TIPOS_TURNO.ERROR, estado, error: decision.error };
+  if (decision.tipo === 'consulta') return ejecutarConsulta(estado, decision, contenido);
   if (decision.tipo === 'reformular') {
     return {
       tipo: TIPOS_TURNO.REFORMULAR,
