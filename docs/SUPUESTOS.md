@@ -629,8 +629,10 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - SUPUESTO — el final depende de h7: el desenlace positivo pide h7 y h8 alcanzados y `secreto_compartido` ≥ 1 con p1. h7 solo se dispara con rencor grave en p1; sin él, el caso cierra en el neutro por defecto (sin condición).
 - VERSION 0.0.15.
 
-## caso_01, h7 de confianza (0.0.16)
+## caso_01, h7 de confianza
 
 - DECISIÓN (opción B) — h7 deja de ser reparación explícita: `es_reparacion` y `repara_rencor_grave` en false, sin `npc_reparacion`; condiciones: `requiere_hitos` ["h6"] y gratitud ≥ 2 sobre `npc(p1)`. La reparación de rencor grave queda fuera de este caso. Motivo: el positivo pide h7 y h8; si h7 exigiera rencor, el positivo solo sería alcanzable con hostilidad previa. Ahora es alcanzable sin ella. El final sigue dependiendo de h7 (positivo: h7, h8 y `secreto_compartido` ≥ 1 con p1).
-- La reparación del caso son h5 y h6 (pasos sobre p1). Cambios mecánicos: h6 escribe gratitud nivel 1 (antes `subir`), `version` "casos-v0.2", h8 t4 reescrito. La gratitud ≥ 2 de h7 sale de las acciones del jugador (ayudar, guardar_secreto...), no de h5 y h6.
-- VERSION 0.0.16.
+- La reparación del caso son h5 y h6 (pasos sobre p1). Cambios mecánicos: h6 escribe gratitud nivel 1 (antes `subir`), `version` "casos-v0.2", h8 t4 reescrito. (Corregido abajo: h6 escribe gratitud nivel 2.)
+- VERSION: se revierte a 0.0.15; los cambios de este bloque son solo de contenido y docs.
+
+- DECISIÓN — h6 escribe gratitud nivel 2 (h5 queda en 1). Motivo: h7 (gratitud ≥ 2 sobre p1) tiene que ser alcanzable con la historia sola, sin depender de las acciones del jugador; así el positivo también lo es. Con nivel 2 en h6, la gratitud pasa a nivel medio (decae a los 6 hitos, no a los 3 del nivel leve).

@@ -292,7 +292,7 @@
             {
               "tipo": "gratitud",
               "objetivo": "npc(p1)",
-              "nivel": 1
+              "nivel": 2
             }
           ],
           "es_reparacion": true,
