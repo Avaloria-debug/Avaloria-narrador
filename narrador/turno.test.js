@@ -338,7 +338,7 @@ describe('turno — huir y viajar', () => {
     assert.equal(t.estado.jugador.escenaId, 'escena_plaza_cambistas');
     assert.deepEqual(t.estado.reloj, { dia: 2, hora: '20:00' });
     assert.equal(t.accion.costoHoras, 36);
-    assert.deepEqual(t.npcsMovidos.map((m) => m.npcId).sort(), ['brenn_arriero', 'sarin_mensajera']);
+    assert.deepEqual(t.npcsMovidos.map((m) => m.npcId).sort(), ['brenn_arriero', 'hollis_pastor', 'sarin_mensajera', 'ysolde_pescadora']);
     assert.deepEqual(t.escena.npcs.map((n) => n.id), ['ivor_cambista']);
   });
 

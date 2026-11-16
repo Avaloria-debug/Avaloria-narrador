@@ -29,7 +29,7 @@
 | Campo | Tipo | Descripción |
 |---|---|---|
 | id | string | `caso_01` … `caso_12` |
-| tono | enum | intriga, calido, misterio, tension, humor, melancolia |
+| tono | enum | intriga, calido, tension, misterio, cotidiano |
 | escenas_origen | string[] | Escenas donde puede arrancar |
 | ranuras_pista | Ranura[] | Huecos de pista que se llenan al instanciar (2.2) |
 | bandos | string[] | 1–3 valores posibles de pacto_caso |
