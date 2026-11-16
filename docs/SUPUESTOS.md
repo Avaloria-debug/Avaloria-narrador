@@ -611,3 +611,13 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - SUPUESTO — marcadores: `{conocimiento:pN}` se reemplaza por el campo `contenido` del conocimiento.
 - SUPUESTO — validador: `escena(pN)` se resuelve con la escena inicial del dueño. "Ninguna acción de rutina cuenta como reparación" = ninguna fila de la tabla de acciones quita rencor, desconfianza o miedo, y todo hito de reparación tiene `requiere_hitos`. Final alcanzable: requiere_hitos cumplibles, escena de entrega o alternativa alcanzable y sin bloqueo por un hito que el final pide; no simula tags ni hora. Tag en el cuerpo: objetivo `jugador.<parte>` o una parte del cuerpo de la lista `PARTES_DEL_CUERPO` (no hay lista en el diseño). Se pide al menos 1 positivo (§9).
 - VERSION 0.0.13 en el último commit del bloque (un solo aumento, según la tarea).
+
+## Caso piloto caso_01 (0.0.14)
+
+- SUPUESTO — archivo: los casos van en `data/contenido/casos.json` como `{version, casos[]}`. `node narrador/validarContenido.js` los valida con `validarCasos` (error = contenido inválido).
+- SUPUESTO — caso_01: escenas de origen `escena_mercado_circular` y `escena_archivo_real` (las dos de ciudad de Ardenhall). Ranuras: p1 maren_1 / serel_1, p2 sarin_1 / naela_1, p3 tiren_1 / ysolde_1: seis dueños distintos, 8 firmas válidas, sin conocimientos nuevos y sin `requiereEvento` ni `requiereMarca`.
+- SUPUESTO — reparación en caso_01: `npc_reparacion` = `npc(p1)`. h5 y h6 son pasos (escenas distintas: `escena(p1)` y `escena_camino_norte`/`escena_camino_sur`); h7 es la explícita (rencor grave en p1, gratitud ≥ 2; relación ≥ 15 la exige el motor). El final (h8) pide h4 y h6, no h7: sin rencor, h5–h6 se disparan una vez y los textos valen igual. El progreso de reparación solo suma si hay un tag reparable en p1.
+- SUPUESTO — h6 se entrega en un camino donde p1 no está: el motor no pide la presencia del NPC para un hito de reparación. Los textos de h6 llegan por recado, no con el NPC en escena.
+- SUPUESTO — `bandos` y `ramas` van vacíos (el caso no usa `pacto_caso` ni ramas); `instancias_minimas`: 8. Los desenlaces no llevan texto (el diseño no lo define). Desenlace positivo: h8 alcanzado y `secreto_compartido` ≥ 1 con p1 (no decae, a diferencia de gratitud). Sin desenlace negativo.
+- SUPUESTO — ids de texto: `caso_01_h<n>_t<1-4>`; ids de desenlace: `caso_01_d_neutro`, `caso_01_d_positivo`. Tono de los textos de reparación: `calido`; el resto `intriga`.
+- VERSION 0.0.14 (cambia `narrador/validarContenido.js`).
