@@ -166,8 +166,9 @@ function efectosSobreNpc(estado, accion, resolucion, contenido, conValor) {
 /**
  * Consulta de tema: una pregunta a un NPC presente. No gasta tiempo ni mueve eventos o NPCs.
  * - Tema de un conocimiento del NPC que se puede revelar: lo cuenta y queda revelado (`exito`).
- * - Tema de un conocimiento ya revelado o sin sus condiciones (umbral, evento, marca): `fallo`.
- * - Sin tema, o con los conocimientos del NPC bloqueados: `no_se`.
+ * - Tema de un conocimiento ya revelado o sin la relación que pide: `fallo`.
+ * - Sin tema, con los conocimientos del NPC bloqueados, o con su evento o marca sin cumplir: `no_se`.
+ *   En ese último caso queda pendiente: se revela al preguntar con la condición cumplida.
  * - Sin NPC presente no hay a quién preguntar: sigue como una frase no entendida.
  */
 function ejecutarConsulta(estado, decision, contenido) {
@@ -197,7 +198,9 @@ function ejecutarConsulta(estado, decision, contenido) {
       consulta.efectos.push({ tipo: TIPOS_EFECTO_NPC.CONOCIMIENTO_REVELADO, npcId, conocimientoId: conocimiento.id, por: 'consulta' });
     } else {
       consulta.motivo = r.motivo;
-      if (r.motivo !== MOTIVOS_NO_REVELA.BLOQUEADO) consulta.resultado = RESULTADOS_CONSULTA.FALLO;
+      // Bloqueado, o con su evento o marca sin cumplir: `no_se`; queda pendiente y se revela al preguntar con la condición cumplida.
+      const pendiente = [MOTIVOS_NO_REVELA.BLOQUEADO, MOTIVOS_NO_REVELA.EVENTO, MOTIVOS_NO_REVELA.MARCA].includes(r.motivo);
+      if (!pendiente) consulta.resultado = RESULTADOS_CONSULTA.FALLO;
     }
   }
   return {

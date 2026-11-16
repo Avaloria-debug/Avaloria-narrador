@@ -217,3 +217,34 @@ describe('validador: palabrasClave y no_se', () => {
     }
   });
 });
+
+describe('conocimiento con evento como pista (motor-caso-v1-operativo.md, sección 4)', async () => {
+  const { ejecutarTurno } = await import('./turno.js');
+  const DARIO = 'dario_guardia';
+  const PISTA = 'conocimiento_dario_1';
+  const EVENTO = 'evento_disputa_aduana';
+  const ADUANA = 'escena_puente_aduana';
+  const enAduana = (eventosActivos) => {
+    const e = crearPartida({ semilla: 3 });
+    return { ...e, eventosActivos, jugador: { ...e.jugador, escenaId: ADUANA }, npcs: { ...e.npcs, [DARIO]: { ...e.npcs[DARIO], relacion: 100 } } };
+  };
+  const preguntar = (estado) => ejecutarTurno(estado, { tipo: 'texto', texto: '¿quién cobra sobornos?' }, { contenido, rng: () => 0.5 });
+
+  test('el conocimiento pide un evento y no queda excluido como pista: se puede preguntar por él', () => {
+    const k = contenido.npcs.find((n) => n.id === DARIO).conocimientos.find((c) => c.id === PISTA);
+    assert.equal(k.requiereEvento, EVENTO);
+    assert.equal(preguntar(enAduana([])).consulta.conocimientoId, PISTA);
+  });
+
+  test('con el evento inactivo responde no_se y no se revela; con el evento activo se revela', () => {
+    const sin = preguntar(enAduana([]));
+    assert.equal(sin.tipo, 'consulta');
+    assert.equal(sin.consulta.resultado, 'no_se');
+    assert.equal(sin.consulta.motivo, 'evento');
+    assert.deepEqual(sin.estado.npcs[DARIO].conocimientosRevelados, []);
+    // Queda pendiente: la misma pregunta, con el evento activo, la revela.
+    const con = preguntar({ ...sin.estado, eventosActivos: [{ id: EVENTO, escenaId: ADUANA, turnosRestantes: 6, horaFin: null }] });
+    assert.equal(con.consulta.resultado, 'exito');
+    assert.deepEqual(con.estado.npcs[DARIO].conocimientosRevelados, [PISTA]);
+  });
+});

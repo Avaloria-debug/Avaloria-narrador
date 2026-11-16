@@ -33,7 +33,7 @@ Secuencia: siguen reloj, contadorHitos, relaciones, textosUsados, efectos_post, 
 
 ## 4. Instanciación
 
-1. Candidatos: 2 conocimientos por ranura, sin dueño ni conocimiento repetido, sin `requiereEvento` ni `requiereMarca`.
+1. Candidatos: 2 conocimientos por ranura, sin dueño ni conocimiento repetido. Un conocimiento con `requiereEvento` o `requiereMarca` puede ser pista. Si al preguntarlo su condición no se cumple, el NPC responde `no_se` y la pista queda pendiente: se revela al preguntar con la condición cumplida.
 2. Excluir en p1 conocimiento cuyo dueño tenga rencor grave.
 3. Firma no jugada por el jugador; si no hay, menos usos (empate: más vieja).
 4. Orden: permutación válida menos usada.
@@ -57,7 +57,7 @@ Ciclo por turno:
 
 Fuera de escena: gancho; a 12 turnos, escena del NPC de ranura más cercano.
 
-Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar reparación; 24 turnos sin avance → pista nivel 1; finales bloqueados → neutro por abandono.
+Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar reparación; 24 h sin avance → pista nivel 1; finales bloqueados → neutro por abandono.
 
 ## 6. Tags por acción
 
@@ -110,6 +110,8 @@ Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar rep
 | alerta_camino | 6 h | — | — |
 | sospecha_crimen, favor_casa_aster, favor_archivo, pacto_caso, alianza_npc | cierre de caso | — | — |
 
+Unidades: el decaimiento por horas y las 24 h de anti-traba usan el reloj del mundo y se evalúan solo cuando el reloj avanza; las acciones de 0 horas no los mueven. Hitos, ramas, arranque y entrega fuera de escena van por turnos o por condición.
+
 Reparación: quita un tag medio/grave (rencor/desconfianza/miedo) del NPC, baja el resto 1 y levanta `bloqueadoConocimientos` de ese NPC. El hito de reparación es repetible, una vez por NPC. contadorHitos es global; sin caso activo (modo libre), el decaimiento por hitos cuenta turnos: 1 hito = 8 turnos. Los turnos salen de contadorTurnos, en el estado.
 
 ## 8. Texto
@@ -128,7 +130,7 @@ Al final o abandono: candidatos con requiere → mayor prioridad → mayor coinc
 
 ## 10. Validación
 
-Error si: hitos ≠ 8; textos ≠ 4; id de texto duplicado; sin neutro default; sin reparación; final inalcanzable en alguna instancia; < 4 firmas; candidato de ranura con `requiereEvento` o `requiereMarca`; id inexistente; marcador inválido; tag fuera de los 20; tag en cuerpo del jugador; efectos_post con tag de cierre.
+Error si: hitos ≠ 8; textos ≠ 4; id de texto duplicado; sin neutro default; sin reparación; final inalcanzable en alguna instancia; < 4 firmas; id inexistente; marcador inválido; tag fuera de los 20; tag en cuerpo del jugador; efectos_post con tag de cierre.
 
 ## 11. Cambios
 

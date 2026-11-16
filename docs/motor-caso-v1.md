@@ -119,7 +119,7 @@ Al cerrar un caso (desenlace elegido), si la partida sigue:
 |---|---|
 | Elección | Mismo algoritmo 3.1, con el caso cerrado agregado a casosJugados y su tono al historial |
 | Reloj | Continúa. No se reinicia. |
-| Escena | El jugador queda donde estaba. El caso nuevo arranca cuando el jugador entra a una de sus escenas_origen o, a las 6 horas, con un gancho en la escena actual |
+| Escena | El jugador queda donde estaba. El caso nuevo arranca cuando el jugador entra a una de sus escenas_origen o, a los 6 turnos, con un gancho en la escena actual |
 | contadorHitos | Continúa (es global de la partida, alimenta decaimiento por hitos) |
 | hitoPrevio | Se reinicia a null para el caso nuevo |
 | hitosAlcanzados, hitosListos, hitosBloqueados | Se archivan con el casoId y se vacían |
@@ -128,7 +128,7 @@ Al cerrar un caso (desenlace elegido), si la partida sigue:
 | Tags de efectos_post | Sobreviven con el nivel que fija el desenlace |
 | Resto de tags | Siguen con su decaimiento normal |
 | Ranuras | Se borran: qué conocimiento ocupaba p1, p2 y p3 en la instancia anterior |
-| pista_conocida | Se conserva con su nivel. Si un pista_conocida coincide con una ranura de la instancia nueva, esa ranura arranca con ese nivel |
+| pista_conocida | Se conserva con su nivel. Si un pista_conocida coincide con una ranura de la instancia nueva, esa ranura arranca con ese nivel, con máximo nivel 1 |
 | Relaciones numéricas | Continúan |
 
 Límite: sin límite de casos por partida; el pool no se repite dentro de la partida. Si se agota (12 casos), la partida pasa a modo libre sin caso.
@@ -137,7 +137,7 @@ Límite: sin límite de casos por partida; el pool no se repite dentro de la par
 
 Al elegir un caso:
 
-1. Generar candidatos: producto de los 2 conocimientos de cada ranura (8 firmas), descartando combinaciones donde un mismo dueño dé más de una pista o un mismo conocimiento llene dos ranuras.
+1. Generar candidatos: producto de los 2 conocimientos de cada ranura (8 firmas), descartando combinaciones donde un mismo dueño dé más de una pista o un mismo conocimiento llene dos ranuras. Un conocimiento con `requiereEvento` o `requiereMarca` puede ser pista. Si al preguntarlo su condición no se cumple, el NPC responde `no_se` y la pista queda pendiente: se revela al preguntar con la condición cumplida.
 2. Filtrar por coherencia del estado: descartar en p1 un conocimiento cuyo dueño tenga rencor grave activo hacia el jugador (evita traba en el arranque).
 3. Leer historial_instancias del jugador para el caso.
 4. Candidatos no jugados = candidatos cuya firma no está en el historial.
@@ -164,11 +164,12 @@ Al elegir un caso:
 | requiere_hitos | h2 o h3 | todos / alguno |
 | tags | `pista_conocida:p1 >= 2`, `desconfianza:npc(p2) < 2` | >=, <, ==, ausente |
 | escena | escena_archivo_real, grupo caminos, `escena(p2)` | en / no en |
-| hora | rango 18–24, `hora >= hitoPrevio.hora + 6` | rango, relativo |
+| hora | rango 18–24 | rango |
+| turnos | `turno >= hitoPrevio.turno + 6` | relativo a hitoPrevio |
 | estado_evento | sigilo, tenso | en |
 | pistas | n ranuras en nivel ≥ entendida; ranura habilitada según orden de la instancia | conteo, habilitada |
 
-**hitoPrevio**: el último hito disparado en la partida dentro del caso activo, con su hora del reloj del mundo, su escena y el valor de contadorHitos en ese momento. Si no hay hito disparado en el caso activo, vale el momento de instanciación (hora y escena en que arrancó el caso). Las condiciones relativas (`hora >= hitoPrevio.hora + 6`, `contadorHitos >= hitoPrevio.contador + 2`) se calculan contra ese registro.
+**hitoPrevio**: el último hito disparado en la partida dentro del caso activo, con su hora del reloj del mundo, su escena, su turno (contadorTurnos, en el estado) y el valor de contadorHitos en ese momento. Si no hay hito disparado en el caso activo, vale el momento de instanciación (hora y escena en que arrancó el caso). Las condiciones relativas (`turno >= hitoPrevio.turno + 6`, `contadorHitos >= hitoPrevio.contador + 2`) se calculan contra ese registro.
 
 - No hay orden fijo de hitos. h5 puede ocurrir antes que h4 si su condición no depende de él.
 - Estructura mínima por caso: h1 entrada, 5 intermedios, ≥1 reparación, ≥1 final. Algunos casos tienen 2 finales alternativos.
@@ -188,7 +189,7 @@ Al elegir un caso:
 
 - Queda en hitosListos.
 - El narrador agrega un gancho en la escena actual (rumor, NPC que menciona algo, chisme_activo en la escena de entrega). El gancho sale de la tabla de reacciones, no de los textos de hito.
-- Si pasan 12 horas sin entregarse y el hito admite escena alternativa, se mueve a la escena del NPC de ranura más cercano.
+- Si pasan 12 turnos sin entregarse y el hito admite escena alternativa, se mueve a la escena del NPC de ranura más cercano.
 
 ### 4.4 Anti-traba
 
@@ -196,7 +197,7 @@ Al elegir un caso:
 |---|---|
 | 0 hitos listos durante 8 turnos | Baja un umbral de pista del siguiente hito alcanzable (vista en lugar de entendida) |
 | Hito requiere NPC con rencor grave | Se habilita su hito de reparación sin otras condiciones |
-| 24 horas sin avance | Evento de escena que siembra pista_conocida nivel 1 de la siguiente ranura habilitada |
+| 24 horas de reloj sin avance | Evento de escena que siembra pista_conocida nivel 1 de la siguiente ranura habilitada |
 | Todos los finales bloqueados | Se habilita el desenlace neutro por abandono |
 
 ## 5. Escritura de tags por acción
@@ -260,10 +261,11 @@ SUPUESTO: el parser actual del narrador clasifica la entrada en estos tipos por 
 
 ### 6.1 Relojes
 
-- Horas: reloj del mundo, evaluado cada vez que avanza.
+- Horas: reloj del mundo, evaluado solo cuando avanza. Las acciones de 0 horas no mueven el decaimiento por horas ni las 24 h de anti-traba.
+- Turnos: contadorTurnos, en el estado. Hitos, ramas, arranque y entrega fuera de escena van por turnos o por condición.
 - Hitos: contadorHitos (global de la partida), evaluado al disparar un hito.
 - Cierre de caso: al elegir desenlace.
-- Reparación: solo un hito con es_reparacion.
+- Reparación: solo un hito con es_reparacion; es repetible, una vez por NPC.
 
 ### 6.2 Tabla
 
@@ -292,8 +294,8 @@ SUPUESTO: el parser actual del narrador clasifica la entrada en estos tipos por 
 
 - Decaer = quitar el tag, salvo reputacion_ciudad y fama_violenta, que bajan por pasos.
 - Ninguna acción de rutina quita rencor, desconfianza o miedo medio/grave.
-- Un hito de reparación quita un tag medio/grave de esos tres sobre su NPC objetivo y baja el resto 1 nivel. Rencor grave solo con repara_rencor_grave.
-- Los tags decaen por hitos usando contadorHitos global, también a través de casos en secuencia.
+- Un hito de reparación quita un tag medio/grave de esos tres sobre su NPC objetivo y baja el resto 1 nivel; también levanta `bloqueadoConocimientos` de ese NPC. Rencor grave solo con repara_rencor_grave.
+- Los tags decaen por hitos usando contadorHitos global, también a través de casos en secuencia. Sin caso activo (modo libre), el decaimiento por hitos cuenta turnos: 1 hito = 8 turnos.
 
 ## 7. Variación de texto
 
@@ -455,7 +457,7 @@ Hitos relevantes:
 | h1 | inicio del caso | escena(p1) |
 | h2 | pista_conocida:p1 ≥ 2 | cualquiera |
 | h3 | alianza_npc:npc(p1) o favor_archivo ≥ 1 | escena_archivo_real |
-| h4 | pista_conocida:p3 ≥ 2, hora 18–24, hora ≥ hitoPrevio.hora + 6 | escena_camino_norte |
+| h4 | pista_conocida:p3 ≥ 2, hora 18–24, turno ≥ hitoPrevio.turno + 6 | escena_camino_norte |
 | h6 (reparación) | rencor:npc(p1) ≥ 2 y gratitud:npc(p1) ≥ 1 | escena(p1) |
 
 ### 11.2 Elección de instancia
@@ -503,7 +505,7 @@ Estado inicial: h1 disparado al instanciar, en escena_mercado_circular; texto `c
 - Tags: secreto_compartido:maren_archivista = 1, gratitud:maren_archivista = 1, alianza_npc:maren_archivista = 1. Relación +5.
 - Reloj 10 → 11. h3 cumple; entrega en escena_archivo_real → hitosListos.
 - Gancho: maren_archivista dice que vuelve al archivo a mediodía (reacción de tabla).
-- h4 no está listo: falta pista p3 en 2 y hora ≥ 16 (hitoPrevio.hora 10 + 6) y franja 18–24.
+- h4 no está listo: falta pista p3 en 2 y 6 turnos desde hitoPrevio y franja 18–24.
 
 Estado:
 
@@ -529,7 +531,7 @@ caso_07 cierra a la hora 41 en escena_archivo_real con d_caso_07_1 (positivo). e
 4. Sorteo → caso_03 "La deuda del pastor" (melancolia), escenas_origen escena_cruce_colinas y escena_taberna_lareth.
 5. Instancia: primera vez para este jugador → cualquier firma; se elige p1 = conocimiento_sendero_sin_vigilancia (dueño hollis_pastor).
 6. Reloj sigue en 41; contadorHitos sigue en 7; hitoPrevio = null hasta que arranque.
-7. El jugador está en Ardenhall: a las 6 horas sin entrar a una escena de origen, sarin_mensajera trae un gancho en la escena actual. Al entrar a escena_taberna_lareth, se dispara h1 de caso_03 y hitoPrevio = ese momento.
+7. El jugador está en Ardenhall: a los 6 turnos sin entrar a una escena de origen, sarin_mensajera trae un gancho en la escena actual. Al entrar a escena_taberna_lareth, se dispara h1 de caso_03 y hitoPrevio = ese momento.
 
 ## 12. Validación de contenido
 
@@ -593,7 +595,7 @@ Code = escribir la lógica. Sonnet = escribir contenido, con revisión de Tomás
 - DECIDIDO: Entre casos en secuencia: se borran cierres de caso y ranuras (qué conocimiento ocupaba p1–p3); se conservan efectos_post, tags con decaimiento propio, relaciones, reloj, contadorHitos y pista_conocida.
 - DECIDIDO: Regla en 3.2: pista_conocida se conserva y, si coincide con una ranura nueva, la ranura arranca con ese nivel; el validador evita que dispare un final en el primer turno.
 - DECIDIDO: Sin límite de casos por partida; el pool no se repite dentro de la partida; agotado, modo libre.
-- DECIDIDO: El caso siguiente arranca al entrar a una de sus escenas de origen, o a las 6 horas con un gancho en la escena actual.
+- DECIDIDO: El caso siguiente arranca al entrar a una de sus escenas de origen, o a los 6 turnos con un gancho en la escena actual.
 - DECIDIDO: objeto_lupa_bronce y conocimiento_sello_doble son nuevos: se agregan a data/contenido/contenido-v3.json antes de validar el caso.
 
 - DECIDIDO: conocimiento_sendero_sin_vigilancia pertenece a hollis_pastor.
