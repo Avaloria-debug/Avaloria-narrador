@@ -559,3 +559,14 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - **Por pasos** (fama_violenta, reputacion_ciudad, deuda_personal): un paso por plazo cumplido, y la cuenta sigue desde el fin de ese plazo. fama_violenta en 1 y reputacion_ciudad en ±1 se quitan al paso siguiente. deuda_personal sube hasta 3 y queda.
 - **Reparación:** se quita el tag de mayor nivel entre rencor, desconfianza y miedo medio/grave del NPC (empate: en ese orden), o el que indique `tipo`. El rencor grave ni se quita ni se baja sin `reparaRencorGrave`. No suma los +15 de relación ni levanta `bloqueadoConocimientos`: eso le toca al módulo de hitos.
 - **Cierre de caso:** `aplicarCierreDeCaso` solo quita los cinco tags de cierre. **Modo libre** (1 hito = 8 turnos): no está; lo decide quien llame a `aplicarDecaimientoPorHitos`.
+
+## Motor de caso: instancias (v0.0.9)
+- **`historialJugador`** es `{ jugadorId, instancias, tags }`: `instancias` sale de `persistencia.instanciasDeCaso` (`leerHistorialJugador` lo arma) y `tags` son los de la partida, para el rencor grave.
+- **Parámetro extra `contexto`** en `candidatos`, `armarInstancia` e `instanciar`: `{ contenido }` o `{ duenos }` para saber el dueño de cada conocimiento, y `{ persistencia, fecha }` en `instanciar`. El dueño no se puede sacar del caso ni del historial.
+- **El historial viaja en cada candidato:** `candidatos` le pone a cada firma `usos`, `ultimaHora`, `ordenes` y `ordenesValidos`; por eso `ordenar(firma, semilla)` no necesita más datos. `elegirFirma` acepta además el historial como segundo parámetro.
+- **Firma como texto:** `p1=<conocimiento>|p2=<conocimiento>|p3=<conocimiento>`.
+- **Rencor grave en p1:** si los dos conocimientos de p1 tienen dueño con rencor grave, la exclusión no se aplica (si no, el caso no se podría instanciar).
+- **Orden válido:** p1 va primera si el primer hito la nombra en `condiciones` o en `escena_entrega`; si no, valen las 6 permutaciones. Es una lectura mínima de "permutación válida", hasta que exista el módulo de hitos. Un caso sin hitos se trata como si dependiera de p1.
+- **Uso por orden:** `persistencia.sumarUsoInstancia` ahora recibe `orden` y lo cuenta en `ordenes` del registro; `instanciasDeCaso` lo devuelve.
+- **"La más vieja"** usa `ultimaHora` del historial, que `instanciar` llena con `contexto.fecha` (por defecto `Date.now()`), no con la hora del reloj del mundo: el historial cruza partidas.
+- **Empates:** entre no jugadas, y entre firmas u órdenes que siguen empatados, decide la semilla. `instanciar` no guarda la instancia en `estado_caso`: lo hace quien llama, en la misma transacción del turno. No está conectado a `narrar`.

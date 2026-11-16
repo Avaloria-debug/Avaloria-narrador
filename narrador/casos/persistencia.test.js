@@ -94,8 +94,8 @@ describe('persistencia de casos: usos', () => {
     const idb = new IDBFactory();
     let bd = await abrir(idb);
     assert.equal(await bd.usoDeInstancia('jugador_1', 'caso_07', 'f1'), 0);
-    assert.equal(await bd.sumarUsoInstancia('jugador_1', 'caso_07', 'f1', { hora: 10 }), 1);
-    assert.equal(await bd.sumarUsoInstancia('jugador_1', 'caso_07', 'f1', { hora: 50 }), 2);
+    assert.equal(await bd.sumarUsoInstancia('jugador_1', 'caso_07', 'f1', { hora: 10, orden: 'p1>p2>p3' }), 1);
+    assert.equal(await bd.sumarUsoInstancia('jugador_1', 'caso_07', 'f1', { hora: 50, orden: 'p1>p2>p3' }), 2);
     assert.equal(await bd.sumarUsoInstancia('jugador_1', 'caso_07', 'f2', { hora: 20 }), 1);
     assert.equal(await bd.sumarUsoInstancia('jugador_2', 'caso_07', 'f1'), 1);
     assert.equal(await bd.sumarUsoInstancia('jugador_1', 'caso_03', 'f1'), 1);
@@ -104,8 +104,8 @@ describe('persistencia de casos: usos', () => {
     bd = await abrir(idb);
     assert.equal(await bd.usoDeInstancia('jugador_1', 'caso_07', 'f1'), 2);
     assert.deepEqual(await bd.instanciasDeCaso('jugador_1', 'caso_07'), [
-      { firma: 'f1', usos: 2, ultimaHora: 50 },
-      { firma: 'f2', usos: 1, ultimaHora: 20 },
+      { firma: 'f1', usos: 2, ultimaHora: 50, ordenes: { 'p1>p2>p3': 2 } },
+      { firma: 'f2', usos: 1, ultimaHora: 20, ordenes: {} },
     ]);
     assert.deepEqual(await bd.instanciasDeCaso('jugador_3', 'caso_07'), []);
     bd.cerrar();

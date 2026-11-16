@@ -57,25 +57,30 @@ function operaciones(tx, versionContenido) {
       return conCompatibilidad(await leer('estado_caso', partidaId));
     },
 
-    /** Suma 1 al uso de una instancia (firma) y devuelve el total. `orden` cuenta cuándo se usó por última vez. */
-    async sumarUsoInstancia(jugadorId, casoId, firma, { hora = null } = {}) {
+    /**
+     * Suma 1 al uso de una instancia (firma) y devuelve el total.
+     * `hora`: cuándo se usó por última vez. `orden`: orden de pistas usado (p. ej. "p1>p3>p2"); se cuenta aparte.
+     */
+    async sumarUsoInstancia(jugadorId, casoId, firma, { hora = null, orden = null } = {}) {
       exigirTexto(jugadorId, 'jugadorId');
       exigirTexto(casoId, 'casoId');
       exigirTexto(firma, 'firma');
       const previo = await leer('historial_instancias', [jugadorId, casoId, firma]);
       const usos = (previo?.usos ?? 0) + 1;
-      await escribir('historial_instancias', { jugadorId, casoId, firma, usos, ultimaHora: hora });
+      const ordenes = { ...(previo?.ordenes ?? {}) };
+      if (orden) ordenes[orden] = (ordenes[orden] ?? 0) + 1;
+      await escribir('historial_instancias', { jugadorId, casoId, firma, usos, ultimaHora: hora, ordenes });
       return usos;
     },
     async usoDeInstancia(jugadorId, casoId, firma) {
       return (await leer('historial_instancias', [jugadorId, casoId, firma]))?.usos ?? 0;
     },
-    /** Instancias jugadas de un caso por un jugador: [{ firma, usos, ultimaHora }]. */
+    /** Instancias jugadas de un caso por un jugador: [{ firma, usos, ultimaHora, ordenes }]. */
     async instanciasDeCaso(jugadorId, casoId) {
       const todas = await comoPromesa(store('historial_instancias').getAll());
       return todas
         .filter((r) => r.jugadorId === jugadorId && r.casoId === casoId)
-        .map(({ firma, usos, ultimaHora }) => ({ firma, usos, ultimaHora }));
+        .map(({ firma, usos, ultimaHora, ordenes }) => ({ firma, usos, ultimaHora, ordenes: ordenes ?? {} }));
     },
 
     /** Suma 1 al uso de un texto y devuelve el total. */
