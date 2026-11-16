@@ -4,11 +4,32 @@
     {
       "id": "caso_01",
       "tono": "intriga",
-      "escenas_origen": ["escena_mercado_circular", "escena_archivo_real"],
+      "escenas_origen": [
+        "escena_mercado_circular",
+        "escena_archivo_real"
+      ],
       "ranuras_pista": [
-        { "id": "p1", "conocimientos_validos": ["conocimiento_maren_1", "conocimiento_serel_1"] },
-        { "id": "p2", "conocimientos_validos": ["conocimiento_sarin_1", "conocimiento_naela_1"] },
-        { "id": "p3", "conocimientos_validos": ["conocimiento_tiren_1", "conocimiento_ysolde_1"] }
+        {
+          "id": "p1",
+          "conocimientos_validos": [
+            "conocimiento_brenn_1",
+            "conocimiento_sarin_1"
+          ]
+        },
+        {
+          "id": "p2",
+          "conocimientos_validos": [
+            "conocimiento_maren_1",
+            "conocimiento_serel_1"
+          ]
+        },
+        {
+          "id": "p3",
+          "conocimientos_validos": [
+            "conocimiento_tiren_1",
+            "conocimiento_ysolde_1"
+          ]
+        }
       ],
       "bandos": [],
       "ramas": [],
@@ -17,14 +38,37 @@
         {
           "id": "h1",
           "condiciones": {
-            "tags": [{ "tipo": "pista_conocida", "objetivo": "p1", "op": ">=", "nivel": 1 }]
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p1",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
           },
           "escena_entrega": "escena(p1)",
           "textos": [
-            { "id": "caso_01_h1_t1", "tono": "intriga", "texto": "{npc:p1} duda un momento antes de hablar. Lo que te deja es poco, pero alcanza para empezar a tirar del hilo: {conocimiento:p1}." },
-            { "id": "caso_01_h1_t2", "tono": "intriga", "texto": "No es un secreto grande, pero {npc:p1} lo cuenta como si lo fuera. Te queda dando vueltas: {conocimiento:p1}." },
-            { "id": "caso_01_h1_t3", "tono": "intriga", "texto": "Entre una frase y otra, {npc:p1} deja caer lo que importa. Hay algo detrás de todo esto, y este es el primer cabo: {conocimiento:p1}." },
-            { "id": "caso_01_h1_t4", "tono": "intriga", "texto": "Te lo dice mirando a otro lado, {npc:p1}. Algo se mueve en la ciudad y acabás de enterarte de un pedazo: {conocimiento:p1}." }
+            {
+              "id": "caso_01_h1_t1",
+              "tono": "intriga",
+              "texto": "{npc:p1} duda un momento antes de hablar. Lo que te deja es poco, pero alcanza para empezar a tirar del hilo: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_01_h1_t2",
+              "tono": "intriga",
+              "texto": "No es un secreto grande, pero {npc:p1} lo cuenta como si lo fuera. Te queda dando vueltas: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_01_h1_t3",
+              "tono": "intriga",
+              "texto": "Entre una frase y otra, {npc:p1} deja caer lo que importa. Hay algo detrás de todo esto, y este es el primer cabo: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_01_h1_t4",
+              "tono": "intriga",
+              "texto": "Te lo dice mirando a otro lado, {npc:p1}. Algo se mueve en la ciudad y acabás de enterarte de un pedazo: {conocimiento:p1}."
+            }
           ],
           "efectos": [],
           "es_reparacion": false,
@@ -35,16 +79,41 @@
         {
           "id": "h2",
           "condiciones": {
-            "requiere_hitos": ["h1"],
-            "tags": [{ "tipo": "pista_conocida", "objetivo": "p2", "op": ">=", "nivel": 1 }]
+            "requiere_hitos": [
+              "h1"
+            ],
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p2",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
           },
           "escena_entrega": "escena(p2)",
           "escena_alternativa": "escena_plaza_cambistas",
           "textos": [
-            { "id": "caso_01_h2_t1", "tono": "intriga", "texto": "La charla con {npc:p2} te da otra pieza. No encaja del todo con la primera, pero se le parece: {conocimiento:p2}." },
-            { "id": "caso_01_h2_t2", "tono": "intriga", "texto": "{npc:p2} no sabe que ya tenés una parte de la historia. Te cuenta la suya sin apuro: {conocimiento:p2}." },
-            { "id": "caso_01_h2_t3", "tono": "intriga", "texto": "Lo que oís de {npc:p2} se apoya en lo anterior, como un escalón sobre otro: {conocimiento:p2}." },
-            { "id": "caso_01_h2_t4", "tono": "intriga", "texto": "{npc:p2} habla de oídas, pero con seguridad. Dos pedazos ya no son casualidad: {conocimiento:p2}." }
+            {
+              "id": "caso_01_h2_t1",
+              "tono": "intriga",
+              "texto": "La charla con {npc:p2} te da otra pieza. No encaja del todo con la primera, pero se le parece: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_01_h2_t2",
+              "tono": "intriga",
+              "texto": "{npc:p2} no sabe que ya tenés una parte de la historia. Te cuenta la suya sin apuro: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_01_h2_t3",
+              "tono": "intriga",
+              "texto": "Lo que oís de {npc:p2} se apoya en lo anterior, como un escalón sobre otro: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_01_h2_t4",
+              "tono": "intriga",
+              "texto": "{npc:p2} habla de oídas, pero con seguridad. Dos pedazos ya no son casualidad: {conocimiento:p2}."
+            }
           ],
           "efectos": [],
           "es_reparacion": false,
@@ -55,16 +124,41 @@
         {
           "id": "h3",
           "condiciones": {
-            "requiere_hitos": ["h2"],
-            "tags": [{ "tipo": "pista_conocida", "objetivo": "p3", "op": ">=", "nivel": 1 }]
+            "requiere_hitos": [
+              "h2"
+            ],
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p3",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
           },
           "escena_entrega": "escena(p3)",
           "escena_alternativa": "escena_camino_norte",
           "textos": [
-            { "id": "caso_01_h3_t1", "tono": "intriga", "texto": "{npc:p3} agrega el tercer pedazo, y de golpe se ve el dibujo: {conocimiento:p3}." },
-            { "id": "caso_01_h3_t2", "tono": "intriga", "texto": "Con lo que dice {npc:p3}, ya no son rumores sueltos. Hay un asunto de fondo: {conocimiento:p3}." },
-            { "id": "caso_01_h3_t3", "tono": "intriga", "texto": "{npc:p3} te habla sin vueltas, casi con alivio de decirlo en voz alta: {conocimiento:p3}." },
-            { "id": "caso_01_h3_t4", "tono": "intriga", "texto": "Tres voces distintas y un mismo tema. Lo último te lo da {npc:p3}: {conocimiento:p3}." }
+            {
+              "id": "caso_01_h3_t1",
+              "tono": "intriga",
+              "texto": "{npc:p3} agrega el tercer pedazo, y de golpe se ve el dibujo: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_01_h3_t2",
+              "tono": "intriga",
+              "texto": "Con lo que dice {npc:p3}, ya no son rumores sueltos. Hay un asunto de fondo: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_01_h3_t3",
+              "tono": "intriga",
+              "texto": "{npc:p3} te habla sin vueltas, casi con alivio de decirlo en voz alta: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_01_h3_t4",
+              "tono": "intriga",
+              "texto": "Tres voces distintas y un mismo tema. Lo último te lo da {npc:p3}: {conocimiento:p3}."
+            }
           ],
           "efectos": [],
           "es_reparacion": false,
@@ -75,18 +169,44 @@
         {
           "id": "h4",
           "condiciones": {
-            "requiere_hitos": ["h3"],
-            "hora": { "desde_previo": 2 }
+            "requiere_hitos": [
+              "h3"
+            ],
+            "hora": {
+              "desde_previo": 2
+            }
           },
           "escena_entrega": "escena_mercado_circular",
           "escena_alternativa": "escena_archivo_real",
           "textos": [
-            { "id": "caso_01_h4_t1", "tono": "intriga", "texto": "Te das cuenta de que alguien más viene haciendo las mismas preguntas. No parece peligroso; parece curioso, y con tanta prisa como vos." },
-            { "id": "caso_01_h4_t2", "tono": "intriga", "texto": "Notás que una persona te mira un poco más de lo normal y después se pierde entre la gente. Nada grave, pero ya no sos el único con este asunto." },
-            { "id": "caso_01_h4_t3", "tono": "intriga", "texto": "Un comentario suelto te hace entender que el tema circula más de lo que creías. Alguien más está atando los mismos cabos." },
-            { "id": "caso_01_h4_t4", "tono": "intriga", "texto": "Hay un aire distinto en el lugar, como cuando un tema deja de ser privado. Lo que averiguaste ya no es solo tuyo." }
+            {
+              "id": "caso_01_h4_t1",
+              "tono": "intriga",
+              "texto": "Te das cuenta de que alguien más viene haciendo las mismas preguntas. No parece peligroso; parece curioso, y con tanta prisa como vos."
+            },
+            {
+              "id": "caso_01_h4_t2",
+              "tono": "intriga",
+              "texto": "Notás que una persona te mira un poco más de lo normal y después se pierde entre la gente. Nada grave, pero ya no sos el único con este asunto."
+            },
+            {
+              "id": "caso_01_h4_t3",
+              "tono": "intriga",
+              "texto": "Un comentario suelto te hace entender que el tema circula más de lo que creías. Alguien más está atando los mismos cabos."
+            },
+            {
+              "id": "caso_01_h4_t4",
+              "tono": "intriga",
+              "texto": "Hay un aire distinto en el lugar, como cuando un tema deja de ser privado. Lo que averiguaste ya no es solo tuyo."
+            }
           ],
-          "efectos": [{ "tipo": "curiosidad", "objetivo": "npc(p2)", "nivel": 1 }],
+          "efectos": [
+            {
+              "tipo": "curiosidad",
+              "objetivo": "npc(p2)",
+              "nivel": 1
+            }
+          ],
           "es_reparacion": false,
           "repara_rencor_grave": false,
           "bloquea": [],
@@ -95,16 +215,40 @@
         {
           "id": "h5",
           "condiciones": {
-            "requiere_hitos": ["h4"]
+            "requiere_hitos": [
+              "h4"
+            ]
           },
-          "escena_entrega": "escena(p1)",
+          "escena_entrega": "escena_camino_norte",
           "textos": [
-            { "id": "caso_01_h5_t1", "tono": "calido", "texto": "{npc:p1} te recibe con menos reserva que antes. Algo de lo que hiciste, o de lo que dejaste de hacer, le dio motivos para bajar la guardia." },
-            { "id": "caso_01_h5_t2", "tono": "calido", "texto": "Sin que lo pidas, {npc:p1} aclara un malentendido. No pide disculpas, y tampoco hace falta." },
-            { "id": "caso_01_h5_t3", "tono": "calido", "texto": "Se nota que {npc:p1} te viene pensando. Te hace un lugar y, por primera vez en un rato, te habla sin medir cada palabra." },
-            { "id": "caso_01_h5_t4", "tono": "calido", "texto": "Un gesto pequeño de {npc:p1}, casi sin importancia, y entendés que la tensión se aflojó." }
+            {
+              "id": "caso_01_h5_t1",
+              "tono": "calido",
+              "texto": "{npc:p1} te recibe con menos reserva que antes. Algo de lo que hiciste, o de lo que dejaste de hacer, le dio motivos para bajar la guardia."
+            },
+            {
+              "id": "caso_01_h5_t2",
+              "tono": "calido",
+              "texto": "Sin que lo pidas, {npc:p1} aclara un malentendido. No pide disculpas, y tampoco hace falta."
+            },
+            {
+              "id": "caso_01_h5_t3",
+              "tono": "calido",
+              "texto": "Se nota que {npc:p1} te viene pensando. Te hace un lugar y, por primera vez en un rato, te habla sin medir cada palabra."
+            },
+            {
+              "id": "caso_01_h5_t4",
+              "tono": "calido",
+              "texto": "Un gesto pequeño de {npc:p1}, casi sin importancia, y entendés que la tensión se aflojó."
+            }
           ],
-          "efectos": [{ "tipo": "gratitud", "objetivo": "npc(p1)", "nivel": 1 }],
+          "efectos": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 1
+            }
+          ],
           "es_reparacion": true,
           "repara_rencor_grave": false,
           "npc_reparacion": "npc(p1)",
@@ -114,18 +258,43 @@
         {
           "id": "h6",
           "condiciones": {
-            "requiere_hitos": ["h5"],
-            "hora": { "desde_previo": 2 }
+            "requiere_hitos": [
+              "h5"
+            ],
+            "hora": {
+              "desde_previo": 2
+            }
           },
-          "escena_entrega": "escena_camino_norte",
-          "escena_alternativa": "escena_camino_sur",
+          "escena_entrega": "escena_camino_sur",
           "textos": [
-            { "id": "caso_01_h6_t1", "tono": "calido", "texto": "Llega un recado de {npc:p1}: pocas palabras, pero con un tono que antes no tenía. La cuenta pendiente entre ustedes se achica." },
-            { "id": "caso_01_h6_t2", "tono": "calido", "texto": "Alguien que pasa te acerca un mensaje de {npc:p1}. No es una promesa, pero sí un paso hacia el lado correcto." },
-            { "id": "caso_01_h6_t3", "tono": "calido", "texto": "Te cruzás con alguien que viene de parte de {npc:p1}. Trae una frase amable y ninguna pregunta, y eso ya dice bastante." },
-            { "id": "caso_01_h6_t4", "tono": "calido", "texto": "En el camino te alcanza una noticia de {npc:p1}: se habló bien de vos. Cuesta ganarse eso, y más cuesta mantenerlo." }
+            {
+              "id": "caso_01_h6_t1",
+              "tono": "calido",
+              "texto": "{npc:p1} te alcanza en el camino con paso tranquilo. Ya no hay filo en la voz: la cuenta pendiente entre ustedes se achica."
+            },
+            {
+              "id": "caso_01_h6_t2",
+              "tono": "calido",
+              "texto": "Te cruzás con {npc:p1}, que esta vez no esquiva la mirada. No es una promesa, pero sí un paso hacia el lado correcto."
+            },
+            {
+              "id": "caso_01_h6_t3",
+              "tono": "calido",
+              "texto": "{npc:p1} camina un trecho a tu lado sin hacer preguntas. Ese silencio ya dice bastante."
+            },
+            {
+              "id": "caso_01_h6_t4",
+              "tono": "calido",
+              "texto": "En el camino, {npc:p1} te comenta que se habló bien de vos. Cuesta ganarse eso, y más cuesta mantenerlo."
+            }
           ],
-          "efectos": [{ "tipo": "gratitud", "objetivo": "npc(p1)", "op": "subir" }],
+          "efectos": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "op": "subir"
+            }
+          ],
           "es_reparacion": true,
           "repara_rencor_grave": false,
           "npc_reparacion": "npc(p1)",
@@ -135,18 +304,46 @@
         {
           "id": "h7",
           "condiciones": {
-            "requiere_hitos": ["h6"],
+            "requiere_hitos": [
+              "h6"
+            ],
             "tags": [
-              { "tipo": "rencor", "objetivo": "npc(p1)", "op": ">=", "nivel": 3 },
-              { "tipo": "gratitud", "objetivo": "npc(p1)", "op": ">=", "nivel": 2 }
+              {
+                "tipo": "rencor",
+                "objetivo": "npc(p1)",
+                "op": ">=",
+                "nivel": 3
+              },
+              {
+                "tipo": "gratitud",
+                "objetivo": "npc(p1)",
+                "op": ">=",
+                "nivel": 2
+              }
             ]
           },
           "escena_entrega": "escena(p1)",
           "textos": [
-            { "id": "caso_01_h7_t1", "tono": "calido", "texto": "{npc:p1} te mira un buen rato y después dice, despacio, que lo pasado pasado está. No hay más ceremonia que esa, y alcanza." },
-            { "id": "caso_01_h7_t2", "tono": "calido", "texto": "Lo que pesaba entre ustedes se suelta de golpe. {npc:p1} no lo comenta; solo te invita a sentarte a conversar." },
-            { "id": "caso_01_h7_t3", "tono": "calido", "texto": "Después de tantas pruebas, {npc:p1} decide darte otra oportunidad. Lo dice con pocas palabras y con toda la seriedad del mundo." },
-            { "id": "caso_01_h7_t4", "tono": "calido", "texto": "{npc:p1} deja de lado el rencor como quien deja una carga. Ahora puede mirarte sin esa sombra de antes." }
+            {
+              "id": "caso_01_h7_t1",
+              "tono": "calido",
+              "texto": "{npc:p1} te mira un buen rato y después dice, despacio, que lo pasado pasado está. No hay más ceremonia que esa, y alcanza."
+            },
+            {
+              "id": "caso_01_h7_t2",
+              "tono": "calido",
+              "texto": "Lo que pesaba entre ustedes se suelta de golpe. {npc:p1} no lo comenta; solo te invita a sentarte a conversar."
+            },
+            {
+              "id": "caso_01_h7_t3",
+              "tono": "calido",
+              "texto": "Después de tantas pruebas, {npc:p1} decide darte otra oportunidad. Lo dice con pocas palabras y con toda la seriedad del mundo."
+            },
+            {
+              "id": "caso_01_h7_t4",
+              "tono": "calido",
+              "texto": "{npc:p1} deja de lado el rencor como quien deja una carga. Ahora puede mirarte sin esa sombra de antes."
+            }
           ],
           "efectos": [],
           "es_reparacion": true,
@@ -158,16 +355,39 @@
         {
           "id": "h8",
           "condiciones": {
-            "requiere_hitos": { "todos": ["h4", "h6"] },
-            "hora": { "desde_previo": 1 }
+            "requiere_hitos": {
+              "todos": [
+                "h4",
+                "h6"
+              ]
+            },
+            "hora": {
+              "desde_previo": 1
+            }
           },
           "escena_entrega": "escena_mercado_circular",
           "escena_alternativa": "escena_archivo_real",
           "textos": [
-            { "id": "caso_01_h8_t1", "tono": "intriga", "texto": "{npc:p1}, {npc:p2} y {npc:p3} te dieron cada uno un pedazo, y ahora el dibujo está completo. No hay villano: solo un enredo de papeles y de prisas." },
-            { "id": "caso_01_h8_t2", "tono": "intriga", "texto": "Lo que empezó como un rumor se asienta como un asunto resuelto. Nadie sale herido, y vos entendiste más de lo que querías." },
-            { "id": "caso_01_h8_t3", "tono": "intriga", "texto": "El hilo se cierra solo, como se cierran las cosas cuando todos hablaron lo suficiente. Lo que sabés ya no hace falta esconderlo." },
-            { "id": "caso_01_h8_t4", "tono": "intriga", "texto": "Era un asunto más chico de lo que parecía, pero te dejó algo: ahora sabés a quién saludar cuando pasás por lo de {npc:p1}, {npc:p2} o {npc:p3}." }
+            {
+              "id": "caso_01_h8_t1",
+              "tono": "intriga",
+              "texto": "{npc:p1}, {npc:p2} y {npc:p3} te dieron cada uno un pedazo, y ahora el dibujo está completo. No hay villano: solo un enredo de papeles y de prisas."
+            },
+            {
+              "id": "caso_01_h8_t2",
+              "tono": "intriga",
+              "texto": "Lo que empezó como un rumor se asienta como un asunto resuelto. Nadie sale herido, y vos entendiste más de lo que querías."
+            },
+            {
+              "id": "caso_01_h8_t3",
+              "tono": "intriga",
+              "texto": "El hilo se cierra solo, como se cierran las cosas cuando todos hablaron lo suficiente. Lo que sabés ya no hace falta esconderlo."
+            },
+            {
+              "id": "caso_01_h8_t4",
+              "tono": "intriga",
+              "texto": "Era un asunto más chico de lo que parecía, pero te dejó algo: ahora sabés a quién saludar cuando pasás por lo de {npc:p1}, {npc:p2} o {npc:p3}."
+            }
           ],
           "efectos": [],
           "es_reparacion": false,
@@ -188,11 +408,27 @@
           "id": "caso_01_d_positivo",
           "tipo": "positivo",
           "requiere": {
-            "requiere_hitos": ["h8"],
-            "tags": [{ "tipo": "secreto_compartido", "objetivo": "npc(p1)", "op": ">=", "nivel": 1 }]
+            "requiere_hitos": [
+              "h7",
+              "h8"
+            ],
+            "tags": [
+              {
+                "tipo": "secreto_compartido",
+                "objetivo": "npc(p1)",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
           },
           "prioridad": 2,
-          "efectos_post": [{ "tipo": "gratitud", "objetivo": "npc(p1)", "nivel": 1 }]
+          "efectos_post": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 1
+            }
+          ]
         }
       ]
     }

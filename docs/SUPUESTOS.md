@@ -621,3 +621,10 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - SUPUESTO — `bandos` y `ramas` van vacíos (el caso no usa `pacto_caso` ni ramas); `instancias_minimas`: 8. Los desenlaces no llevan texto (el diseño no lo define). Desenlace positivo: h8 alcanzado y `secreto_compartido` ≥ 1 con p1 (no decae, a diferencia de gratitud). Sin desenlace negativo.
 - SUPUESTO — ids de texto: `caso_01_h<n>_t<1-4>`; ids de desenlace: `caso_01_d_neutro`, `caso_01_d_positivo`. Tono de los textos de reparación: `calido`; el resto `intriga`.
 - VERSION 0.0.14 (cambia `narrador/validarContenido.js`).
+
+## caso_01 corregido (0.0.15)
+
+- SUPUESTO — reparación: h5 y h6 suman progreso sobre `npc(p1)` en escenas distintas por construcción: h5 en `escena_camino_norte`, h6 en `escena_camino_sur`. Ambas escenas están en el recorrido de los dos dueños posibles de p1.
+- SUPUESTO — h6 cambiada: antes `escena_camino_norte`/`escena_camino_sur` sin p1 (los p1 eran maren/serel, fijos en Ardenhall); un NPC fijo no puede estar en dos escenas distintas. Para que p1 esté presente en h5 y h6, p1 pasa a conocimiento_brenn_1 / conocimiento_sarin_1 (Brenn alterna norte/sur cada 24 h; Sarin rota norte/este/sur cada 8 h) y maren_1 / serel_1 pasan a p2 (naela_1 sale del caso). Se quitó la `escena_alternativa` de h6 y se reescribieron sus 4 textos (ahora con p1 presente). El motor no garantiza que p1 esté en la escena en el turno del disparo: depende de su rotación.
+- SUPUESTO — el final depende de h7: el desenlace positivo pide h7 y h8 alcanzados y `secreto_compartido` ≥ 1 con p1. h7 solo se dispara con rencor grave en p1; sin él, el caso cierra en el neutro por defecto (sin condición).
+- VERSION 0.0.15.
