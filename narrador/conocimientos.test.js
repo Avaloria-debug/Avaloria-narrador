@@ -48,12 +48,17 @@ describe('conocimientos — revelar por conversación', () => {
     }
   });
 
-  test('una sola vez por NPC', () => {
+  test('sin el _1 revelado, nunca el _2 (Ivor sin deuda impaga)', () => {
+    assert.equal(aRevelar('ivor_cambista', npc('ivor_cambista', { relacion: 100 })).motivo, M.EVENTO);
+  });
+
+  test('una sola vez por conocimiento', () => {
     const maren = npc('maren_archivista', { relacion: 90 });
     const { conocimiento } = aRevelar('maren_archivista', maren);
     const despues = revelar(maren, conocimiento.id);
     assert.deepEqual(despues.conocimientosRevelados, ['conocimiento_maren_1']);
-    assert.deepEqual(aRevelar('maren_archivista', despues), { conocimiento: null, motivo: M.YA_REVELADO });
+    const ambos = revelar(despues, 'conocimiento_maren_2');
+    assert.deepEqual(aRevelar('maren_archivista', ambos), { conocimiento: null, motivo: M.YA_REVELADO });
     // Revelar dos veces no duplica, y no modifica el estado recibido.
     assert.equal(revelar(despues, conocimiento.id), despues);
     assert.deepEqual(maren.conocimientosRevelados, []);

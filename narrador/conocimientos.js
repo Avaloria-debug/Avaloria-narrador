@@ -38,17 +38,17 @@ export function puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido, 
 }
 
 /**
- * Primer conocimiento del NPC que se puede revelar ahora, por conversación.
+ * Conocimiento del NPC que se puede revelar ahora, por conversación: el primero sin revelar, en orden.
+ * El _2 nunca se revela antes que el _1.
  * @returns {{ conocimiento: object|null, motivo: string|null }} `motivo`: por qué no se reveló el primero pendiente
  */
 export function conocimientoARevelar(npcDef, npcEstado, estado, contenido) {
-  let motivo = null;
-  for (const k of npcDef.conocimientos ?? []) {
-    const r = puedeRevelar(k, npcDef.id, npcEstado, estado, contenido);
-    if (r.puede) return { conocimiento: k, motivo: null };
-    motivo ??= r.motivo;
-  }
-  return { conocimiento: null, motivo };
+  // En orden (_1 antes que _2): solo el primer conocimiento sin revelar puede revelarse.
+  const lista = npcDef.conocimientos ?? [];
+  const pendiente = lista.find((k) => !npcEstado.conocimientosRevelados.includes(k.id)) ?? lista.at(-1);
+  if (!pendiente) return { conocimiento: null, motivo: null };
+  const r = puedeRevelar(pendiente, npcDef.id, npcEstado, estado, contenido);
+  return r.puede ? { conocimiento: pendiente, motivo: null } : { conocimiento: null, motivo: r.motivo };
 }
 
 /**
