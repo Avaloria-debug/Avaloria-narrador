@@ -651,3 +651,12 @@ plantillas: 26/26
 casos: 1
 Contenido válido.
 ```
+
+## Casos 2 a 4 (casos-v0.3)
+
+- SUPUESTO — p1 de caso_02 a caso_04 = conocimiento_brenn_1 / conocimiento_sarin_1, igual que caso_01. Motivo: h5 y h6 (reparación sobre `npc(p1)`) tienen que estar en dos escenas distintas con p1 presente, y solo Brenn (norte/sur) y Sarin (norte/este/sur) se mueven. Un p1 fijo no puede cumplirlo. Consecuencia: la mitad de las firmas varía solo en p2 y p3.
+- SUPUESTO — h5 y h6 usan `escena_camino_norte` y `escena_camino_sur`, rutas comunes a Brenn y Sarin (caso_02 y caso_04: sur y después norte; caso_03: norte y después sur). h1 y h7 van en `escena(p1)`; h2 y h3 en `escena(p2)` y `escena(p3)` (dueños fijos, sin `escena_alternativa`).
+- SUPUESTO — `escena_alternativa` solo en h4 y h8, y es siempre la otra escena de origen del caso. Origen: caso_02 plaza_cambistas y taberna_lareth; caso_03 biblioteca_publica y aula_cartografia; caso_04 mercado_circular y plaza_cambistas (no hay más de dos de ciudad; se usan escenas de otras categorías).
+- SUPUESTO — p2 y p3 usan solo conocimientos sin `requiereEvento` ni `requiereMarca` (maren, serel, naela, tiren, ysolde), repetidos entre casos: no hay más dueños fijos y sin condición. caso_02 p2 serel/naela, p3 ysolde/maren; caso_03 p2 maren/tiren, p3 naela/ysolde; caso_04 p2 serel/tiren, p3 maren/naela. 8 firmas válidas en cada caso.
+- SUPUESTO — tono "cotidiano" (caso_04) no está en el enum del diseño (intriga, calido, misterio, tension, humor, melancolia). Se usó el pedido; el validador no lo comprueba. Todos los textos de un caso llevan el tono del caso. caso_02 "tension", caso_03 "misterio".
+- Mismo esquema que caso_01: h5 gratitud 1 y h6 gratitud 2 (es_reparacion sobre `npc(p1)`); h7 de confianza (gratitud ≥ 2, sin reparación de rencor grave); final h8 pide h4 y h6; positivo pide h7, h8 y `secreto_compartido` ≥ 1 con p1; neutro por defecto sin condición. `casos.json` pasa a "casos-v0.3". VERSION no cambia (0.0.15).

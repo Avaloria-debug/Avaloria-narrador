@@ -1,5 +1,5 @@
 {
-  "version": "casos-v0.2",
+  "version": "casos-v0.3",
   "casos": [
     {
       "id": "caso_01",
@@ -399,6 +399,1272 @@
         },
         {
           "id": "caso_01_d_positivo",
+          "tipo": "positivo",
+          "requiere": {
+            "requiere_hitos": [
+              "h7",
+              "h8"
+            ],
+            "tags": [
+              {
+                "tipo": "secreto_compartido",
+                "objetivo": "npc(p1)",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "prioridad": 2,
+          "efectos_post": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "caso_02",
+      "tono": "tension",
+      "escenas_origen": [
+        "escena_plaza_cambistas",
+        "escena_taberna_lareth"
+      ],
+      "ranuras_pista": [
+        {
+          "id": "p1",
+          "conocimientos_validos": [
+            "conocimiento_brenn_1",
+            "conocimiento_sarin_1"
+          ]
+        },
+        {
+          "id": "p2",
+          "conocimientos_validos": [
+            "conocimiento_serel_1",
+            "conocimiento_naela_1"
+          ]
+        },
+        {
+          "id": "p3",
+          "conocimientos_validos": [
+            "conocimiento_ysolde_1",
+            "conocimiento_maren_1"
+          ]
+        }
+      ],
+      "bandos": [],
+      "ramas": [],
+      "instancias_minimas": 8,
+      "hitos": [
+        {
+          "id": "h1",
+          "condiciones": {
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p1",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "escena_entrega": "escena(p1)",
+          "textos": [
+            {
+              "id": "caso_02_h1_t1",
+              "tono": "tension",
+              "texto": "{npc:p1} habla con la mandíbula tensa, como quien ya discutió hoy y no quiere repetirlo. Aun así suelta un dato: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_02_h1_t2",
+              "tono": "tension",
+              "texto": "Hay un roce en el aire cuando {npc:p1} responde. Lo que dice es corto y filoso: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_02_h1_t3",
+              "tono": "tension",
+              "texto": "{npc:p1} te contesta sin mirarte, con la brusquedad de quien espera que lo contradigan. Pero te da algo: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_02_h1_t4",
+              "tono": "tension",
+              "texto": "No es una pelea, todavía. {npc:p1} lo dice entre dientes y mide tu reacción: {conocimiento:p1}."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h2",
+          "condiciones": {
+            "requiere_hitos": [
+              "h1"
+            ],
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p2",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "escena_entrega": "escena(p2)",
+          "textos": [
+            {
+              "id": "caso_02_h2_t1",
+              "tono": "tension",
+              "texto": "{npc:p2} se defiende antes de que preguntes nada. Entre reproches, se le escapa esto: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_02_h2_t2",
+              "tono": "tension",
+              "texto": "La charla con {npc:p2} avanza a los tirones, con silencios incómodos. Al final queda una pieza más: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_02_h2_t3",
+              "tono": "tension",
+              "texto": "{npc:p2} cruza los brazos y te cuenta su versión, sin ceder un centímetro: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_02_h2_t4",
+              "tono": "tension",
+              "texto": "Se nota que a {npc:p2} ya le cansa dar explicaciones, pero las da: {conocimiento:p2}."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h3",
+          "condiciones": {
+            "requiere_hitos": [
+              "h2"
+            ],
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p3",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "escena_entrega": "escena(p3)",
+          "textos": [
+            {
+              "id": "caso_02_h3_t1",
+              "tono": "tension",
+              "texto": "{npc:p3} baja la voz para que nadie más oiga. El conflicto es más chico y más viejo de lo que parecía: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_02_h3_t2",
+              "tono": "tension",
+              "texto": "Lo que dice {npc:p3} cambia el tono de todo. Ya no es solo un malhumor suelto: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_02_h3_t3",
+              "tono": "tension",
+              "texto": "{npc:p3} te mira con cautela, midiendo de qué lado estás, y aun así habla: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_02_h3_t4",
+              "tono": "tension",
+              "texto": "Con {npc:p3} se completa el cuadro: cada uno tiene su razón y ninguno quiere ceder. Lo último que oís: {conocimiento:p3}."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h4",
+          "condiciones": {
+            "requiere_hitos": [
+              "h3"
+            ],
+            "hora": {
+              "desde_previo": 2
+            }
+          },
+          "escena_entrega": "escena_plaza_cambistas",
+          "escena_alternativa": "escena_taberna_lareth",
+          "textos": [
+            {
+              "id": "caso_02_h4_t1",
+              "tono": "tension",
+              "texto": "Una discusión a media voz se corta cuando te acercás. Nadie quiere que escuches, pero el clima ya lo dijo todo."
+            },
+            {
+              "id": "caso_02_h4_t2",
+              "tono": "tension",
+              "texto": "Alguien deja caer una frase hiriente a tu paso, dirigida a nadie en particular. El asunto se está calentando."
+            },
+            {
+              "id": "caso_02_h4_t3",
+              "tono": "tension",
+              "texto": "Notás que dos conocidos se evitan con demasiado cuidado. Las miradas pesan más que las palabras."
+            },
+            {
+              "id": "caso_02_h4_t4",
+              "tono": "tension",
+              "texto": "El lugar tiene esa quietud rara que viene antes de un reclamo. Lo que averiguaste ya anda en boca de todos."
+            }
+          ],
+          "efectos": [
+            {
+              "tipo": "curiosidad",
+              "objetivo": "npc(p2)",
+              "nivel": 1
+            }
+          ],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h5",
+          "condiciones": {
+            "requiere_hitos": [
+              "h4"
+            ]
+          },
+          "escena_entrega": "escena_camino_sur",
+          "textos": [
+            {
+              "id": "caso_02_h5_t1",
+              "tono": "tension",
+              "texto": "{npc:p1} te espera en el camino con menos dureza en el gesto. El enojo no se fue del todo, pero ya no apunta hacia vos."
+            },
+            {
+              "id": "caso_02_h5_t2",
+              "tono": "tension",
+              "texto": "Te cruzás con {npc:p1} y, para tu sorpresa, no hay reproche. Solo un asentimiento seco que vale más de lo que parece."
+            },
+            {
+              "id": "caso_02_h5_t3",
+              "tono": "tension",
+              "texto": "{npc:p1} afloja los hombros al verte. Todavía queda algo de tirantez, pero se nota el esfuerzo por dejarla de lado."
+            },
+            {
+              "id": "caso_02_h5_t4",
+              "tono": "tension",
+              "texto": "Sin que lo pidas, {npc:p1} te aparta de una discusión ajena. Es su modo de decir que ya no estás en la lista."
+            }
+          ],
+          "efectos": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 1
+            }
+          ],
+          "es_reparacion": true,
+          "repara_rencor_grave": false,
+          "npc_reparacion": "npc(p1)",
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h6",
+          "condiciones": {
+            "requiere_hitos": [
+              "h5"
+            ],
+            "hora": {
+              "desde_previo": 2
+            }
+          },
+          "escena_entrega": "escena_camino_norte",
+          "textos": [
+            {
+              "id": "caso_02_h6_t1",
+              "tono": "tension",
+              "texto": "En el camino, {npc:p1} te cede el paso y hasta intercambia un par de palabras amables. Un conflicto menos entre los que cuidás."
+            },
+            {
+              "id": "caso_02_h6_t2",
+              "tono": "tension",
+              "texto": "{npc:p1} comenta, de pasada, que no todo era contra vos. Lo dice con un resoplido, pero lo dice."
+            },
+            {
+              "id": "caso_02_h6_t3",
+              "tono": "tension",
+              "texto": "Esta vez la charla con {npc:p1} no termina en tensión. Se despiden con un gesto sobrio y sin deudas pendientes."
+            },
+            {
+              "id": "caso_02_h6_t4",
+              "tono": "tension",
+              "texto": "{npc:p1} te alcanza un rato más tarde con un comentario conciliador. La tirantez baja, aunque no desaparece."
+            }
+          ],
+          "efectos": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 2
+            }
+          ],
+          "es_reparacion": true,
+          "repara_rencor_grave": false,
+          "npc_reparacion": "npc(p1)",
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h7",
+          "condiciones": {
+            "requiere_hitos": [
+              "h6"
+            ],
+            "tags": [
+              {
+                "tipo": "gratitud",
+                "objetivo": "npc(p1)",
+                "op": ">=",
+                "nivel": 2
+              }
+            ]
+          },
+          "escena_entrega": "escena(p1)",
+          "textos": [
+            {
+              "id": "caso_02_h7_t1",
+              "tono": "tension",
+              "texto": "{npc:p1} deja de medir las palabras y te cuenta lo que realmente le pesaba. Ya no hay puja entre ustedes."
+            },
+            {
+              "id": "caso_02_h7_t2",
+              "tono": "tension",
+              "texto": "Después de tanto roce, {npc:p1} se permite una pausa y te da la razón en algo. No es poco."
+            },
+            {
+              "id": "caso_02_h7_t3",
+              "tono": "tension",
+              "texto": "{npc:p1} te mira distinto: ya no como a quien viene a sumar problemas, sino como a alguien con quien contar."
+            },
+            {
+              "id": "caso_02_h7_t4",
+              "tono": "tension",
+              "texto": "La tensión que había entre ustedes se vuelve complicidad. {npc:p1} lo marca con una media sonrisa."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h8",
+          "condiciones": {
+            "requiere_hitos": {
+              "todos": [
+                "h4",
+                "h6"
+              ]
+            },
+            "hora": {
+              "desde_previo": 1
+            }
+          },
+          "escena_entrega": "escena_plaza_cambistas",
+          "escena_alternativa": "escena_taberna_lareth",
+          "textos": [
+            {
+              "id": "caso_02_h8_t1",
+              "tono": "tension",
+              "texto": "El asunto, que parecía a punto de estallar, se desinfla. Entre {npc:p1}, {npc:p2} y {npc:p3} queda una tregua incómoda pero firme."
+            },
+            {
+              "id": "caso_02_h8_t2",
+              "tono": "tension",
+              "texto": "No hubo gritos ni portazos: solo una serie de reproches dichos a tiempo. Lo que estaba tenso se aflojó."
+            },
+            {
+              "id": "caso_02_h8_t3",
+              "tono": "tension",
+              "texto": "Cada quien cedió un poco, y bastó. Las cosas siguen sin ser perfectas, pero ya nadie se esquiva."
+            },
+            {
+              "id": "caso_02_h8_t4",
+              "tono": "tension",
+              "texto": "La disputa se cierra sin ganadores ni vencidos. Quedó una calma prudente y la sensación de haber ayudado."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": true
+        }
+      ],
+      "desenlaces": [
+        {
+          "id": "caso_02_d_neutro",
+          "tipo": "neutro",
+          "requiere": {},
+          "prioridad": 0,
+          "efectos_post": []
+        },
+        {
+          "id": "caso_02_d_positivo",
+          "tipo": "positivo",
+          "requiere": {
+            "requiere_hitos": [
+              "h7",
+              "h8"
+            ],
+            "tags": [
+              {
+                "tipo": "secreto_compartido",
+                "objetivo": "npc(p1)",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "prioridad": 2,
+          "efectos_post": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "caso_03",
+      "tono": "misterio",
+      "escenas_origen": [
+        "escena_biblioteca_publica",
+        "escena_aula_cartografia"
+      ],
+      "ranuras_pista": [
+        {
+          "id": "p1",
+          "conocimientos_validos": [
+            "conocimiento_brenn_1",
+            "conocimiento_sarin_1"
+          ]
+        },
+        {
+          "id": "p2",
+          "conocimientos_validos": [
+            "conocimiento_maren_1",
+            "conocimiento_tiren_1"
+          ]
+        },
+        {
+          "id": "p3",
+          "conocimientos_validos": [
+            "conocimiento_naela_1",
+            "conocimiento_ysolde_1"
+          ]
+        }
+      ],
+      "bandos": [],
+      "ramas": [],
+      "instancias_minimas": 8,
+      "hitos": [
+        {
+          "id": "h1",
+          "condiciones": {
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p1",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "escena_entrega": "escena(p1)",
+          "textos": [
+            {
+              "id": "caso_03_h1_t1",
+              "tono": "misterio",
+              "texto": "{npc:p1} mira alrededor antes de contestar. Lo que sabe tiene que ver con algo que desapareció sin ruido: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_03_h1_t2",
+              "tono": "misterio",
+              "texto": "Hay algo extraño en cómo {npc:p1} esquiva ciertos temas. Pero este lo toca de refilón: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_03_h1_t3",
+              "tono": "misterio",
+              "texto": "{npc:p1} habla despacio, como recordando un detalle que le daba vueltas. El objeto perdido deja su primera huella: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_03_h1_t4",
+              "tono": "misterio",
+              "texto": "Nada de lo que dice {npc:p1} parece importante, hasta que lo pensás dos veces: {conocimiento:p1}."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h2",
+          "condiciones": {
+            "requiere_hitos": [
+              "h1"
+            ],
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p2",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "escena_entrega": "escena(p2)",
+          "textos": [
+            {
+              "id": "caso_03_h2_t1",
+              "tono": "misterio",
+              "texto": "{npc:p2} frunce el ceño al oír del objeto perdido y recuerda algo que no encaja: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_03_h2_t2",
+              "tono": "misterio",
+              "texto": "La respuesta de {npc:p2} llega después de un silencio demasiado largo para ser casual: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_03_h2_t3",
+              "tono": "misterio",
+              "texto": "Lo que {npc:p2} cuenta es poco, pero se acomoda con lo anterior y abre otra pregunta: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_03_h2_t4",
+              "tono": "misterio",
+              "texto": "{npc:p2} no sabe cuánto vale lo que dice. Vos sí lo intuís: {conocimiento:p2}."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h3",
+          "condiciones": {
+            "requiere_hitos": [
+              "h2"
+            ],
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p3",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "escena_entrega": "escena(p3)",
+          "textos": [
+            {
+              "id": "caso_03_h3_t1",
+              "tono": "misterio",
+              "texto": "{npc:p3} agrega el último detalle, el que faltaba para que la pista tenga forma: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_03_h3_t2",
+              "tono": "misterio",
+              "texto": "Entre {npc:p3} y lo que ya sabías, empieza a dibujarse un camino hasta el objeto perdido: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_03_h3_t3",
+              "tono": "misterio",
+              "texto": "{npc:p3} lo dice casi en susurros, como si el lugar escuchara: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_03_h3_t4",
+              "tono": "misterio",
+              "texto": "Con lo que cuenta {npc:p3}, el misterio deja de ser una sospecha y pasa a ser un rastro: {conocimiento:p3}."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h4",
+          "condiciones": {
+            "requiere_hitos": [
+              "h3"
+            ],
+            "hora": {
+              "desde_previo": 2
+            }
+          },
+          "escena_entrega": "escena_biblioteca_publica",
+          "escena_alternativa": "escena_aula_cartografia",
+          "textos": [
+            {
+              "id": "caso_03_h4_t1",
+              "tono": "misterio",
+              "texto": "Algo cambia en el ambiente: una puerta que antes estaba abierta ahora está cerrada, y nadie quiere decir por qué."
+            },
+            {
+              "id": "caso_03_h4_t2",
+              "tono": "misterio",
+              "texto": "Notás una marca nueva en un rincón, apenas visible, que antes no estaba. Alguien se te adelantó en la búsqueda."
+            },
+            {
+              "id": "caso_03_h4_t3",
+              "tono": "misterio",
+              "texto": "Una sombra se aparta cuando mirás en esa dirección. Puede ser casualidad; no lo parece."
+            },
+            {
+              "id": "caso_03_h4_t4",
+              "tono": "misterio",
+              "texto": "El rastro que seguías se enfría de golpe, como si alguien lo hubiera borrado a propósito. Hay que ir con más cuidado."
+            }
+          ],
+          "efectos": [
+            {
+              "tipo": "curiosidad",
+              "objetivo": "npc(p2)",
+              "nivel": 1
+            }
+          ],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h5",
+          "condiciones": {
+            "requiere_hitos": [
+              "h4"
+            ]
+          },
+          "escena_entrega": "escena_camino_norte",
+          "textos": [
+            {
+              "id": "caso_03_h5_t1",
+              "tono": "misterio",
+              "texto": "{npc:p1} te aguarda en el camino y, por primera vez, te mira sin recelo. Lo que oculta ya pesa menos que lo que quiere compartir."
+            },
+            {
+              "id": "caso_03_h5_t2",
+              "tono": "misterio",
+              "texto": "En el camino, {npc:p1} te deja pasar sin preguntas. Un gesto mínimo, pero de los que importan en un misterio."
+            },
+            {
+              "id": "caso_03_h5_t3",
+              "tono": "misterio",
+              "texto": "{npc:p1} se acerca con paso callado y te dice algo apenas audible: ya no te ve como una amenaza."
+            },
+            {
+              "id": "caso_03_h5_t4",
+              "tono": "misterio",
+              "texto": "Un guiño de {npc:p1}, casi imperceptible, y entendés que confía un poco más. Un buen aliado vale más que una pista."
+            }
+          ],
+          "efectos": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 1
+            }
+          ],
+          "es_reparacion": true,
+          "repara_rencor_grave": false,
+          "npc_reparacion": "npc(p1)",
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h6",
+          "condiciones": {
+            "requiere_hitos": [
+              "h5"
+            ],
+            "hora": {
+              "desde_previo": 2
+            }
+          },
+          "escena_entrega": "escena_camino_sur",
+          "textos": [
+            {
+              "id": "caso_03_h6_t1",
+              "tono": "misterio",
+              "texto": "{npc:p1} te cuenta, en el camino, algo que no había dicho antes. No era un secreto: solo esperaba el momento justo."
+            },
+            {
+              "id": "caso_03_h6_t2",
+              "tono": "misterio",
+              "texto": "Te cruzás con {npc:p1}, que te da un dato de pasada, como quien da la hora. Pero ambos saben que es más que eso."
+            },
+            {
+              "id": "caso_03_h6_t3",
+              "tono": "misterio",
+              "texto": "{npc:p1} comparte con vos un silencio cómplice mientras caminan. Ese silencio ya es una respuesta."
+            },
+            {
+              "id": "caso_03_h6_t4",
+              "tono": "misterio",
+              "texto": "{npc:p1} confirma, con un gesto, lo que sospechabas: no estás solo en esto."
+            }
+          ],
+          "efectos": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 2
+            }
+          ],
+          "es_reparacion": true,
+          "repara_rencor_grave": false,
+          "npc_reparacion": "npc(p1)",
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h7",
+          "condiciones": {
+            "requiere_hitos": [
+              "h6"
+            ],
+            "tags": [
+              {
+                "tipo": "gratitud",
+                "objetivo": "npc(p1)",
+                "op": ">=",
+                "nivel": 2
+              }
+            ]
+          },
+          "escena_entrega": "escena(p1)",
+          "textos": [
+            {
+              "id": "caso_03_h7_t1",
+              "tono": "misterio",
+              "texto": "{npc:p1} te confía lo último que guardaba: un detalle que cambia el sentido del resto. La confianza, esta vez, es completa."
+            },
+            {
+              "id": "caso_03_h7_t2",
+              "tono": "misterio",
+              "texto": "Sin rodeos, {npc:p1} te cuenta lo que todo este tiempo evitó decir. El misterio se despeja un poco más."
+            },
+            {
+              "id": "caso_03_h7_t3",
+              "tono": "misterio",
+              "texto": "{npc:p1} te muestra, por fin, lo que siempre tuvo a mano y nunca quiso enseñar. La puerta que estaba cerrada se abre."
+            },
+            {
+              "id": "caso_03_h7_t4",
+              "tono": "misterio",
+              "texto": "Ya no hay medias palabras entre ustedes. {npc:p1} habla claro, y lo que dice hace encajar las piezas."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h8",
+          "condiciones": {
+            "requiere_hitos": {
+              "todos": [
+                "h4",
+                "h6"
+              ]
+            },
+            "hora": {
+              "desde_previo": 1
+            }
+          },
+          "escena_entrega": "escena_biblioteca_publica",
+          "escena_alternativa": "escena_aula_cartografia",
+          "textos": [
+            {
+              "id": "caso_03_h8_t1",
+              "tono": "misterio",
+              "texto": "El objeto perdido aparece donde nadie lo buscaba, y el misterio se desarma con la sencillez de lo que siempre estuvo a la vista. {npc:p1}, {npc:p2} y {npc:p3} tenían una parte."
+            },
+            {
+              "id": "caso_03_h8_t2",
+              "tono": "misterio",
+              "texto": "Todo cierra: las pistas, los silencios, los gestos que no cuadraban. Al final, nadie salió perdiendo."
+            },
+            {
+              "id": "caso_03_h8_t3",
+              "tono": "misterio",
+              "texto": "El rastro termina donde empezó, con una explicación más simple que la sospecha. Se siente como cerrar un libro bien leído."
+            },
+            {
+              "id": "caso_03_h8_t4",
+              "tono": "misterio",
+              "texto": "Lo perdido vuelve a su lugar, y con eso se acaba la intriga. Queda una pregunta menos y un par de aliados más."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": true
+        }
+      ],
+      "desenlaces": [
+        {
+          "id": "caso_03_d_neutro",
+          "tipo": "neutro",
+          "requiere": {},
+          "prioridad": 0,
+          "efectos_post": []
+        },
+        {
+          "id": "caso_03_d_positivo",
+          "tipo": "positivo",
+          "requiere": {
+            "requiere_hitos": [
+              "h7",
+              "h8"
+            ],
+            "tags": [
+              {
+                "tipo": "secreto_compartido",
+                "objetivo": "npc(p1)",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "prioridad": 2,
+          "efectos_post": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "caso_04",
+      "tono": "cotidiano",
+      "escenas_origen": [
+        "escena_mercado_circular",
+        "escena_plaza_cambistas"
+      ],
+      "ranuras_pista": [
+        {
+          "id": "p1",
+          "conocimientos_validos": [
+            "conocimiento_brenn_1",
+            "conocimiento_sarin_1"
+          ]
+        },
+        {
+          "id": "p2",
+          "conocimientos_validos": [
+            "conocimiento_serel_1",
+            "conocimiento_tiren_1"
+          ]
+        },
+        {
+          "id": "p3",
+          "conocimientos_validos": [
+            "conocimiento_maren_1",
+            "conocimiento_naela_1"
+          ]
+        }
+      ],
+      "bandos": [],
+      "ramas": [],
+      "instancias_minimas": 8,
+      "hitos": [
+        {
+          "id": "h1",
+          "condiciones": {
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p1",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "escena_entrega": "escena(p1)",
+          "textos": [
+            {
+              "id": "caso_04_h1_t1",
+              "tono": "cotidiano",
+              "texto": "Empezó como un favor sin importancia. {npc:p1} te lo comenta al pasar: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_04_h1_t2",
+              "tono": "cotidiano",
+              "texto": "Hablando de otra cosa, {npc:p1} menciona algo que parece menor: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_04_h1_t3",
+              "tono": "cotidiano",
+              "texto": "Con la naturalidad de quien charla de cualquier tema, {npc:p1} te cuenta: {conocimiento:p1}."
+            },
+            {
+              "id": "caso_04_h1_t4",
+              "tono": "cotidiano",
+              "texto": "Entre un comentario sobre el clima y otro sobre los precios, {npc:p1} suelta esto: {conocimiento:p1}."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h2",
+          "condiciones": {
+            "requiere_hitos": [
+              "h1"
+            ],
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p2",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "escena_entrega": "escena(p2)",
+          "textos": [
+            {
+              "id": "caso_04_h2_t1",
+              "tono": "cotidiano",
+              "texto": "{npc:p2} se ríe del enredo y lo explica sin darle importancia: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_04_h2_t2",
+              "tono": "cotidiano",
+              "texto": "El favor se ramifica: según {npc:p2}, hay otra persona metida en esto. Entre una charla y otra, queda claro: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_04_h2_t3",
+              "tono": "cotidiano",
+              "texto": "{npc:p2} te cuenta su parte con ganas de aclararlo todo, y de paso enreda un poco más: {conocimiento:p2}."
+            },
+            {
+              "id": "caso_04_h2_t4",
+              "tono": "cotidiano",
+              "texto": "Lo que dice {npc:p2} suena a anécdota, pero encaja con lo anterior: {conocimiento:p2}."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h3",
+          "condiciones": {
+            "requiere_hitos": [
+              "h2"
+            ],
+            "tags": [
+              {
+                "tipo": "pista_conocida",
+                "objetivo": "p3",
+                "op": ">=",
+                "nivel": 1
+              }
+            ]
+          },
+          "escena_entrega": "escena(p3)",
+          "textos": [
+            {
+              "id": "caso_04_h3_t1",
+              "tono": "cotidiano",
+              "texto": "{npc:p3} se encoge de hombros: lo que pasó es menos grave de lo que se rumorea. Igual aporta esto: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_04_h3_t2",
+              "tono": "cotidiano",
+              "texto": "Con {npc:p3} la charla es ligera, pero el dato pesa: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_04_h3_t3",
+              "tono": "cotidiano",
+              "texto": "{npc:p3} no sabe que su comentario cierra una cadena de favores cruzados: {conocimiento:p3}."
+            },
+            {
+              "id": "caso_04_h3_t4",
+              "tono": "cotidiano",
+              "texto": "Lo que cuenta {npc:p3} ya no sorprende, solo confirma que el enredo es más grande que el favor original: {conocimiento:p3}."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h4",
+          "condiciones": {
+            "requiere_hitos": [
+              "h3"
+            ],
+            "hora": {
+              "desde_previo": 2
+            }
+          },
+          "escena_entrega": "escena_mercado_circular",
+          "escena_alternativa": "escena_plaza_cambistas",
+          "textos": [
+            {
+              "id": "caso_04_h4_t1",
+              "tono": "cotidiano",
+              "texto": "Alguien te agradece un favor que nunca hiciste, y otra persona te reclama otro que no pediste. El asunto se enreda."
+            },
+            {
+              "id": "caso_04_h4_t2",
+              "tono": "cotidiano",
+              "texto": "Te llegan dos versiones distintas del mismo favor, cada una con su propio agradecimiento. Empezás a perder la cuenta."
+            },
+            {
+              "id": "caso_04_h4_t3",
+              "tono": "cotidiano",
+              "texto": "Un vecino te saluda con demasiada efusividad, como si le debieras algo. Pensás que quizá le debés, sin saberlo."
+            },
+            {
+              "id": "caso_04_h4_t4",
+              "tono": "cotidiano",
+              "texto": "El favor original ya tiene tres dueños y ninguna explicación. Conviene desenredarlo antes de que se complique más."
+            }
+          ],
+          "efectos": [
+            {
+              "tipo": "curiosidad",
+              "objetivo": "npc(p2)",
+              "nivel": 1
+            }
+          ],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h5",
+          "condiciones": {
+            "requiere_hitos": [
+              "h4"
+            ]
+          },
+          "escena_entrega": "escena_camino_sur",
+          "textos": [
+            {
+              "id": "caso_04_h5_t1",
+              "tono": "cotidiano",
+              "texto": "{npc:p1} te ofrece un trago de agua en el camino y charla sin apuro. Los favores se acomodan, aunque sea de a poco."
+            },
+            {
+              "id": "caso_04_h5_t2",
+              "tono": "cotidiano",
+              "texto": "En el camino, {npc:p1} te cuenta una anécdota y se ríe de la confusión. El clima entre ustedes se aligera."
+            },
+            {
+              "id": "caso_04_h5_t3",
+              "tono": "cotidiano",
+              "texto": "{npc:p1} te saluda como a un conocido de siempre. Algo del favor torcido empezó a enderezarse."
+            },
+            {
+              "id": "caso_04_h5_t4",
+              "tono": "cotidiano",
+              "texto": "Una charla corta con {npc:p1}, de esas que no cambian el mundo, y la confianza crece un poco."
+            }
+          ],
+          "efectos": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 1
+            }
+          ],
+          "es_reparacion": true,
+          "repara_rencor_grave": false,
+          "npc_reparacion": "npc(p1)",
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h6",
+          "condiciones": {
+            "requiere_hitos": [
+              "h5"
+            ],
+            "hora": {
+              "desde_previo": 2
+            }
+          },
+          "escena_entrega": "escena_camino_norte",
+          "textos": [
+            {
+              "id": "caso_04_h6_t1",
+              "tono": "cotidiano",
+              "texto": "{npc:p1} te retribuye un detalle menor, de esos que se agradecen más de lo que se dicen. Los favores van quedando parejos."
+            },
+            {
+              "id": "caso_04_h6_t2",
+              "tono": "cotidiano",
+              "texto": "Te cruzás otra vez con {npc:p1} y se nota la familiaridad. Hablan del día, de los caminos y de nada importante."
+            },
+            {
+              "id": "caso_04_h6_t3",
+              "tono": "cotidiano",
+              "texto": "{npc:p1} te cuenta que ya aclaró su parte del enredo. Un alivio pequeño, de los cotidianos."
+            },
+            {
+              "id": "caso_04_h6_t4",
+              "tono": "cotidiano",
+              "texto": "Con {npc:p1} el favor ya no pesa: se volvió costumbre. Eso, en el trato diario, vale mucho."
+            }
+          ],
+          "efectos": [
+            {
+              "tipo": "gratitud",
+              "objetivo": "npc(p1)",
+              "nivel": 2
+            }
+          ],
+          "es_reparacion": true,
+          "repara_rencor_grave": false,
+          "npc_reparacion": "npc(p1)",
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h7",
+          "condiciones": {
+            "requiere_hitos": [
+              "h6"
+            ],
+            "tags": [
+              {
+                "tipo": "gratitud",
+                "objetivo": "npc(p1)",
+                "op": ">=",
+                "nivel": 2
+              }
+            ]
+          },
+          "escena_entrega": "escena(p1)",
+          "textos": [
+            {
+              "id": "caso_04_h7_t1",
+              "tono": "cotidiano",
+              "texto": "{npc:p1} te cuenta algo que solo se cuenta a quien ya es de confianza. El enredo deja de ser un problema y pasa a ser una historia."
+            },
+            {
+              "id": "caso_04_h7_t2",
+              "tono": "cotidiano",
+              "texto": "Entre {npc:p1} y vos ya no hay cuentas pendientes ni favores en el aire. Solo la tranquilidad de lo que funciona."
+            },
+            {
+              "id": "caso_04_h7_t3",
+              "tono": "cotidiano",
+              "texto": "{npc:p1} te hace un lugar en la charla como a uno más. Se nota que te ganaste ese sitio."
+            },
+            {
+              "id": "caso_04_h7_t4",
+              "tono": "cotidiano",
+              "texto": "Sin mucha ceremonia, {npc:p1} te agradece todo. Entre los dos, el trato quedó claro y liviano."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": false
+        },
+        {
+          "id": "h8",
+          "condiciones": {
+            "requiere_hitos": {
+              "todos": [
+                "h4",
+                "h6"
+              ]
+            },
+            "hora": {
+              "desde_previo": 1
+            }
+          },
+          "escena_entrega": "escena_mercado_circular",
+          "escena_alternativa": "escena_plaza_cambistas",
+          "textos": [
+            {
+              "id": "caso_04_h8_t1",
+              "tono": "cotidiano",
+              "texto": "El favor, que empezó como un trámite, termina en una charla larga y un par de sonrisas. {npc:p1}, {npc:p2} y {npc:p3} quedan conformes."
+            },
+            {
+              "id": "caso_04_h8_t2",
+              "tono": "cotidiano",
+              "texto": "Todo vuelve a su cauce: cada favor tiene su dueño y cada deuda su saldo. Lo cotidiano retoma su ritmo."
+            },
+            {
+              "id": "caso_04_h8_t3",
+              "tono": "cotidiano",
+              "texto": "El enredo se deshace tan fácil como se armó. Al final, un favor más chico de lo que el chisme prometía."
+            },
+            {
+              "id": "caso_04_h8_t4",
+              "tono": "cotidiano",
+              "texto": "Termina como suelen terminar estas cosas: con un apretón de manos y alguna promesa de verse pronto."
+            }
+          ],
+          "efectos": [],
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
+          "bloquea": [],
+          "final": true
+        }
+      ],
+      "desenlaces": [
+        {
+          "id": "caso_04_d_neutro",
+          "tipo": "neutro",
+          "requiere": {},
+          "prioridad": 0,
+          "efectos_post": []
+        },
+        {
+          "id": "caso_04_d_positivo",
           "tipo": "positivo",
           "requiere": {
             "requiere_hitos": [
