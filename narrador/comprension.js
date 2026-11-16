@@ -486,8 +486,13 @@ export function prepararDiccionarios(cargados, intenciones) {
       correcciones.set(mal, bien);
     }
 
+    // frases-patrones: las frases `ignorar` (saludos y ruido), comparadas enteras y normalizadas.
+    const ignorar = new Set(
+      entradasDe(cargados['frases-patrones']).filter((e) => e.categoria === 'ignorar').map((e) => normalizar(e.patron)).filter((p) => p !== ''),
+    );
     const prep = {
       [PREPARADO]: true,
+      ignorar,
       intencionesLexico: [...formasPorIntencion].map(([id, formas]) => ({ id, verbo: verboDe.get(id), formas })),
       lexicoNpc: lexico.npc,
       lexicoObjeto: lexico.objeto,
@@ -495,7 +500,7 @@ export function prepararDiccionarios(cargados, intenciones) {
       correcciones,
       maxPalabrasCorreccion: Math.max(1, ...[...correcciones.keys()].map((k) => k.split(' ').length)),
     };
-    const hayAlgo = prep.intencionesLexico.length > 0 || correcciones.size > 0 || lexico.npc.size + lexico.objeto.size + lexico.escena.size > 0;
+    const hayAlgo = prep.intencionesLexico.length > 0 || correcciones.size > 0 || lexico.npc.size + lexico.objeto.size + lexico.escena.size + ignorar.size > 0;
     const resultado = hayAlgo ? prep : null;
     preparados.set(cargados, { intenciones, prep: resultado });
     return resultado;
@@ -580,16 +585,17 @@ export const PALABRAS_PREGUNTA = Object.freeze(['cómo', 'cuál', 'sabés', 'sab
 // Distancia total máxima entre la frase y una forma de viajar.
 export const TOLERANCIA_VERBO_VIAJE = 1;
 
-/** ¿La frase trae una forma de viajar con, a lo sumo, una letra de diferencia? */
-function verboDeViajeClaro(texto, intenciones) {
+/**
+ * Menor distancia de edición entre la frase y una forma de viajar del catálogo (0: la forma está escrita tal cual).
+ * Infinity si ninguna forma de viajar aparece, ni siquiera con la tolerancia a typos.
+ */
+function distanciaVerboViaje(texto, intenciones) {
   const entrada = tokenizar(texto);
-  return (intenciones ?? [])
+  const distancias = (intenciones ?? [])
     .filter((i) => i.verbo === 'viajar')
     .flatMap((i) => i.formas ?? [])
-    .some((forma) => {
-      const m = buscarEnOrden(entrada, tokenizar(forma));
-      return m !== null && m.distancia <= TOLERANCIA_VERBO_VIAJE;
-    });
+    .map((forma) => buscarEnOrden(entrada, tokenizar(forma))?.distancia ?? Infinity);
+  return Math.min(Infinity, ...distancias);
 }
 
 /** ¿La frase es una pregunta? Trae un signo de pregunta o una palabra interrogativa. */
@@ -647,6 +653,7 @@ export function resolverConsulta(texto, npcsPresentes, { lexico = null } = {}) {
  * @returns {{ tipo: 'ejecutar', intencionId: string, parametros: object, repetirIntencionId: string|null, reportes: object[] }
  *   | { tipo: 'reformular', motivo: string, intencionId: string|null, datos: object }
  *   | { tipo: 'consulta', npcId: string|null, conocimientoId: string|null }
+ *   | { tipo: 'ignorar', npcId: string|null }
  *   | { tipo: 'ia', intencionId: string|null }}
  * `consulta`: una pregunta que no se ejecuta como acción. Una pregunta nunca dispara viajar.
  */
@@ -660,6 +667,11 @@ export function decidir(texto, contexto = {}) {
   const reformular = (motivo, datos = {}) =>
     contexto.reformulacionPrevia ? { tipo: 'ia', intencionId } : { tipo: 'reformular', motivo, intencionId, datos };
 
+  // Saludo o ruido: la frase entera es una de las `ignorar` de frases-patrones, y no es ninguna intención.
+  if (!coincidencia && diccionarios?.ignorar?.has(normalizar(texto))) {
+    return { tipo: 'ignorar', npcId: contexto.npcsPresentes?.[0]?.id ?? null };
+  }
+
   // Preguntas: sin intención, con verbo de viaje o sobre un tema de un NPC presente, son consultas.
   if (esPregunta(texto)) {
     const consulta = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
@@ -668,12 +680,18 @@ export function decidir(texto, contexto = {}) {
     }
   }
 
-  // Viajar pide un verbo de viaje claro: con más de una letra de diferencia ("viejo" por "viajá") no viaja.
-  // Una forma del léxico es exacta: no necesita esta prueba.
-  if (coincidencia?.verbo === 'viajar' && !porLexico && !verboDeViajeClaro(t, contexto.intenciones)) {
-    const r = reformular(MOTIVOS.NO_ENTENDIDO);
-    r.intencionId = null;
-    return r;
+  // Viajar por parecido: una palabra que se parece a un verbo de viaje solo por la tolerancia a typos ("viejo" por
+  // "viajá") no viaja. Con una letra de diferencia como máximo, viaja solo si la frase también nombra un destino
+  // válido (la pregunta ya se resolvió arriba). Una forma exacta del catálogo o del léxico no necesita esta prueba.
+  if (coincidencia?.verbo === 'viajar' && !porLexico) {
+    const distancia = distanciaVerboViaje(t, contexto.intenciones);
+    const parecidoNada = distancia > TOLERANCIA_VERBO_VIAJE;
+    const parecidoSinDestino = distancia > 0 && resolverDestino(t, contexto.escenas, { lexico: diccionarios?.lexicoEscena }).estado !== 'resuelto';
+    if (parecidoNada || parecidoSinDestino) {
+      const r = reformular(MOTIVOS.NO_ENTENDIDO);
+      r.intencionId = null;
+      return r;
+    }
   }
 
   if (!coincidencia) return reformular(MOTIVOS.NO_ENTENDIDO);

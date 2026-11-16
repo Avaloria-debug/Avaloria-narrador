@@ -355,8 +355,8 @@ describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
     assert.deepEqual(base.plantillas.reformulacion.ya_en_destino, ['Ya estás en {lugar}.']);
   });
 
-  test('los bloques reformulacion y no_se no cuentan entre los 26 bloques de resultado', () => {
-    assert.equal(Object.keys(base.plantillas).length, 28);
+  test('los bloques reformulacion, no_se y saludo no cuentan entre los 26 bloques de resultado', () => {
+    assert.equal(Object.keys(base.plantillas).length, 29);
     assert.equal(validarContenido(base).conteos.plantillas, 26);
   });
 
