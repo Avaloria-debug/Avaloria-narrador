@@ -5,7 +5,7 @@
 //   casoId, instancia: { pistas: [{ ranura, conocimientoId, npcId, orden }] },
 //   tags, contadorHitos, hitoPrevio: { id, hora, escena, contador },
 //   hitosAlcanzados: [id], hitosListos: [id], listosDesde: { id: hora }, hitosBloqueados: [id],
-//   entregasMovidas: { id: escena }, reparados: [npcId], umbralesBajados: [id], reparacionHabilitada: [id],
+//   entregasMovidas: { id: escena }, reparados: [npcId], progresoReparacion: { npcId: [escena] }, umbralesBajados: [id], reparacionHabilitada: [id],
 //   sinListosDesde: turno, ultimoAvance: { hora }, turnoUltimoDisparo, finalAlcanzado, abandonoHabilitado
 // }
 // estadoMundo: {
@@ -37,6 +37,9 @@ export const HORAS_SIN_AVANCE = 24;
 export const HORAS_GANCHO = 12;
 export const NIVEL_VISTA = 1;
 export const NIVEL_ENTENDIDA = 2;
+export const RELACION_MINIMA_REPARACION = 15;
+export const REPARACIONES_PREVIAS = 2;
+export const GRATITUD_MINIMA_REPARACION = 2;
 const RELACION_MIN = -100;
 const RELACION_MAX = 100;
 
@@ -95,20 +98,50 @@ export function siguienteRanuraHabilitada(estadoCaso) {
   );
 }
 
-/** NPCs de ranura con un tag medio o grave que una reparación de este hito puede quitar, sin reparar todavía. */
-export function npcsPorReparar(hito, estadoCaso) {
+const esExplicita = (hito) => hito.es_reparacion === true && hito.repara_rencor_grave === true;
+const esPasoDeReparacion = (hito) => hito.es_reparacion === true && hito.repara_rencor_grave !== true;
+
+/** NPC dueño de los tags que repara el hito (`npc_reparacion`), o null. La reparación nunca va sobre otro. */
+export function npcDeReparacion(hito, estadoCaso, estadoMundo = {}) {
+  if (!hito.es_reparacion || !hito.npc_reparacion) return null;
+  return resolver(hito.npc_reparacion, estadoCaso, estadoMundo);
+}
+
+/** Escenas donde ya hubo un hito de reparación sobre el NPC. */
+export const progresoDeReparacion = (estadoCaso, npcId) => estadoCaso.progresoReparacion?.[npcId] ?? [];
+
+/**
+ * Las tres condiciones de la reparación explícita (rencor grave) sobre un NPC. Se piden todas.
+ * @returns {{progreso:boolean, relacion:boolean, gratitud:boolean, cumple:boolean}}
+ */
+export function condicionesDeReparacionExplicita(npcId, estadoCaso, estadoMundo) {
+  const progreso = new Set(progresoDeReparacion(estadoCaso, npcId)).size >= REPARACIONES_PREVIAS;
+  const relacion = (estadoMundo.npcs?.[npcId]?.relacion ?? 0) >= RELACION_MINIMA_REPARACION;
+  const gratitud = nivelDeTag(estadoCaso.tags ?? [], 'gratitud', npcId) >= GRATITUD_MINIMA_REPARACION;
+  return { progreso, relacion, gratitud, cumple: progreso && relacion && gratitud };
+}
+
+/** Borra el progreso de reparación de un NPC (o varios). Lo llama quien registra una traición o un rencor nuevo sobre él. */
+export function reiniciarProgresoReparacion(estadoCaso, npcIds) {
+  const ids = lista(npcIds).filter((id) => estadoCaso.progresoReparacion?.[id] !== undefined);
+  if (ids.length === 0) return estadoCaso;
+  const progresoReparacion = Object.fromEntries(Object.entries(estadoCaso.progresoReparacion).filter(([id]) => !ids.includes(id)));
+  return { ...estadoCaso, progresoReparacion };
+}
+
+/**
+ * El NPC del hito, si tiene algo que este hito repara; si no, lista vacía.
+ * Hito de reparación: un tag medio o grave de rencor, desconfianza o miedo (el rencor grave no lo quita, pero suma progreso).
+ * Reparación explícita: rencor grave.
+ */
+export function npcsPorReparar(hito, estadoCaso, estadoMundo = {}) {
+  const npcId = npcDeReparacion(hito, estadoCaso, estadoMundo);
+  if (!npcId) return [];
   const tags = estadoCaso.tags ?? [];
-  const reparados = estadoCaso.reparados ?? [];
-  const pendiente = (npcId) =>
-    TAGS_REPARABLES.some((tipo) => {
-      const nivel = nivelDeTag(tags, tipo, npcId);
-      if (nivel < NIVEL_ENTENDIDA) return false;
-      return !(tipo === 'rencor' && nivel === NIVEL_MAX && !hito.repara_rencor_grave);
-    });
-  return [...pistasDe(estadoCaso)]
-    .sort((a, b) => a.orden - b.orden)
-    .map((p) => p.npcId)
-    .filter((npcId, i, todos) => todos.indexOf(npcId) === i && !reparados.includes(npcId) && pendiente(npcId));
+  const pendiente = esExplicita(hito)
+    ? nivelDeTag(tags, 'rencor', npcId) === NIVEL_MAX
+    : TAGS_REPARABLES.some((tipo) => nivelDeTag(tags, tipo, npcId) >= NIVEL_ENTENDIDA);
+  return pendiente ? [npcId] : [];
 }
 
 function cumpleRequiereHitos(condicion, alcanzados) {
@@ -169,9 +202,14 @@ function cumplePistas(condicion, estadoCaso, bajar) {
 
 /**
  * ¿Se cumplen las condiciones del hito? No mira la escena de entrega.
+ * La reparación explícita pide además sus tres condiciones (progreso, relación, gratitud); nada las saltea.
  * Un hito de reparación habilitado por anti-traba (rencor grave) se cumple sin otras condiciones.
  */
 export function evaluarCondiciones(hito, estadoCaso, estadoMundo) {
+  if (esExplicita(hito)) {
+    const npcId = npcDeReparacion(hito, estadoCaso, estadoMundo);
+    if (!npcId || !condicionesDeReparacionExplicita(npcId, estadoCaso, estadoMundo).cumple) return false;
+  }
   if ((estadoCaso.reparacionHabilitada ?? []).includes(hito.id)) return true;
   const c = hito.condiciones ?? {};
   const bajar = (estadoCaso.umbralesBajados ?? []).includes(hito.id);
@@ -187,7 +225,7 @@ export function evaluarCondiciones(hito, estadoCaso, estadoMundo) {
   return true;
 }
 
-/** Un hito ya disparado no vuelve, salvo el de reparación mientras quede un NPC por reparar. */
+/** Un hito ya disparado no vuelve, salvo el de reparación mientras su NPC tenga algo por reparar. */
 function disponible(hito, estadoCaso) {
   if ((estadoCaso.hitosBloqueados ?? []).includes(hito.id)) return false;
   if (!(estadoCaso.hitosAlcanzados ?? []).includes(hito.id)) return true;
@@ -208,31 +246,55 @@ export function actualizarListos(estadoCaso, estadoMundo) {
   return { ...estadoCaso, hitosListos: listos, listosDesde, sinListosDesde };
 }
 
-/** Escena donde se entrega el hito: la movida por el gancho, la fija, la del dueño de una ranura, o null (cualquiera). */
+/** Escena de entrega principal del hito: la fija, la del dueño de una ranura, o null (cualquiera). */
 export function escenaDeEntrega(hito, estadoCaso, estadoMundo) {
-  const movida = estadoCaso.entregasMovidas?.[hito.id];
-  if (movida) return movida;
   if (hito.escena_entrega === null || hito.escena_entrega === undefined) return null;
   return resolver(hito.escena_entrega, estadoCaso, estadoMundo);
+}
+
+/** Escena alternativa del hito (opcional, una sola), o null. Solo vale con escena_entrega no nula. */
+export function escenaAlternativa(hito, estadoCaso, estadoMundo) {
+  if (typeof hito.escena_alternativa !== 'string' || hito.escena_alternativa === '') return null;
+  if (hito.escena_entrega === null || hito.escena_entrega === undefined) return null;
+  return resolver(hito.escena_alternativa, estadoCaso, estadoMundo);
+}
+
+/** Escenas donde un hito de reparación ya contó para su NPC: ahí no se repite (una vez por NPC y escena). */
+function escenasYaContadas(hito, estadoCaso, estadoMundo) {
+  if (!esPasoDeReparacion(hito)) return [];
+  const npcId = npcDeReparacion(hito, estadoCaso, estadoMundo);
+  return npcId ? progresoDeReparacion(estadoCaso, npcId) : [];
+}
+
+/**
+ * Escenas donde se puede entregar el hito: escena_entrega y escena_alternativa, cualquiera de las dos.
+ * null = cualquier escena.
+ */
+export function escenasDeEntrega(hito, estadoCaso, estadoMundo) {
+  const principal = escenaDeEntrega(hito, estadoCaso, estadoMundo);
+  if (hito.escena_entrega === null || hito.escena_entrega === undefined) return null;
+  const alternativa = escenaAlternativa(hito, estadoCaso, estadoMundo);
+  return [...new Set([principal, alternativa].filter(Boolean))];
 }
 
 /** Hitos listos, en orden de prioridad: reparación con tags pendientes > el que bloquea ramas > menor id. */
 function listosPorPrioridad(estadoCaso, estadoMundo) {
   const ids = estadoCaso.hitosListos ?? [];
-  const peso = (h) => (h.es_reparacion && npcsPorReparar(h, estadoCaso).length > 0 ? 0 : lista(h.bloquea).length > 0 ? 1 : 2);
+  const peso = (h) => (h.es_reparacion && npcsPorReparar(h, estadoCaso, estadoMundo).length > 0 ? 0 : lista(h.bloquea).length > 0 ? 1 : 2);
   return hitosDe(estadoMundo)
     .filter((h) => ids.includes(h.id))
     .sort((a, b) => peso(a) - peso(b) || porId(a, b));
 }
 
 const entregableAca = (hito, estadoCaso, estadoMundo) => {
-  const escena = escenaDeEntrega(hito, estadoCaso, estadoMundo);
-  return escena === null || escena === estadoMundo.escena;
+  if (escenasYaContadas(hito, estadoCaso, estadoMundo).includes(estadoMundo.escena)) return false;
+  const escenas = escenasDeEntrega(hito, estadoCaso, estadoMundo);
+  return escenas === null || escenas.includes(estadoMundo.escena);
 };
 
 /**
  * Hito a disparar este turno, o null. Máximo 1 por turno: si ya se disparó uno en este turno, null.
- * Solo entran los listos cuya escena de entrega es la del jugador, o null.
+ * Solo entran los listos que se entregan en la escena del jugador: escena_entrega, escena_alternativa, o null.
  */
 export function elegirDisparo(estadoCaso, estadoMundo) {
   if (estadoCaso.turnoUltimoDisparo !== undefined && estadoCaso.turnoUltimoDisparo !== null && estadoCaso.turnoUltimoDisparo === estadoMundo.turno) {
@@ -267,8 +329,11 @@ function aplicarEfecto(efecto, tags, estadoCaso, estadoMundo, marca) {
 
 /**
  * Dispara un hito: contadorHitos + 1, hitoPrevio, efectos, bloqueos, reparación (si es_reparacion) y decaimiento por hitos.
- * La reparación va sobre `hito.npc_reparacion` (si lo trae) o sobre el primer NPC de ranura con algo por reparar:
- * quita un tag medio/grave, baja el resto 1, suma +15 de relación y levanta bloqueadoConocimientos. Una vez por NPC.
+ * La reparación va solo sobre `hito.npc_reparacion`, el NPC dueño de los tags.
+ * Hito de reparación: quita un tag medio/grave (no el rencor grave), baja el resto 1, suma +15 de relación y
+ * anota la escena en progresoReparacion[npc]. Reparación explícita: quita el rencor grave si se cumplen las tres
+ * condiciones, y consume el progreso. Sin rencor grave se levanta bloqueadoConocimientos.
+ * Un efecto del hito que escribe rencor sobre un NPC borra su progreso de reparación.
  * @returns {{estadoCaso:object, estadoMundo:object, hito:object, reparado:string|null}}
  */
 export function dispararHito(hito, estadoCaso, estadoMundo) {
@@ -277,8 +342,12 @@ export function dispararHito(hito, estadoCaso, estadoMundo) {
 
   let mundo = estadoMundo;
   let tags = estadoCaso.tags ?? [];
+  let progresoReparacion = estadoCaso.progresoReparacion ?? {};
   for (const efecto of lista(hito.efectos)) {
     ({ tags, estadoMundo: mundo } = aplicarEfecto(efecto, tags, estadoCaso, mundo, marca));
+    if (efecto.tipo === 'rencor' && (efecto.op ?? 'escribir') !== 'quitar') {
+      progresoReparacion = reiniciarProgresoReparacion({ progresoReparacion }, resolver(efecto.objetivo, estadoCaso, mundo)).progresoReparacion;
+    }
   }
 
   const bloqueados = [...new Set([...(estadoCaso.hitosBloqueados ?? []), ...lista(hito.bloquea)])];
@@ -286,17 +355,23 @@ export function dispararHito(hito, estadoCaso, estadoMundo) {
   let reparados = estadoCaso.reparados ?? [];
   let reparado = null;
   if (hito.es_reparacion) {
-    const conTags = { ...estadoCaso, tags };
-    const pedido = hito.npc_reparacion ? resolver(hito.npc_reparacion, estadoCaso, mundo) : null;
-    const pendientes = npcsPorReparar(hito, conTags);
-    const npcId = pedido ? (pendientes.includes(pedido) ? pedido : null) : (pendientes[0] ?? null);
-    if (npcId) {
-      tags = aplicarReparacion(conTags, npcId, { reparaRencorGrave: hito.repara_rencor_grave === true }).tags;
+    const conTags = { ...estadoCaso, tags, progresoReparacion };
+    const npcId = npcsPorReparar(hito, conTags, mundo)[0] ?? null;
+    const explicita = esExplicita(hito);
+    if (npcId && (!explicita || condicionesDeReparacionExplicita(npcId, conTags, mundo).cumple)) {
+      tags = aplicarReparacion(conTags, npcId, explicita ? { tipo: 'rencor', reparaRencorGrave: true } : {}).tags;
+      const sigueGrave = nivelDeTag(tags, 'rencor', npcId) === NIVEL_MAX;
       mundo = cambiarNpc(mundo, npcId, (npc) => ({
         relacion: acotarRelacion((npc.relacion ?? 0) + RELACION_REPARACION),
-        bloqueadoConocimientos: false,
+        bloqueadoConocimientos: sigueGrave ? (npc.bloqueadoConocimientos ?? false) : false,
       }));
-      reparados = [...reparados, npcId];
+      if (explicita) {
+        progresoReparacion = reiniciarProgresoReparacion({ progresoReparacion }, npcId).progresoReparacion;
+      } else if (estadoMundo.escena) {
+        const previas = progresoReparacion[npcId] ?? [];
+        if (!previas.includes(estadoMundo.escena)) progresoReparacion = { ...progresoReparacion, [npcId]: [...previas, estadoMundo.escena] };
+      }
+      if (!reparados.includes(npcId)) reparados = [...reparados, npcId];
       reparado = npcId;
     }
   }
@@ -316,6 +391,7 @@ export function dispararHito(hito, estadoCaso, estadoMundo) {
     hitosBloqueados: bloqueados,
     entregasMovidas,
     reparados,
+    progresoReparacion,
     reparacionHabilitada: (estadoCaso.reparacionHabilitada ?? []).filter((id) => id !== hito.id),
     umbralesBajados: (estadoCaso.umbralesBajados ?? []).filter((id) => id !== hito.id),
     sinListosDesde: null,
@@ -327,48 +403,42 @@ export function dispararHito(hito, estadoCaso, estadoMundo) {
   return { estadoCaso: nuevo, estadoMundo: mundo, hito, reparado };
 }
 
-/** NPC de ranura más cercano al jugador: por `estadoMundo.distancia` si viene; si no, el de su escena o el primero en el orden. */
-function npcDeRanuraMasCercano(estadoCaso, estadoMundo) {
-  const conEscena = [...pistasDe(estadoCaso)]
-    .sort((a, b) => a.orden - b.orden)
-    .map((p) => ({ npcId: p.npcId, escena: escenaDeNpc(estadoMundo, p.npcId) }))
-    .filter((p) => p.escena);
-  if (conEscena.length === 0) return null;
-  const distancia = (escena) => {
-    if (escena === estadoMundo.escena) return 0;
-    return typeof estadoMundo.distancia === 'function' ? estadoMundo.distancia(estadoMundo.escena, escena) : 1;
-  };
-  return conEscena.reduce((mejor, p) => (distancia(p.escena) < distancia(mejor.escena) ? p : mejor));
-}
-
 /**
  * Gancho de un hito listo que no se puede entregar en la escena del jugador.
- * Devuelve el del hito de mayor prioridad: { hitoId, escena, npcId, movido }. npcId: el NPC de ranura que está en
- * esa escena (o el de la ranura de `escena(pN)`); null si no hay ninguno.
- * A las 12 horas de reloj de estar listo sin entregarse, la entrega se mueve a la escena del NPC de ranura
- * más cercano, salvo que el hito tenga `escena_alternativa: false`.
+ * Devuelve el del hito de mayor prioridad: { hitoId, escena, npcId, movido }. npcId: el NPC de la ranura de
+ * `escena(pN)`, o el NPC de ranura que está en esa escena; null si no hay ninguno.
+ * El gancho nombra escena_entrega. A las 12 horas de reloj de estar listo sin entregarse, si el hito tiene
+ * escena_alternativa, pasa a nombrarla (`movido` es true la primera vez). La entrega no se mueve a otra escena:
+ * el hito se entrega en cualquiera de las dos desde que está listo.
  * @returns {{estadoCaso:object, gancho:object|null}}
  */
 export function ganchoFueraDeEscena(estadoCaso, estadoMundo) {
-  const hito = listosPorPrioridad(estadoCaso, estadoMundo).find((h) => !entregableAca(h, estadoCaso, estadoMundo));
+  const libresDe = (h) => {
+    const contadas = escenasYaContadas(h, estadoCaso, estadoMundo);
+    return (escenasDeEntrega(h, estadoCaso, estadoMundo) ?? []).filter((e) => !contadas.includes(e));
+  };
+  const hito = listosPorPrioridad(estadoCaso, estadoMundo).find(
+    (h) => !entregableAca(h, estadoCaso, estadoMundo) && libresDe(h).length > 0,
+  );
   if (!hito) return { estadoCaso, gancho: null };
+
+  const libres = libresDe(hito);
+  const principal = escenaDeEntrega(hito, estadoCaso, estadoMundo);
+  const alternativa = escenaAlternativa(hito, estadoCaso, estadoMundo);
+  const desde = estadoCaso.listosDesde?.[hito.id] ?? estadoMundo.hora;
+  const vencido = estadoMundo.hora - desde >= HORAS_GANCHO;
+  const usaAlternativa = libres.includes(alternativa) && (vencido || !libres.includes(principal));
+  const escena = usaAlternativa ? alternativa : libres[0];
 
   let estado = estadoCaso;
   let movido = false;
-  const desde = estadoCaso.listosDesde?.[hito.id] ?? estadoMundo.hora;
-  const yaMovida = estadoCaso.entregasMovidas?.[hito.id] !== undefined;
-  if (!yaMovida && hito.escena_alternativa !== false && estadoMundo.hora - desde >= HORAS_GANCHO) {
-    const cercano = npcDeRanuraMasCercano(estadoCaso, estadoMundo);
-    if (cercano && cercano.escena !== escenaDeEntrega(hito, estadoCaso, estadoMundo)) {
-      estado = { ...estadoCaso, entregasMovidas: { ...(estadoCaso.entregasMovidas ?? {}), [hito.id]: cercano.escena } };
-      movido = true;
-    }
+  if (usaAlternativa && vencido && estadoCaso.entregasMovidas?.[hito.id] !== alternativa) {
+    estado = { ...estadoCaso, entregasMovidas: { ...(estadoCaso.entregasMovidas ?? {}), [hito.id]: alternativa } };
+    movido = true;
   }
 
-  const escena = escenaDeEntrega(hito, estado, estadoMundo);
-  // Se movió a la escena del jugador: ya se puede entregar acá, no hace falta gancho.
-  if (escena === estadoMundo.escena) return { estadoCaso: estado, gancho: null };
-  const deRanura = typeof hito.escena_entrega === 'string' && !movido && !yaMovida ? hito.escena_entrega.match(/^escena\((p\d)\)$/) : null;
+  const nombrada = usaAlternativa ? hito.escena_alternativa : hito.escena_entrega;
+  const deRanura = typeof nombrada === 'string' ? nombrada.match(/^escena\((p\d)\)$/) : null;
   const npcId = deRanura
     ? pistaDe(estado, deRanura[1])?.npcId ?? null
     : pistasDe(estado).map((p) => p.npcId).find((id) => escenaDeNpc(estadoMundo, id) === escena) ?? null;
@@ -406,21 +476,32 @@ export function antiTrabaSinListos(estadoCaso, estadoMundo) {
 }
 
 /**
- * Un NPC de ranura con rencor grave (sin reparar) → se habilita el hito de reparación sin otras condiciones.
- * Se prefiere el hito con repara_rencor_grave; sin él no hay nada que habilitar (una reparación común no quita rencor grave).
+ * Un NPC de ranura con rencor grave → se habilitan sus hitos de reparación (los de npc_reparacion = ese NPC, sin
+ * repara_rencor_grave) sin otras condiciones, mientras le falte progreso. Las tres condiciones de la reparación
+ * explícita no se saltean.
  */
 export function antiTrabaRencorGrave(estadoCaso, estadoMundo) {
-  const reparados = estadoCaso.reparados ?? [];
-  const hayRencorGrave = pistasDe(estadoCaso).some(
-    (p) => !reparados.includes(p.npcId) && nivelDeTag(estadoCaso.tags ?? [], 'rencor', p.npcId) === NIVEL_MAX,
-  );
-  if (!hayRencorGrave) return estadoCaso;
+  const conRencorGrave = pistasDe(estadoCaso)
+    .map((p) => p.npcId)
+    .filter(
+      (npcId) =>
+        nivelDeTag(estadoCaso.tags ?? [], 'rencor', npcId) === NIVEL_MAX &&
+        new Set(progresoDeReparacion(estadoCaso, npcId)).size < REPARACIONES_PREVIAS,
+    );
+  if (conRencorGrave.length === 0) return estadoCaso;
   const habilitados = estadoCaso.reparacionHabilitada ?? [];
-  const hito = [...hitosDe(estadoMundo)]
+  const nuevos = [...hitosDe(estadoMundo)]
     .sort(porId)
-    .find((h) => h.es_reparacion && h.repara_rencor_grave && !(estadoCaso.hitosBloqueados ?? []).includes(h.id));
-  if (!hito || habilitados.includes(hito.id)) return estadoCaso;
-  return { ...estadoCaso, reparacionHabilitada: [...habilitados, hito.id] };
+    .filter(
+      (h) =>
+        esPasoDeReparacion(h) &&
+        !(estadoCaso.hitosBloqueados ?? []).includes(h.id) &&
+        !habilitados.includes(h.id) &&
+        conRencorGrave.includes(npcDeReparacion(h, estadoCaso, estadoMundo)),
+    )
+    .map((h) => h.id);
+  if (nuevos.length === 0) return estadoCaso;
+  return { ...estadoCaso, reparacionHabilitada: [...habilitados, ...nuevos] };
 }
 
 /**

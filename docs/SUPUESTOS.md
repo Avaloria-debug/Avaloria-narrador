@@ -596,6 +596,8 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 
 - `escena_alternativa` y `npc_reparacion` existen; quedan definidos en `docs/motor-caso-v1-operativo.md` §2b. Las dos preguntas de arriba quedan cerradas.
 - SUPUESTO: umbral de relación para la reparación explícita = 15. Con rencor grave (−24), dos hitos de reparación (+30) y gratitud media (+10) un NPC que partía de 0 queda en 16.
-- SUPUESTO: a las 12 h el gancho pasa a nombrar `escena_alternativa`; ya no se mueve la entrega a la escena del NPC de ranura más cercano.
 - SUPUESTO: el progreso de reparación (`progresoReparacion`) es por NPC y sigue entre casos.
-- PENDIENTE (código sin tocar en esta tarea): `hitos.js` todavía trata `escena_alternativa` como booleano y mueve la entrega al NPC más cercano, repara una vez por NPC, y no aplica las tres condiciones ni el reinicio por traición; `decaimiento.js` no pide NPC dueño. El validador todavía no existe.
+- Cumplido en `narrador/casos/hitos.js` (0.0.12): `escena_alternativa` es una escena (ya no booleano); el hito se entrega en cualquiera de las dos; la reparación va solo sobre `npc_reparacion`; la explícita pide las tres condiciones; la traición reinicia el progreso (`reiniciarProgresoReparacion`, y un efecto de hito que escribe rencor sobre el NPC).
+- Decisión de Tomás: el gancho a las 12 h nombra `escena_alternativa`; no se mueve al NPC de ranura más cercano. Sin `escena_alternativa` el gancho sigue nombrando `escena_entrega`.
+- SUPUESTO: un hito de reparación cuenta una vez por (NPC, escena); en una escena ya contada no se vuelve a entregar. El anti-traba de rencor grave habilita los hitos de reparación de ese NPC mientras le falten escenas; nunca la explícita.
+- SUPUESTO: quien aplica la acción de traición sobre un NPC llama a `reiniciarProgresoReparacion`; eso se conecta en `narrar` (bloque C). El validador de alcanzabilidad de escenas también queda para el bloque C.

@@ -15,6 +15,8 @@ import {
   antiTrabaRencorGrave,
   antiTrabaSinAvance,
   antiTrabaFinalesBloqueados,
+  reiniciarProgresoReparacion,
+  condicionesDeReparacionExplicita,
 } from './hitos.js';
 
 // Datos de prueba: no son contenido.
@@ -229,7 +231,7 @@ describe('hitos: listos', () => {
 });
 
 describe('hitos: elegir disparo', () => {
-  const reparacion = hito('h7', {}, { es_reparacion: true });
+  const reparacion = hito('h7', {}, { es_reparacion: true, npc_reparacion: 'npc(p1)' });
   const queBloquea = hito('h5', {}, { bloquea: ['h6'] });
   const comunes = [hito('h3'), hito('h2')];
   const conRencor = { tags: [tag('rencor', 'npc_a', 2)] };
@@ -357,8 +359,10 @@ describe('hitos: disparo', () => {
 });
 
 describe('hitos: reparación', () => {
-  const reparacion = hito('h7', {}, { es_reparacion: true });
-  const conBloqueo = (extra = {}) => mundo([reparacion], {
+  const reparacion = hito('h7', {}, { es_reparacion: true, npc_reparacion: 'npc(p1)' });
+  const explicita = hito('h8', {}, { es_reparacion: true, repara_rencor_grave: true, npc_reparacion: 'npc(p1)' });
+  const conBloqueo = (extra = {}) => mundo([reparacion, explicita], {
+    escena: 'escena_archivo',
     npcs: {
       npc_a: { escena: 'escena_archivo', relacion: -30, bloqueadoConocimientos: true },
       npc_b: { escena: 'escena_taberna', relacion: 0, bloqueadoConocimientos: true },
@@ -366,19 +370,42 @@ describe('hitos: reparación', () => {
     },
     ...extra,
   });
+  // Estado con las tres condiciones de la reparación explícita cumplidas sobre npc_a.
+  const listo = (extra = {}) => caso({
+    tags: [tag('rencor', 'npc_a', 3), tag('gratitud', 'npc_a', 2)],
+    progresoReparacion: { npc_a: ['escena_archivo', 'escena_taberna'] },
+    ...extra,
+  });
+  const mundoListo = (relacion = 15) => {
+    const m = conBloqueo();
+    m.npcs.npc_a.relacion = relacion;
+    return m;
+  };
 
-  test('quita un tag medio/grave, baja el resto 1, suma +15 y levanta el bloqueo', () => {
-    const antes = caso({ tags: [tag('miedo', 'npc_a', 3), tag('desconfianza', 'npc_a', 2), tag('rencor', 'npc_a', 1), tag('gratitud', 'npc_a', 1)] });
+  test('quita un tag medio/grave del NPC dueño, baja el resto 1, suma +15, levanta el bloqueo y anota la escena', () => {
+    const antes = caso({ tags: [tag('miedo', 'npc_a', 3), tag('desconfianza', 'npc_a', 2), tag('rencor', 'npc_a', 1), tag('gratitud', 'npc_a', 1), tag('miedo', 'npc_b', 2)] });
     const r = dispararHito(reparacion, antes, conBloqueo());
     assert.equal(r.reparado, 'npc_a');
     assert.equal(nivelDeTag(r.estadoCaso.tags, 'miedo', 'npc_a'), 0);
     assert.equal(nivelDeTag(r.estadoCaso.tags, 'desconfianza', 'npc_a'), 1);
     assert.equal(nivelDeTag(r.estadoCaso.tags, 'rencor', 'npc_a'), 0);
     assert.equal(nivelDeTag(r.estadoCaso.tags, 'gratitud', 'npc_a'), 1);
+    assert.equal(nivelDeTag(r.estadoCaso.tags, 'miedo', 'npc_b'), 2);
     assert.equal(r.estadoMundo.npcs.npc_a.relacion, -15);
     assert.equal(r.estadoMundo.npcs.npc_a.bloqueadoConocimientos, false);
     assert.equal(r.estadoMundo.npcs.npc_b.bloqueadoConocimientos, true);
-    assert.deepEqual(r.estadoCaso.reparados, ['npc_a']);
+    assert.deepEqual(r.estadoCaso.progresoReparacion, { npc_a: ['escena_archivo'] });
+  });
+
+  test('solo con el NPC dueño: sin npc_reparacion no repara, y nunca toca otro NPC', () => {
+    const sinDueno = hito('h7', {}, { es_reparacion: true });
+    const r = dispararHito(sinDueno, caso({ tags: [tag('miedo', 'npc_a', 2)] }), conBloqueo());
+    assert.equal(r.reparado, null);
+    assert.equal(nivelDeTag(r.estadoCaso.tags, 'miedo', 'npc_a'), 2);
+    const deB = hito('h7', {}, { es_reparacion: true, npc_reparacion: 'npc(p2)' });
+    const r2 = dispararHito(deB, caso({ tags: [tag('miedo', 'npc_a', 2)] }), conBloqueo());
+    assert.equal(r2.reparado, null);
+    assert.equal(nivelDeTag(r2.estadoCaso.tags, 'miedo', 'npc_a'), 2);
   });
 
   test('la relación no pasa de 100', () => {
@@ -388,44 +415,77 @@ describe('hitos: reparación', () => {
     assert.equal(r.estadoMundo.npcs.npc_a.relacion, 100);
   });
 
-  test('es repetible, una vez por NPC', () => {
-    const m = conBloqueo();
-    let estado = caso({ tags: [tag('rencor', 'npc_a', 2), tag('miedo', 'npc_b', 2)] });
-    estado = actualizarListos(estado, m);
+  test('repetible: cuenta una vez por escena; en la misma escena no se vuelve a entregar', () => {
+    let m = conBloqueo();
+    let estado = actualizarListos(caso({ tags: [tag('rencor', 'npc_a', 3), tag('miedo', 'npc_a', 2)] }), m);
+    assert.equal(elegirDisparo(estado, m).id, 'h7');
     let r = dispararHito(reparacion, estado, m);
-    assert.equal(r.reparado, 'npc_a');
+    assert.deepEqual(r.estadoCaso.progresoReparacion, { npc_a: ['escena_archivo'] });
+    assert.equal(nivelDeTag(r.estadoCaso.tags, 'rencor', 'npc_a'), 3); // el grave no sale con una reparación común
+    assert.equal(r.estadoMundo.npcs.npc_a.bloqueadoConocimientos, true);
 
-    // Sigue disponible: queda npc_b por reparar.
-    estado = actualizarListos(r.estadoCaso, r.estadoMundo);
-    assert.deepEqual(estado.hitosListos, ['h7']);
-    r = dispararHito(reparacion, estado, { ...r.estadoMundo, turno: 2 });
-    assert.equal(r.reparado, 'npc_b');
-    assert.equal(r.estadoMundo.npcs.npc_b.bloqueadoConocimientos, false);
-    assert.deepEqual(r.estadoCaso.reparados, ['npc_a', 'npc_b']);
-
-    // npc_a vuelve a tener rencor medio: ya se reparó una vez, no hay segunda.
-    estado = { ...r.estadoCaso, tags: [tag('rencor', 'npc_a', 2)] };
-    assert.deepEqual(actualizarListos(estado, r.estadoMundo).hitosListos, []);
+    estado = actualizarListos(r.estadoCaso, { ...r.estadoMundo, turno: 2 });
+    assert.ok(estado.hitosListos.includes('h7'));
+    assert.equal(elegirDisparo(estado, { ...r.estadoMundo, turno: 2 }), null);
+    m = { ...r.estadoMundo, turno: 2, escena: 'escena_taberna' };
+    assert.equal(elegirDisparo(estado, m).id, 'h7');
+    r = dispararHito(reparacion, estado, m);
+    assert.deepEqual(r.estadoCaso.progresoReparacion, { npc_a: ['escena_archivo', 'escena_taberna'] });
   });
 
-  test('rencor grave: solo con repara_rencor_grave', () => {
-    const grave = caso({ tags: [tag('rencor', 'npc_a', 3)] });
-    const comun = dispararHito(reparacion, grave, conBloqueo());
-    assert.equal(comun.reparado, null);
-    assert.equal(nivelDeTag(comun.estadoCaso.tags, 'rencor', 'npc_a'), 3);
-    assert.equal(comun.estadoMundo.npcs.npc_a.bloqueadoConocimientos, true);
-
-    const explicita = { ...reparacion, repara_rencor_grave: true };
-    const r = dispararHito(explicita, grave, conBloqueo());
+  test('explícita con las tres condiciones: quita el rencor grave y consume el progreso', () => {
+    const m = mundoListo();
+    const estado = actualizarListos(listo(), m);
+    assert.ok(estado.hitosListos.includes('h8'));
+    const r = dispararHito(explicita, estado, m);
     assert.equal(r.reparado, 'npc_a');
     assert.equal(nivelDeTag(r.estadoCaso.tags, 'rencor', 'npc_a'), 0);
-    assert.equal(r.estadoMundo.npcs.npc_a.relacion, -15);
+    assert.equal(r.estadoMundo.npcs.npc_a.bloqueadoConocimientos, false);
+    assert.equal(r.estadoMundo.npcs.npc_a.relacion, 30);
+    assert.deepEqual(r.estadoCaso.progresoReparacion, {});
   });
 
-  test('npc_reparacion fija el NPC', () => {
-    const fija = { ...reparacion, npc_reparacion: 'npc(p2)' };
-    const estado = caso({ tags: [tag('rencor', 'npc_a', 2), tag('miedo', 'npc_b', 2)] });
-    assert.equal(dispararHito(fija, estado, conBloqueo()).reparado, 'npc_b');
+  test('condición 1: hacen falta 2 reparaciones previas en escenas distintas', () => {
+    const m = mundoListo();
+    for (const progreso of [[], ['escena_archivo'], ['escena_archivo', 'escena_archivo']]) {
+      const estado = listo({ progresoReparacion: { npc_a: progreso } });
+      assert.equal(condicionesDeReparacionExplicita('npc_a', estado, m).progreso, false);
+      assert.equal(evaluarCondiciones(explicita, estado, m), false);
+      assert.equal(dispararHito(explicita, estado, m).reparado, null);
+    }
+    // El progreso de otro NPC no cuenta.
+    assert.equal(evaluarCondiciones(explicita, listo({ progresoReparacion: { npc_b: ['escena_archivo', 'escena_taberna'] } }), m), false);
+    assert.equal(evaluarCondiciones(explicita, listo(), m), true);
+  });
+
+  test('condición 2: relación con el NPC ≥ 15', () => {
+    assert.equal(evaluarCondiciones(explicita, listo(), mundoListo(14)), false);
+    assert.equal(condicionesDeReparacionExplicita('npc_a', listo(), mundoListo(14)).relacion, false);
+    assert.equal(dispararHito(explicita, listo(), mundoListo(14)).reparado, null);
+    assert.equal(evaluarCondiciones(explicita, listo(), mundoListo(15)), true);
+  });
+
+  test('condición 3: gratitud medio o grave sobre ese NPC', () => {
+    const m = mundoListo();
+    const con = (tags) => listo({ tags: [tag('rencor', 'npc_a', 3), ...tags] });
+    assert.equal(evaluarCondiciones(explicita, con([]), m), false);
+    assert.equal(evaluarCondiciones(explicita, con([tag('gratitud', 'npc_a', 1)]), m), false);
+    assert.equal(evaluarCondiciones(explicita, con([tag('gratitud', 'npc_b', 3)]), m), false);
+    assert.equal(evaluarCondiciones(explicita, con([tag('gratitud', 'npc_a', 2)]), m), true);
+    assert.equal(evaluarCondiciones(explicita, con([tag('gratitud', 'npc_a', 3)]), m), true);
+  });
+
+  test('traición: el progreso del NPC se reinicia', () => {
+    const m = mundoListo();
+    let estado = listo({ progresoReparacion: { npc_a: ['escena_archivo', 'escena_taberna'], npc_b: ['escena_puente'] } });
+    estado = reiniciarProgresoReparacion(estado, 'npc_a');
+    assert.deepEqual(estado.progresoReparacion, { npc_b: ['escena_puente'] });
+    assert.equal(evaluarCondiciones(explicita, estado, m), false);
+
+    // Un hito que escribe rencor sobre el NPC también lo reinicia.
+    const traiciona = hito('h3', {}, { efectos: [{ tipo: 'rencor', objetivo: 'npc(p1)', nivel: 1 }] });
+    const r = dispararHito(traiciona, listo(), m);
+    assert.deepEqual(r.estadoCaso.progresoReparacion, {});
   });
 
   test('sin nada que reparar se dispara como un hito común', () => {
@@ -471,46 +531,38 @@ describe('hitos: gancho fuera de escena', () => {
     assert.equal(ganchoFueraDeEscena(actualizarListos(caso(), libre), libre).gancho, null);
   });
 
-  test('a las 12 horas de reloj sin entregarse se mueve a la escena del NPC de ranura más cercano', () => {
-    const distancias = { escena_archivo: 5, escena_taberna: 2, escena_puente: 3 };
+  test('se entrega en escena_entrega o en escena_alternativa', () => {
+    const conAlt = { ...enMercado, escena_alternativa: 'escena(p2)' };
+    const estado = actualizarListos(caso(), mundo([conAlt]));
+    assert.equal(elegirDisparo(estado, mundo([conAlt], { escena: 'escena_mercado' })).id, 'h3');
+    assert.equal(elegirDisparo(estado, mundo([conAlt], { escena: 'escena_taberna' })).id, 'h3');
+    assert.equal(elegirDisparo(estado, mundo([conAlt], { escena: 'escena_puente' })), null);
+  });
+
+  test('a las 12 horas de reloj el gancho nombra la escena alternativa, sin mover al NPC más cercano', () => {
+    const conAlt = { ...enMercado, escena_alternativa: 'escena_puente' };
+    const distancias = { escena_archivo: 1, escena_taberna: 1, escena_puente: 9 };
     const extra = { distancia: (_, hasta) => distancias[hasta] };
-    let estado = actualizarListos(caso(), mundo([enMercado], { hora: 10, ...extra }));
+    const estado = actualizarListos(caso(), mundo([conAlt], { hora: 10, ...extra }));
 
-    let r = ganchoFueraDeEscena(estado, mundo([enMercado], { hora: 21, ...extra }));
+    let r = ganchoFueraDeEscena(estado, mundo([conAlt], { hora: 21, ...extra }));
+    assert.deepEqual(r.gancho, { hitoId: 'h3', escena: 'escena_mercado', npcId: null, movido: false });
+    r = ganchoFueraDeEscena(estado, mundo([conAlt], { hora: 21, turno: 900, ...extra }));
     assert.equal(r.gancho.escena, 'escena_mercado');
-    assert.equal(r.gancho.movido, false);
 
-    // Muchos turnos sin que avance el reloj no lo mueven.
-    r = ganchoFueraDeEscena(estado, mundo([enMercado], { hora: 21, turno: 900, ...extra }));
-    assert.equal(r.gancho.movido, false);
-
-    const m22 = mundo([enMercado], { hora: 22, ...extra });
-    r = ganchoFueraDeEscena(estado, m22);
-    assert.deepEqual(r.gancho, { hitoId: 'h3', escena: 'escena_taberna', npcId: 'npc_b', movido: true });
-    assert.deepEqual(r.estadoCaso.entregasMovidas, { h3: 'escena_taberna' });
-    estado = r.estadoCaso;
-    assert.equal(escenaDeEntrega(enMercado, estado, m22), 'escena_taberna');
-
-    // Ya movido: el gancho sigue apuntando ahí y el hito se entrega en la escena nueva.
-    r = ganchoFueraDeEscena(estado, mundo([enMercado], { hora: 40, ...extra }));
-    assert.deepEqual(r.gancho, { hitoId: 'h3', escena: 'escena_taberna', npcId: 'npc_b', movido: false });
-    assert.equal(elegirDisparo(estado, mundo([enMercado], { hora: 40, escena: 'escena_taberna', ...extra })).id, 'h3');
-    assert.equal(elegirDisparo(estado, mundo([enMercado], { hora: 40, escena: 'escena_mercado', ...extra })), null);
+    r = ganchoFueraDeEscena(estado, mundo([conAlt], { hora: 22, ...extra }));
+    assert.deepEqual(r.gancho, { hitoId: 'h3', escena: 'escena_puente', npcId: 'npc_c', movido: true });
+    const despues = ganchoFueraDeEscena(r.estadoCaso, mundo([conAlt], { hora: 40, ...extra }));
+    assert.deepEqual(despues.gancho, { hitoId: 'h3', escena: 'escena_puente', npcId: 'npc_c', movido: false });
+    // La escena principal sigue valiendo.
+    assert.equal(elegirDisparo(r.estadoCaso, mundo([conAlt], { hora: 40, escena: 'escena_mercado' })).id, 'h3');
   });
 
-  test('sin distancias: el NPC de ranura que está con el jugador, o el primero en el orden', () => {
-    let estado = actualizarListos(caso(), mundo([enMercado], { hora: 0 }));
-    assert.equal(ganchoFueraDeEscena(estado, mundo([enMercado], { hora: 12 })).gancho.escena, 'escena_archivo');
-    estado = actualizarListos(caso(), mundo([enMercado], { hora: 0, escena: 'escena_puente' }));
-    assert.equal(ganchoFueraDeEscena(estado, mundo([enMercado], { hora: 12, escena: 'escena_puente' })).gancho, null);
-  });
-
-  test('un hito con escena_alternativa: false no se mueve', () => {
-    const fijo = { ...enMercado, escena_alternativa: false };
-    const estado = actualizarListos(caso(), mundo([fijo], { hora: 0 }));
-    const r = ganchoFueraDeEscena(estado, mundo([fijo], { hora: 50 }));
-    assert.equal(r.gancho.escena, 'escena_mercado');
-    assert.equal(r.gancho.movido, false);
+  test('sin escena_alternativa la entrega no se mueve', () => {
+    const estado = actualizarListos(caso(), mundo([enMercado], { hora: 0 }));
+    const r = ganchoFueraDeEscena(estado, mundo([enMercado], { hora: 50 }));
+    assert.deepEqual(r.gancho, { hitoId: 'h3', escena: 'escena_mercado', npcId: null, movido: false });
+    assert.equal(r.estadoCaso, estado);
   });
 });
 
@@ -552,34 +604,27 @@ describe('hitos: anti-traba', () => {
     assert.equal(antiTrabaSinListos(estado, mundo(hitos, { turno: 50 })), estado);
   });
 
-  test('rencor grave: habilita la reparación sin otras condiciones', () => {
-    const reparacion = hito('h7', { requiere_hitos: ['h5'], escena: 'escena_archivo' }, { es_reparacion: true, repara_rencor_grave: true });
-    const m = mundo([hito('h2'), reparacion]);
-    const sinRencor = caso({ tags: [tag('rencor', 'npc_a', 2)] });
-    assert.equal(antiTrabaRencorGrave(sinRencor, m), sinRencor);
+  test('rencor grave: habilita los hitos de reparación de ese NPC; la explícita sigue pidiendo sus tres condiciones', () => {
+    const paso = hito('h7', { requiere_hitos: ['h5'], escena: 'escena_archivo' }, { es_reparacion: true, npc_reparacion: 'npc(p1)' });
+    const deOtro = hito('h6', { requiere_hitos: ['h5'] }, { es_reparacion: true, npc_reparacion: 'npc(p2)' });
+    const explicita = hito('h8', {}, { es_reparacion: true, repara_rencor_grave: true, npc_reparacion: 'npc(p1)' });
+    const m = mundo([hito('h2'), deOtro, paso, explicita]);
+    const medio = caso({ tags: [tag('rencor', 'npc_a', 2)] });
+    assert.equal(antiTrabaRencorGrave(medio, m), medio);
 
     let estado = caso({ tags: [tag('rencor', 'npc_a', 3)] });
-    assert.deepEqual(actualizarListos(estado, m).hitosListos, ['h2']);
     estado = antiTrabaRencorGrave(estado, m);
     assert.deepEqual(estado.reparacionHabilitada, ['h7']);
     assert.equal(antiTrabaRencorGrave(estado, m), estado);
-
     estado = actualizarListos(estado, m);
     assert.deepEqual(estado.hitosListos, ['h2', 'h7']);
     assert.equal(elegirDisparo(estado, m).id, 'h7');
-    const r = dispararHito(reparacion, estado, m);
-    assert.equal(nivelDeTag(r.estadoCaso.tags, 'rencor', 'npc_a'), 0);
-    assert.deepEqual(r.estadoCaso.reparacionHabilitada, []);
-    assert.equal(antiTrabaRencorGrave(r.estadoCaso, m), r.estadoCaso);
   });
 
-  test('rencor grave: no cuenta el de un NPC fuera de las ranuras, ni una reparación común', () => {
-    const comun = hito('h7', { requiere_hitos: ['h5'] }, { es_reparacion: true });
-    const explicita = hito('h6', { requiere_hitos: ['h5'] }, { es_reparacion: true, repara_rencor_grave: true });
+  test('rencor grave: no cuenta el de un NPC fuera de las ranuras', () => {
+    const paso = hito('h7', {}, { es_reparacion: true, npc_reparacion: 'npc(p1)' });
     const ajeno = caso({ tags: [tag('rencor', 'npc_z', 3)] });
-    assert.equal(antiTrabaRencorGrave(ajeno, mundo([explicita])), ajeno);
-    const grave = caso({ tags: [tag('rencor', 'npc_a', 3)] });
-    assert.equal(antiTrabaRencorGrave(grave, mundo([comun])), grave);
+    assert.equal(antiTrabaRencorGrave(ajeno, mundo([paso])), ajeno);
   });
 
   test('24 horas de reloj sin avance: pista nivel 1 de la siguiente ranura habilitada', () => {
