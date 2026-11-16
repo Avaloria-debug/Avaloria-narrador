@@ -29,11 +29,11 @@ IndexedDB (versionContenido; una transacción por turno):
 2. Pesos: tono = último ×0.3; = dos anteriores ×0.6; ×1/(1+partidas jugadas); escena inicial en origen ×1.2.
 3. Sorteo con semilla.
 
-Secuencia: siguen reloj, contadorHitos, relaciones, textosUsados, efectos_post, tags con decaimiento propio. Se borran cierres de caso y ranuras (qué conocimiento ocupaba p1–p3). pista_conocida se conserva con su nivel; si coincide con una ranura nueva, la ranura arranca con ese nivel. hitoPrevio = null. Arranque al entrar a escenas_origen o a las 6 h con gancho. Pool agotado → modo libre.
+Secuencia: siguen reloj, contadorHitos, relaciones, textosUsados, efectos_post, tags con decaimiento propio. Se borran cierres de caso y ranuras (qué conocimiento ocupaba p1–p3). pista_conocida se conserva con su nivel; si coincide con una ranura nueva, la ranura arranca con ese nivel, con máximo nivel 1. hitoPrevio = null. Arranque al entrar a escenas_origen o a los 6 turnos con gancho. Pool agotado → modo libre.
 
 ## 4. Instanciación
 
-1. Candidatos: 2 conocimientos por ranura, sin dueño ni conocimiento repetido.
+1. Candidatos: 2 conocimientos por ranura, sin dueño ni conocimiento repetido, sin `requiereEvento` ni `requiereMarca`.
 2. Excluir en p1 conocimiento cuyo dueño tenga rencor grave.
 3. Firma no jugada por el jugador; si no hay, menos usos (empate: más vieja).
 4. Orden: permutación válida menos usada.
@@ -41,9 +41,9 @@ Secuencia: siguen reloj, contadorHitos, relaciones, textosUsados, efectos_post, 
 
 ## 5. Hitos
 
-Condiciones: requiere_hitos, tags (por ranura), escena, hora (rango o relativa), estado_evento, pistas.
+Condiciones: requiere_hitos, tags (por ranura), escena, hora (rango) o turnos (relativa a hitoPrevio), estado_evento, pistas.
 
-hitoPrevio = último hito disparado del caso activo (hora, escena, contador); sin hitos, el momento de instanciación.
+hitoPrevio = último hito disparado del caso activo (hora, escena, contador, turno); sin hitos, el momento de instanciación.
 
 Ranura habilitada cuando la anterior en el orden llega a nivel 1.
 
@@ -55,9 +55,9 @@ Ciclo por turno:
 5. Prioridad: reparación > bloquea ramas > menor id. Máx. 1 por turno.
 6. Al disparar: contadorHitos+1, hitoPrevio, efectos, bloqueos, decaimiento por hitos, texto.
 
-Fuera de escena: gancho; a 12 h, escena del NPC de ranura más cercano.
+Fuera de escena: gancho; a 12 turnos, escena del NPC de ranura más cercano.
 
-Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar reparación; 24 h sin avance → pista nivel 1; finales bloqueados → neutro por abandono.
+Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar reparación; 24 turnos sin avance → pista nivel 1; finales bloqueados → neutro por abandono.
 
 ## 6. Tags por acción
 
@@ -110,7 +110,7 @@ Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar rep
 | alerta_camino | 6 h | — | — |
 | sospecha_crimen, favor_casa_aster, favor_archivo, pacto_caso, alianza_npc | cierre de caso | — | — |
 
-Reparación: quita un tag medio/grave (rencor/desconfianza/miedo) del NPC y baja el resto 1. contadorHitos es global.
+Reparación: quita un tag medio/grave (rencor/desconfianza/miedo) del NPC, baja el resto 1 y levanta `bloqueadoConocimientos` de ese NPC. El hito de reparación es repetible, una vez por NPC. contadorHitos es global; sin caso activo (modo libre), el decaimiento por hitos cuenta turnos: 1 hito = 8 turnos. Los turnos salen de contadorTurnos, en el estado.
 
 ## 8. Texto
 
@@ -128,7 +128,7 @@ Al final o abandono: candidatos con requiere → mayor prioridad → mayor coinc
 
 ## 10. Validación
 
-Error si: hitos ≠ 8; textos ≠ 4; id de texto duplicado; sin neutro default; sin reparación; final inalcanzable en alguna instancia; < 4 firmas; id inexistente; marcador inválido; tag fuera de los 20; tag en cuerpo del jugador; efectos_post con tag de cierre.
+Error si: hitos ≠ 8; textos ≠ 4; id de texto duplicado; sin neutro default; sin reparación; final inalcanzable en alguna instancia; < 4 firmas; candidato de ranura con `requiereEvento` o `requiereMarca`; id inexistente; marcador inválido; tag fuera de los 20; tag en cuerpo del jugador; efectos_post con tag de cierre.
 
 ## 11. Cambios
 
