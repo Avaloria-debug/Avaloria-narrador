@@ -628,3 +628,9 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - SUPUESTO — h6 cambiada: antes `escena_camino_norte`/`escena_camino_sur` sin p1 (los p1 eran maren/serel, fijos en Ardenhall); un NPC fijo no puede estar en dos escenas distintas. Para que p1 esté presente en h5 y h6, p1 pasa a conocimiento_brenn_1 / conocimiento_sarin_1 (Brenn alterna norte/sur cada 24 h; Sarin rota norte/este/sur cada 8 h) y maren_1 / serel_1 pasan a p2 (naela_1 sale del caso). Se quitó la `escena_alternativa` de h6 y se reescribieron sus 4 textos (ahora con p1 presente). El motor no garantiza que p1 esté en la escena en el turno del disparo: depende de su rotación.
 - SUPUESTO — el final depende de h7: el desenlace positivo pide h7 y h8 alcanzados y `secreto_compartido` ≥ 1 con p1. h7 solo se dispara con rencor grave en p1; sin él, el caso cierra en el neutro por defecto (sin condición).
 - VERSION 0.0.15.
+
+## caso_01, h7 de confianza (0.0.16)
+
+- DECISIÓN (opción B) — h7 deja de ser reparación explícita: `es_reparacion` y `repara_rencor_grave` en false, sin `npc_reparacion`; condiciones: `requiere_hitos` ["h6"] y gratitud ≥ 2 sobre `npc(p1)`. La reparación de rencor grave queda fuera de este caso. Motivo: el positivo pide h7 y h8; si h7 exigiera rencor, el positivo solo sería alcanzable con hostilidad previa. Ahora es alcanzable sin ella. El final sigue dependiendo de h7 (positivo: h7, h8 y `secreto_compartido` ≥ 1 con p1).
+- La reparación del caso son h5 y h6 (pasos sobre p1). Cambios mecánicos: h6 escribe gratitud nivel 1 (antes `subir`), `version` "casos-v0.2", h8 t4 reescrito. La gratitud ≥ 2 de h7 sale de las acciones del jugador (ayudar, guardar_secreto...), no de h5 y h6.
+- VERSION 0.0.16.

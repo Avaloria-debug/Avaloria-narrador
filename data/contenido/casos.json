@@ -1,5 +1,5 @@
 {
-  "version": "casos-v0.1",
+  "version": "casos-v0.2",
   "casos": [
     {
       "id": "caso_01",
@@ -292,7 +292,7 @@
             {
               "tipo": "gratitud",
               "objetivo": "npc(p1)",
-              "op": "subir"
+              "nivel": 1
             }
           ],
           "es_reparacion": true,
@@ -308,12 +308,6 @@
               "h6"
             ],
             "tags": [
-              {
-                "tipo": "rencor",
-                "objetivo": "npc(p1)",
-                "op": ">=",
-                "nivel": 3
-              },
               {
                 "tipo": "gratitud",
                 "objetivo": "npc(p1)",
@@ -346,9 +340,8 @@
             }
           ],
           "efectos": [],
-          "es_reparacion": true,
-          "repara_rencor_grave": true,
-          "npc_reparacion": "npc(p1)",
+          "es_reparacion": false,
+          "repara_rencor_grave": false,
           "bloquea": [],
           "final": false
         },
@@ -386,7 +379,7 @@
             {
               "id": "caso_01_h8_t4",
               "tono": "intriga",
-              "texto": "Era un asunto más chico de lo que parecía, pero te dejó algo: ahora sabés a quién saludar cuando pasás por lo de {npc:p1}, {npc:p2} o {npc:p3}."
+              "texto": "Era un asunto más chico de lo que parecía, pero dejó huella: lo que empezó como una duda suelta terminó en una conversación entre quienes compartían el mismo hilo."
             }
           ],
           "efectos": [],
