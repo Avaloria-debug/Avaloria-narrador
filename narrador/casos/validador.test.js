@@ -1,6 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
-import { validarCaso, validarCasos, validarAcciones, REGLAS } from './validador.js';
+import { validarCaso, validarCasos, validarAcciones, REGLAS, TONOS_VALIDOS } from './validador.js';
 import { ACCIONES } from './acciones.js';
 
 // Datos de prueba: no son contenido. e_isla no se alcanza desde el origen.
@@ -20,11 +20,12 @@ const CONTENIDO = {
     { id: 'n6', escenaInicialId: 'e_isla', conocimientos: [{ id: 'k6' }] },
   ],
 };
-const textos = (h) => [1, 2, 3, 4].map((n) => ({ id: `t_${h}_${n}`, texto: `Texto ${n} con {npc:p1}.`, tono: 'neutro' }));
+const textos = (h) => [1, 2, 3, 4].map((n) => ({ id: `t_${h}_${n}`, texto: `Texto ${n} con {npc:p1}.`, tono: 'intriga' }));
 const hito = (id, extra = {}) => ({ id, condiciones: { requiere_hitos: ['h1'] }, escena_entrega: null, textos: textos(id), efectos: [], bloquea: [], ...extra });
 function casoValido() {
   return {
     id: 'caso_prueba',
+    tono: 'intriga',
     escenas_origen: ['e_origen'],
     ranuras_pista: [
       { id: 'p1', conocimientos_validos: ['k1', 'k2'] },
@@ -58,6 +59,22 @@ const dispara = (caso, regla) => assert.ok(reglas(caso).includes(regla), `${regl
 describe('validador', () => {
   test('el caso de prueba es válido', () => {
     assert.deepEqual(validarCaso(casoValido(), CONTENIDO), []);
+  });
+
+  test('tonos: los cinco válidos pasan y cualquier otro da error', () => {
+    assert.deepEqual([...TONOS_VALIDOS], ['intriga', 'calido', 'tension', 'misterio', 'cotidiano']);
+    for (const tono of TONOS_VALIDOS) {
+      const c = casoValido();
+      c.tono = tono;
+      c.hitos = c.hitos.map((h) => ({ ...h, textos: h.textos.map((t) => ({ ...t, tono })) }));
+      assert.deepEqual(validarCaso(c, CONTENIDO), [], tono);
+    }
+    for (const tono of ['humor', 'melancolia', 'neutro', '', null, undefined]) {
+      const c = casoValido();
+      c.tono = tono;
+      dispara(c, REGLAS.TONO_INVALIDO);
+    }
+    dispara(conHito('h3', { textos: textos('h3').map((t) => ({ ...t, tono: 'humor' })) }), REGLAS.TONO_INVALIDO);
   });
 
   test('hitos ≠ 8', () => {
@@ -172,6 +189,6 @@ describe('validador', () => {
   });
 
   test('cada regla tiene un test que la dispara', () => {
-    assert.equal(Object.keys(REGLAS).length, 17);
+    assert.equal(Object.keys(REGLAS).length, 18);
   });
 });

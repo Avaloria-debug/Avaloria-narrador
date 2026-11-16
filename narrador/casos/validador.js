@@ -25,7 +25,11 @@ export const REGLAS = Object.freeze({
   TAG_DESCONOCIDO: 'tag_desconocido',
   TAG_FISICO: 'tag_en_cuerpo',
   EFECTOS_POST_CIERRE: 'efectos_post_cierre',
+  TONO_INVALIDO: 'tono_invalido',
 });
+
+/** Tonos permitidos para un caso y para sus textos. */
+export const TONOS_VALIDOS = Object.freeze(['intriga', 'calido', 'tension', 'misterio', 'cotidiano']);
 
 export const HITOS_POR_CASO = 8;
 export const TEXTOS_POR_HITO = 4;
@@ -154,6 +158,12 @@ export function validarCaso(caso, contenido, opciones = {}) {
   const npcs = new Map((contenido.npcs ?? []).map((n) => [n.id, n]));
   const conocimientos = new Set((contenido.npcs ?? []).flatMap((n) => lista(n.conocimientos).map((k) => k.id)));
   const ranuras = new Set(lista(caso?.ranuras_pista).map((r) => r.id));
+
+  // Tonos: el del caso y el de cada texto.
+  if (!TONOS_VALIDOS.includes(caso?.tono)) error(REGLAS.TONO_INVALIDO, `caso: ${JSON.stringify(caso?.tono ?? null)}`);
+  for (const h of hitos) {
+    for (const t of lista(h.textos)) if (!TONOS_VALIDOS.includes(t.tono)) error(REGLAS.TONO_INVALIDO, `${t.id}: ${JSON.stringify(t.tono ?? null)}`);
+  }
 
   // Hitos y textos.
   if (hitos.length !== HITOS_POR_CASO) error(REGLAS.HITOS, `${hitos.length} hitos`);
