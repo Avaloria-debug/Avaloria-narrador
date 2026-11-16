@@ -211,7 +211,18 @@ Acá `neutro` es una categoría de evento, no un resultado ni un estado.
 | `origen_respuesta` | `codigo`, `ia` |
 | `revision` | `pendiente`, `aprobada`, `descartada` |
 | `intento_reformulacion` | `true`, `false` |
-| `intencion_detectada` | id de intención, o `null` |
+| `intencion_detectada` | id de intención, `saludo`, `reconocimiento` o `null` |
+
+### 13a. Intenciones de registro
+
+Dos valores de `intencion_detectada` que no son intenciones del catálogo (no tienen verbo, ni costo, ni botón). Están en `INTENCIONES_DE_REGISTRO` (`narrador/registro.js`); quien valide registros con una lista de intenciones permitidas tiene que sumarlas a los ids de `intenciones`.
+
+| Valor | Cuándo | Plantilla |
+|---|---|---|
+| `saludo` | La frase es solo palabras de `saludos` del contenido (`hola`, `buenas`, `buen dia`...) | `plantillas.saludo` |
+| `reconocimiento` | La frase es solo palabras de `reconocimientos` del contenido (`ok`, `gracias`, `dale`...) | `plantillas.reconocimiento` |
+
+Los dos son turnos de ruta `grupo_1`, origen `codigo`: no reformulan, no pasan a la IA, no gastan tiempo y no cambian el estado.
 
 ### 13b. Motivos de reformulación
 

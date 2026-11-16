@@ -9,6 +9,9 @@ export const RUTAS = Object.freeze({ GRUPO_1: 'grupo_1', GRUPO_2: 'grupo_2', REF
 export const ORIGENES = Object.freeze({ CODIGO: 'codigo', IA: 'ia' });
 export const REVISIONES = Object.freeze({ PENDIENTE: 'pendiente', APROBADA: 'aprobada', DESCARTADA: 'descartada' });
 export const MAX_ULTIMOS_TURNOS = 3;
+// Ids de `intencion_detectada` que no son intenciones del catálogo: la frase fue un saludo o un reconocimiento.
+// Quien valide registros con `permitidos.intenciones` tiene que sumarlos a los ids del contenido.
+export const INTENCIONES_DE_REGISTRO = Object.freeze(['saludo', 'reconocimiento']);
 
 export const CAMPOS_REGISTRO = Object.freeze([
   'id', 'fecha', 'escena', 'estado_escena', 'ultimos_turnos', 'texto_jugador', 'ruta', 'intento_reformulacion',

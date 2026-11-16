@@ -388,8 +388,8 @@ export function destinosDeViaje(escenas) {
   return destinos;
 }
 
-function nombraDestino(entrada, d) {
-  const trae = (t) => entrada.some((p) => coincidePalabra(p, t) >= 0);
+function nombraDestino(entrada, d, exacto = false) {
+  const trae = (t) => entrada.some((p) => (exacto ? p === t : coincidePalabra(p, t) >= 0));
   // Camino: nombre completo, o su dirección sola si está escrita exacta ("norte").
   if (d.tipo === 'camino') return d.terminos.every(trae) || entrada.includes(d.terminos.at(-1));
   // Escena de ciudad o lugar de camino: la primera palabra de su nombre ("taberna", "lago").
@@ -401,9 +401,9 @@ function nombraDestino(entrada, d) {
  * @returns {{ estado: 'resuelto', destino: string }
  *   | { estado: 'reformular', motivo: string, datos: { nombres: string[] } }}
  */
-export function resolverDestino(texto, escenas, { lexico = null } = {}) {
+export function resolverDestino(texto, escenas, { lexico = null, exacto = false } = {}) {
   const entrada = tokenizar(texto);
-  let hallados = destinosDeViaje(escenas).filter((d) => nombraDestino(entrada, d) || palabrasDeLexico(entrada, lexico?.get(d.id)) > 0);
+  let hallados = destinosDeViaje(escenas).filter((d) => nombraDestino(entrada, d, exacto) || palabrasDeLexico(entrada, lexico?.get(d.id)) > 0);
   // "la biblioteca de Halenor": la escena gana sobre su propia ciudad.
   const ciudadesDeEscenas = new Set(hallados.filter((d) => d.tipo === 'escena').map((d) => d.ciudadId));
   hallados = hallados.filter((d) => !(d.tipo === 'ciudad' && ciudadesDeEscenas.has(d.id)));
@@ -486,13 +486,8 @@ export function prepararDiccionarios(cargados, intenciones) {
       correcciones.set(mal, bien);
     }
 
-    // frases-patrones: las frases `ignorar` (saludos y ruido), comparadas enteras y normalizadas.
-    const ignorar = new Set(
-      entradasDe(cargados['frases-patrones']).filter((e) => e.categoria === 'ignorar').map((e) => normalizar(e.patron)).filter((p) => p !== ''),
-    );
     const prep = {
       [PREPARADO]: true,
-      ignorar,
       intencionesLexico: [...formasPorIntencion].map(([id, formas]) => ({ id, verbo: verboDe.get(id), formas })),
       lexicoNpc: lexico.npc,
       lexicoObjeto: lexico.objeto,
@@ -500,7 +495,7 @@ export function prepararDiccionarios(cargados, intenciones) {
       correcciones,
       maxPalabrasCorreccion: Math.max(1, ...[...correcciones.keys()].map((k) => k.split(' ').length)),
     };
-    const hayAlgo = prep.intencionesLexico.length > 0 || correcciones.size > 0 || lexico.npc.size + lexico.objeto.size + lexico.escena.size + ignorar.size > 0;
+    const hayAlgo = prep.intencionesLexico.length > 0 || correcciones.size > 0 || lexico.npc.size + lexico.objeto.size + lexico.escena.size > 0;
     const resultado = hayAlgo ? prep : null;
     preparados.set(cargados, { intenciones, prep: resultado });
     return resultado;
@@ -582,20 +577,35 @@ export function coincidirConDiccionarios(texto, intenciones, diccionarios) {
 // "cómo" pregunta, "como" no.
 export const PALABRAS_PREGUNTA = Object.freeze(['cómo', 'cuál', 'sabés', 'sabes', 'conviene']);
 
-// Distancia total máxima entre la frase y una forma de viajar.
-export const TOLERANCIA_VERBO_VIAJE = 1;
-
 /**
- * Menor distancia de edición entre la frase y una forma de viajar del catálogo (0: la forma está escrita tal cual).
- * Infinity si ninguna forma de viajar aparece, ni siquiera con la tolerancia a typos.
+ * ¿La frase trae una forma de viajar del catálogo escrita tal cual (sin tildes, en minúsculas)?
+ * Un typo, por chico que sea, no cuenta: la tolerancia a typos no dispara viajar.
  */
-function distanciaVerboViaje(texto, intenciones) {
+function hayVerboDeViajeExacto(texto, intenciones) {
   const entrada = tokenizar(texto);
-  const distancias = (intenciones ?? [])
+  return (intenciones ?? [])
     .filter((i) => i.verbo === 'viajar')
     .flatMap((i) => i.formas ?? [])
-    .map((forma) => buscarEnOrden(entrada, tokenizar(forma))?.distancia ?? Infinity);
-  return Math.min(Infinity, ...distancias);
+    .some((forma) => buscarEnOrden(entrada, tokenizar(forma), { exacto: true }) !== null);
+}
+
+/**
+ * ¿La frase es solo palabras de una lista (saludos o reconocimientos), sin ninguna otra?
+ * Las frases de la lista se pueden juntar: "hola, buenas tardes" son dos saludos. Sin tildes ni signos.
+ */
+export function esSoloDeLista(texto, lista) {
+  const ws = palabras(texto);
+  if (ws.length === 0 || !Array.isArray(lista)) return false;
+  const frases = lista.map((f) => palabras(f)).filter((f) => f.length > 0);
+  const cubre = Array(ws.length + 1).fill(false);
+  cubre[0] = true;
+  for (let i = 0; i < ws.length; i++) {
+    if (!cubre[i]) continue;
+    for (const f of frases) {
+      if (f.every((p, k) => ws[i + k] === p)) cubre[i + f.length] = true;
+    }
+  }
+  return cubre[ws.length];
 }
 
 /** ¿La frase es una pregunta? Trae un signo de pregunta o una palabra interrogativa. */
@@ -647,13 +657,13 @@ export function resolverConsulta(texto, npcsPresentes, { lexico = null } = {}) {
  *   npcsAusentes?: object[],
  *   objetosAplicables?: object[] | ((verbo: string) => object[]),
  *   reformulacionPrevia?: boolean,
- *   diccionarios?: object,
+ *   diccionarios?: object, saludos?: string[], reconocimientos?: string[],
  * }} contexto `reformulacionPrevia`: ya se reformuló en este turno. `diccionarios`: lo que devuelve
  *   `cargarDiccionarios` (o `prepararDiccionarios`); sin él, o si no sirve, se usa el catálogo solo.
  * @returns {{ tipo: 'ejecutar', intencionId: string, parametros: object, repetirIntencionId: string|null, reportes: object[] }
  *   | { tipo: 'reformular', motivo: string, intencionId: string|null, datos: object }
  *   | { tipo: 'consulta', npcId: string|null, conocimientoId: string|null }
- *   | { tipo: 'ignorar', npcId: string|null }
+ *   | { tipo: 'saludo'|'reconocimiento', npcId: string|null }
  *   | { tipo: 'ia', intencionId: string|null }}
  * `consulta`: una pregunta que no se ejecuta como acción. Una pregunta nunca dispara viajar.
  */
@@ -667,9 +677,9 @@ export function decidir(texto, contexto = {}) {
   const reformular = (motivo, datos = {}) =>
     contexto.reformulacionPrevia ? { tipo: 'ia', intencionId } : { tipo: 'reformular', motivo, intencionId, datos };
 
-  // Saludo o ruido: la frase entera es una de las `ignorar` de frases-patrones, y no es ninguna intención.
-  if (!coincidencia && diccionarios?.ignorar?.has(normalizar(texto))) {
-    return { tipo: 'ignorar', npcId: contexto.npcsPresentes?.[0]?.id ?? null };
+  // Saludo o reconocimiento: la frase es solo palabras de `saludos` o de `reconocimientos` del contenido.
+  for (const tipo of ['saludo', 'reconocimiento']) {
+    if (esSoloDeLista(texto, contexto[`${tipo}s`])) return { tipo, npcId: contexto.npcsPresentes?.[0]?.id ?? null };
   }
 
   // Preguntas: sin intención, con verbo de viaje o sobre un tema de un NPC presente, son consultas.
@@ -680,18 +690,14 @@ export function decidir(texto, contexto = {}) {
     }
   }
 
-  // Viajar por parecido: una palabra que se parece a un verbo de viaje solo por la tolerancia a typos ("viejo" por
-  // "viajá") no viaja. Con una letra de diferencia como máximo, viaja solo si la frase también nombra un destino
-  // válido (la pregunta ya se resolvió arriba). Una forma exacta del catálogo o del léxico no necesita esta prueba.
-  if (coincidencia?.verbo === 'viajar' && !porLexico) {
-    const distancia = distanciaVerboViaje(t, contexto.intenciones);
-    const parecidoNada = distancia > TOLERANCIA_VERBO_VIAJE;
-    const parecidoSinDestino = distancia > 0 && resolverDestino(t, contexto.escenas, { lexico: diccionarios?.lexicoEscena }).estado !== 'resuelto';
-    if (parecidoNada || parecidoSinDestino) {
-      const r = reformular(MOTIVOS.NO_ENTENDIDO);
-      r.intencionId = null;
-      return r;
-    }
+  // Viajar: el verbo de viaje cuenta solo si aparece exacto en lo que escribió el jugador (en el catálogo o en el
+  // léxico). Una palabra que se parece ("viejo", "vieja", "viajr") por la tolerancia a typos, o que la ortografía
+  // corrigió ("biajar"), no viaja, aunque haya un destino válido.
+  const corregido = t !== texto;
+  if (coincidencia?.verbo === 'viajar' && (corregido || !(porLexico || hayVerboDeViajeExacto(texto, contexto.intenciones)))) {
+    const r = reformular(MOTIVOS.NO_ENTENDIDO);
+    r.intencionId = null;
+    return r;
   }
 
   if (!coincidencia) return reformular(MOTIVOS.NO_ENTENDIDO);
@@ -706,7 +712,8 @@ export function decidir(texto, contexto = {}) {
   const reportes = [];
 
   if (verbo === 'viajar') {
-    const d = resolverDestino(t, contexto.escenas, { lexico: diccionarios?.lexicoEscena });
+    // El destino también tiene que estar escrito bien: "viajá al nrte" no viaja.
+    const d = resolverDestino(t, contexto.escenas, { lexico: diccionarios?.lexicoEscena, exacto: true });
     if (d.estado === 'reformular') return reformular(d.motivo, d.datos);
     parametros.destino = d.destino;
   }

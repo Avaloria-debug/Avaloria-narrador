@@ -13,6 +13,7 @@ const BLOQUE_REVELAR = 'revelar_conocimiento';
 const BLOQUE_MOSTRAR = 'mostrar_narrativo';
 const BLOQUE_NO_SE = 'no_se';
 const BLOQUE_SALUDO = 'saludo';
+const BLOQUE_RECONOCIMIENTO = 'reconocimiento';
 const PATRON = /\{([^{}]*)\}/g;
 
 const porId = (lista, id) => (lista ?? []).find((x) => x.id === id);
@@ -77,7 +78,7 @@ export function elegirPlantilla(plantillas, valores, { rng, aperturas = [] } = {
 }
 
 /**
- * Texto de un bloque que es una lista de frases con {npc} (`no_se`, `saludo`). Todas abren con el nombre del NPC:
+ * Texto de un bloque que es una lista de frases con {npc} (`no_se`, `saludo`, `reconocimiento`). Todas abren con el nombre del NPC:
  * la ventana de aperturas no sirve para alternarlas, así que se elige al azar entre las que se pueden completar.
  */
 function narrarLista(contenido, bloque, valores, opciones) {
@@ -148,7 +149,7 @@ export function valoresDeAccion(accion, contenido) {
  *   Si en el turno se reveló un conocimiento, sigue una frase de `revelar_conocimiento`.
  *   Viajar a donde ya se está usa la reformulación `ya_en_destino`. Si quedó una segunda acción sin hacer, sigue `repetir_segunda`.
  * - `reformular`: plantilla del motivo.
- * - `saludo`: plantilla `saludo` con el NPC presente (sin NPC, el respaldo `no_entendido`).
+ * - `saludo` y `reconocimiento`: plantilla del mismo nombre con el NPC presente (sin NPC, el respaldo `no_entendido`).
  * - `consulta`: si el NPC cuenta, `revelar_conocimiento.exito`; si no cuenta por ahora, `revelar_conocimiento.fallo`;
  *   si no sabe del tema, `no_se`.
  * - `ia` y `error`: sin texto (null); no los narra este módulo.
@@ -178,9 +179,10 @@ export function narrarTurno(turno, { contenido, rng, aperturas = [] }) {
     }
     return salida([narrarResultado(contenido, BLOQUE_REVELAR, resultado, valores, opciones)]);
   }
-  if (turno?.tipo === 'saludo') {
+  if (turno?.tipo === 'saludo' || turno?.tipo === 'reconocimiento') {
     const npc = porId(contenido.npcs, turno.npcId);
-    return salida([narrarLista(contenido, BLOQUE_SALUDO, { npc: npc?.nombre }, opciones)]);
+    const bloque = turno.tipo === 'saludo' ? BLOQUE_SALUDO : BLOQUE_RECONOCIMIENTO;
+    return salida([narrarLista(contenido, bloque, { npc: npc?.nombre }, opciones)]);
   }
   if (turno?.tipo !== 'accion' || !turno.accion) return { texto: null, aperturas: ventana, respaldo: false };
 
