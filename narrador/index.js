@@ -20,6 +20,10 @@ import { cargarDiccionarios } from './diccionarios.js';
 import { npcInicial, clampRelacion, clampDisposicion } from './npcs.js';
 import { esHora } from './reloj.js';
 import { MOTIVOS } from './motivos.js';
+import { minutosAbsolutos } from './reloj.js';
+import { posicionesDeNpcs } from './movimientoNpcs.js';
+import { turnoDeCaso } from './casos/narrar.js';
+import { accionesDeIntencion } from './casos/acciones.js';
 
 export const TIPOS_SALIDA = Object.freeze({
   NARRACION: 'narracion',
@@ -36,6 +40,7 @@ export const ERRORES = Object.freeze({
   NARRACION_DE_RESPALDO: 'narracion_de_respaldo',
   REGISTRO: 'registro',
   IA: 'ia',
+  CASO: 'caso',
 });
 
 export const AVISO_VERSION_CONTENIDO = 'version_contenido';
@@ -224,6 +229,55 @@ function textoMostrable(texto) {
   return typeof texto === 'string' && texto.trim() !== '' && !/[{}[\]<>]/.test(texto) && !/[\p{L}\p{N}]_[\p{L}\p{N}]/u.test(texto);
 }
 
+/**
+ * Motor de caso en un turno de acción. Solo corre si el estado tiene un caso activo (`estado.caso` con casoId,
+ * sin cerrar) y su plantilla llega en `opciones.casos`. Sin caso activo devuelve null y el turno no cambia.
+ * El contenido v3 no trae casos: la plantilla entra por opciones (SUPUESTO, docs/SUPUESTOS.md).
+ * @returns {Promise<null|{caso:object, npcs:object, texto:string|null}>}
+ */
+async function turnoConCaso(partida, turno, opciones) {
+  const estadoCaso = partida.caso;
+  if (!esObjeto(estadoCaso) || typeof estadoCaso.casoId !== 'string' || estadoCaso.cerrado) return null;
+  if (turno.tipo !== TIPOS_TURNO.ACCION) return null;
+  const plantilla = lista(opciones?.casos).find((c) => c?.id === estadoCaso.casoId);
+  if (!plantilla) return null;
+
+  const nuevo = turno.estado;
+  const posiciones = posicionesDeNpcs(nuevo.reloj, contenido);
+  const npcs = Object.fromEntries(
+    Object.entries(nuevo.npcs).map(([id, n]) => [id, { escena: posiciones[id] ?? null, relacion: n.relacion, bloqueadoConocimientos: n.bloqueadoConocimientos === true }]),
+  );
+  const parametros = turno.accion.parametros ?? {};
+  const accionId = accionesDeIntencion(turno.accion.intencionId)[0] ?? null;
+  const escenaAccion = porId(contenido.escenas, turno.accion.escenaAnterior);
+  const contadorTurnos = (estadoCaso.contadorTurnos ?? 0) + 1;
+  const r = await turnoDeCaso({
+    estadoCaso,
+    caso: plantilla,
+    accion: accionId ? { accionId, npcId: parametros.npcId ?? null, escenaId: turno.accion.escenaAnterior, ciudad: escenaAccion?.ciudad ?? null } : null,
+    mundo: {
+      hora: minutosAbsolutos(nuevo.reloj) / 60,
+      turno: contadorTurnos,
+      escena: nuevo.jugador.escenaId,
+      estadoEvento: turno.escena?.estado ?? null,
+      npcs,
+    },
+    horasAvanzadas: turno.accion.costoHoras ?? 0,
+    contenido,
+    semilla: partida.semilla,
+    persistencia: opciones?.persistenciaCasos ?? null,
+    jugadorId: opciones?.jugadorId ?? null,
+    partidaId: opciones?.partidaId ?? null,
+  });
+  const npcsNuevos = Object.fromEntries(
+    Object.entries(nuevo.npcs).map(([id, n]) => {
+      const m = r.npcs[id];
+      return [id, m ? { ...n, relacion: clampRelacion(m.relacion), bloqueadoConocimientos: m.bloqueadoConocimientos === true } : n];
+    }),
+  );
+  return { caso: { ...r.estadoCaso, contadorTurnos }, npcs: npcsNuevos, texto: r.texto?.texto ?? null };
+}
+
 const diaReal = (fecha) => new Date(fecha).toISOString().slice(0, 10);
 
 /** Fecha real del turno. Si el reloj inyectado falla o da algo que no es una fecha, usa el del sistema. */
@@ -246,6 +300,7 @@ function fechaActual(ahora) {
  *   groqKey?: string|null,
  *   http?: Function, esperar?: (ms: number) => Promise<void>, ahora?: () => Date|number|string,
  *   cola?: { agregar: (registro: object) => unknown }, diccionarios?: object|null,
+ *   casos?: object[], persistenciaCasos?: object, jugadorId?: string, partidaId?: string,
  * }} [opciones] `http`, `esperar` y `ahora` son para tests: por defecto, `fetch` y el reloj del sistema.
  *   `cola`: la cola de registros (narrador/registroFirestore.js); si llega, el registro del turno se encola.
  * @returns {Promise<{
@@ -351,6 +406,18 @@ export async function narrar(estado, entrada, opciones = {}) {
       }
     }
 
+    // Motor de caso: solo con caso activo. Sin caso, el turno queda igual.
+    let conCaso = null;
+    try {
+      conCaso = await turnoConCaso(partida, turno, opciones);
+    } catch (e) {
+      anotar(ERRORES.CASO, e instanceof Error ? e.message : '');
+    }
+    if (conCaso?.texto) {
+      if (textoMostrable(conCaso.texto)) texto = `${texto}\n\n${conCaso.texto}`;
+      else anotar(ERRORES.TEXTO_INVALIDO, 'caso');
+    }
+
     // Registro: solo los turnos con texto libre.
     let registro = null;
     let numeroRegistro = partida.numeroRegistro;
@@ -384,6 +451,7 @@ export async function narrar(estado, entrada, opciones = {}) {
     const etiqueta = turno.tipo === TIPOS_TURNO.ACCION ? etiquetaDeAccion(turno.accion) : null;
     const nuevo = {
       ...turno.estado,
+      ...(conCaso ? { caso: conCaso.caso, npcs: conCaso.npcs } : {}),
       ventanaAperturas: aperturas,
       ultimosTurnos: etiqueta ? [...partida.ultimosTurnos, etiqueta].slice(-MAX_ULTIMOS_TURNOS) : partida.ultimosTurnos,
       numeroRegistro,
