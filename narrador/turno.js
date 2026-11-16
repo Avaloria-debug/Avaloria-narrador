@@ -52,7 +52,7 @@ export function objetosAplicables(estado, contenido, verbo) {
 }
 
 /** Arma el contexto de la comprensión desde el estado. */
-function contextoDeComprension(estado, contenido) {
+function contextoDeComprension(estado, contenido, diccionarios = null) {
   return {
     intenciones: contenido.intenciones,
     escenas: contenido.escenas,
@@ -61,6 +61,7 @@ function contextoDeComprension(estado, contenido) {
     npcsAusentes: contenido.npcs,
     objetosAplicables: (verbo) => objetosAplicables(estado, contenido, verbo),
     reformulacionPrevia: estado.reformulacionPendiente === true,
+    ...(diccionarios ? { diccionarios } : {}),
   };
 }
 
@@ -105,10 +106,10 @@ function decidirBoton(entrada, estado, contenido) {
 }
 
 /** Paso 1: comprender. */
-function comprender(entrada, estado, contenido) {
+function comprender(entrada, estado, contenido, diccionarios) {
   if (entrada?.tipo === 'boton') return decidirBoton(entrada, estado, contenido);
   if (entrada?.tipo === 'texto' && typeof entrada.texto === 'string') {
-    return decidir(entrada.texto, contextoDeComprension(estado, contenido));
+    return decidir(entrada.texto, contextoDeComprension(estado, contenido, diccionarios));
   }
   return { tipo: 'error', error: 'entrada inválida' };
 }
@@ -209,7 +210,7 @@ function ejecutarConsulta(estado, decision, contenido) {
  * Ejecuta un turno.
  * @param {object} estado
  * @param {{ tipo: 'boton', intencionId: string, parametros?: object } | { tipo: 'texto', texto: string }} entrada
- * @param {{ contenido: object, rng: () => number }} dependencias
+ * @param {{ contenido: object, rng: () => number, diccionarios?: object }} dependencias `diccionarios`: los de la comprensión del texto libre (opcional)
  * @returns {{
  *   tipo: 'accion'|'consulta'|'reformular'|'ia'|'error', estado: object,
  *   consulta?: { npcId: string, conocimientoId: string|null, resultado: 'exito'|'fallo'|'no_se', motivo?: string, efectos: object[] },
@@ -221,11 +222,11 @@ function ejecutarConsulta(estado, decision, contenido) {
  *   repetirIntencionId?: string|null, reportes?: object[],
  * }}
  */
-export function ejecutarTurno(estado, entrada, { contenido, rng }) {
+export function ejecutarTurno(estado, entrada, { contenido, rng, diccionarios = null }) {
   if (typeof rng !== 'function') throw new TypeError('ejecutarTurno necesita un rng');
 
   // 1. Comprender.
-  const decision = comprender(entrada, estado, contenido);
+  const decision = comprender(entrada, estado, contenido, diccionarios);
   if (decision.tipo === 'error') return { tipo: TIPOS_TURNO.ERROR, estado, error: decision.error };
   if (decision.tipo === 'consulta') return ejecutarConsulta(estado, decision, contenido);
   if (decision.tipo === 'reformular') {
