@@ -206,6 +206,18 @@ describe('validador: palabrasClave y no_se', () => {
       conocimiento_sarin_1: ['carta', 'semana', 'destinatario'],
       conocimiento_sendero_sin_vigilancia: ['sendero', 'colinas', 'vigilancia'],
       conocimiento_oren_1: ['roble', 'firma'],
+      conocimiento_maren_2: ['cerradura', 'cerraduras', 'llave', 'llaves'],
+      conocimiento_serel_2: ['horno', 'hornos', 'alba'],
+      conocimiento_ivor_2: ['ficha', 'fichas', 'empeno'],
+      conocimiento_naela_2: ['madrugada', 'parroquianos'],
+      conocimiento_tiren_2: ['vado', 'crecida', 'lluvias'],
+      conocimiento_elia_2: ['registro', 'paginas', 'invierno'],
+      conocimiento_brenn_2: ['molino', 'ruinas', 'bajada'],
+      conocimiento_ysolde_2: ['niebla', 'bote', 'farol'],
+      conocimiento_dario_2: ['barrera', 'relevo', 'garita'],
+      conocimiento_sarin_2: ['consigna', 'contrasena', 'santo'],
+      conocimiento_hollis_2: ['lobos', 'rebano', 'fogatas'],
+      conocimiento_oren_2: ['ofrenda', 'ofrendas', 'amanecer'],
     });
   });
   test('no_se tiene que existir con dos variantes', async () => {

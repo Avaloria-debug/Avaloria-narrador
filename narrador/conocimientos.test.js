@@ -48,12 +48,28 @@ describe('conocimientos — revelar por conversación', () => {
     }
   });
 
-  test('una sola vez por NPC', () => {
+  test('orden: el _1 antes que el _2, aunque el _2 tenga umbral menor', () => {
+    // maren_1 umbral 40, maren_2 umbral 30. Con 39 no se revela el _2.
+    const k2 = def('maren_archivista').conocimientos.find((k) => k.id === 'conocimiento_maren_2');
+    assert.ok(k2.umbralRelacion < 40);
+    assert.deepEqual(aRevelar('maren_archivista', npc('maren_archivista', { relacion: 39 })), { conocimiento: null, motivo: M.UMBRAL });
+    const maren = npc('maren_archivista', { relacion: 40 });
+    assert.equal(aRevelar('maren_archivista', maren).conocimiento.id, 'conocimiento_maren_1');
+    // Con el _1 revelado, el _2 sin condición sale en la siguiente pregunta.
+    assert.equal(aRevelar('maren_archivista', revelar(maren, 'conocimiento_maren_1')).conocimiento.id, 'conocimiento_maren_2');
+  });
+
+  test('sin el _1 revelado, nunca el _2 (Ivor sin deuda impaga)', () => {
+    assert.equal(aRevelar('ivor_cambista', npc('ivor_cambista', { relacion: 100 })).motivo, M.EVENTO);
+  });
+
+  test('una sola vez por conocimiento', () => {
     const maren = npc('maren_archivista', { relacion: 90 });
     const { conocimiento } = aRevelar('maren_archivista', maren);
     const despues = revelar(maren, conocimiento.id);
     assert.deepEqual(despues.conocimientosRevelados, ['conocimiento_maren_1']);
-    assert.deepEqual(aRevelar('maren_archivista', despues), { conocimiento: null, motivo: M.YA_REVELADO });
+    const ambos = revelar(despues, 'conocimiento_maren_2');
+    assert.deepEqual(aRevelar('maren_archivista', ambos), { conocimiento: null, motivo: M.YA_REVELADO });
     // Revelar dos veces no duplica, y no modifica el estado recibido.
     assert.equal(revelar(despues, conocimiento.id), despues);
     assert.deepEqual(maren.conocimientosRevelados, []);

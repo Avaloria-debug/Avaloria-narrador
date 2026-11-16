@@ -37,7 +37,7 @@ describe('diccionarios — archivos reales', () => {
       'ortografia-tipeo': 2475,
       'frases-patrones': 610,
       'contexto-palabras': 385,
-      'temas-conocimiento': 72,
+      'temas-conocimiento': 84,
     });
   });
 

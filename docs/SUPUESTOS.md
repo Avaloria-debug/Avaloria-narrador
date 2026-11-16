@@ -675,3 +675,58 @@ Contenido válido.
 - SUPUESTO — caso_03: el conocimiento de Hollis pide `evento_tormenta_verano`. Sin ese evento la pista p1 queda pendiente (§4) y h1 espera al evento o a la anti-traba de 24 h.
 - caso_02: p3 era ysolde_1 / maren_1; ysolde pasa a p1, así que p3 ahora es tiren_1 / maren_1 (p2 serel/naela sin cambios). p2 y p3 no repiten a p1 en ningún caso (test). Se cambió una frase en h5 de caso_02 ("junto al lago") y una en h6 de caso_03 ("en el cruce") por la escena nueva; los demás textos de h5 y h6 ya nombran al NPC con `{npc:p1}`.
 - Tonos: el enum de `docs/motor-caso-v1.md` (§2.1) pasa a intriga, calido, tension, misterio, cotidiano, igual que `TONOS_VALIDOS`. El ejemplo del §12 (línea con "melancolia") no se tocó. `casos.json`: "casos-v0.4". VERSION 0.0.16.
+
+## Verificación de casos 1 a 4 (ronda Opus)
+
+Sobre `data/contenido/casos.json` (casos-v0.4) y el `movimiento` de `contenido-v3.json`:
+
+| Caso | Tono | p1 | h5 / h6 (npc_reparacion = npc(p1)) | p2/p3 repiten p1 |
+|---|---|---|---|---|
+| caso_01 | intriga | brenn_1 / sarin_1 (dos válidos) | camino_norte / camino_sur: Brenn (norte/sur) y Sarin (norte/este/sur) pasan por las dos | no |
+| caso_02 | tension | ysolde_1 dos veces | lago_espejos / camino_norte: Ysolde alterna entre las dos | no |
+| caso_03 | misterio | sendero_sin_vigilancia dos veces | camino_sur / cruce_colinas: Hollis alterna entre las dos | no |
+| caso_04 | cotidiano | sarin_1 dos veces | camino_norte / camino_sur: Sarin rota por las dos | no |
+
+- Errores: ninguno. No se cambió `casos.json`.
+- LIMITACIÓN — caso_02, caso_03 y caso_04 tienen un solo conocimiento válido en p1 (el NPC dueño tiene un solo conocimiento). No se reemplazó. Ver "pendiente de Tomás".
+- Los cuatro tonos están en `TONOS_VALIDOS`. Los textos de h5 y h6 no nombran una escena distinta de la de entrega.
+
+## Ronda Opus
+
+Hecho:
+- `docs/conocimientos-propuestos.md`: 12 conocimientos `_2` (uno por NPC; Hollis queda `conocimiento_hollis_2`). Sin cargar en `contenido-v3.json`. Palabras clave sin repetir entre los 24 conocimientos ni con `conocimiento_sello_doble`, sin alias de NPC, en minúsculas y sin tildes.
+- SUPUESTO — `conocimiento_brenn_2` pide `evento_ladrones_sur` (el dato sale de ese evento); los otros 11 no tienen condición. Umbrales entre 25 y 45.
+- Verificación de caso_01 a caso_04: sin errores (sección anterior). No se escribieron casos nuevos; no se tocó `narrador/` ni `VERSION`.
+
+Quedó pendiente:
+- Aprobación de los 12 conocimientos propuestos, uno por uno.
+- Tanda 2 de casos (caso_05 a caso_12), después de la aprobación.
+
+Pendiente de Tomás (decisiones de diseño, no errores):
+1. p1 de caso_02, caso_03 y caso_04 lista el mismo conocimiento dos veces (4 firmas por caso en lugar de 8). Una vez aprobados, `conocimiento_ysolde_2`, `conocimiento_hollis_2` y `conocimiento_sarin_2` completarían cada p1 con el mismo NPC y las mismas escenas de h5/h6.
+2. caso_03: p1 depende de `evento_tormenta_verano` (conocimiento de Hollis). Si se aprueba `conocimiento_hollis_2` (sin condición), p1 tendría una opción que no espera al evento.
+3. caso_01: p1 mezcla dos dueños (Brenn y Sarin) mientras los otros casos usan uno solo; los textos de h5/h6 sirven para los dos. Decidir si se unifica.
+
+## Ronda Opus, revisión de conocimientos
+
+Cambios en `docs/conocimientos-propuestos.md` (versión final; sin cargar en `contenido-v3.json` hasta que Tomás confirme):
+1. `conocimiento_brenn_2`: sale `requiereEvento: evento_ladrones_sur`, entra `requiereMarca: leyo`. Motivo: el evento es pasajero y la pista quedaría pendiente fuera de él; la marca dura toda la partida, así que la pista no se pierde una vez habilitada.
+2. `conocimiento_naela_2`: sale la palabra clave "turno" (chocaba con el rol "turno nocturno" y con el hecho del cambio de guardia de Darío). Contenido nuevo: viajeros que pasan de madrugada por la taberna, sin nombrar guardias. Palabras clave: madrugada, parroquianos. Umbral 30.
+3. `conocimiento_tiren_2`: no hay ningún río cargado en el mundo. Contenido nuevo: "Los mapas del aula marcan un vado que aparece con las lluvias de invierno y se cubre el resto del año." Palabras clave: vado, crecida, lluvias. SUPUESTO: "invierno" aparece en el contenido pero no es palabra clave (es de `conocimiento_elia_2`).
+4. DECISIÓN — `conocimiento_sarin_2` (consigna) y `conocimiento_dario_2` (cambio de guardia) quedan como estaban: la aduana concentra dos reglas de seguridad de forma deliberada.
+5. DECISIÓN — `conocimiento_sarin_2` mantiene umbral 45: es la última pista del caso.
+
+Verificación final (script sobre los 12 `_1`, los 12 `_2` y `conocimiento_sello_doble`): pasa.
+- Ninguna palabra clave aparece en dos conocimientos.
+- Ningún contenido nombra un NPC (ni existente ni inexistente).
+- Palabras clave en minúsculas, sin tildes ni ñ, de 2 a 4 por conocimiento.
+- Ningún `_2` repite el hecho del `_1` de su dueño.
+
+## Conocimientos _2 cargados y orden de revelación (0.0.17)
+
+- `conocimientoARevelar` (`narrador/conocimientos.js`): solo puede revelarse el primer conocimiento sin revelar, en el orden del contenido (_1 antes que _2). Si su condición no se cumple, no se revela nada y el motivo es el de ese conocimiento. Con todos revelados, el motivo es `ya_revelado` (o `bloqueado`). `conocimientoPorNarrativo` no cambió: un objeto narrativo revela el conocimiento al que apunta.
+- SUPUESTO — con relación 39 (umbral del _1: 40) no revela nada (motivo `umbral`, no el _2); con 40 revela el _1, y con el _1 revelado, la siguiente revela el _2. El test cubre las tres cosas.
+- Tests por id en lugar de posición: `contenido.test.js` (id repetido), `conocimientos.test.js` y `turno.test.js` (Serel revela _1 y en la siguiente charla _2). `consultas.test.js` suma las palabras clave de los 12 _2.
+- `data/diccionarios/temas-conocimiento.md`: 12 entradas nuevas, una por _2, solo con las palabras clave aprobadas (sin frases extra, para no inventar contenido). Entradas: 84.
+- Casos: `casos.json` no cambió. p1 de caso_02 a caso_04 sigue listando el mismo conocimiento dos veces; ahora `conocimiento_ysolde_2`, `conocimiento_hollis_2` y `conocimiento_sarin_2` existen y podrían completar esas ranuras (decisión de Tomás). caso_01 ya tenía dos conocimientos válidos en cada ranura.
+- Commits: el de contenido deja 1 falla ("los 12 conocimientos del contenido están en temas-conocimiento") hasta el commit de diccionarios, que la cierra. El orden de commits pedido no permite que el intermedio quede en verde.
