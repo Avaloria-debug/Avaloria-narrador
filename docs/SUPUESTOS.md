@@ -675,3 +675,18 @@ Contenido válido.
 - SUPUESTO — caso_03: el conocimiento de Hollis pide `evento_tormenta_verano`. Sin ese evento la pista p1 queda pendiente (§4) y h1 espera al evento o a la anti-traba de 24 h.
 - caso_02: p3 era ysolde_1 / maren_1; ysolde pasa a p1, así que p3 ahora es tiren_1 / maren_1 (p2 serel/naela sin cambios). p2 y p3 no repiten a p1 en ningún caso (test). Se cambió una frase en h5 de caso_02 ("junto al lago") y una en h6 de caso_03 ("en el cruce") por la escena nueva; los demás textos de h5 y h6 ya nombran al NPC con `{npc:p1}`.
 - Tonos: el enum de `docs/motor-caso-v1.md` (§2.1) pasa a intriga, calido, tension, misterio, cotidiano, igual que `TONOS_VALIDOS`. El ejemplo del §12 (línea con "melancolia") no se tocó. `casos.json`: "casos-v0.4". VERSION 0.0.16.
+
+## Verificación de casos 1 a 4 (ronda Opus)
+
+Sobre `data/contenido/casos.json` (casos-v0.4) y el `movimiento` de `contenido-v3.json`:
+
+| Caso | Tono | p1 | h5 / h6 (npc_reparacion = npc(p1)) | p2/p3 repiten p1 |
+|---|---|---|---|---|
+| caso_01 | intriga | brenn_1 / sarin_1 (dos válidos) | camino_norte / camino_sur: Brenn (norte/sur) y Sarin (norte/este/sur) pasan por las dos | no |
+| caso_02 | tension | ysolde_1 dos veces | lago_espejos / camino_norte: Ysolde alterna entre las dos | no |
+| caso_03 | misterio | sendero_sin_vigilancia dos veces | camino_sur / cruce_colinas: Hollis alterna entre las dos | no |
+| caso_04 | cotidiano | sarin_1 dos veces | camino_norte / camino_sur: Sarin rota por las dos | no |
+
+- Errores: ninguno. No se cambió `casos.json`.
+- LIMITACIÓN — caso_02, caso_03 y caso_04 tienen un solo conocimiento válido en p1 (el NPC dueño tiene un solo conocimiento). No se reemplazó. Ver "pendiente de Tomás".
+- Los cuatro tonos están en `TONOS_VALIDOS`. Los textos de h5 y h6 no nombran una escena distinta de la de entrega.
