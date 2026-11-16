@@ -1,5 +1,6 @@
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { nivelDeTag } from './tags.js';
 import {
   evaluarCondiciones,
@@ -622,5 +623,82 @@ describe('hitos: anti-traba', () => {
     assert.equal(antiTrabaFinalesBloqueados(r, mundo(hitos)), r);
     const sinFinales = caso({ hitosBloqueados: ['h2'] });
     assert.equal(antiTrabaFinalesBloqueados(sinFinales, mundo([hito('h2')])), sinFinales);
+  });
+});
+
+describe('hitos: esquema del documento', () => {
+  // El hito de ejemplo de docs/motor-caso-v1-operativo.md, sección "Esquema de condiciones".
+  const doc = readFileSync(new URL('../../docs/motor-caso-v1-operativo.md', import.meta.url), 'utf8');
+  const seccion = doc.slice(doc.indexOf('## 2b. Esquema de condiciones'), doc.indexOf('## 3. Elección de caso'));
+  const ejemplo = JSON.parse(seccion.match(/```json\n([\s\S]*?)```/)[1]);
+
+  // Estado y mundo que cumplen todas las condiciones del ejemplo.
+  const estadoQueCumple = () => caso({
+    contadorHitos: 2,
+    hitoPrevio: { id: 'h2', hora: 12, escena: 'escena_plaza', contador: 1 },
+    hitosAlcanzados: ['h1', 'h2'],
+    tags: [tag('pista_conocida', 'c_a', 2), tag('pista_conocida', 'c_b', 2), tag('desconfianza', 'npc_b', 1)],
+  });
+  // npc_b (dueño de p2) está en escena_taberna; hora 20 del día, 8 h después de hitoPrevio.
+  const mundoQueCumple = (extra = {}) => mundo([ejemplo], { hora: 20, escena: 'escena_taberna', estadoEvento: 'tenso', ...extra });
+
+  test('el ejemplo tiene todos los tipos de condición del esquema', () => {
+    assert.deepEqual(Object.keys(ejemplo.condiciones), ['requiere_hitos', 'tags', 'escena', 'hora', 'contador', 'estado_evento', 'pistas']);
+    assert.deepEqual(ejemplo.condiciones.tags.map((t) => t.op), ['>=', '<', 'ausente']);
+    assert.deepEqual(Object.keys(ejemplo.condiciones.hora), ['rango', 'desde_previo']);
+  });
+
+  test('se cumple con un estado que cumple todo', () => {
+    assert.equal(evaluarCondiciones(ejemplo, estadoQueCumple(), mundoQueCumple()), true);
+    assert.equal(evaluarCondiciones(ejemplo, estadoQueCumple(), mundoQueCumple({ escena: 'escena_archivo_real' })), true);
+  });
+
+  const fallas = [
+    ['requiere_hitos: falta h1', (e) => ({ ...e, hitosAlcanzados: ['h2'] }), {}],
+    ['requiere_hitos: ninguno de h2 o h3', (e) => ({ ...e, hitosAlcanzados: ['h1'] }), {}],
+    ['tag >=: pista p1 solo vista', (e) => ({ ...e, tags: [tag('pista_conocida', 'c_a', 1), tag('pista_conocida', 'c_b', 2), tag('pista_conocida', 'c_c', 2)] }), {}],
+    ['tag <: desconfianza media del NPC de p2', (e) => ({ ...e, tags: [...e.tags, tag('desconfianza', 'npc_b', 2)].filter((t, i) => i !== 2) }), {}],
+    ['tag ausente: hay rencor del NPC de p1', (e) => ({ ...e, tags: [...e.tags, tag('rencor', 'npc_a', 1)] }), {}],
+    ['escena: en otra', (e) => e, { escena: 'escena_plaza' }],
+    ['escena: en una de no_en', (e) => e, { escena: 'escena_puente_aduana' }],
+    ['hora: fuera del rango', (e) => e, { hora: 24 + 17 }],
+    ['hora: menos de 6 h desde hitoPrevio', (e) => ({ ...e, hitoPrevio: { ...e.hitoPrevio, hora: 15 } }), {}],
+    ['contador: ningún hito desde hitoPrevio', (e) => ({ ...e, contadorHitos: 1 }), {}],
+    ['estado_evento: tranquilo', (e) => e, { estadoEvento: 'tranquilo' }],
+    ['pistas: una sola entendida', (e) => ({ ...e, tags: [tag('pista_conocida', 'c_a', 2), tag('pista_conocida', 'c_b', 1)] }), {}],
+  ];
+  for (const [nombre, cambiar, extraMundo] of fallas) {
+    test(`no se cumple — ${nombre}`, () => {
+      assert.equal(evaluarCondiciones(ejemplo, cambiar(estadoQueCumple()), mundoQueCumple(extraMundo)), false);
+    });
+  }
+
+  test('pistas.habilitada: p3 pide que la anterior en el orden (p1) esté vista', () => {
+    const soloHabilitada = { id: 'h9', condiciones: { pistas: { habilitada: ejemplo.condiciones.pistas.habilitada } } };
+    assert.equal(evaluarCondiciones(soloHabilitada, caso(), mundoQueCumple()), false);
+    assert.equal(evaluarCondiciones(soloHabilitada, estadoQueCumple(), mundoQueCumple()), true);
+  });
+
+  test('queda listo, se entrega en escena(p2) y al dispararse escribe lo que dice el esquema', () => {
+    const m = mundoQueCumple({ turno: 7 });
+    const estado = actualizarListos(estadoQueCumple(), m);
+    assert.deepEqual(estado.hitosListos, ['h4']);
+    assert.equal(escenaDeEntrega(ejemplo, estado, m), 'escena_taberna');
+    assert.equal(elegirDisparo(estado, mundoQueCumple({ escena: 'escena_archivo_real' })), null);
+    const elegido = elegirDisparo(estado, m);
+    assert.equal(elegido.id, 'h4');
+
+    const { estadoCaso } = dispararHito(elegido, estado, m);
+    assert.equal(nivelDeTag(estadoCaso.tags, 'gratitud', 'npc_a'), 1);
+    assert.equal(nivelDeTag(estadoCaso.tags, 'pista_conocida', 'c_c'), 1);
+    assert.deepEqual(estadoCaso.hitoPrevio, { id: 'h4', hora: 20, escena: 'escena_taberna', contador: 3 });
+    assert.deepEqual(estadoCaso.hitosBloqueados, ['h5']);
+    assert.deepEqual(estadoCaso.hitosAlcanzados, ['h1', 'h2', 'h4']);
+    // Los campos del estado que el documento dice que escribe el disparo.
+    for (const campo of ['tags', 'contadorHitos', 'hitoPrevio', 'hitosAlcanzados', 'hitosListos', 'listosDesde', 'hitosBloqueados',
+      'entregasMovidas', 'reparados', 'umbralesBajados', 'reparacionHabilitada', 'sinListosDesde', 'ultimoAvance', 'turnoUltimoDisparo']) {
+      assert.ok(campo in estadoCaso, campo);
+    }
+    assert.equal(estadoCaso.turnoUltimoDisparo, 7);
   });
 });

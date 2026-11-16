@@ -23,6 +23,81 @@ IndexedDB (versionContenido; una transacción por turno):
 | historial_tonos | jugadorId |
 | reacciones_aprobadas | id |
 
+## 2b. Esquema de condiciones
+
+Fuente de verdad de `narrador/casos/hitos.js`. Un hito se cumple si se cumplen todas las condiciones que trae; las que faltan no cuentan. La escena de entrega no es condición.
+
+Hito de ejemplo:
+
+```json
+{
+  "id": "h4",
+  "condiciones": {
+    "requiere_hitos": { "todos": ["h1"], "alguno": ["h2", "h3"] },
+    "tags": [
+      { "tipo": "pista_conocida", "objetivo": "p1", "op": ">=", "nivel": 2 },
+      { "tipo": "desconfianza", "objetivo": "npc(p2)", "op": "<", "nivel": 2 },
+      { "tipo": "rencor", "objetivo": "npc(p1)", "op": "ausente" }
+    ],
+    "escena": { "en": ["escena_archivo_real", "escena(p2)"], "no_en": ["escena_puente_aduana"] },
+    "hora": { "rango": [18, 24], "desde_previo": 6 },
+    "contador": { "desde_previo": 1 },
+    "estado_evento": ["sigilo", "tenso"],
+    "pistas": { "cantidad": 2, "nivel": 2, "habilitada": "p3" }
+  },
+  "escena_entrega": "escena(p2)",
+  "efectos": [
+    { "tipo": "gratitud", "objetivo": "npc(p1)", "nivel": 1 },
+    { "tipo": "pista_conocida", "objetivo": "p3", "op": "subir" }
+  ],
+  "es_reparacion": false,
+  "repara_rencor_grave": false,
+  "bloquea": ["h5"],
+  "final": false
+}
+```
+
+| Condición | Forma | Se cumple si |
+|---|---|---|
+| requiere_hitos | lista (= todos) o `{todos, alguno}` | todos alcanzados y, si hay `alguno`, al menos uno |
+| tags | `{tipo, objetivo, op, nivel}` | nivel del tag `>=`, `<` o `==` al nivel dado; `ausente`: no hay tag (sin `nivel`) |
+| escena | id, lista o `{en, no_en}` | el jugador está en una de `en` y en ninguna de `no_en` |
+| hora.rango | `[desde, hasta]` | hora del día: desde ≤ h < hasta; `[22, 4]` cruza la medianoche |
+| hora.desde_previo | n | hora del reloj ≥ hitoPrevio.hora + n |
+| contador.desde_previo | n | contadorHitos ≥ hitoPrevio.contador + n |
+| estado_evento | id o lista | el estado de la escena es uno de esos |
+| pistas.cantidad, nivel | n, nivel (por defecto 2) | n ranuras con pista_conocida ≥ nivel |
+| pistas.habilitada | ranura o lista | la ranura está habilitada según el orden de la instancia |
+
+Objetivos y escenas: `p1` = conocimiento de la ranura; `npc(p1)` = su dueño; `escena(p1)` = escena donde está el dueño; `escena` = escena del jugador; otro texto = id literal.
+
+Efectos: `{tipo, objetivo, nivel}` escribe el tag; `op` puede ser `subir` (+1), `quitar` o `reputacion` (con `paso`).
+
+Estado del caso (lo que hitos.js lee y escribe):
+
+| Campo | Forma | Lee | Escribe |
+|---|---|---|---|
+| casoId | id | sí | — |
+| instancia | `{pistas: [{ranura, conocimientoId, npcId, orden}]}` | sí | — |
+| tags | Tag[] | sí | disparo, anti-traba 24 h |
+| contadorHitos | número | sí | disparo |
+| hitoPrevio | `{id, hora, escena, contador}`; `id` null si es la instanciación | sí | disparo |
+| hitosAlcanzados | id[] | sí | disparo |
+| hitosListos | id[] | sí | listos, disparo |
+| listosDesde | `{hitoId: hora}` | sí | listos, disparo |
+| hitosBloqueados | id[] | sí | disparo |
+| entregasMovidas | `{hitoId: escena}` | sí | gancho, disparo |
+| reparados | npcId[] | sí | disparo |
+| umbralesBajados | hitoId[] | sí | anti-traba 8 turnos, disparo |
+| reparacionHabilitada | hitoId[] | sí | anti-traba rencor grave, disparo |
+| sinListosDesde | turno o null | sí | listos, disparo, anti-traba 8 turnos |
+| ultimoAvance | `{hora}` | sí | disparo, anti-traba 24 h |
+| turnoUltimoDisparo | turno o null | sí | disparo |
+| finalAlcanzado | hitoId | — | disparo de un hito final |
+| abandonoHabilitado | bool | sí | anti-traba finales bloqueados |
+
+Estado del mundo (solo lectura, salvo `npcs` en el disparo): `{caso, hora, turno, escena, estadoEvento, npcs: {id: {escena, relacion, bloqueadoConocimientos}}, distancia(a, b)}`. `hora` es la hora total del reloj; `caso` es la plantilla con sus hitos.
+
 ## 3. Elección de caso
 
 1. Pool = 12 − casosJugados.
@@ -41,9 +116,9 @@ Secuencia: siguen reloj, contadorHitos, relaciones, textosUsados, efectos_post, 
 
 ## 5. Hitos
 
-Condiciones: requiere_hitos, tags (por ranura), escena, hora (rango) o turnos (relativa a hitoPrevio), estado_evento, pistas.
+Condiciones (esquema en §2b): requiere_hitos, tags (por ranura), escena, hora (rango o relativa a hitoPrevio, en horas del reloj), contador (relativo a hitoPrevio), estado_evento, pistas.
 
-hitoPrevio = último hito disparado del caso activo (hora, escena, contador, turno); sin hitos, el momento de instanciación.
+hitoPrevio = último hito disparado del caso activo (id, hora, escena, contador); sin hitos, el momento de instanciación.
 
 Ranura habilitada cuando la anterior en el orden llega a nivel 1.
 

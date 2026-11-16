@@ -585,3 +585,9 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - **Anti-traba, rencor grave:** se lee como "un NPC de ranura tiene rencor grave" y habilita el hito con `repara_rencor_grave`; una reparación común no se habilita porque no puede quitarlo.
 - **Anti-traba, 24 h:** "avance" es el último hito disparado, la instanciación o la última siembra. Escribe el tag directo; el "evento de escena" que lo narra no está.
 - **Anti-traba, finales bloqueados:** marca `abandonoHabilitado`; elegir el desenlace es del módulo de desenlaces. Un hito `final` disparado deja `finalAlcanzado`.
+
+## Motor de caso: esquema de condiciones (v0.0.11)
+- **SUPUESTO — `escena_alternativa`. Pregunta para Tomás: ¿existe?** `narrador/casos/hitos.js` (`ganchoFueraDeEscena`) lee `hito.escena_alternativa`: con `false` la entrega no se mueve a las 12 h; sin el campo, se mueve. El campo no está en el diseño ni en el esquema de `docs/motor-caso-v1-operativo.md` (§2b); salió de "si el hito admite escena alternativa" de la referencia (4.3). El código queda como está y los casos no lo tienen que usar hasta que se decida.
+- El esquema de condiciones y el formato del estado del caso quedaron en `docs/motor-caso-v1-operativo.md`, §2b, como fuente de verdad. `hitos.js` ya coincidía: no hubo que cambiar código. Un test lee el hito de ejemplo del documento y lo evalúa.
+- En §5 del operativo se ajustaron dos líneas para que no contradigan el esquema: la condición relativa a hitoPrevio va en horas del reloj (decía turnos) y hitoPrevio es `(id, hora, escena, contador)` (decía `turno`). `docs/motor-caso-v1.md` (4.1) todavía tiene la fila `turnos`: sin sincronizar.
+- `npc_reparacion` (NPC fijo de un hito de reparación) tampoco está en el esquema: es opcional y sale del mismo módulo. Misma duda que `escena_alternativa`.
