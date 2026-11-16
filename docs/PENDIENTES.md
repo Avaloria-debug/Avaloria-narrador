@@ -61,50 +61,41 @@ Sin verificar: Groq real desde el navegador (clave real, CORS, forma de `usage`)
 - NPCs terciarios: sin importancia real.
 
 ## 6. Diagnóstico de comprensión
-Solo diagnóstico: no se tocó el motor ni el contenido, y los tests que no coinciden quedan rojos (`narrador/pruebasComprension.test.js`). Todos los casos, con su resultado: `docs/diagnostico-comprension.md` (se regenera con `node narrador/diagnosticoComprension.js`).
-Diseño = palabras clave y umbral de `contenido-v3.json` (Maren: `_1` umbral 40, `_2` umbral 30; Serel: `_1` umbral 30, `_2` umbral 25). Nota: `motor-caso-v1-operativo.md` §2b trata las condiciones de hitos del motor de caso, no las preguntas de tema; no sirve de referencia para este barrido.
-Casos: 106. No coinciden: 40. Secuencias de dos preguntas (relación 50): 2 de 2 OK (revela `_1` y después `_2`).
-Los 40 son frases de una sola palabra ("tratado", "copia", "llave", "cerradura", "harina", "hornos", "precio") o "hablame/háblame ... " sin nombrar al NPC. Todos quedan marcados "revisar con diseño": el diseño no dice qué hacer con una palabra suelta, y `SUPUESTOS.md` pide reformular `hablar_con` sin NPC nombrado.
+Diagnóstico completo, con todos los casos: `docs/diagnostico-comprension.md` (se regenera con `node narrador/diagnosticoComprension.js`).
+Después de la corrección de `narrador/comprension.js` (commit "comprension: consultas de tema con NPC presente"): 106 casos, 36 corregidos, 4 siguen sin coincidir. Secuencias de dos preguntas: 2 de 2 OK. Ningún test se saltó ni se cambió.
+
+### Casos del barrido que siguen fallando (4)
+Frase "hablame sobre el tratado de la guerra" con Serel (el tema es de Maren, que no está). El test espera reformulación. Con la regla 1 ("hablar_con" sin NPC nombrado y un solo NPC presente usa ese NPC), la frase tiene un verbo reconocible, así que el motor habla con Serel y contesta a medias; la regla 3 no pide reformular en ese caso. Queda rojo: revisar con diseño si esa frase debe reformular o hablar con Serel.
 
 | NPC | Frase | Relación | Diseño dice | Resultado real |
 |---|---|---|---|---|
-| Maren | tratado | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | copia | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No tenés nada para eso. |
-| Maren | hablame sobre el tratado de la guerra | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | llave | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | cerradura | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | háblame de la copia del tratado | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | hablame de la copia del tratado | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | tratado | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | copia | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No tenés nada para eso. |
-| Maren | hablame sobre el tratado de la guerra | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | llave | 39 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | cerradura | 39 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | háblame de la copia del tratado | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | hablame de la copia del tratado | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | tratado | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | copia | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] No tenés nada para eso. |
-| Maren | hablame sobre el tratado de la guerra | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | llave | 40 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | cerradura | 40 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | háblame de la copia del tratado | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | hablame de la copia del tratado | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | tratado | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | copia | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] No tenés nada para eso. |
-| Maren | hablame sobre el tratado de la guerra | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | llave | 50 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | cerradura | 50 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Maren | háblame de la copia del tratado | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Maren | hablame de la copia del tratado | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
-| Serel | harina | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | hornos | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | precio | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | harina | 39 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | hornos | 39 | conocimiento_serel_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | precio | 39 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | harina | 40 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | hornos | 40 | conocimiento_serel_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | precio | 40 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | harina | 50 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | hornos | 50 | conocimiento_serel_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | precio | 50 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | hablame sobre el tratado de la guerra | 0 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
+| Serel | hablame sobre el tratado de la guerra | 39 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
+| Serel | hablame sobre el tratado de la guerra | 40 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
+| Serel | hablame sobre el tratado de la guerra | 50 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
+
+### Tests anteriores que quedan rojos por las reglas nuevas (20)
+Esperaban la regla vieja (§4.1: `hablar_con` sin nombre con un solo NPC reformula; una frase sin pregunta no es consulta de tema). No se tocaron. Varios usan una frase de relleno que trae un verbo de hablar ("sigo sin decir nada claro", "hablar con serel") para provocar la reformulación o la IA, y ahora se ejecuta con el único NPC presente.
+
+| Archivo | Test |
+|---|---|
+| narrador/comprension.test.js | 3.1: sin la lista de ausentes, el ausente no se reconoce |
+| narrador/comprension.test.js | un NPC y ningún nombre: pregunta, no elige |
+| narrador/comprensionDiccionarios.test.js | las entradas objeto, npc y escena resuelven parámetros, no la intención |
+| narrador/consultas.test.js | una frase que no es pregunta no es consulta, aunque nombre el tema |
+| narrador/index.test.js | IA que falla (clave inválida): tipo narracion con plantilla, y errores tiene el motivo |
+| narrador/index.test.js | IA que falla (cupo por minuto dos veces): tipo narracion con plantilla, y errores tiene el motivo |
+| narrador/index.test.js | IA que falla (error de red): tipo narracion con plantilla, y errores tiene el motivo |
+| narrador/index.test.js | IA que falla (salida con corchetes): tipo narracion con plantilla, y errores tiene el motivo |
+| narrador/index.test.js | IA que falla (salida con id): tipo narracion con plantilla, y errores tiene el motivo |
+| narrador/index.test.js | IA que falla (salida vacía): tipo narracion con plantilla, y errores tiene el motivo |
+| narrador/index.test.js | RPD agotado: pasa a modo código y no vuelve a llamar ese día |
+| narrador/index.test.js | ida y vuelta por IndexedDB sin pérdida: crear, narrar, guardar, cargar |
+| narrador/index.test.js | reformulación: tipo reformulacion y registro con ruta reformulacion |
+| narrador/index.test.js | sin groqKey nunca llama a la IA: usa plantilla |
+| narrador/registro.test.js | reformular y después entender: ruta reformulacion, y el turno que resuelve va a grupo_1 con intento_reformulacion |
+| narrador/registro.test.js | si la IA no respondió y se mostró una plantilla: grupo_2 con origen codigo |
+| narrador/turno.test.js | reformula una vez; la segunda pasa a IA; no avanza el reloj |
+| narrador/turno.test.js | si la segunda frase se entiende, se ejecuta |
+| narrador/turno.test.js | sin parámetros usa las reglas de la comprensión |
+| narrador/turno.test.js | un botón nunca pasa a IA |

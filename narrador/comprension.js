@@ -275,7 +275,8 @@ export function resolverNpc(texto, escena, npcsPresentes, verbo, { npcsAusentes 
 
   if (soloNombrado) return { estado: 'sin_objetivo' };
 
-  // 4.1: hablar_con nunca elige por el jugador.
+  // 4.1: hablar_con sin nombre: con un solo NPC presente es ese NPC; con dos o más, se reformula.
+  if (exigido && presentes.length === 1) return resuelto(presentes[0]);
   if (exigido) return reformular(presentes.length === 0 ? MOTIVOS.SIN_NPCS : MOTIVOS.FALTA_NPC, presentes);
 
   // 4.2
@@ -687,6 +688,16 @@ export function decidir(texto, contexto = {}) {
     const consulta = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
     if (!coincidencia || coincidencia.verbo === 'viajar' || consulta.conocimientoId !== null) {
       return { tipo: 'consulta', ...consulta };
+    }
+  }
+
+  // Frase de tema sin pregunta: una palabra clave de un conocimiento de un NPC presente es una consulta de tema,
+  // salvo que traiga un verbo exacto que no sea hablar (ese verbo manda). "tratado", "hablame del tratado".
+  if (!esPregunta(texto)) {
+    const consulta = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
+    if (consulta.conocimientoId !== null) {
+      const exacta = coincidirIntencion(t, contexto.intenciones, { exacto: true });
+      if (!exacta || exacta.verbo === 'hablar_con') return { tipo: 'consulta', ...consulta };
     }
   }
 
