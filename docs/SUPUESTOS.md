@@ -690,3 +690,19 @@ Sobre `data/contenido/casos.json` (casos-v0.4) y el `movimiento` de `contenido-v
 - Errores: ninguno. No se cambió `casos.json`.
 - LIMITACIÓN — caso_02, caso_03 y caso_04 tienen un solo conocimiento válido en p1 (el NPC dueño tiene un solo conocimiento). No se reemplazó. Ver "pendiente de Tomás".
 - Los cuatro tonos están en `TONOS_VALIDOS`. Los textos de h5 y h6 no nombran una escena distinta de la de entrega.
+
+## Ronda Opus
+
+Hecho:
+- `docs/conocimientos-propuestos.md`: 12 conocimientos `_2` (uno por NPC; Hollis queda `conocimiento_hollis_2`). Sin cargar en `contenido-v3.json`. Palabras clave sin repetir entre los 24 conocimientos ni con `conocimiento_sello_doble`, sin alias de NPC, en minúsculas y sin tildes.
+- SUPUESTO — `conocimiento_brenn_2` pide `evento_ladrones_sur` (el dato sale de ese evento); los otros 11 no tienen condición. Umbrales entre 25 y 45.
+- Verificación de caso_01 a caso_04: sin errores (sección anterior). No se escribieron casos nuevos; no se tocó `narrador/` ni `VERSION`.
+
+Quedó pendiente:
+- Aprobación de los 12 conocimientos propuestos, uno por uno.
+- Tanda 2 de casos (caso_05 a caso_12), después de la aprobación.
+
+Pendiente de Tomás (decisiones de diseño, no errores):
+1. p1 de caso_02, caso_03 y caso_04 lista el mismo conocimiento dos veces (4 firmas por caso en lugar de 8). Una vez aprobados, `conocimiento_ysolde_2`, `conocimiento_hollis_2` y `conocimiento_sarin_2` completarían cada p1 con el mismo NPC y las mismas escenas de h5/h6.
+2. caso_03: p1 depende de `evento_tormenta_verano` (conocimiento de Hollis). Si se aprueba `conocimiento_hollis_2` (sin condición), p1 tendría una opción que no espera al evento.
+3. caso_01: p1 mezcla dos dueños (Brenn y Sarin) mientras los otros casos usan uno solo; los textos de h5/h6 sirven para los dos. Decidir si se unifica.
