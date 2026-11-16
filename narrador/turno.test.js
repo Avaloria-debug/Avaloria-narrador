@@ -211,9 +211,12 @@ describe('turno — conocimientos', () => {
       por: 'conversacion',
     });
     assert.deepEqual(t.estado.npcs.serel_panadero.conocimientosRevelados, ['conocimiento_serel_1']);
+    // Con el _1 revelado, la siguiente charla revela el _2 (sin condición); después, nada.
     const otra = texto(t.estado, 'hablar con Serel');
-    assert.equal(efecto(otra, 'conocimiento_revelado'), undefined);
-    assert.deepEqual(otra.estado.npcs.serel_panadero.conocimientosRevelados, ['conocimiento_serel_1']);
+    assert.equal(efecto(otra, 'conocimiento_revelado').conocimientoId, 'conocimiento_serel_2');
+    const tercera = texto(otra.estado, 'hablar con Serel');
+    assert.equal(efecto(tercera, 'conocimiento_revelado'), undefined);
+    assert.deepEqual(tercera.estado.npcs.serel_panadero.conocimientosRevelados, ['conocimiento_serel_1', 'conocimiento_serel_2']);
   });
 
   test('por debajo del umbral, o con fallo, no revela', () => {

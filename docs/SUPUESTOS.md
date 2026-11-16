@@ -721,3 +721,12 @@ Verificación final (script sobre los 12 `_1`, los 12 `_2` y `conocimiento_sello
 - Ningún contenido nombra un NPC (ni existente ni inexistente).
 - Palabras clave en minúsculas, sin tildes ni ñ, de 2 a 4 por conocimiento.
 - Ningún `_2` repite el hecho del `_1` de su dueño.
+
+## Conocimientos _2 cargados y orden de revelación (0.0.17)
+
+- `conocimientoARevelar` (`narrador/conocimientos.js`): solo puede revelarse el primer conocimiento sin revelar, en el orden del contenido (_1 antes que _2). Si su condición no se cumple, no se revela nada y el motivo es el de ese conocimiento. Con todos revelados, el motivo es `ya_revelado` (o `bloqueado`). `conocimientoPorNarrativo` no cambió: un objeto narrativo revela el conocimiento al que apunta.
+- SUPUESTO — con relación 39 (umbral del _1: 40) no revela nada (motivo `umbral`, no el _2); con 40 revela el _1, y con el _1 revelado, la siguiente revela el _2. El test cubre las tres cosas.
+- Tests por id en lugar de posición: `contenido.test.js` (id repetido), `conocimientos.test.js` y `turno.test.js` (Serel revela _1 y en la siguiente charla _2). `consultas.test.js` suma las palabras clave de los 12 _2.
+- `data/diccionarios/temas-conocimiento.md`: 12 entradas nuevas, una por _2, solo con las palabras clave aprobadas (sin frases extra, para no inventar contenido). Entradas: 84.
+- Casos: `casos.json` no cambió. p1 de caso_02 a caso_04 sigue listando el mismo conocimiento dos veces; ahora `conocimiento_ysolde_2`, `conocimiento_hollis_2` y `conocimiento_sarin_2` existen y podrían completar esas ranuras (decisión de Tomás). caso_01 ya tenía dos conocimientos válidos en cada ranura.
+- Commits: el de contenido deja 1 falla ("los 12 conocimientos del contenido están en temas-conocimiento") hasta el commit de diccionarios, que la cierra. El orden de commits pedido no permite que el intermedio quede en verde.

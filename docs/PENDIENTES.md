@@ -53,10 +53,8 @@ Sin verificar: Groq real desde el navegador (clave real, CORS, forma de `usage`)
 - Bloque C (desenlaces, validador, narrar e integración): cerrado.
 - Bloques A y B (modelo, tags, decaimiento, instancias, hitos, textos): hechos en código y probados con `npm test`. Falta la simulación en lote (`narrador/sim/`) fuera de npm test.
 - Casos: caso_01 a caso_04 escritos y verificados (ronda Opus, sin errores). p1 de caso_02 a caso_04 con un solo conocimiento válido: decisión pendiente de Tomás (`docs/SUPUESTOS.md`, "Ronda Opus").
-- Conocimientos nuevos: 12 propuestos en `docs/conocimientos-propuestos.md`, pendientes de aprobación uno por uno. No están en `contenido-v3.json`.
-- Aprobar conocimientos propuestos (docs/conocimientos-propuestos.md, versión final revisada) y cargarlos en contenido-v3.json. Después, tanda 2 de casos.
-- Pendiente de Tomás: confirmar la versión final y cargar conocimientos aprobados en contenido-v3.json.
-- Tanda 2 de casos (caso_05 a caso_12): sin escribir; espera la aprobación de los conocimientos.
+- HECHO — conocimientos _2: aprobados y cargados en `contenido-v3.json` (12, uno por NPC), con orden de revelación _1 antes que _2 y entradas en `temas-conocimiento.md`.
+- Tanda 2 de casos (caso_05 a caso_12): sin escribir.
 
 ## 9. Futuro (sin implementar)
 - NPCs secundarios: con poco lore.
