@@ -512,7 +512,7 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - El pedido decía 240 formas en el catálogo; en `contenido-v3.json` hay 239 (24 intenciones). El test las recorre todas.
 - Los nombres del pedido (`forma_mal`, `forma_bien`, `tipo_error`) son `escrita`, `correcta` y `tipo` en el código y en `docs/formato-diccionarios.md`.
 
-## Arreglos de la prueba v0.0.3 (`narrador/fixPruebaV003.test.js`)
+## Arreglos de la prueba v0.0.3 (`narrador/version.test.js`, antes `fixPruebaV003.test.js`)
 - **Viajar por parecido.** Causa: la tolerancia a typos de la sección 2.1 compara "viejo" con "viajá" y da 2 letras de diferencia (la tolerancia de una palabra de 5 letras); `coincidirIntencion` devuelve `intencion_viajar` y "norte" es un destino válido. No fue el léxico ni la ortografía: con los diccionarios reales la frase no se corrige ni aparece en el léxico (el test lo comprueba con `{ exacto: true }`). Con el código de `main` la frase ya no viajaba (la prueba de "una letra" del arreglo anterior la frenaba); lo que cambia ahora es la regla, que quedó así en `decidir`:
   - Forma exacta del catálogo o del léxico: viaja como siempre.
   - Parecido de **una** letra (por ejemplo "viajr"): viaja solo si la frase nombra un destino válido. Sin destino, no se entiende (`no_entendido`, sin intención), en vez de pedir el destino.
@@ -636,3 +636,18 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - VERSION: se revierte a 0.0.15; los cambios de este bloque son solo de contenido y docs.
 
 - DECISIÓN — h6 escribe gratitud nivel 2 (h5 queda en 1). Motivo: h7 (gratitud ≥ 2 sobre p1) tiene que ser alcanzable con la historia sola, sin depender de las acciones del jugador; así el positivo también lo es. Con nivel 2 en h6, la gratitud pasa a nivel medio (decae a los 6 hitos, no a los 3 del nivel leve).
+
+## Salida de validación, piloto
+
+Comando: `node narrador/validarContenido.js` (código de salida 0). 0 errores, 0 avisos.
+
+```
+escenas: 12/12
+npcs: 12/12
+objetos: 40/40
+eventos: 70/70
+intenciones: 24/24
+plantillas: 26/26
+casos: 1
+Contenido válido.
+```
