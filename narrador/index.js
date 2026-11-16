@@ -81,6 +81,7 @@ export function crearPartida(opciones = {}) {
     numeroRegistro: 0,
     iaAgotadaDia: null,
     avisos: [],
+    caso: null,
     semilla: rng.estado(),
   };
 }
@@ -141,6 +142,8 @@ function conValoresPorDefecto(e) {
     numeroRegistro: Number.isInteger(e.numeroRegistro) && e.numeroRegistro >= 0 ? e.numeroRegistro : 0,
     iaAgotadaDia: typeof e.iaAgotadaDia === 'string' ? e.iaAgotadaDia : null,
     avisos: lista(e.avisos).filter(esObjeto).map((a) => ({ ...a })),
+    // Estado del motor de caso (tags, hitos, instancia): se conserva tal cual, copiado.
+    caso: esObjeto(e.caso) ? structuredClone(e.caso) : null,
     semilla: Number.isInteger(e.semilla) ? e.semilla | 0 : semillaAlAzar(),
   };
 }

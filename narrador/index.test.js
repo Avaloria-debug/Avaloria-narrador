@@ -496,3 +496,25 @@ describe('contrato — cargarPartida y persistencia', () => {
     assert.deepEqual(c.avisos, [{ tipo: 'version_contenido', guardada: null, actual: contenido.version }]);
   });
 });
+
+describe('estado del caso', () => {
+  const caso = { casoActivo: 'caso_x', contadorHitos: 2, contadorTurnos: 5, tags: [{ tipo: 'gratitud', objetivo: 'serel_panadero', nivel: 1 }] };
+
+  test('una partida nueva no tiene caso', () => {
+    assert.equal(crearPartida({ semilla: 1 }).caso, null);
+  });
+
+  test('sobrevive a cargarPartida y a un turno, sin compartir referencias', async () => {
+    const e = { ...crearPartida({ semilla: 1 }), caso };
+    assert.deepEqual(cargarPartida(JSON.stringify(e)).caso, caso);
+    for (const frase of ['descansar', 'hola', 'xyzzy plugh']) {
+      const r = await narrar(e, { tipo: 'texto', texto: frase }, { ahora: () => new Date('2026-01-01T00:00:00Z') });
+      assert.deepEqual(r.estado.caso, caso);
+      assert.notEqual(r.estado.caso, caso);
+    }
+  });
+
+  test('un caso que no es un objeto queda en null', () => {
+    assert.equal(cargarPartida({ ...crearPartida({ semilla: 1 }), caso: 'x' }).caso, null);
+  });
+});
