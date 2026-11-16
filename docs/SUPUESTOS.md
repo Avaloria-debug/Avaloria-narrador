@@ -548,3 +548,14 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - **Rangos (gratitud 1–2, pista 1–2, pacto 1–3, lealtad 1–2):** el nivel lo pasa quien aplica la acción (`contexto.nivel`); sin dato, el mínimo. Falta la regla que elige el nivel.
 - **Estado social, "chisme +1":** el `chisme_activo` de la acción sale un nivel más alto (máximo 3). "En sigilo, robar no visto es más probable" no está: es de quien decide si lo ven.
 - **Objetivos:** la tabla da la clase (`npc`, `escena`, `jugador`, `ciudad`, `conocimiento`, `bando`, `faccion`, `camino`); el id concreto lo pone el módulo que aplique la acción al estado, que todavía no existe. Tampoco se conectó nada al turno: `tags.js` y `acciones.js` no los usa nadie aún.
+
+## Motor de caso: persistencia y decaimiento (v0.0.8)
+- **`fake-indexeddb`** entró como dependencia de desarrollo (`package.json`, `package-lock.json`); antes de `npm test` hay que correr `npm install`. Se agregó `.gitignore` con `node_modules/`. IndexedDB de navegador real: sin verificar.
+- **Persistencia** (`narrador/casos/persistencia.js`): base `avaloria`, esquema 1, los seis stores de la sección 2. Todo lo del turno se guarda con `turno(fn)` en una sola transacción; si `fn` falla no se guarda nada. Las operaciones sueltas abren su propia transacción. No está conectada a `narrar`.
+- **`versionContenido`** se guarda en cada registro. Al leer con otra versión el registro vuelve con `compatible: false`; no hay migración.
+- **Firma** es un texto que arma quien instancia; la persistencia solo la usa de clave. `historial_instancias` guarda `usos` y `ultimaHora` (para el empate "más vieja").
+- **Decaimiento** (`narrador/casos/decaimiento.js`): el estado es `{ tags, hora, contadorHitos }`. `estado.hora` es la hora total del reloj ya avanzada y `contadorHitos` ya tiene sumado el hito disparado. Cada tag cuenta desde su `creadoHora` / `creadoHito`.
+- **Celdas "—" de la tabla:** la regla de la columna Leve vale para los tres niveles (chisme_activo, alerta_camino, lealtad_caravana, favor_debido).
+- **Por pasos** (fama_violenta, reputacion_ciudad, deuda_personal): un paso por plazo cumplido, y la cuenta sigue desde el fin de ese plazo. fama_violenta en 1 y reputacion_ciudad en ±1 se quitan al paso siguiente. deuda_personal sube hasta 3 y queda.
+- **Reparación:** se quita el tag de mayor nivel entre rencor, desconfianza y miedo medio/grave del NPC (empate: en ese orden), o el que indique `tipo`. El rencor grave ni se quita ni se baja sin `reparaRencorGrave`. No suma los +15 de relación ni levanta `bloqueadoConocimientos`: eso le toca al módulo de hitos.
+- **Cierre de caso:** `aplicarCierreDeCaso` solo quita los cinco tags de cierre. **Modo libre** (1 hito = 8 turnos): no está; lo decide quien llame a `aplicarDecaimientoPorHitos`.
