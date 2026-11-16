@@ -591,3 +591,11 @@ Resultado: `narrador/resolver.js`, `narrador/turno.js` y `narrador/estado.js`, c
 - El esquema de condiciones y el formato del estado del caso quedaron en `docs/motor-caso-v1-operativo.md`, §2b, como fuente de verdad. `hitos.js` ya coincidía: no hubo que cambiar código. Un test lee el hito de ejemplo del documento y lo evalúa.
 - En §5 del operativo se ajustaron dos líneas para que no contradigan el esquema: la condición relativa a hitoPrevio va en horas del reloj (decía turnos) y hitoPrevio es `(id, hora, escena, contador)` (decía `turno`). `docs/motor-caso-v1.md` (4.1) todavía tiene la fila `turnos`: sin sincronizar.
 - `npc_reparacion` (NPC fijo de un hito de reparación) tampoco está en el esquema: es opcional y sale del mismo módulo. Misma duda que `escena_alternativa`.
+
+## Escena alternativa y reparación con NPC dueño (decidido por Tomás)
+
+- `escena_alternativa` y `npc_reparacion` existen; quedan definidos en `docs/motor-caso-v1-operativo.md` §2b. Las dos preguntas de arriba quedan cerradas.
+- SUPUESTO: umbral de relación para la reparación explícita = 15. Con rencor grave (−24), dos hitos de reparación (+30) y gratitud media (+10) un NPC que partía de 0 queda en 16.
+- SUPUESTO: a las 12 h el gancho pasa a nombrar `escena_alternativa`; ya no se mueve la entrega a la escena del NPC de ranura más cercano.
+- SUPUESTO: el progreso de reparación (`progresoReparacion`) es por NPC y sigue entre casos.
+- PENDIENTE (código sin tocar en esta tarea): `hitos.js` todavía trata `escena_alternativa` como booleano y mueve la entrega al NPC más cercano, repara una vez por NPC, y no aplica las tres condiciones ni el reinicio por traición; `decaimiento.js` no pide NPC dueño. El validador todavía no existe.

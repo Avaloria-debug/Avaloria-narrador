@@ -9,7 +9,7 @@
 - **Caso**: id, tono, escenas_origen, ranuras_pista[3], bandos, hitos[8], ramas, desenlaces.
 - **Ranura**: id p1–p3, conocimientos_validos (2). El NPC de la pista es el dueño del conocimiento en contenido-v3.json.
 - **Instancia**: casoId, firma, pistas[{ranura, conocimientoId, npcId (dueño), orden}], semilla. Firma = conjunto de conocimientos por ranura, sin orden. 8 firmas por caso (2 × 2 × 2).
-- **Hito**: id, condiciones, escena_entrega (escena | escena(pN) | null), textos[4], efectos, es_reparacion, repara_rencor_grave, bloquea, final.
+- **Hito**: id, condiciones, escena_entrega (escena | escena(pN) | null), escena_alternativa (opcional), textos[4], efectos, es_reparacion, repara_rencor_grave, npc_reparacion, bloquea, final.
 - **Tag**: tipo, objetivo, nivel 1–3, creadoHora, creadoHito, casoId, origen. Único por (tipo, objetivo).
 
 IndexedDB (versionContenido; una transacción por turno):
@@ -88,6 +88,7 @@ Estado del caso (lo que hitos.js lee y escribe):
 | hitosBloqueados | id[] | sí | disparo |
 | entregasMovidas | `{hitoId: escena}` | sí | gancho, disparo |
 | reparados | npcId[] | sí | disparo |
+| progresoReparacion | `{npcId: escena[]}` | sí | disparo de un hito de reparación; traición lo borra |
 | umbralesBajados | hitoId[] | sí | anti-traba 8 turnos, disparo |
 | reparacionHabilitada | hitoId[] | sí | anti-traba rencor grave, disparo |
 | sinListosDesde | turno o null | sí | listos, disparo, anti-traba 8 turnos |
@@ -97,6 +98,22 @@ Estado del caso (lo que hitos.js lee y escribe):
 | abandonoHabilitado | bool | sí | anti-traba finales bloqueados |
 
 Estado del mundo (solo lectura, salvo `npcs` en el disparo): `{caso, hora, turno, escena, estadoEvento, npcs: {id: {escena, relacion, bloqueadoConocimientos}}, distancia(a, b)}`. `hora` es la hora total del reloj; `caso` es la plantilla con sus hitos.
+
+Escena alternativa y reparación (campos del hito que no están en el ejemplo):
+
+| Campo | Forma | Regla |
+|---|---|---|
+| escena_alternativa | escena o `escena(pN)`; opcional, una sola | El hito se entrega en escena_entrega o en escena_alternativa; hitos.js acepta cualquiera de las dos desde que el hito está listo. Solo con escena_entrega no nula y distinta de ella. |
+| npc_reparacion | `npc(pN)` o id de NPC; obligatorio si es_reparacion | NPC dueño de los tags que el hito repara. El hito solo toca tags cuyo objetivo es ese NPC, nunca los de otro. |
+
+- Validador: en cada instancia válida, al menos una de las dos escenas (escena_entrega, escena_alternativa) es alcanzable desde alguna escena de origen del caso. Si no, error.
+- Hito de reparación = hito con es_reparacion y sin repara_rencor_grave. Al dispararse suma su escena a `progresoReparacion[npc]` si no estaba. Ninguna acción de rutina cuenta como hito de reparación.
+- Reparación explícita = hito con repara_rencor_grave. Es la única que quita un rencor grave, y solo el del NPC de npc_reparacion. Se cumple si se cumplen las tres, además de sus condiciones:
+  1. `progresoReparacion[npc]` tiene al menos 2 escenas distintas (2 hitos de reparación previos sobre ese NPC, cada uno en otra escena).
+  2. Relación con el NPC ≥ 15 (`RELACION_MINIMA_REPARACION`).
+  3. gratitud ≥ 2 (medio o grave) sobre ese NPC.
+- Traición a ese NPC (acción que escribe traición o rencor sobre él): `progresoReparacion[npc]` se borra y hay que empezar de nuevo.
+- `progresoReparacion` es por NPC y sigue entre casos en secuencia.
 
 ## 3. Elección de caso
 
@@ -126,13 +143,15 @@ Ciclo por turno:
 1. Acción → tags.
 2. Reloj → decaimiento por horas.
 3. Condición cumplida → hitosListos.
-4. Disparar si el jugador está en escena_entrega.
+4. Disparar si el jugador está en escena_entrega o en escena_alternativa (escena_entrega null = cualquiera).
 5. Prioridad: reparación > bloquea ramas > menor id. Máx. 1 por turno.
 6. Al disparar: contadorHitos+1, hitoPrevio, efectos, bloqueos, decaimiento por hitos, texto.
 
-Fuera de escena: gancho; a las 12 h de reloj, escena del NPC de ranura más cercano.
+Fuera de escena: gancho hacia escena_entrega; a las 12 h de reloj, si el hito tiene escena_alternativa, el gancho pasa a nombrarla. Sin escena_alternativa la entrega no se mueve.
 
-Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar reparación; 24 h sin avance → pista nivel 1; finales bloqueados → neutro por abandono.
+Reparación: un hito con es_reparacion va sobre su npc_reparacion. El de repara_rencor_grave no queda listo sin las tres condiciones de §2b.
+
+Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar los hitos de reparación de ese NPC sin otras condiciones (las tres de la reparación explícita no se saltean); 24 h sin avance → pista nivel 1; finales bloqueados → neutro por abandono.
 
 ## 6. Tags por acción
 
@@ -187,7 +206,7 @@ Anti-traba: 8 turnos sin listos → bajar umbral; rencor grave → habilitar rep
 
 Unidades: el decaimiento por horas, las 24 h de anti-traba, las 6 h de arranque y las 12 h de entrega fuera de escena usan el reloj del mundo y se evalúan solo cuando el reloj avanza; las acciones de 0 horas no los mueven. Hitos y ramas van por turnos o por condición.
 
-Reparación: quita un tag medio/grave (rencor/desconfianza/miedo) del NPC, baja el resto 1 y levanta `bloqueadoConocimientos` de ese NPC. El hito de reparación es repetible, una vez por NPC. contadorHitos es global; sin caso activo (modo libre), el decaimiento por hitos cuenta turnos: 1 hito = 8 turnos. Los turnos salen de contadorTurnos, en el estado.
+Reparación: solo con el NPC dueño del tag (npc_reparacion), nunca con otro. Un hito de reparación quita un tag medio/grave (rencor medio, desconfianza, miedo) de ese NPC, baja el resto 1 y levanta `bloqueadoConocimientos`. Es repetible: cuenta una vez por (NPC, escena). El rencor grave solo sale con la reparación explícita y sus tres condiciones (§2b: 2 hitos de reparación en escenas distintas, relación ≥ 15, gratitud ≥ 2). Una traición a ese NPC borra el progreso. contadorHitos es global; sin caso activo (modo libre), el decaimiento por hitos cuenta turnos: 1 hito = 8 turnos. Los turnos salen de contadorTurnos, en el estado.
 
 ## 8. Texto
 
@@ -205,7 +224,7 @@ Al final o abandono: candidatos con requiere → mayor prioridad → mayor coinc
 
 ## 10. Validación
 
-Error si: hitos ≠ 8; textos ≠ 4; id de texto duplicado; sin neutro default; sin reparación; final inalcanzable en alguna instancia; < 4 firmas; id inexistente; marcador inválido; tag fuera de los 20; tag en cuerpo del jugador; efectos_post con tag de cierre.
+Error si: hitos ≠ 8; textos ≠ 4; id de texto duplicado; sin neutro default; sin reparación; reparación sin npc_reparacion; ni escena_entrega ni escena_alternativa alcanzable desde el origen; final inalcanzable en alguna instancia; < 4 firmas; id inexistente; marcador inválido; tag fuera de los 20; tag en cuerpo del jugador; efectos_post con tag de cierre.
 
 ## 11. Cambios
 

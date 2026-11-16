@@ -67,10 +67,12 @@ Los hitos no nombran conocimientos ni NPCs concretos: nombran ranuras (`pista:p1
 | id | string | `h1` … `h8` |
 | condiciones | Condicion | Sección 4 |
 | escena_entrega | string \| ranura \| null | Escena fija, escena del dueño del conocimiento de una ranura, o cualquiera |
+| escena_alternativa | string \| ranura (opcional) | Segunda escena de entrega, una sola. El hito se entrega en cualquiera de las dos |
 | textos | Texto[4] | `{id, texto, tono}` |
 | efectos | EfectoTag[] | Tags que escribe al dispararse |
 | es_reparacion | bool | Puede quitar rencor/desconfianza/miedo medio o grave |
 | repara_rencor_grave | bool | Reparación explícita del caso |
+| npc_reparacion | `npc(pN)` \| id | Obligatorio si es_reparacion. NPC dueño de los tags que repara; nunca toca los de otro |
 | bloquea | string[] | Hitos que quedan inaccesibles |
 | final | bool | Habilita evaluación de desenlace |
 
@@ -180,7 +182,7 @@ Al elegir un caso:
 1. Aplicar acción → escribir tags.
 2. Avanzar reloj → decaimiento por horas.
 3. Para cada hito no alcanzado ni bloqueado: evaluar condición sin escena_entrega. Si cumple → hitosListos.
-4. Si el jugador está en la escena_entrega (o es null) de un hito listo → se dispara.
+4. Si el jugador está en la escena_entrega (o es null) o en la escena_alternativa de un hito listo → se dispara.
 5. Varios listos en la misma escena: prioridad (a) reparación si hay tags medio/grave pendientes, (b) el que bloquea ramas, (c) menor id.
 6. Máximo 1 hito disparado por turno.
 7. Al disparar: contadorHitos += 1, hitoPrevio = este hito, efectos, bloqueos, decaimiento por hitos, elección de texto.
@@ -189,14 +191,14 @@ Al elegir un caso:
 
 - Queda en hitosListos.
 - El narrador agrega un gancho en la escena actual (rumor, NPC que menciona algo, chisme_activo en la escena de entrega). El gancho sale de la tabla de reacciones, no de los textos de hito.
-- Si pasan 12 horas de reloj sin entregarse y el hito admite escena alternativa, se mueve a la escena del NPC de ranura más cercano.
+- El hito se puede entregar en escena_entrega o en escena_alternativa desde que está listo. Si pasan 12 horas de reloj sin entregarse y el hito tiene escena_alternativa, el gancho pasa a nombrarla. Sin escena_alternativa la entrega no se mueve.
 
 ### 4.4 Anti-traba
 
 | Situación | Respuesta |
 |---|---|
 | 0 hitos listos durante 8 turnos | Baja un umbral de pista del siguiente hito alcanzable (vista en lugar de entendida) |
-| Hito requiere NPC con rencor grave | Se habilita su hito de reparación sin otras condiciones |
+| Hito requiere NPC con rencor grave | Se habilitan los hitos de reparación de ese NPC sin otras condiciones. Las tres condiciones de la reparación explícita (6.2) no se saltean |
 | 24 horas de reloj sin avance | Evento de escena que siembra pista_conocida nivel 1 de la siguiente ranura habilitada |
 | Todos los finales bloqueados | Se habilita el desenlace neutro por abandono |
 
@@ -265,7 +267,7 @@ SUPUESTO: el parser actual del narrador clasifica la entrada en estos tipos por 
 - Turnos: contadorTurnos, en el estado. Hitos y ramas van por turnos o por condición. El arranque del caso (6 h) y la entrega fuera de escena (12 h) usan el reloj del mundo.
 - Hitos: contadorHitos (global de la partida), evaluado al disparar un hito.
 - Cierre de caso: al elegir desenlace.
-- Reparación: solo un hito con es_reparacion; es repetible, una vez por NPC.
+- Reparación: solo un hito con es_reparacion, sobre su npc_reparacion; es repetible y cuenta una vez por (NPC, escena).
 
 ### 6.2 Tabla
 
@@ -294,7 +296,9 @@ SUPUESTO: el parser actual del narrador clasifica la entrada en estos tipos por 
 
 - Decaer = quitar el tag, salvo reputacion_ciudad y fama_violenta, que bajan por pasos.
 - Ninguna acción de rutina quita rencor, desconfianza o miedo medio/grave.
-- Un hito de reparación quita un tag medio/grave de esos tres sobre su NPC objetivo y baja el resto 1 nivel; también levanta `bloqueadoConocimientos` de ese NPC. Rencor grave solo con repara_rencor_grave.
+- Un hito de reparación (es_reparacion, sin repara_rencor_grave) quita un tag medio/grave de esos tres sobre su npc_reparacion y baja el resto 1 nivel; también levanta `bloqueadoConocimientos` de ese NPC. Solo con el NPC dueño del tag, nunca con otro. Al dispararse suma su escena a `progresoReparacion[npc]`.
+- Rencor grave: solo con la reparación explícita (repara_rencor_grave) del NPC dueño, y si se cumplen las tres: (1) al menos 2 hitos de reparación previos sobre ese NPC, cada uno en escena distinta; (2) relación con el NPC ≥ 15; (3) gratitud medio o grave sobre ese NPC.
+- Ninguna acción de rutina cuenta como hito de reparación. Una traición a ese NPC borra `progresoReparacion[npc]`. El progreso es por NPC y sigue entre casos en secuencia.
 - Los tags decaen por hitos usando contadorHitos global, también a través de casos en secuencia. Sin caso activo (modo libre), el decaimiento por hitos cuenta turnos: 1 hito = 8 turnos.
 
 ## 7. Variación de texto
@@ -542,7 +546,8 @@ caso_07 cierra a la hora 41 en escena_archivo_real con d_caso_07_1 (positivo). e
 | Ids de texto | duplicado global |
 | Desenlace default | no hay neutro con requiere vacío |
 | Positivo o neutro | ninguno |
-| Hito de reparación | ninguno |
+| Hito de reparación | ninguno, o alguno sin npc_reparacion |
+| Escena de entrega | ni escena_entrega ni escena_alternativa alcanzable desde el origen del caso, en alguna instancia válida |
 | Alcanzabilidad | algún final inalcanzable en alguna instancia válida |
 | Instancias | < 4 firmas válidas |
 | Ids de mundo | escena, NPC, objeto o conocimiento inexistente en contenido-v3.json o en conocimientos aprobados |
@@ -598,6 +603,8 @@ Code = escribir la lógica. Sonnet = escribir contenido, con revisión de Tomás
 - DECIDIDO: El caso siguiente arranca al entrar a una de sus escenas de origen, o a las 6 horas de reloj con un gancho en la escena actual.
 - DECIDIDO: objeto_lupa_bronce y conocimiento_sello_doble son nuevos: se agregan a data/contenido/contenido-v3.json antes de validar el caso.
 
+- DECIDIDO: escena_alternativa existe: una sola, opcional; el hito se entrega en escena_entrega o en escena_alternativa.
+- DECIDIDO: npc_reparacion existe: la reparación es solo con el NPC dueño del tag. Rencor grave: 2 hitos de reparación en escenas distintas, relación ≥ 15 y gratitud ≥ 2; la traición reinicia el progreso.
 - DECIDIDO: conocimiento_sendero_sin_vigilancia pertenece a hollis_pastor.
 - DECIDIDO: sin reacción aprobada para (NPC, familia de tag), se narra una reacción genérica de la familia (6 familias × 2 textos).
 
