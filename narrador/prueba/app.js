@@ -5,7 +5,7 @@
 import { crearPartida, cargarPartida, narrar, contenido } from '../index.js';
 import { crearColaDeRegistros } from '../registro.js';
 import { crearAlmacenIndexedDB } from '../../persistencia/adaptadores/almacenIndexedDB.js';
-import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
+import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, fijarRelacion, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
 
 const $ = (id) => document.getElementById(id);
 const SIN_DATO = '—';
@@ -41,6 +41,7 @@ function llenarSelect(select, opciones) {
 }
 
 function pintarEscena() {
+  pintarRelaciones();
   const hay = estado !== null;
   for (const id of ['guardar', 'entrada', 'enviar']) $(id).disabled = !hay || ocupado;
   if (!hay) return;
@@ -62,6 +63,29 @@ function pintarEscena() {
       return boton;
     }),
   );
+}
+
+// Atajo de prueba, no es parte del juego: un campo numérico por NPC que fija su relación en la partida actual.
+function pintarRelaciones() {
+  const campos = contenido.npcs.map((npc) => {
+    const entrada = document.createElement('input');
+    entrada.type = 'number';
+    entrada.min = '-100';
+    entrada.max = '100';
+    entrada.step = '1';
+    entrada.id = `relacion_${npc.id}`;
+    entrada.disabled = estado === null;
+    entrada.value = estado ? String(estado.npcs[npc.id]?.relacion ?? 0) : '';
+    entrada.addEventListener('change', () => {
+      if (!estado) return;
+      estado = fijarRelacion(estado, npc.id, entrada.value);
+      entrada.value = String(estado.npcs[npc.id].relacion);
+    });
+    const etiqueta = document.createElement('label');
+    etiqueta.append(`${npc.nombre} `, entrada);
+    return etiqueta;
+  });
+  $('relaciones').replaceChildren(...campos);
 }
 
 function pintarPanel(panel) {

@@ -84,3 +84,15 @@ export function armarPanel(salida, { llamadas = [], pendientes = 0 } = {}) {
     pendientes: Number.isInteger(pendientes) ? pendientes : 0,
   };
 }
+
+/**
+ * Atajo de prueba, no es parte del juego: fija la relación de un NPC en el estado actual.
+ * Devuelve un estado nuevo (no modifica el recibido). Valor no numérico o NPC desconocido: devuelve el mismo estado.
+ * La relación se redondea y se recorta a [-100, 100].
+ */
+export function fijarRelacion(estado, npcId, valor) {
+  const numero = typeof valor === 'number' || (typeof valor === 'string' && valor.trim() !== '') ? Number(valor) : NaN;
+  if (!estado?.npcs?.[npcId] || !Number.isFinite(numero)) return estado;
+  const relacion = Math.min(100, Math.max(-100, Math.round(numero)));
+  return { ...estado, npcs: { ...estado.npcs, [npcId]: { ...estado.npcs[npcId], relacion } } };
+}
