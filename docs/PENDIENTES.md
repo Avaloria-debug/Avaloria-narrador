@@ -61,7 +61,7 @@ Sin verificar: Groq real desde el navegador (clave real, CORS, forma de `usage`)
 - NPCs terciarios: sin importancia real.
 
 ## 6. Barrido de comprensión por relación (casos que fallan)
-Origen: `narrador/pruebasComprension.test.js` (tabla en `narrador/barridoComprension.js`). Cada caso está como `test.skip` con motivo; la lista completa con el resultado obtenido está en `narrador/pendientesComprension.json`. No se arregló nada en el test ni en el motor: lo revisamos nosotros. Esperado calculado según `docs/SUPUESTOS-v3.md`.
+Origen: `narrador/pruebasComprension.test.js` (tabla en `narrador/barridoComprension.js`). Cada caso está como `test.skip` con motivo; la lista completa con el resultado obtenido está en `narrador/pendientesComprension.json`. No se arregló nada en el test ni en el motor: lo revisamos nosotros. Esperado según `docs/SUPUESTOS-v3.md`.
 Etiquetas: `fallo` = "no te cuenta nada nuevo", `rev1` / `rev2` = revela el conocimiento 1 / 2, `reformulacion` = pide decirlo de otra forma.
 
 | NPC | Relación | Frase | Esperado | Obtenido |
@@ -69,30 +69,40 @@ Etiquetas: `fallo` = "no te cuenta nada nuevo", `rev1` / `rev2` = revela el cono
 | Maren | 0 | tratado | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Maren | 0 | copia | fallo | reformulacion ([reformulacion] No tenés nada para eso.) |
 | Maren | 0 | hablame sobre el tratado de la guerra | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
+| Maren | 0 | llave | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
+| Maren | 0 | cerradura | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Maren | 0 | háblame de la copia del tratado | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
 | Maren | 0 | hablame de la copia del tratado | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
 | Maren | 39 | tratado | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Maren | 39 | copia | fallo | reformulacion ([reformulacion] No tenés nada para eso.) |
 | Maren | 39 | hablame sobre el tratado de la guerra | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
+| Maren | 39 | llave | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
+| Maren | 39 | cerradura | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Maren | 39 | háblame de la copia del tratado | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
 | Maren | 39 | hablame de la copia del tratado | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
 | Maren | 40 | tratado | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Maren | 40 | copia | rev1 | reformulacion ([reformulacion] No tenés nada para eso.) |
 | Maren | 40 | hablame sobre el tratado de la guerra | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
+| Maren | 40 | llave | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
+| Maren | 40 | cerradura | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Maren | 40 | háblame de la copia del tratado | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
 | Maren | 40 | hablame de la copia del tratado | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
 | Maren | 50 | tratado | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Maren | 50 | copia | rev1 | reformulacion ([reformulacion] No tenés nada para eso.) |
 | Maren | 50 | hablame sobre el tratado de la guerra | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
+| Maren | 50 | llave | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
+| Maren | 50 | cerradura | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Maren | 50 | háblame de la copia del tratado | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
 | Maren | 50 | hablame de la copia del tratado | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 50 | ¿qué sabés del tratado? → ¿y qué más sabés de la copia? | rev1 → rev2 | rev1 → fallo ([narracion] Después de un rato, Maren de Orst te dice: Dónde está la copia de un tratado de la Guerra de las Dos Coronas. // [narracion] Maren de Orst no te cuenta nada nuevo por ahora.) |
 | Serel | 0 | harina | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
+| Serel | 0 | hornos | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Serel | 0 | precio | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Serel | 39 | harina | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
+| Serel | 39 | hornos | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Serel | 39 | precio | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Serel | 40 | harina | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
+| Serel | 40 | hornos | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Serel | 40 | precio | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Serel | 50 | harina | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
+| Serel | 50 | hornos | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
 | Serel | 50 | precio | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 50 | ¿qué sabés de la harina? → ¿y qué más sabés del precio? | rev1 → rev2 | rev1 → fallo ([narracion] Después de un rato, Serel Norlen te dice: Qué proveedor vende harina a precio de pérdida, y por qué. // [narracion] Serel Norlen no te cuenta nada nuevo por ahora.) |

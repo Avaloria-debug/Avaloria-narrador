@@ -3,8 +3,8 @@
 import { crearPartida, narrar, contenido } from './index.js';
 
 const NPCS = {
-  maren_archivista: { escena: 'escena_archivo_real', umbral: 40 },
-  serel_panadero: { escena: 'escena_mercado_circular', umbral: 30 },
+  maren_archivista: { escena: 'escena_archivo_real' },
+  serel_panadero: { escena: 'escena_mercado_circular' },
 };
 export const RELACIONES = [0, 39, 40, 50];
 
@@ -22,20 +22,20 @@ const PAREJAS_TILDES = {
 };
 // Secuencias: la primera pregunta revela _1 y la segunda tendría que revelar _2.
 const SECUENCIAS = {
-  maren_archivista: ['¿qué sabés del tratado?', '¿y qué más sabés de la copia?'],
-  serel_panadero: ['¿qué sabés de la harina?', '¿y qué más sabés del precio?'],
+  maren_archivista: ['¿qué sabés del tratado?', '¿y qué sabés de las llaves?'],
+  serel_panadero: ['¿qué sabés de la harina?', '¿y qué sabés de los hornos?'],
 };
 
 const claveDe = (npc, relacion, frases) => `${npc} | relación ${relacion} | ${frases.join(' > ')}`;
 
-/** Lo que se espera de una frase de un solo paso, según el NPC y su relación. */
+/** Lo que se espera de una frase de un solo paso, según el NPC y su relación: el conocimiento que nombra y su umbral. */
 function esperadoSimple(npcId, relacion, frase) {
   const def = contenido.npcs.find((n) => n.id === npcId);
-  const norm = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const norm = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   const palabras = new Set(norm(frase).split(/[^a-zñ]+/).filter(Boolean));
-  const esTema = def.conocimientos.some((k) => k.palabrasClave.some((p) => palabras.has(norm(p))));
-  if (!esTema) return 'reformulacion';
-  return relacion >= NPCS[npcId].umbral ? 'rev1' : 'fallo';
+  const i = def.conocimientos.findIndex((k) => k.palabrasClave.some((p) => palabras.has(norm(p))));
+  if (i < 0) return 'reformulacion';
+  return relacion >= def.conocimientos[i].umbralRelacion ? `rev${i + 1}` : 'fallo';
 }
 
 export function armarCasos() {
