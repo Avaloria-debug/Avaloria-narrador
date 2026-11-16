@@ -1,4 +1,4 @@
-# Conocimientos propuestos (ronda Opus)
+# Conocimientos propuestos (ronda Opus, versión final revisada)
 
 Un segundo conocimiento por NPC de `data/contenido/contenido-v3.json`. **No están cargados**: Tomás los aprueba uno por uno y recién ahí pasan al archivo de contenido.
 
@@ -79,12 +79,11 @@ Dueño: `naela_tabernera` (Tabernera de turno nocturno). Escenas: escena_taberna
 ```json
 {
   "id": "conocimiento_naela_2",
-  "contenido": "Los guardias que salen del turno de noche pasan por la taberna de madrugada, y alguno se va de la lengua.",
+  "contenido": "De madrugada pasan por la taberna viajeros que prefieren no cruzar la ciudad de día, y alguno se va de la lengua.",
   "umbralRelacion": 30,
   "requiereEvento": null,
   "requiereMarca": null,
   "palabrasClave": [
-    "turno",
     "madrugada",
     "parroquianos"
   ]
@@ -100,14 +99,14 @@ Dueño: `tiren_docente` (Docente de cartografía). Escenas: escena_aula_cartogra
 ```json
 {
   "id": "conocimiento_tiren_2",
-  "contenido": "Los mapas del aula marcan un vado del río que la crecida deja al descubierto unos pocos días al año.",
+  "contenido": "Los mapas del aula marcan un vado que aparece con las lluvias de invierno y se cubre el resto del año.",
   "umbralRelacion": 35,
   "requiereEvento": null,
   "requiereMarca": null,
   "palabrasClave": [
     "vado",
-    "rio",
-    "crecida"
+    "crecida",
+    "lluvias"
   ]
 }
 ```
@@ -144,8 +143,8 @@ Dueño: `brenn_arriero` (Arriero de caravanas). Escenas: escena_camino_norte, es
   "id": "conocimiento_brenn_2",
   "contenido": "Los ladrones del camino del sur se esconden en un molino en ruinas cerca de la bajada.",
   "umbralRelacion": 40,
-  "requiereEvento": "evento_ladrones_sur",
-  "requiereMarca": null,
+  "requiereEvento": null,
+  "requiereMarca": "leyo",
   "palabrasClave": [
     "molino",
     "ruinas",

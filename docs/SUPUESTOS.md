@@ -706,3 +706,18 @@ Pendiente de Tomás (decisiones de diseño, no errores):
 1. p1 de caso_02, caso_03 y caso_04 lista el mismo conocimiento dos veces (4 firmas por caso en lugar de 8). Una vez aprobados, `conocimiento_ysolde_2`, `conocimiento_hollis_2` y `conocimiento_sarin_2` completarían cada p1 con el mismo NPC y las mismas escenas de h5/h6.
 2. caso_03: p1 depende de `evento_tormenta_verano` (conocimiento de Hollis). Si se aprueba `conocimiento_hollis_2` (sin condición), p1 tendría una opción que no espera al evento.
 3. caso_01: p1 mezcla dos dueños (Brenn y Sarin) mientras los otros casos usan uno solo; los textos de h5/h6 sirven para los dos. Decidir si se unifica.
+
+## Ronda Opus, revisión de conocimientos
+
+Cambios en `docs/conocimientos-propuestos.md` (versión final; sin cargar en `contenido-v3.json` hasta que Tomás confirme):
+1. `conocimiento_brenn_2`: sale `requiereEvento: evento_ladrones_sur`, entra `requiereMarca: leyo`. Motivo: el evento es pasajero y la pista quedaría pendiente fuera de él; la marca dura toda la partida, así que la pista no se pierde una vez habilitada.
+2. `conocimiento_naela_2`: sale la palabra clave "turno" (chocaba con el rol "turno nocturno" y con el hecho del cambio de guardia de Darío). Contenido nuevo: viajeros que pasan de madrugada por la taberna, sin nombrar guardias. Palabras clave: madrugada, parroquianos. Umbral 30.
+3. `conocimiento_tiren_2`: no hay ningún río cargado en el mundo. Contenido nuevo: "Los mapas del aula marcan un vado que aparece con las lluvias de invierno y se cubre el resto del año." Palabras clave: vado, crecida, lluvias. SUPUESTO: "invierno" aparece en el contenido pero no es palabra clave (es de `conocimiento_elia_2`).
+4. DECISIÓN — `conocimiento_sarin_2` (consigna) y `conocimiento_dario_2` (cambio de guardia) quedan como estaban: la aduana concentra dos reglas de seguridad de forma deliberada.
+5. DECISIÓN — `conocimiento_sarin_2` mantiene umbral 45: es la última pista del caso.
+
+Verificación final (script sobre los 12 `_1`, los 12 `_2` y `conocimiento_sello_doble`): pasa.
+- Ninguna palabra clave aparece en dos conocimientos.
+- Ningún contenido nombra un NPC (ni existente ni inexistente).
+- Palabras clave en minúsculas, sin tildes ni ñ, de 2 a 4 por conocimiento.
+- Ningún `_2` repite el hecho del `_1` de su dueño.
