@@ -60,49 +60,51 @@ Sin verificar: Groq real desde el navegador (clave real, CORS, forma de `usage`)
 - NPCs secundarios: con poco lore.
 - NPCs terciarios: sin importancia real.
 
-## 6. Barrido de comprensión por relación (casos que fallan)
-Origen: `narrador/pruebasComprension.test.js` (tabla en `narrador/barridoComprension.js`). Cada caso está como `test.skip` con motivo; la lista completa con el resultado obtenido está en `narrador/pendientesComprension.json`. No se arregló nada en el test ni en el motor: lo revisamos nosotros. Esperado según `docs/SUPUESTOS-v3.md`.
-Etiquetas: `fallo` = "no te cuenta nada nuevo", `rev1` / `rev2` = revela el conocimiento 1 / 2, `reformulacion` = pide decirlo de otra forma.
+## 6. Diagnóstico de comprensión
+Solo diagnóstico: no se tocó el motor ni el contenido, y los tests que no coinciden quedan rojos (`narrador/pruebasComprension.test.js`). Todos los casos, con su resultado: `docs/diagnostico-comprension.md` (se regenera con `node narrador/diagnosticoComprension.js`).
+Diseño = palabras clave y umbral de `contenido-v3.json` (Maren: `_1` umbral 40, `_2` umbral 30; Serel: `_1` umbral 30, `_2` umbral 25). Nota: `motor-caso-v1-operativo.md` §2b trata las condiciones de hitos del motor de caso, no las preguntas de tema; no sirve de referencia para este barrido.
+Casos: 106. No coinciden: 40. Secuencias de dos preguntas (relación 50): 2 de 2 OK (revela `_1` y después `_2`).
+Los 40 son frases de una sola palabra ("tratado", "copia", "llave", "cerradura", "harina", "hornos", "precio") o "hablame/háblame ... " sin nombrar al NPC. Todos quedan marcados "revisar con diseño": el diseño no dice qué hacer con una palabra suelta, y `SUPUESTOS.md` pide reformular `hablar_con` sin NPC nombrado.
 
-| NPC | Relación | Frase | Esperado | Obtenido |
+| NPC | Frase | Relación | Diseño dice | Resultado real |
 |---|---|---|---|---|
-| Maren | 0 | tratado | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 0 | copia | fallo | reformulacion ([reformulacion] No tenés nada para eso.) |
-| Maren | 0 | hablame sobre el tratado de la guerra | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 0 | llave | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 0 | cerradura | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 0 | háblame de la copia del tratado | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 0 | hablame de la copia del tratado | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 39 | tratado | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 39 | copia | fallo | reformulacion ([reformulacion] No tenés nada para eso.) |
-| Maren | 39 | hablame sobre el tratado de la guerra | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 39 | llave | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 39 | cerradura | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 39 | háblame de la copia del tratado | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 39 | hablame de la copia del tratado | fallo | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 40 | tratado | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 40 | copia | rev1 | reformulacion ([reformulacion] No tenés nada para eso.) |
-| Maren | 40 | hablame sobre el tratado de la guerra | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 40 | llave | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 40 | cerradura | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 40 | háblame de la copia del tratado | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 40 | hablame de la copia del tratado | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 50 | tratado | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 50 | copia | rev1 | reformulacion ([reformulacion] No tenés nada para eso.) |
-| Maren | 50 | hablame sobre el tratado de la guerra | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 50 | llave | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 50 | cerradura | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Maren | 50 | háblame de la copia del tratado | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Maren | 50 | hablame de la copia del tratado | rev1 | reformulacion ([reformulacion] ¿Con cuál: Maren de Orst?) |
-| Serel | 0 | harina | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 0 | hornos | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 0 | precio | fallo | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 39 | harina | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 39 | hornos | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 39 | precio | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 40 | harina | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 40 | hornos | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 40 | precio | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 50 | harina | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 50 | hornos | rev2 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
-| Serel | 50 | precio | rev1 | reformulacion ([reformulacion] No entendí bien. ¿Podés decirlo de otra forma?) |
+| Maren | tratado | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | copia | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No tenés nada para eso. |
+| Maren | hablame sobre el tratado de la guerra | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | llave | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | cerradura | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | háblame de la copia del tratado | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | hablame de la copia del tratado | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | tratado | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | copia | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No tenés nada para eso. |
+| Maren | hablame sobre el tratado de la guerra | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | llave | 39 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | cerradura | 39 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | háblame de la copia del tratado | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | hablame de la copia del tratado | 39 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | tratado | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | copia | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] No tenés nada para eso. |
+| Maren | hablame sobre el tratado de la guerra | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | llave | 40 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | cerradura | 40 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | háblame de la copia del tratado | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | hablame de la copia del tratado | 40 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | tratado | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | copia | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] No tenés nada para eso. |
+| Maren | hablame sobre el tratado de la guerra | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | llave | 50 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | cerradura | 50 | conocimiento_maren_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Maren | háblame de la copia del tratado | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Maren | hablame de la copia del tratado | 50 | conocimiento_maren_1 (revisar con diseño) | reformulacion: [reformulacion] ¿Con cuál: Maren de Orst? |
+| Serel | harina | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | hornos | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | precio | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | harina | 39 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | hornos | 39 | conocimiento_serel_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | precio | 39 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | harina | 40 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | hornos | 40 | conocimiento_serel_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | precio | 40 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | harina | 50 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | hornos | 50 | conocimiento_serel_2 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | precio | 50 | conocimiento_serel_1 (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |

@@ -26,6 +26,9 @@ const SECUENCIAS = {
   serel_panadero: ['¿qué sabés de la harina?', '¿y qué sabés de los hornos?'],
 };
 
+// El diseño no dice qué hace una palabra suelta sin verbo, y SUPUESTOS.md pide reformular "háblame de..." sin NPC nombrado.
+const dudosa = (f) => !/\s/.test(f.trim()) && f.trim() !== 'ok' || /^h[aá]blame\b/i.test(f.trim());
+
 const claveDe = (npc, relacion, frases) => `${npc} | relación ${relacion} | ${frases.join(' > ')}`;
 
 /** Lo que se espera de una frase de un solo paso, según el NPC y su relación: el conocimiento que nombra y su umbral. */
@@ -41,7 +44,7 @@ function esperadoSimple(npcId, relacion, frase) {
 export function armarCasos() {
   const casos = [];
   const nuevo = (npc, relacion, frases, esperado) =>
-    casos.push({ id: claveDe(npc, relacion, frases), npc, relacion, frases, esperado });
+    casos.push({ id: claveDe(npc, relacion, frases), npc, relacion, frases, esperado, revisarConDiseno: frases.some(dudosa) });
   for (const npc of Object.keys(NPCS)) {
     for (const relacion of RELACIONES) {
       for (const f of FRASES_TEMA) nuevo(npc, relacion, [f], [esperadoSimple(npc, relacion, f)]);

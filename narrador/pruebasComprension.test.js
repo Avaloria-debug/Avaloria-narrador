@@ -1,12 +1,10 @@
 // Barrido de comprensión por relación (tabla en barridoComprension.js). Cada caso dice qué frase probó,
-// qué esperaba y qué obtuvo. Los casos que no dan lo esperado no se arreglan acá: están marcados como
-// pendientes (test.skip con motivo, en pendientesComprension.json) y listados en docs/PENDIENTES.md.
+// qué esperaba y qué obtuvo. Un caso que no coincide con el diseño queda rojo: no se salta ni se ajusta
+// al código. El detalle de los que fallan está en docs/PENDIENTES.md ("Diagnóstico de comprensión").
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
 import { armarCasos, correrCaso } from './barridoComprension.js';
 
-const PENDIENTES = JSON.parse(await readFile(new URL('./pendientesComprension.json', import.meta.url), 'utf8'));
 const casos = armarCasos();
 
 test('la tabla cubre Maren y Serel con relación 0, 39, 40 y 50 y no repite casos', () => {
@@ -17,18 +15,8 @@ test('la tabla cubre Maren y Serel con relación 0, 39, 40 y 50 y no repite caso
   assert.ok(casos.some((c) => c.frases.length === 2));
 });
 
-test('todo pendiente corresponde a un caso de la tabla', () => {
-  const ids = new Set(casos.map((c) => c.id));
-  for (const id of Object.keys(PENDIENTES)) assert.ok(ids.has(id), `pendiente sin caso: ${id}`);
-});
-
 for (const caso of casos) {
-  const nombre = caso.id;
-  if (PENDIENTES[caso.id]) {
-    test.skip(`${nombre} [pendiente: ${PENDIENTES[caso.id]}]`, () => {});
-    continue;
-  }
-  test(nombre, async () => {
+  test(caso.id, async () => {
     const { obtenido, textos } = await correrCaso(caso);
     assert.deepEqual(
       obtenido,
