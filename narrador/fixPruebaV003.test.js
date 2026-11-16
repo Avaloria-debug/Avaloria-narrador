@@ -300,8 +300,8 @@ describe('IA sin clave', () => {
 });
 
 describe('versión visible', () => {
-  test('VERSION es 0.0.7', () => {
-    assert.equal(VERSION, '0.0.7');
+  test('VERSION es 0.0.8', () => {
+    assert.equal(VERSION, '0.0.8');
     assert.match(VERSION, /^\d+\.\d+\.\d+$/);
   });
 
