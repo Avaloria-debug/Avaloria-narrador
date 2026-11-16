@@ -53,6 +53,9 @@ Cada commit tiene que dejar la suite en verde.
 - Narrador por código: completo en código (bloques 1 a 7, registros en Firestore y prueba de punta a punta en `narrador/integracionFinal.test.js`).
 - Pendiente de integración: navegador real, Groq real, Firebase real, HTML y política de privacidad. Detalle en `docs/PENDIENTES.md`.
 
+## Versión
+- `narrador/version.js` exporta `VERSION` y la página de prueba la muestra abajo a la derecha (`v0.0.4`). Cada commit que cambie `narrador/` o la página suma 0.0.1 a `VERSION` y al texto de `narrador/prueba/index.html` (un test los compara).
+
 ## Cuándo correr tests
 - Mientras cambiás un módulo: solo su archivo de test (node --test narrador/<modulo>.test.js).
 - Al cerrar un bloque o antes de un commit que se sube: npm test completo y node narrador/validarContenido.js.

@@ -12,6 +12,8 @@ export const SEPARADOR_NOMBRES = ', ';
 const BLOQUE_REVELAR = 'revelar_conocimiento';
 const BLOQUE_MOSTRAR = 'mostrar_narrativo';
 const BLOQUE_NO_SE = 'no_se';
+const BLOQUE_SALUDO = 'saludo';
+const BLOQUE_RECONOCIMIENTO = 'reconocimiento';
 const PATRON = /\{([^{}]*)\}/g;
 
 const porId = (lista, id) => (lista ?? []).find((x) => x.id === id);
@@ -75,6 +77,19 @@ export function elegirPlantilla(plantillas, valores, { rng, aperturas = [] } = {
   return candidatas.reduce((mejor, c) => (ventana.lastIndexOf(c.apertura) < ventana.lastIndexOf(mejor.apertura) ? c : mejor));
 }
 
+/**
+ * Texto de un bloque que es una lista de frases con {npc} (`no_se`, `saludo`, `reconocimiento`). Todas abren con el nombre del NPC:
+ * la ventana de aperturas no sirve para alternarlas, así que se elige al azar entre las que se pueden completar.
+ */
+function narrarLista(contenido, bloque, valores, opciones) {
+  const textos = (Array.isArray(contenido?.plantillas?.[bloque]) ? contenido.plantillas[bloque] : [])
+    .map((p) => completar(p, valores))
+    .filter(Boolean);
+  if (textos.length === 0) return { ...respaldo(contenido, opciones), respaldo: true };
+  const texto = textos[Math.min(textos.length - 1, Math.floor(opciones.rng() * textos.length))];
+  return { texto, apertura: aperturaDe(texto), respaldo: false };
+}
+
 /** Texto de la reformulación `no_entendido`: el respaldo cuando ninguna plantilla sirve. */
 function respaldo(contenido, opciones) {
   const elegida = elegirPlantilla(contenido?.plantillas?.[BLOQUE_REFORMULACION]?.[MOTIVOS.NO_ENTENDIDO], {}, opciones);
@@ -134,6 +149,7 @@ export function valoresDeAccion(accion, contenido) {
  *   Si en el turno se reveló un conocimiento, sigue una frase de `revelar_conocimiento`.
  *   Viajar a donde ya se está usa la reformulación `ya_en_destino`. Si quedó una segunda acción sin hacer, sigue `repetir_segunda`.
  * - `reformular`: plantilla del motivo.
+ * - `saludo` y `reconocimiento`: plantilla del mismo nombre con el NPC presente (sin NPC, el respaldo `no_entendido`).
  * - `consulta`: si el NPC cuenta, `revelar_conocimiento.exito`; si no cuenta por ahora, `revelar_conocimiento.fallo`;
  *   si no sabe del tema, `no_se`.
  * - `ia` y `error`: sin texto (null); no los narra este módulo.
@@ -159,16 +175,14 @@ export function narrarTurno(turno, { contenido, rng, aperturas = [] }) {
     const npc = porId(contenido.npcs, npcId);
     const valores = { npc: npc?.nombre, conocimiento: porId(npc?.conocimientos, conocimientoId)?.contenido };
     if (resultado === 'no_se') {
-      // Todas las variantes abren con el nombre del NPC: la ventana de aperturas no sirve para alternarlas.
-      // Se elige al azar entre las que se pueden completar.
-      const textos = (Array.isArray(contenido?.plantillas?.[BLOQUE_NO_SE]) ? contenido.plantillas[BLOQUE_NO_SE] : [])
-        .map((p) => completar(p, valores))
-        .filter(Boolean);
-      if (textos.length === 0) return salida([{ ...respaldo(contenido, opciones), respaldo: true }]);
-      const texto = textos[Math.min(textos.length - 1, Math.floor(rng() * textos.length))];
-      return salida([{ texto, apertura: aperturaDe(texto), respaldo: false }]);
+      return salida([narrarLista(contenido, BLOQUE_NO_SE, valores, opciones)]);
     }
     return salida([narrarResultado(contenido, BLOQUE_REVELAR, resultado, valores, opciones)]);
+  }
+  if (turno?.tipo === 'saludo' || turno?.tipo === 'reconocimiento') {
+    const npc = porId(contenido.npcs, turno.npcId);
+    const bloque = turno.tipo === 'saludo' ? BLOQUE_SALUDO : BLOQUE_RECONOCIMIENTO;
+    return salida([narrarLista(contenido, bloque, { npc: npc?.nombre }, opciones)]);
   }
   if (turno?.tipo !== 'accion' || !turno.accion) return { texto: null, aperturas: ventana, respaldo: false };
 

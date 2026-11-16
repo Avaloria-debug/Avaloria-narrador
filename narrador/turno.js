@@ -11,7 +11,7 @@ import { estadoDeEscena } from './estadoEscena.js';
 import { avanzar } from './reloj.js';
 import { moverNpcs, npcsEnEscena } from './movimientoNpcs.js';
 
-export const TIPOS_TURNO = Object.freeze({ ACCION: 'accion', CONSULTA: 'consulta', REFORMULAR: 'reformular', IA: 'ia', ERROR: 'error' });
+export const TIPOS_TURNO = Object.freeze({ ACCION: 'accion', CONSULTA: 'consulta', SALUDO: 'saludo', RECONOCIMIENTO: 'reconocimiento', REFORMULAR: 'reformular', IA: 'ia', ERROR: 'error' });
 
 // Resultado de una consulta: el NPC cuenta el conocimiento, no lo cuenta por ahora, o no sabe del tema.
 export const RESULTADOS_CONSULTA = Object.freeze({ EXITO: 'exito', FALLO: 'fallo', NO_SE: 'no_se' });
@@ -61,6 +61,8 @@ function contextoDeComprension(estado, contenido, diccionarios = null) {
     npcsAusentes: contenido.npcs,
     objetosAplicables: (verbo) => objetosAplicables(estado, contenido, verbo),
     reformulacionPrevia: estado.reformulacionPendiente === true,
+    saludos: contenido.saludos,
+    reconocimientos: contenido.reconocimientos,
     ...(diccionarios ? { diccionarios } : {}),
   };
 }
@@ -212,7 +214,7 @@ function ejecutarConsulta(estado, decision, contenido) {
  * @param {{ tipo: 'boton', intencionId: string, parametros?: object } | { tipo: 'texto', texto: string }} entrada
  * @param {{ contenido: object, rng: () => number, diccionarios?: object }} dependencias `diccionarios`: los de la comprensión del texto libre (opcional)
  * @returns {{
- *   tipo: 'accion'|'consulta'|'reformular'|'ia'|'error', estado: object,
+ *   tipo: 'accion'|'consulta'|'saludo'|'reconocimiento'|'reformular'|'ia'|'error', estado: object,
  *   consulta?: { npcId: string, conocimientoId: string|null, resultado: 'exito'|'fallo'|'no_se', motivo?: string, efectos: object[] },
  *   intencionId?: string|null, motivo?: string, datos?: object, error?: string,
  *   accion?: { intencionId: string, verbo: string, parametros: object, resultado: string, motivo?: string,
@@ -229,6 +231,16 @@ export function ejecutarTurno(estado, entrada, { contenido, rng, diccionarios = 
   const decision = comprender(entrada, estado, contenido, diccionarios);
   if (decision.tipo === 'error') return { tipo: TIPOS_TURNO.ERROR, estado, error: decision.error };
   if (decision.tipo === 'consulta') return ejecutarConsulta(estado, decision, contenido);
+  // Saludo o reconocimiento ("hola", "ok"): lo responde el primer NPC presente. No gasta tiempo, no cambia nada,
+  // no reformula y no pasa a la IA. Su `intencionId` es `saludo` o `reconocimiento` (intenciones de registro).
+  if (decision.tipo === 'saludo' || decision.tipo === 'reconocimiento') {
+    return {
+      tipo: decision.tipo,
+      estado: { ...estado, reformulacionPendiente: false },
+      intencionId: decision.tipo,
+      npcId: decision.npcId,
+    };
+  }
   if (decision.tipo === 'reformular') {
     return {
       tipo: TIPOS_TURNO.REFORMULAR,

@@ -17,6 +17,14 @@ export const RESULTADOS = Object.freeze(['exito', 'fallo', 'neutro']);
 export const BLOQUES_EXTRA = Object.freeze(['revelar_conocimiento', 'mostrar_narrativo']);
 // Respuesta de un NPC a una pregunta sobre un tema que no conoce: lista de textos con {npc}.
 export const BLOQUE_NO_SE = 'no_se';
+// Respuesta de un NPC a un saludo (o ruido) del jugador: lista de textos con {npc}.
+export const BLOQUE_SALUDO = 'saludo';
+// Respuesta de un NPC a un reconocimiento del jugador ("ok", "gracias"): lista de textos con {npc}.
+export const BLOQUE_RECONOCIMIENTO = 'reconocimiento';
+// Bloques que son una lista de textos con {npc}, sin resultados exito/fallo.
+export const BLOQUES_LISTA = Object.freeze([BLOQUE_NO_SE, BLOQUE_SALUDO, BLOQUE_RECONOCIMIENTO]);
+// Listas de palabras del jugador que son solo un saludo o solo un reconocimiento (en la raíz del contenido).
+export const LISTAS_SOCIALES = Object.freeze(['saludos', 'reconocimientos']);
 export const MIN_VARIANTES_NO_SE = 2;
 export const MIN_PALABRAS_CLAVE = 2;
 export const MAX_PALABRAS_CLAVE = 5;
@@ -105,7 +113,7 @@ export function validarContenido(contenido) {
   const plantillas = esObjeto(contenido.plantillas) ? contenido.plantillas : null;
   if (!plantillas) err('plantillas: falta o no es un objeto');
   // El conteo es de bloques de resultado; el bloque de reformulaciones va aparte.
-  conteos.plantillas = plantillas ? Object.keys(plantillas).filter((k) => k !== BLOQUE_REFORMULACION && k !== BLOQUE_NO_SE).length : 0;
+  conteos.plantillas = plantillas ? Object.keys(plantillas).filter((k) => k !== BLOQUE_REFORMULACION && !BLOQUES_LISTA.includes(k)).length : 0;
   if (!esObjeto(contenido.transiciones)) err('transiciones: falta o no es un objeto');
   if (!esObjeto(contenido.reglas)) err('reglas: falta o no es un objeto');
 
@@ -383,12 +391,29 @@ export function validarContenido(contenido) {
   if (plantillas) {
     for (const extra of BLOQUES_EXTRA) validarBloque(plantillas, extra, err);
     validarReformulacion(plantillas[BLOQUE_REFORMULACION], err);
-    const noSe = Array.isArray(plantillas[BLOQUE_NO_SE]) ? plantillas[BLOQUE_NO_SE] : [];
-    const noSeValidas = new Set(noSe.filter((t) => typeof t === 'string' && t.trim() !== '' && t.includes('{npc}')));
-    if (noSeValidas.size < MIN_VARIANTES_NO_SE || noSeValidas.size !== noSe.length) {
-      err(`plantillas.${BLOQUE_NO_SE}: hacen falta al menos ${MIN_VARIANTES_NO_SE} variantes distintas, con {npc}`);
+    // Saludos y reconocimientos: listas de frases no vacías, sin repetir (ni dentro de una ni entre las dos).
+    const vistasSociales = new Map();
+    for (const lista of LISTAS_SOCIALES) {
+      const frases = contenido[lista];
+      if (!Array.isArray(frases) || frases.length === 0) {
+        err(`${lista}: falta o está vacía`);
+        continue;
+      }
+      for (const [i, f] of frases.entries()) {
+        const clave = typeof f === 'string' ? f.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim() : '';
+        if (clave === '') err(`${lista}[${i}]: frase vacía o no textual`);
+        else if (vistasSociales.has(clave)) err(`${lista}[${i}]: ${JSON.stringify(f)} se repite (ya está en ${vistasSociales.get(clave)})`);
+        else vistasSociales.set(clave, `${lista}[${i}]`);
+      }
     }
-    const esperados = new Set([...ids.intenciones, ...BLOQUES_EXTRA, BLOQUE_REFORMULACION, BLOQUE_NO_SE]);
+    for (const bloque of BLOQUES_LISTA) {
+      const textos = Array.isArray(plantillas[bloque]) ? plantillas[bloque] : [];
+      const validos = new Set(textos.filter((t) => typeof t === 'string' && t.trim() !== '' && t.includes('{npc}')));
+      if (validos.size < MIN_VARIANTES_NO_SE || validos.size !== textos.length) {
+        err(`plantillas.${bloque}: hacen falta al menos ${MIN_VARIANTES_NO_SE} variantes distintas, con {npc}`);
+      }
+    }
+    const esperados = new Set([...ids.intenciones, ...BLOQUES_EXTRA, BLOQUE_REFORMULACION, ...BLOQUES_LISTA]);
     for (const clave of Object.keys(plantillas)) {
       if (!esperados.has(clave)) err(`plantillas: bloque sin intención ${clave}`);
     }
