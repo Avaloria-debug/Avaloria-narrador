@@ -28,10 +28,6 @@ export const VERBOS_SIN_OBJETIVO_PERMITIDO = Object.freeze(['observar', 'defende
 export const VERBOS_NPC_SOLO_NOMBRADO = Object.freeze(['usar']);
 // R4 (ajuste): verbos de acción de riesgo. Sin tolerancia a typos: solo la forma escrita exacta ("huri" no es huir).
 export const VERBOS_DE_RIESGO = Object.freeze(['huir', 'atacar', 'emboscar', 'abortar', 'rendirse', 'defender']);
-// Formas de verbo que el código suma a las del catálogo (el contenido no se toca). "hablame" y "háblame" no son forma de
-// `hablar_con` en `contenido-v3.json` y con la tolerancia de R4 ("hablar" está a 2 letras) ya no se reconocen solas.
-// Se comparan escritas exactas; "hablá" ya está cubierta por "hablá con" y el voseo (R6).
-export const FORMAS_ADICIONALES = Object.freeze({ hablar_con: Object.freeze(['hablame', 'háblame']) });
 // R1c: verbos de movimiento del catálogo (intenciones de `contenido-v3.json`: viajar, retirarse, huir, avanzar_cautela).
 // Escritos exactos, una frase con ellos no es una consulta de tema. La lista también está en docs/comprension-v1.md §4.
 export const VERBOS_MOVIMIENTO = Object.freeze(['viajar', 'retirarse', 'huir', 'avanzar_cautela']);
@@ -225,8 +221,8 @@ function coincidirIntencionBase(texto, intenciones, opciones, voseo) {
     let mejor = null;
     // R4 (ajuste): los verbos de riesgo solo coinciden escritos exactos.
     const opcionesDe = VERBOS_DE_RIESGO.includes(intencion.verbo) ? { ...opciones, exacto: true } : opciones;
-    for (const forma of [...(intencion.formas ?? []), ...(FORMAS_ADICIONALES[intencion.verbo] ?? [])]) {
-      const m = buscarEnOrden(entrada, tokenizar(forma_(forma)), FORMAS_ADICIONALES[intencion.verbo]?.includes(forma) ? { ...opcionesDe, exacto: true } : opcionesDe);
+    for (const forma of (intencion.formas ?? [])) {
+      const m = buscarEnOrden(entrada, tokenizar(forma_(forma)), opcionesDe);
       if (!m) continue;
       const completa = palabras(forma_(forma));
       const candidato = {

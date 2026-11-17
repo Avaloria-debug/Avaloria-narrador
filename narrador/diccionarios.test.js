@@ -33,7 +33,7 @@ describe('diccionarios — archivos reales', () => {
       cantidades[nombre] = d.cargados.length;
     }
     assert.deepEqual(cantidades, {
-      'diccionario-lexico': 1770,
+      'diccionario-lexico': 1772, // + hablame y háblame (formas de hablar_con, antes en el código)
       'ortografia-tipeo': 2475,
       'frases-patrones': 610,
       'contexto-palabras': 385,

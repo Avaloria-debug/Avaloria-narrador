@@ -1,6 +1,7 @@
 import { test, describe, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { leerContenido } from './cargarContenido.js';
+import { cargarDiccionarios } from './diccionarios.js';
 import {
   normalizar,
   tokenizar,
@@ -818,14 +819,15 @@ describe('R1 y R4 — consulta de tema y typos', () => {
     assert.equal(decidir('hablá con Serel de la harina', ctx({ npcsPresentes: [npc('serel_panadero')] })).tipo, 'consulta');
   });
 
-  test('"hablame sobre Serel": hablame es forma de hablar_con y el NPC está nombrado', () => {
+  test('"hablame sobre Serel": hablame es forma de hablar_con (diccionario léxico) y el NPC está nombrado', async () => {
+    const diccionarios = await cargarDiccionarios(contenido);
     for (const frase of ['hablame sobre Serel', 'háblame de Serel', 'hablá de Serel']) {
-      const d = decidir(frase, ctx({ npcsPresentes: [npc('serel_panadero')] }));
+      const d = decidir(frase, ctx({ npcsPresentes: [npc('serel_panadero')], diccionarios }));
       assert.equal(d.tipo, 'ejecutar', frase);
       assert.equal(d.parametros.npcId, 'serel_panadero', frase);
     }
     // Con un tema de un NPC presente sigue siendo consulta; sin NPC presente que lo tenga, se pregunta.
-    assert.equal(decidir('hablame sobre la harina', ctx({ npcsPresentes: [npc('serel_panadero')] })).tipo, 'consulta');
-    assert.equal(decidir('hablame sobre el tratado', ctx({ npcsPresentes: [npc('serel_panadero')] })).motivo, MOTIVOS.FALTA_NPC);
+    assert.equal(decidir('hablame sobre la harina', ctx({ npcsPresentes: [npc('serel_panadero')], diccionarios })).tipo, 'consulta');
+    assert.equal(decidir('hablame sobre el tratado', ctx({ npcsPresentes: [npc('serel_panadero')], diccionarios })).motivo, MOTIVOS.FALTA_NPC);
   });
 });
