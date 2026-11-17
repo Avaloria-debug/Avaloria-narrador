@@ -62,40 +62,14 @@ Sin verificar: Groq real desde el navegador (clave real, CORS, forma de `usage`)
 
 ## 6. Diagnóstico de comprensión
 Diagnóstico completo, con todos los casos: `docs/diagnostico-comprension.md` (se regenera con `node narrador/diagnosticoComprension.js`).
-Después de la corrección de `narrador/comprension.js` (commit "comprension: consultas de tema con NPC presente"): 106 casos, 36 corregidos, 4 siguen sin coincidir. Secuencias de dos preguntas: 2 de 2 OK. Ningún test se saltó ni se cambió.
+Con las reglas R1–R5 ("comprension: reglas R1-R5 finales"): 106 casos, 0 no coinciden. Los 4 casos "hablame sobre el tratado de la guerra" con Serel (relaciones 0, 39, 40 y 50) reformulan: "tratado" es palabra clave de Maren, ausente (R3). Secuencias de dos preguntas: 2 de 2 OK.
+Tests reescritos a R1/R2/R3: 9. Los 11 tests con frase de relleno ("sigo sin decir nada claro") vuelven a pasar con R4 sin tocarlos.
 
-### Casos del barrido que siguen fallando (4)
-Frase "hablame sobre el tratado de la guerra" con Serel (el tema es de Maren, que no está). El test espera reformulación. Con la regla 1 ("hablar_con" sin NPC nombrado y un solo NPC presente usa ese NPC), la frase tiene un verbo reconocible, así que el motor habla con Serel y contesta a medias; la regla 3 no pide reformular en ese caso. Queda rojo: revisar con diseño si esa frase debe reformular o hablar con Serel.
+### Tests rojos (3)
+Ninguno se saltó ni cambió de esperado (salvo `comrpar`: de 2 a 1 por R4 final, indicado en la tarea). Con R4 final (Damerau) y R1b/R1c pasaron: "comrpar", "ir a la tabenra", el primer tramo de "hablar con el de la harina" y "salir de acá Mapa de la posada escondida". Los 11 tests de relleno y los 9 reescritos siguen verdes; ninguno cambió de estado.
 
-| NPC | Frase | Relación | Diseño dice | Resultado real |
-|---|---|---|---|---|
-| Serel | hablame sobre el tratado de la guerra | 0 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
-| Serel | hablame sobre el tratado de la guerra | 39 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
-| Serel | hablame sobre el tratado de la guerra | 40 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
-| Serel | hablame sobre el tratado de la guerra | 50 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
-
-### Tests anteriores que quedan rojos por las reglas nuevas (20)
-Esperaban la regla vieja (§4.1: `hablar_con` sin nombre con un solo NPC reformula; una frase sin pregunta no es consulta de tema). No se tocaron. Varios usan una frase de relleno que trae un verbo de hablar ("sigo sin decir nada claro", "hablar con serel") para provocar la reformulación o la IA, y ahora se ejecuta con el único NPC presente.
-
-| Archivo | Test |
-|---|---|
-| narrador/comprension.test.js | 3.1: sin la lista de ausentes, el ausente no se reconoce |
-| narrador/comprension.test.js | un NPC y ningún nombre: pregunta, no elige |
-| narrador/comprensionDiccionarios.test.js | las entradas objeto, npc y escena resuelven parámetros, no la intención |
-| narrador/consultas.test.js | una frase que no es pregunta no es consulta, aunque nombre el tema |
-| narrador/index.test.js | IA que falla (clave inválida): tipo narracion con plantilla, y errores tiene el motivo |
-| narrador/index.test.js | IA que falla (cupo por minuto dos veces): tipo narracion con plantilla, y errores tiene el motivo |
-| narrador/index.test.js | IA que falla (error de red): tipo narracion con plantilla, y errores tiene el motivo |
-| narrador/index.test.js | IA que falla (salida con corchetes): tipo narracion con plantilla, y errores tiene el motivo |
-| narrador/index.test.js | IA que falla (salida con id): tipo narracion con plantilla, y errores tiene el motivo |
-| narrador/index.test.js | IA que falla (salida vacía): tipo narracion con plantilla, y errores tiene el motivo |
-| narrador/index.test.js | RPD agotado: pasa a modo código y no vuelve a llamar ese día |
-| narrador/index.test.js | ida y vuelta por IndexedDB sin pérdida: crear, narrar, guardar, cargar |
-| narrador/index.test.js | reformulación: tipo reformulacion y registro con ruta reformulacion |
-| narrador/index.test.js | sin groqKey nunca llama a la IA: usa plantilla |
-| narrador/registro.test.js | reformular y después entender: ruta reformulacion, y el turno que resuelve va a grupo_1 con intento_reformulacion |
-| narrador/registro.test.js | si la IA no respondió y se mostró una plantilla: grupo_2 con origen codigo |
-| narrador/turno.test.js | reformula una vez; la segunda pasa a IA; no avanza el reloj |
-| narrador/turno.test.js | si la segunda frase se entiende, se ejecuta |
-| narrador/turno.test.js | sin parámetros usa las reglas de la comprensión |
-| narrador/turno.test.js | un botón nunca pasa a IA |
+| Archivo | Test | Frase | Relación | Esperado | Real |
+|---|---|---|---|---|---|
+| narrador/comprension.test.js | en una intención: typo en palabra larga sí, en palabra corta no | huri | n/a | coincidirIntencion devuelve null | intencion_huir (R4 final: "huri" es una transposición, distancia 1). Falla nueva por R4 final |
+| narrador/comprensionDiccionarios.test.js | las entradas objeto, npc y escena resuelven parámetros, no la intención | hablar con el de la harina (sin léxico de NPC) | 0 | tipo reformular | consulta de conocimiento_serel_1 (R1: "harina" es palabra clave de Serel). Con léxico pasa: ejecuta hablar_con con Serel (R1b). Es la última aserción del test |
+| narrador/version.test.js | causa: la tolerancia a typos acerca "viejo" a "viajá" (2 letras) y a eso se suma el destino "norte" | contame lo del pozo viejo del norte | n/a | coincidirIntencion devuelve intencion_viajar | null. Causa: `normalizar` solo saca tildes ("viajá" pasa a "viaja"; el voseo no se toca) y `coincidePalabra`/`toleranciaPara` (comprension.js) permitía distancia 2 en palabras de más de 4 letras: "viejo" a "viaja" son dos cambios. R4 limita a distancia 1 y esa coincidencia ya no existe. El test documenta el bug viejo y no se puede poner verde sin volver a la distancia 2 |

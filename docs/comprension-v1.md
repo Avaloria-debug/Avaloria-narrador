@@ -19,8 +19,7 @@ Define cómo el código interpreta lo que escribe el jugador. Complementa a `cat
 
 ### 2.1 Tolerancia a typos, por palabra
 - Palabra de 3 letras o menos: coincidencia exacta.
-- Palabra de 4 letras: distancia de edición ≤ 1.
-- Palabra de más de 4 letras: distancia de edición ≤ 2.
+- Palabra de 4 letras o más: distancia de Damerau-Levenshtein ≤ 1 sobre la palabra completa. Insertar, borrar, cambiar una letra o intercambiar dos letras adyacentes ("comrpar", "tabenra", "huri") cuesta 1. Sin coincidencia por prefijo ni subcadena ("decir" no es "decirle"). *(R4 final. Reemplaza la regla anterior: más de 4 letras, distancia ≤ 2, y la versión intermedia de R4: Levenshtein ≤ 1 sin transposición.)*
 
 ### 2.2 Formas de varias palabras
 Cada forma del catálogo se tokeniza igual que la entrada (sin palabras vacías). Una forma coincide si todas sus palabras aparecen **en orden** dentro de la entrada, cada una con la tolerancia de 2.1. Se permite que haya otras palabras entre medio.
@@ -94,10 +93,15 @@ Cada NPC tiene un nombre, un rol y alias. El código compara la frase contra est
 Los verbos se dividen en dos grupos.
 
 ### 4.1 Verbos que exigen elegir a la persona
-Solo `hablar_con`. Si el jugador no nombra a nadie, nunca se elige por él:
+Solo `hablar_con`. Si el jugador no nombra a nadie:
 - Sin NPC en la escena → "No hay nadie con quien hablar acá."
-- Un NPC en la escena y ningún nombre → se reformula: "¿Con quién querés hablar?"
-- Dos o más → se reformula con los nombres de los presentes: "¿Con cuál de los dos: Maren o Serel?" *(El código muestra solo los nombres, nunca los números.)*
+- Un NPC en la escena, ningún nombre y ninguna palabra clave de otro NPC (presente o no) en la frase → se habla con ese NPC, sin reformular. *(R2. Reemplaza la regla anterior: "nunca se elige por él"; con un NPC y ningún nombre se reformulaba.)*
+- Un NPC en la escena y la palabra clave de un NPC ausente → se reformula (R3).
+- Dos o más → se reformula con los nombres de los presentes: "¿Con cuál de los dos: Maren o Serel?" *(El código muestra solo los nombres, nunca los números.)* (R3)
+
+Consulta de tema sin pregunta (R1): si la frase trae una palabra clave de un conocimiento de un NPC presente, es una consulta de tema con ese NPC, tenga o no un verbo. Si la palabra clave es de dos o más NPC presentes, se reformula. Se eliminó la excepción "verbo exacto distinto de hablar", salvo las dos siguientes, que sí quedan escritas:
+- R1b: si la frase trae `hablar_con` (forma exacta o con la tolerancia de 2.1) y una referencia a un NPC presente que sale del léxico de NPC ("hablar con el de la harina"), es una orden de hablar y se ejecuta `hablar_con` con ese NPC. Las palabras clave que forman parte de esa referencia no son un tema. Con el nombre del NPC y un tema ("hablá con Serel de la harina") sigue siendo consulta de tema.
+- R1c: si la frase trae un verbo de movimiento escrito exacto, no es consulta de tema y sigue el flujo normal. Verbos de movimiento: `viajar`, `retirarse`, `huir`, `avanzar_cautela` (intenciones `intencion_viajar`, `intencion_retirarse`, `intencion_huir`, `intencion_avanzar_cautela` de `contenido-v3.json`; el contenido no marca "movimiento", se eligieron por su significado).
 
 ### 4.2 Verbos que pueden elegir por el jugador
 `ayudar`, `negociar`, `presionar`, `atacar`, `emboscar`, `defender`, `distraer`, `observar`.

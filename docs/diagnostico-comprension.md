@@ -1,6 +1,6 @@
 # Diagnóstico de comprensión: todos los casos
 
-Generado con `node narrador/diagnosticoComprension.js`. Casos: 106. No coinciden con el diseño: 4.
+Generado con `node narrador/diagnosticoComprension.js`. Casos: 106. No coinciden con el diseño: 0.
 
 | NPC | Frase | Relación | Diseño dice | Resultado real |
 |---|---|---|---|---|
@@ -58,8 +58,8 @@ Generado con `node narrador/diagnosticoComprension.js`. Casos: 106. No coinciden
 | Maren | ok | 50 | asiente | asiente: [narracion] Maren de Orst te mira y asiente con la cabeza. |
 | Maren | ¿qué sabés del tratado? → ¿y qué sabés de las llaves? | 50 | conocimiento_maren_1 → conocimiento_maren_2 | rev1 → rev2: [narracion] Después de un rato, Maren de Orst te dice: Dónde está la copia de un tratado de la Guerra de las Dos Coronas. // [narracion] Maren de Orst baja la voz y te cuenta: El Archivo Real cambió hace un mes la cerradura de la sala de mapas, y solo dos llaves abren la nueva.. |
 | Serel | tratado | 0 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | copia | 0 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] ¿Cuál querés: Espada rota, Cuchillo de cocina, Antorcha, Pan duro, Pan fresco, Queso curado? |
-| **NO COINCIDE**  Serel | hablame sobre el tratado de la guerra | 0 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
+| Serel | copia | 0 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | hablame sobre el tratado de la guerra | 0 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | llave | 0 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | cerradura | 0 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | harina | 0 | ninguno ("no te cuenta nada nuevo") (revisar con diseño) | fallo: [narracion] Serel Norlen no te cuenta nada nuevo por ahora. |
@@ -71,8 +71,8 @@ Generado con `node narrador/diagnosticoComprension.js`. Casos: 106. No coinciden
 | Serel | ¿por que el precio de la harina? | 0 | ninguno ("no te cuenta nada nuevo") | fallo: [narracion] Serel Norlen no te cuenta nada nuevo por ahora. |
 | Serel | ok | 0 | asiente | asiente: [narracion] Serel Norlen te mira y asiente con la cabeza. |
 | Serel | tratado | 39 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | copia | 39 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] ¿Cuál querés: Espada rota, Cuchillo de cocina, Antorcha, Pan duro, Pan fresco, Queso curado? |
-| **NO COINCIDE**  Serel | hablame sobre el tratado de la guerra | 39 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
+| Serel | copia | 39 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | hablame sobre el tratado de la guerra | 39 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | llave | 39 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | cerradura | 39 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | harina | 39 | conocimiento_serel_1 (revisar con diseño) | rev1: [narracion] Después de un rato, Serel Norlen te dice: Qué proveedor vende harina a precio de pérdida, y por qué. |
@@ -84,8 +84,8 @@ Generado con `node narrador/diagnosticoComprension.js`. Casos: 106. No coinciden
 | Serel | ¿por que el precio de la harina? | 39 | conocimiento_serel_1 | rev1: [narracion] Después de un rato, Serel Norlen te dice: Qué proveedor vende harina a precio de pérdida, y por qué. |
 | Serel | ok | 39 | asiente | asiente: [narracion] Serel Norlen te mira y asiente con la cabeza. |
 | Serel | tratado | 40 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | copia | 40 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] ¿Cuál querés: Espada rota, Cuchillo de cocina, Antorcha, Pan duro, Pan fresco, Queso curado? |
-| **NO COINCIDE**  Serel | hablame sobre el tratado de la guerra | 40 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
+| Serel | copia | 40 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | hablame sobre el tratado de la guerra | 40 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | llave | 40 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | cerradura | 40 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | harina | 40 | conocimiento_serel_1 (revisar con diseño) | rev1: [narracion] Después de un rato, Serel Norlen te dice: Qué proveedor vende harina a precio de pérdida, y por qué. |
@@ -97,8 +97,8 @@ Generado con `node narrador/diagnosticoComprension.js`. Casos: 106. No coinciden
 | Serel | ¿por que el precio de la harina? | 40 | conocimiento_serel_1 | rev1: [narracion] Después de un rato, Serel Norlen te dice: Qué proveedor vende harina a precio de pérdida, y por qué. |
 | Serel | ok | 40 | asiente | asiente: [narracion] Serel Norlen te mira y asiente con la cabeza. |
 | Serel | tratado | 50 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
-| Serel | copia | 50 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] ¿Cuál querés: Espada rota, Cuchillo de cocina, Antorcha, Pan duro, Pan fresco, Queso curado? |
-| **NO COINCIDE**  Serel | hablame sobre el tratado de la guerra | 50 | reformulacion (revisar con diseño) | otro: [narracion] Sin ganas, Serel Norlen te contesta a medias. |
+| Serel | copia | 50 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
+| Serel | hablame sobre el tratado de la guerra | 50 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | llave | 50 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | cerradura | 50 | reformulacion (revisar con diseño) | reformulacion: [reformulacion] No entendí bien. ¿Podés decirlo de otra forma? |
 | Serel | harina | 50 | conocimiento_serel_1 (revisar con diseño) | rev1: [narracion] Después de un rato, Serel Norlen te dice: Qué proveedor vende harina a precio de pérdida, y por qué. |

@@ -98,7 +98,7 @@ describe('turno — comprender', () => {
   });
 
   test('si la segunda frase se entiende, se ejecuta', () => {
-    const uno = texto(partida(), 'hablar con');
+    const uno = texto(partida(), 'hablar del tratado');
     assert.equal(uno.motivo, 'falta_npc');
     assert.deepEqual(uno.datos.nombres, ['Serel Norlen']);
     const dos = texto(uno.estado, 'hablar con el panadero');
@@ -138,14 +138,17 @@ describe('turno — botones', () => {
 
   test('sin parámetros usa las reglas de la comprensión', () => {
     assert.equal(boton(partida(), 'intencion_ayudar').accion.parametros.npcId, 'serel_panadero');
-    assert.equal(boton(partida(), 'intencion_hablar_con').motivo, 'falta_npc');
+    assert.equal(boton(partida(), 'intencion_hablar_con').accion.parametros.npcId, 'serel_panadero');
+    const enSur = partida({ jugador: { escenaId: 'escena_camino_sur' }, reloj: { dia: 1, hora: '16:00' } });
+    assert.equal(boton(enSur, 'intencion_hablar_con').motivo, 'falta_npc');
     assert.equal(boton(partida(), 'intencion_viajar').motivo, 'falta_destino');
     assert.equal(boton(partida(), 'intencion_usar', { objetoId: 'objeto_daga' }).motivo, 'sin_objetos');
     assert.equal(boton(partida(), 'intencion_hablar_con', { npcId: 'maren_archivista' }).motivo, 'npc_ausente');
   });
 
   test('un botón nunca pasa a IA', () => {
-    const uno = boton(partida(), 'intencion_hablar_con');
+    const enSur = partida({ jugador: { escenaId: 'escena_camino_sur' }, reloj: { dia: 1, hora: '16:00' } });
+    const uno = boton(enSur, 'intencion_hablar_con');
     assert.equal(boton(uno.estado, 'intencion_hablar_con').tipo, TIPOS_TURNO.REFORMULAR);
   });
 

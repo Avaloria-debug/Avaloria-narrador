@@ -175,7 +175,7 @@ describe('contrato — narrar', () => {
 
   test('reformulación: tipo reformulacion y registro con ruta reformulacion', async () => {
     const e = crearPartida({ semilla: 1 });
-    const r = await narrar(e, texto('hablar'), { ahora: AHORA });
+    const r = await narrar(e, texto('hablar del tratado'), { ahora: AHORA });
     assert.equal(r.tipo, 'reformulacion');
     limpio(r.texto);
     assert.deepEqual([r.registro.ruta, r.registro.origen_respuesta, r.registro.intento_reformulacion], ['reformulacion', 'codigo', false]);
@@ -394,7 +394,7 @@ describe('contrato — cargarPartida y persistencia', () => {
     const http = httpFalso([ok('No lo sé.')]);
     for (const entrada of [
       texto('trabajar'), texto('comprar pan fresco'), texto('hablar con serel'), boton('intencion_descansar'), texto('leer'),
-      texto('ir al archivo'), texto('leer'), texto('zzz'), texto('qqq'), texto('viajar a lareth'), texto('hablar'),
+      texto('ir al archivo'), texto('leer'), texto('zzz'), texto('qqq'), texto('viajar a lareth'), texto('hablar del tratado'),
     ]) {
       e = (await narrar(e, entrada, { groqKey: CLAVE, http, esperar, ahora: AHORA })).estado;
     }

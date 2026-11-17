@@ -29,7 +29,7 @@ Decisiones tomadas sin preguntar. Son reversibles. El código y el contenido se 
 ## Intenciones y comprensión
 - intencion_viajar se agregó después del catálogo original. No cuenta como verbo de nivel 1. El motor tiene 24 intenciones.
 - Varias intenciones en una frase: se responde a la primera por posición y se pide repetir la segunda.
-- Parámetro faltante: hablar_con nunca elige a alguien por el jugador. Los demás verbos usan resolverNpcObjetivo cuando hay dos o más NPCs presentes.
+- Parámetro faltante: hablar_con nunca elige a alguien por el jugador. Los demás verbos usan resolverNpcObjetivo cuando hay dos o más NPCs presentes. *(Regla reemplazada por R2/R3: ver "Reglas R1–R5 de comprensión" al final.)*
 - Empates de nombre o alias (NPCs u objetos): se reformula. No se elige por distancia.
 - Solo se buscan NPCs presentes en la escena actual.
 - Viajar a un lugar que no es destino válido: se reformula.
@@ -127,7 +127,7 @@ Resultado: `narrador/comprension.js` implementa `docs/comprension-v1.md`. Los al
 - Los términos de un NPC son las palabras de su nombre y sus alias. No se usan las palabras del rol, porque chocan con nombres de escenas y objetos ("Archivo", "aduana").
 - Dos o más NPCs presentes nombrados en la frase: se reformula, aunque uno coincida exacto y el otro por typo.
 - "No lo ves por acá" (`npc_ausente`): solo si el ausente está escrito exacto. Con tolerancia, palabras comunes se confunden con nombres de NPCs que no están.
-- `hablar_con` con un solo NPC presente y sin nombre también pregunta (`falta_npc`), como dice la sección 4.1.
+- `hablar_con` con un solo NPC presente y sin nombre también pregunta (`falta_npc`), como dice la sección 4.1. *(Regla reemplazada por R2/R3: ver "Reglas R1–R5 de comprensión" al final.)*
 - Sin NPC presente, se ejecutan sin objetivo `observar`, `defender` y `distraer` (los que el contenido marca "NPC opcional"). `ayudar`, `negociar`, `presionar`, `atacar` y `emboscar` reformulan (`sin_npcs`).
 - `usar` toma un NPC solo si el jugador lo nombra.
 - Con dos o más presentes se llama a `resolverNpcObjetivo` de la beta (`core/orquestador`), con los NPCs adaptados a su forma. No se le pasa el motor de eventos, así que la regla "fuente de amenaza" no se aplica todavía; queda para el bloque 3.
@@ -730,3 +730,14 @@ Verificación final (script sobre los 12 `_1`, los 12 `_2` y `conocimiento_sello
 - `data/diccionarios/temas-conocimiento.md`: 12 entradas nuevas, una por _2, solo con las palabras clave aprobadas (sin frases extra, para no inventar contenido). Entradas: 84.
 - Casos: `casos.json` no cambió. p1 de caso_02 a caso_04 sigue listando el mismo conocimiento dos veces; ahora `conocimiento_ysolde_2`, `conocimiento_hollis_2` y `conocimiento_sarin_2` existen y podrían completar esas ranuras (decisión de Tomás). caso_01 ya tenía dos conocimientos válidos en cada ranura.
 - Commits: el de contenido deja 1 falla ("los 12 conocimientos del contenido están en temas-conocimiento") hasta el commit de diccionarios, que la cierra. El orden de commits pedido no permite que el intermedio quede en verde.
+
+## Reglas R1–R5 de comprensión (reemplazan reglas anteriores)
+- R1: palabra clave de un NPC presente en una frase sin pregunta → consulta de tema con ese NPC; si es de dos o más NPC presentes, se reformula. **Reemplaza** "una frase que no es pregunta no es consulta" y la excepción "verbo exacto distinto de hablar" (eliminada, junto con la lista de verbos).
+- R2: `hablar_con` sin NPC nombrado, un solo NPC presente y sin palabra clave de otro NPC (presente o no) → se ejecuta con ese NPC. **Reemplaza** "`hablar_con` nunca elige a alguien por el jugador" y "un solo NPC sin nombre también pregunta (`falta_npc`)".
+- R3: `hablar_con` sin nombre con dos o más NPC, o con la palabra clave de un NPC ausente → se reformula (`falta_npc`).
+- R4 (versión intermedia, **reemplazada** por R4 final): Levenshtein ≤ 1, sin transposición.
+- R4 final: distancia Damerau-Levenshtein con costo 1 sobre la palabra completa (3 letras o menos, exacta); la transposición de dos letras adyacentes cuenta como 1. Sin prefijo ni subcadena. **Reemplaza** "más de 4 letras: distancia ≤ 2". Efecto: "huri" ahora coincide con "huir".
+- R1b: "hablar con X" (forma exacta o con tolerancia R4) con X una referencia del léxico de NPC a un NPC presente → `hablar_con` con ese NPC, no consulta. Se entendió "X identifica a un NPC" como referencia de léxico o nombre, no como palabra clave de tema: "hablame sobre el tratado" con Maren presente sigue siendo consulta de tema (el barrido lo espera). Con tolerancia R4, "hablame" ya no coincide con "hablar" (distancia 2); esa frase se resuelve por R1 (palabra clave).
+- R1c: un verbo de movimiento exacto (`viajar`, `retirarse`, `huir`, `avanzar_cautela`, lista elegida por significado porque el contenido no los marca) nunca es consulta de tema. La lista está en `VERBOS_MOVIMIENTO` de `comprension.js` y en `docs/comprension-v1.md` §4.
+- R5: el parámetro `{exacto: true}` de `coincidirIntencion` se conserva: lo usan el léxico, la ortografía y viajar.
+- Una palabra clave "de un NPC ausente" se busca en los `conocimientos` de `contexto.npcsAusentes` (en el juego, todos los NPC del contenido).

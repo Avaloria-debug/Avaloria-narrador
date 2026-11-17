@@ -149,8 +149,10 @@ describe('consultas de tema', () => {
     const conMarca = await decir(en('escena_biblioteca_publica', elia, { marcas: ['leyo'] }), '¿qué libro fue retirado?');
     assert.deepEqual(conMarca.estado.npcs[elia].conocimientosRevelados, ['conocimiento_elia_1']);
   });
-  test('una frase que no es pregunta no es consulta, aunque nombre el tema', () => {
-    assert.notEqual(decidir('la harina está cara', ctx()).tipo, 'consulta');
+  test('R1: una frase que no es pregunta y nombra el tema de un NPC presente es consulta con ese NPC', () => {
+    const d = decidir('la harina está cara', ctx());
+    assert.equal(d.tipo, 'consulta');
+    assert.equal(d.conocimientoId, 'conocimiento_serel_1');
   });
 });
 

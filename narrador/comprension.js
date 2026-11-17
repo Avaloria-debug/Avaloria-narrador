@@ -26,6 +26,9 @@ export const VERBOS_NPC_AUTOMATICO = Object.freeze([
 export const VERBOS_SIN_OBJETIVO_PERMITIDO = Object.freeze(['observar', 'defender', 'distraer']);
 // Solo toman un NPC si el jugador lo nombra.
 export const VERBOS_NPC_SOLO_NOMBRADO = Object.freeze(['usar']);
+// R1c: verbos de movimiento del catálogo (intenciones de `contenido-v3.json`: viajar, retirarse, huir, avanzar_cautela).
+// Escritos exactos, una frase con ellos no es una consulta de tema. La lista también está en docs/comprension-v1.md §4.
+export const VERBOS_MOVIMIENTO = Object.freeze(['viajar', 'retirarse', 'huir', 'avanzar_cautela']);
 // Sección 4.3.
 export const VERBOS_OBJETO_EXIGIDO = Object.freeze(['usar', 'examinar']);
 export const VERBOS_OBJETO_OPCIONAL = Object.freeze(['comprar', 'atacar']);
@@ -61,10 +64,14 @@ export function tokenizar(texto) {
 // Sección 2.1: tolerancia a typos
 // ---------------------------------------------------------------------------
 
-/** Distancia de edición (Levenshtein). Corta en `tope + 1`. */
+/**
+ * Distancia de edición de Damerau-Levenshtein (R4): insertar, borrar, cambiar una letra o intercambiar dos letras
+ * adyacentes cuesta 1 cada cosa. Corta en `tope + 1`.
+ */
 export function distanciaEdicion(a, b, tope = Infinity) {
   if (a === b) return 0;
   if (Math.abs(a.length - b.length) > tope) return tope + 1;
+  let anterior = null; // fila i - 2
   let previa = Array.from({ length: b.length + 1 }, (_, j) => j);
   for (let i = 1; i <= a.length; i++) {
     const fila = [i];
@@ -72,19 +79,21 @@ export function distanciaEdicion(a, b, tope = Infinity) {
     for (let j = 1; j <= b.length; j++) {
       const costo = a[i - 1] === b[j - 1] ? 0 : 1;
       fila[j] = Math.min(previa[j] + 1, fila[j - 1] + 1, previa[j - 1] + costo);
+      if (anterior && i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        fila[j] = Math.min(fila[j], anterior[j - 2] + 1);
+      }
       if (fila[j] < minimo) minimo = fila[j];
     }
-    if (minimo > tope) return tope + 1;
+    if (minimo > tope && (!anterior || Math.min(...previa) > tope)) return tope + 1;
+    anterior = previa;
     previa = fila;
   }
-  return previa[b.length];
+  return previa[b.length] > tope ? tope + 1 : previa[b.length];
 }
 
 /** Distancia máxima permitida para una palabra de ese largo. */
 export function toleranciaPara(largo) {
-  if (largo <= 3) return 0;
-  if (largo === 4) return 1;
-  return 2;
+  return largo <= 3 ? 0 : 1;
 }
 
 /**
@@ -239,6 +248,13 @@ function nombraA(entrada, npc, exacto = false, lexico = null) {
 
 const nombresDe = (lista) => lista.map((x) => x.nombre);
 
+/** ¿La frase trae una palabra clave de un conocimiento de un NPC que no es `npc`? */
+function traePalabraClaveDeOtro(entrada, npc, otros) {
+  return (otros ?? []).some(
+    (o) => o.id !== npc.id && (o.conocimientos ?? []).some((k) => (k.palabrasClave ?? []).some((c) => entrada.includes(normalizar(c)))),
+  );
+}
+
 /**
  * Resuelve el NPC objetivo de un verbo.
  * @param {string} texto
@@ -275,8 +291,9 @@ export function resolverNpc(texto, escena, npcsPresentes, verbo, { npcsAusentes 
 
   if (soloNombrado) return { estado: 'sin_objetivo' };
 
-  // 4.1: hablar_con sin nombre: con un solo NPC presente es ese NPC; con dos o más, se reformula.
-  if (exigido && presentes.length === 1) return resuelto(presentes[0]);
+  // 4.1 (R2, R3): hablar_con sin nombre. Un solo NPC presente y ninguna palabra clave de otro NPC (presente o no):
+  // es ese NPC. Con dos o más NPC, o con la palabra clave de un NPC ausente, se reformula.
+  if (exigido && presentes.length === 1 && !traePalabraClaveDeOtro(entrada, presentes[0], npcsAusentes)) return resuelto(presentes[0]);
   if (exigido) return reformular(presentes.length === 0 ? MOTIVOS.SIN_NPCS : MOTIVOS.FALTA_NPC, presentes);
 
   // 4.2
@@ -633,19 +650,49 @@ export function resolverConsulta(texto, npcsPresentes, { lexico = null } = {}) {
   const nombrados = presentes.filter((n) => nombraA(entrada, n) || palabrasDeLexico(sinVacias, lexico?.get(n.id)) > 0);
   const candidatos = nombrados.length > 0 ? nombrados : presentes;
   let mejor = null;
+  const dueños = new Map(); // palabra clave de la frase -> NPCs que la tienen
   for (const n of candidatos) {
     for (const k of n.conocimientos ?? []) {
-      const puntos = new Set((k.palabrasClave ?? []).map(normalizar).filter((c) => c !== '' && entrada.includes(c))).size;
+      const claves = new Set((k.palabrasClave ?? []).map(normalizar).filter((c) => c !== '' && entrada.includes(c)));
+      for (const c of claves) dueños.set(c, new Set([...(dueños.get(c) ?? []), n.id]));
+      const puntos = claves.size;
       if (puntos > 0 && (!mejor || puntos > mejor.puntos)) mejor = { npcId: n.id, conocimientoId: k.id, puntos };
     }
   }
-  if (mejor) return { npcId: mejor.npcId, conocimientoId: mejor.conocimientoId };
+  if (mejor) {
+    // R1: una palabra clave que tienen dos o más NPCs de los candidatos no dice a quién se le pregunta.
+    const ids = new Set([...dueños.values()].filter((d) => d.size > 1).flatMap((d) => [...d]));
+    const ambiguos = candidatos.filter((n) => ids.has(n.id));
+    return { npcId: mejor.npcId, conocimientoId: mejor.conocimientoId, ...(ambiguos.length > 0 ? { ambiguos } : {}) };
+  }
   return { npcId: candidatos[0]?.id ?? null, conocimientoId: null };
 }
 
 // ---------------------------------------------------------------------------
 // Sección 1, paso 6: decidir
 // ---------------------------------------------------------------------------
+
+/** R1c: ¿la frase trae un verbo de movimiento del catálogo escrito exacto? */
+function esOrdenDeMovimiento(texto, intenciones) {
+  const exacta = coincidirIntencion(texto, intenciones, { exacto: true });
+  return exacta !== null && VERBOS_MOVIMIENTO.includes(exacta.verbo);
+}
+
+/**
+ * R1b: "hablar con X" (forma exacta o con la tolerancia de R4) donde X es una referencia del léxico a un NPC presente
+ * ("el de la harina"). Las palabras clave que trae la frase son parte de esa referencia, no un tema: se ejecuta hablar_con.
+ */
+function esHablarConReferencia(texto, coincidencia, presentes, lexico) {
+  if (coincidencia?.verbo !== 'hablar_con' || !lexico) return false;
+  const entrada = tokenizar(texto);
+  return (presentes ?? []).some((n) => {
+    const formas = (lexico.get(n.id) ?? []).filter((f) => contieneForma(entrada, f));
+    if (formas.length === 0) return false;
+    const deLaReferencia = new Set(formas.flat());
+    const claves = (n.conocimientos ?? []).flatMap((k) => (k.palabrasClave ?? []).map(normalizar)).filter((c) => c !== '' && entrada.includes(c));
+    return claves.every((c) => deLaReferencia.has(c));
+  });
+}
 
 /**
  * Decide qué hacer con una frase del jugador.
@@ -685,19 +732,19 @@ export function decidir(texto, contexto = {}) {
 
   // Preguntas: sin intención, con verbo de viaje o sobre un tema de un NPC presente, son consultas.
   if (esPregunta(texto)) {
-    const consulta = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
+    const { ambiguos: _ambiguos, ...consulta } = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
     if (!coincidencia || coincidencia.verbo === 'viajar' || consulta.conocimientoId !== null) {
       return { tipo: 'consulta', ...consulta };
     }
   }
 
-  // Frase de tema sin pregunta: una palabra clave de un conocimiento de un NPC presente es una consulta de tema,
-  // salvo que traiga un verbo exacto que no sea hablar (ese verbo manda). "tratado", "hablame del tratado".
+  // R1: frase sin pregunta con una palabra clave de un conocimiento de un NPC presente: consulta de tema con ese NPC.
+  // Si la palabra clave es de dos o más NPC presentes, se reformula. "tratado", "hablame del tratado".
   if (!esPregunta(texto)) {
-    const consulta = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
-    if (consulta.conocimientoId !== null) {
-      const exacta = coincidirIntencion(t, contexto.intenciones, { exacto: true });
-      if (!exacta || exacta.verbo === 'hablar_con') return { tipo: 'consulta', ...consulta };
+    const { ambiguos, ...consulta } = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
+    if (consulta.conocimientoId !== null && !esOrdenDeMovimiento(t, contexto.intenciones) && !esHablarConReferencia(t, coincidencia, contexto.npcsPresentes, diccionarios?.lexicoNpc)) {
+      if (ambiguos) return reformular(MOTIVOS.NPC_AMBIGUO, { nombres: nombresDe(ambiguos) });
+      return { tipo: 'consulta', ...consulta };
     }
   }
 
