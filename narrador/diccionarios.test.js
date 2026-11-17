@@ -32,13 +32,27 @@ describe('diccionarios — archivos reales', () => {
       assert.deepEqual(d.descartados, [], nombre);
       cantidades[nombre] = d.cargados.length;
     }
-    assert.deepEqual(cantidades, {
-      'diccionario-lexico': 1772, // + hablame y háblame (formas de hablar_con, antes en el código)
+    // Conteo mínimo (los archivos crecen); las formas concretas se verifican abajo.
+    const minimos = {
+      'diccionario-lexico': 1772,
       'ortografia-tipeo': 2475,
       'frases-patrones': 610,
       'contexto-palabras': 385,
       'temas-conocimiento': 84,
-    });
+    };
+    for (const [nombre, minimo] of Object.entries(minimos)) {
+      assert.ok(cantidades[nombre] >= minimo, `${nombre}: ${cantidades[nombre]} < ${minimo}`);
+    }
+  });
+
+  test('el léxico trae "hablame" y "háblame" como coloquial de intencion_hablar_con', async () => {
+    const { cargados } = (await cargarDiccionarios(contenido))['diccionario-lexico'];
+    for (const forma of ['hablame', 'háblame']) {
+      assert.ok(
+        cargados.some((e) => e.forma === forma && e.id === 'intencion_hablar_con' && e.tipo === 'coloquial'),
+        forma,
+      );
+    }
   });
 
   test('los 12 conocimientos del contenido están en temas-conocimiento', async () => {
