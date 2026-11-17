@@ -65,11 +65,9 @@ Diagnóstico completo, con todos los casos: `docs/diagnostico-comprension.md` (s
 Con las reglas R1–R5 ("comprension: reglas R1-R5 finales"): 106 casos, 0 no coinciden. Los 4 casos "hablame sobre el tratado de la guerra" con Serel (relaciones 0, 39, 40 y 50) reformulan: "tratado" es palabra clave de Maren, ausente (R3). Secuencias de dos preguntas: 2 de 2 OK.
 Tests reescritos a R1/R2/R3: 9. Los 11 tests con frase de relleno ("sigo sin decir nada claro") vuelven a pasar con R4 sin tocarlos.
 
-### Tests rojos (3)
-Ninguno se saltó ni cambió de esperado (salvo `comrpar`: de 2 a 1 por R4 final, indicado en la tarea). Con R4 final (Damerau) y R1b/R1c pasaron: "comrpar", "ir a la tabenra", el primer tramo de "hablar con el de la harina" y "salir de acá Mapa de la posada escondida". Los 11 tests de relleno y los 9 reescritos siguen verdes; ninguno cambió de estado.
+### Tests rojos (1)
+Ninguno se saltó. Con R4 ajustada y R6 pasan "huri" (null) y "viejo/viajá" (test reescrito: la frase ya no se acerca a viajar y "viajá" es viajar por voseo). 
 
 | Archivo | Test | Frase | Relación | Esperado | Real |
 |---|---|---|---|---|---|
-| narrador/comprension.test.js | en una intención: typo en palabra larga sí, en palabra corta no | huri | n/a | coincidirIntencion devuelve null | intencion_huir (R4 final: "huri" es una transposición, distancia 1). Falla nueva por R4 final |
 | narrador/comprensionDiccionarios.test.js | las entradas objeto, npc y escena resuelven parámetros, no la intención | hablar con el de la harina (sin léxico de NPC) | 0 | tipo reformular | consulta de conocimiento_serel_1 (R1: "harina" es palabra clave de Serel). Con léxico pasa: ejecuta hablar_con con Serel (R1b). Es la última aserción del test |
-| narrador/version.test.js | causa: la tolerancia a typos acerca "viejo" a "viajá" (2 letras) y a eso se suma el destino "norte" | contame lo del pozo viejo del norte | n/a | coincidirIntencion devuelve intencion_viajar | null. Causa: `normalizar` solo saca tildes ("viajá" pasa a "viaja"; el voseo no se toca) y `coincidePalabra`/`toleranciaPara` (comprension.js) permitía distancia 2 en palabras de más de 4 letras: "viejo" a "viaja" son dos cambios. R4 limita a distancia 1 y esa coincidencia ya no existe. El test documenta el bug viejo y no se puede poner verde sin volver a la distancia 2 |

@@ -26,6 +26,8 @@ export const VERBOS_NPC_AUTOMATICO = Object.freeze([
 export const VERBOS_SIN_OBJETIVO_PERMITIDO = Object.freeze(['observar', 'defender', 'distraer']);
 // Solo toman un NPC si el jugador lo nombra.
 export const VERBOS_NPC_SOLO_NOMBRADO = Object.freeze(['usar']);
+// R4 (ajuste): verbos de acción de riesgo. Sin tolerancia a typos: solo la forma escrita exacta ("huri" no es huir).
+export const VERBOS_DE_RIESGO = Object.freeze(['huir', 'atacar', 'emboscar', 'abortar', 'rendirse', 'defender']);
 // R1c: verbos de movimiento del catálogo (intenciones de `contenido-v3.json`: viajar, retirarse, huir, avanzar_cautela).
 // Escritos exactos, una frase con ellos no es una consulta de tema. La lista también está en docs/comprension-v1.md §4.
 export const VERBOS_MOVIMIENTO = Object.freeze(['viajar', 'retirarse', 'huir', 'avanzar_cautela']);
@@ -161,6 +163,33 @@ function compararCandidatos(a, b) {
   return b.palabras - a.palabras || a.distancia - b.distancia || b.formaCompleta - a.formaCompleta || a.inicio - b.inicio;
 }
 
+// R6: voseo. "viajá" → "viajar", "leé" → "leer", "dormí" → "dormir", pero solo si el infinitivo es una palabra de
+// alguna forma del catálogo de intenciones. Se hace antes de sacar las tildes: después "viajá" y "viaja" son lo mismo.
+const SUFIJOS_VOSEO = Object.freeze({ á: 'ar', é: 'er', í: 'ir' });
+const palabrasDelCatalogo = new WeakMap();
+
+function palabrasDeFormas(intenciones) {
+  if (!Array.isArray(intenciones)) return new Set();
+  if (!palabrasDelCatalogo.has(intenciones)) {
+    palabrasDelCatalogo.set(intenciones, new Set(intenciones.flatMap((i) => (i.formas ?? []).flatMap((f) => palabras(f)))));
+  }
+  return palabrasDelCatalogo.get(intenciones);
+}
+
+/** R6: cambia las formas de voseo (-á, -é, -í) por el infinitivo cuando ese infinitivo existe en el catálogo. */
+export function aVoseoInfinitivo(texto, intenciones) {
+  if (typeof texto !== 'string') return texto;
+  const conocidas = palabrasDeFormas(intenciones);
+  if (conocidas.size === 0) return texto;
+  return texto.normalize('NFC').replace(/[\p{L}\p{N}]+/gu, (palabra) => {
+    const minuscula = palabra.toLowerCase();
+    const terminacion = SUFIJOS_VOSEO[minuscula.at(-1)];
+    if (!terminacion || minuscula.length < 3) return palabra;
+    const infinitivo = minuscula.slice(0, -1) + terminacion;
+    return conocidas.has(normalizar(infinitivo)) ? infinitivo : palabra;
+  });
+}
+
 /**
  * Busca la intención de la frase.
  * `exacto`: sin tolerancia a typos (las palabras tienen que ser iguales). `contiguo`: las palabras de una forma
@@ -171,6 +200,16 @@ function compararCandidatos(a, b) {
  * }}
  */
 export function coincidirIntencion(texto, intenciones, opciones = {}) {
+  // R6: primero con el voseo llevado al infinitivo (frase y formas); si no coincide nada, la comparación de siempre.
+  const conVoseo = aVoseoInfinitivo(texto, intenciones);
+  return (
+    (conVoseo !== texto ? coincidirIntencionBase(conVoseo, intenciones, opciones, true) : null) ??
+    coincidirIntencionBase(texto, intenciones, opciones, false)
+  );
+}
+
+function coincidirIntencionBase(texto, intenciones, opciones, voseo) {
+  const forma_ = (f) => (voseo ? aVoseoInfinitivo(f, intenciones) : f);
   const entrada = tokenizar(texto);
   // Para la forma completa, "al" y "del" valen como "a" y "de": "irme al norte" trae la forma "irme a".
   const entradaCompleta = palabras(texto).map((p) => CONTRACCIONES[p] ?? p);
@@ -180,15 +219,17 @@ export function coincidirIntencion(texto, intenciones, opciones = {}) {
   const candidatos = [];
   for (const intencion of intenciones) {
     let mejor = null;
+    // R4 (ajuste): los verbos de riesgo solo coinciden escritos exactos.
+    const opcionesDe = VERBOS_DE_RIESGO.includes(intencion.verbo) ? { ...opciones, exacto: true } : opciones;
     for (const forma of intencion.formas ?? []) {
-      const m = buscarEnOrden(entrada, tokenizar(forma), opciones);
+      const m = buscarEnOrden(entrada, tokenizar(forma_(forma)), opcionesDe);
       if (!m) continue;
-      const completa = palabras(forma);
+      const completa = palabras(forma_(forma));
       const candidato = {
         intencionId: intencion.id,
         verbo: intencion.verbo,
         palabras: m.posiciones.length,
-        formaCompleta: buscarEnOrden(entradaCompleta, completa, opciones) ? completa.length : 0,
+        formaCompleta: buscarEnOrden(entradaCompleta, completa, opcionesDe) ? completa.length : 0,
         inicio: m.posiciones[0],
         distancia: m.distancia,
         posiciones: m.posiciones,

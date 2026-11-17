@@ -12,6 +12,7 @@ import {
   resolverDestino,
   destinosDeViaje,
   decidir,
+  aVoseoInfinitivo,
   PALABRAS_VACIAS,
   MOTIVOS,
 } from './comprension.js';
@@ -785,5 +786,27 @@ describe('R1 y R4 — consulta de tema y typos', () => {
     const d = decidir('salir de acá posada', ctx({ npcsPresentes: presentes }));
     assert.notEqual(d.tipo, 'consulta');
     assert.equal(d.intencionId, 'intencion_retirarse');
+  });
+
+  test('R4 ajustada: los verbos de riesgo solo coinciden exactos ("huri" no es huir)', () => {
+    for (const frase of ['huri', 'atacra', 'defnder', 'rendirem']) assert.equal(coincidirIntencion(frase, intenciones), null, frase);
+    assert.equal(coincidirIntencion('huir', intenciones).verbo, 'huir');
+    assert.equal(coincidirIntencion('huí', intenciones).verbo, 'huir');
+    const d = decidir('huri', ctx({ npcsPresentes: [npc('serel_panadero')] }));
+    assert.equal(d.tipo, 'reformular');
+    // Un verbo que no es de riesgo conserva la tolerancia.
+    assert.equal(coincidirIntencion('comrpar', intenciones).verbo, 'comprar');
+  });
+
+  test('R6: voseo al infinitivo si el infinitivo está en el catálogo', () => {
+    assert.equal(aVoseoInfinitivo('viajá al norte', intenciones), 'viajar al norte');
+    assert.equal(aVoseoInfinitivo('leé un rato', intenciones), 'leer un rato');
+    assert.equal(aVoseoInfinitivo('dormí', intenciones), 'dormir');
+    assert.equal(aVoseoInfinitivo('hablá con serel', intenciones), 'hablar con serel');
+    // Sin el infinitivo en el catálogo o sin tilde, no se toca.
+    assert.equal(aVoseoInfinitivo('comé pan', intenciones), 'comé pan');
+    assert.equal(aVoseoInfinitivo('esta mañana', intenciones), 'esta mañana');
+    assert.equal(coincidirIntencion('hablá con serel', intenciones).verbo, 'hablar_con');
+    assert.equal(coincidirIntencion('hablar con serel', intenciones).verbo, 'hablar_con');
   });
 });

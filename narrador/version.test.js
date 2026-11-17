@@ -30,10 +30,12 @@ const ctx = (extra = {}) => ({
 const decir = (estado, texto, opciones) => narrar(estado, { tipo: 'texto', texto }, opciones);
 
 describe('viajar solo con verbo exacto', () => {
-  test('causa: la tolerancia a typos acerca "viejo" a "viajá" (2 letras) y a eso se suma el destino "norte"', () => {
-    // La comparación de palabras sola ya lo confunde: es el origen del bug.
-    assert.equal(coincidirIntencion(FRASE, contenido.intenciones)?.intencionId, 'intencion_viajar');
+  test('"viejo" ya no se acerca a "viajá" (R4: distancia 1) y "viajá" es "viajar" por voseo (R6)', () => {
+    // Antes la tolerancia de 2 letras confundía "viejo" con "viajá": ese era el origen del bug.
+    assert.equal(coincidirIntencion(FRASE, contenido.intenciones), null);
     assert.equal(coincidirIntencion(FRASE, contenido.intenciones, { exacto: true }), null);
+    assert.equal(coincidirIntencion('viajá al norte', contenido.intenciones)?.intencionId, 'intencion_viajar');
+    assert.equal(coincidirIntencion('viajar al norte', contenido.intenciones)?.intencionId, 'intencion_viajar');
   });
 
   test('la frase exacta no viaja: ni sin diccionarios ni con los reales', async () => {

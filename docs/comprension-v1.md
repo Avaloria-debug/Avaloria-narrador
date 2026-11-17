@@ -21,6 +21,10 @@ Define cómo el código interpreta lo que escribe el jugador. Complementa a `cat
 - Palabra de 3 letras o menos: coincidencia exacta.
 - Palabra de 4 letras o más: distancia de Damerau-Levenshtein ≤ 1 sobre la palabra completa. Insertar, borrar, cambiar una letra o intercambiar dos letras adyacentes ("comrpar", "tabenra", "huri") cuesta 1. Sin coincidencia por prefijo ni subcadena ("decir" no es "decirle"). *(R4 final. Reemplaza la regla anterior: más de 4 letras, distancia ≤ 2, y la versión intermedia de R4: Levenshtein ≤ 1 sin transposición.)*
 
+**R4 (ajuste): verbos de riesgo.** `huir`, `atacar`, `emboscar`, `abortar`, `rendirse` y `defender` no tienen tolerancia a typos: solo coinciden escritos exactos ("huri" no es `huir`: da reformulación). La tolerancia de arriba vale para el resto de los verbos.
+
+**R6: voseo.** Antes de comparar, una palabra que termina en `-á`, `-é` o `-í` se cambia por el infinitivo (`-ar`, `-er`, `-ir`) si ese infinitivo es una palabra de alguna forma del catálogo de intenciones: "viajá" → "viajar", "hablá" → "hablar", "leé" → "leer", "dormí" → "dormir". Se aplica a la frase y a las formas del catálogo. Si con esa conversión no coincide ninguna intención, se compara como siempre (así "hui" sin tilde sigue siendo "huí"). Una palabra sin infinitivo en el catálogo ("comé") no se toca.
+
 ### 2.2 Formas de varias palabras
 Cada forma del catálogo se tokeniza igual que la entrada (sin palabras vacías). Una forma coincide si todas sus palabras aparecen **en orden** dentro de la entrada, cada una con la tolerancia de 2.1. Se permite que haya otras palabras entre medio.
 
@@ -101,7 +105,7 @@ Solo `hablar_con`. Si el jugador no nombra a nadie:
 
 Consulta de tema sin pregunta (R1): si la frase trae una palabra clave de un conocimiento de un NPC presente, es una consulta de tema con ese NPC, tenga o no un verbo. Si la palabra clave es de dos o más NPC presentes, se reformula. Se eliminó la excepción "verbo exacto distinto de hablar", salvo las dos siguientes, que sí quedan escritas:
 - R1b: si la frase trae `hablar_con` (forma exacta o con la tolerancia de 2.1) y una referencia a un NPC presente que sale del léxico de NPC ("hablar con el de la harina"), es una orden de hablar y se ejecuta `hablar_con` con ese NPC. Las palabras clave que forman parte de esa referencia no son un tema. Con el nombre del NPC y un tema ("hablá con Serel de la harina") sigue siendo consulta de tema.
-- R1c: si la frase trae un verbo de movimiento escrito exacto, no es consulta de tema y sigue el flujo normal. Verbos de movimiento: `viajar`, `retirarse`, `huir`, `avanzar_cautela` (intenciones `intencion_viajar`, `intencion_retirarse`, `intencion_huir`, `intencion_avanzar_cautela` de `contenido-v3.json`; el contenido no marca "movimiento", se eligieron por su significado).
+- R1c: si la frase trae un verbo de movimiento escrito exacto, no es consulta de tema y sigue el flujo normal. **Lista sin fuente, pendiente de Tomás:** ni `contenido-v3.json` ni los documentos de diseño traen una lista de verbos de movimiento. El código usa provisoriamente `viajar`, `retirarse`, `huir` y `avanzar_cautela`.
 
 ### 4.2 Verbos que pueden elegir por el jugador
 `ayudar`, `negociar`, `presionar`, `atacar`, `emboscar`, `defender`, `distraer`, `observar`.
