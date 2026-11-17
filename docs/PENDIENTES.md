@@ -65,9 +65,5 @@ Diagnóstico completo, con todos los casos: `docs/diagnostico-comprension.md` (s
 Con las reglas R1–R5 ("comprension: reglas R1-R5 finales"): 106 casos, 0 no coinciden. Los 4 casos "hablame sobre el tratado de la guerra" con Serel (relaciones 0, 39, 40 y 50) reformulan: "tratado" es palabra clave de Maren, ausente (R3). Secuencias de dos preguntas: 2 de 2 OK.
 Tests reescritos a R1/R2/R3: 9. Los 11 tests con frase de relleno ("sigo sin decir nada claro") vuelven a pasar con R4 sin tocarlos.
 
-### Tests rojos (1)
-Ninguno se saltó. Con R4 ajustada y R6 pasan "huri" (null) y "viejo/viajá" (test reescrito: la frase ya no se acerca a viajar y "viajá" es viajar por voseo). 
-
-| Archivo | Test | Frase | Relación | Esperado | Real |
-|---|---|---|---|---|---|
-| narrador/comprensionDiccionarios.test.js | las entradas objeto, npc y escena resuelven parámetros, no la intención | hablar con el de la harina (sin léxico de NPC) | 0 | tipo reformular | consulta de conocimiento_serel_1 (R1: "harina" es palabra clave de Serel). Con léxico pasa: ejecuta hablar_con con Serel (R1b). Es la última aserción del test |
+### Tests rojos (0)
+Ninguno. Con "comprension: hablame con NPC presente; test de harina corregido" pasan "hablar con el de la harina" sin léxico (reformula) y "hablame sobre Serel" (habla con Serel). Suite completa en verde.

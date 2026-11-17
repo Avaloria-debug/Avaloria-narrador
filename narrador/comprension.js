@@ -28,6 +28,10 @@ export const VERBOS_SIN_OBJETIVO_PERMITIDO = Object.freeze(['observar', 'defende
 export const VERBOS_NPC_SOLO_NOMBRADO = Object.freeze(['usar']);
 // R4 (ajuste): verbos de acción de riesgo. Sin tolerancia a typos: solo la forma escrita exacta ("huri" no es huir).
 export const VERBOS_DE_RIESGO = Object.freeze(['huir', 'atacar', 'emboscar', 'abortar', 'rendirse', 'defender']);
+// Formas de verbo que el código suma a las del catálogo (el contenido no se toca). "hablame" y "háblame" no son forma de
+// `hablar_con` en `contenido-v3.json` y con la tolerancia de R4 ("hablar" está a 2 letras) ya no se reconocen solas.
+// Se comparan escritas exactas; "hablá" ya está cubierta por "hablá con" y el voseo (R6).
+export const FORMAS_ADICIONALES = Object.freeze({ hablar_con: Object.freeze(['hablame', 'háblame']) });
 // R1c: verbos de movimiento del catálogo (intenciones de `contenido-v3.json`: viajar, retirarse, huir, avanzar_cautela).
 // Escritos exactos, una frase con ellos no es una consulta de tema. La lista también está en docs/comprension-v1.md §4.
 export const VERBOS_MOVIMIENTO = Object.freeze(['viajar', 'retirarse', 'huir', 'avanzar_cautela']);
@@ -221,8 +225,8 @@ function coincidirIntencionBase(texto, intenciones, opciones, voseo) {
     let mejor = null;
     // R4 (ajuste): los verbos de riesgo solo coinciden escritos exactos.
     const opcionesDe = VERBOS_DE_RIESGO.includes(intencion.verbo) ? { ...opciones, exacto: true } : opciones;
-    for (const forma of intencion.formas ?? []) {
-      const m = buscarEnOrden(entrada, tokenizar(forma_(forma)), opcionesDe);
+    for (const forma of [...(intencion.formas ?? []), ...(FORMAS_ADICIONALES[intencion.verbo] ?? [])]) {
+      const m = buscarEnOrden(entrada, tokenizar(forma_(forma)), FORMAS_ADICIONALES[intencion.verbo]?.includes(forma) ? { ...opcionesDe, exacto: true } : opcionesDe);
       if (!m) continue;
       const completa = palabras(forma_(forma));
       const candidato = {
@@ -736,6 +740,21 @@ function esHablarConReferencia(texto, coincidencia, presentes, lexico) {
 }
 
 /**
+ * ¿La frase trae una forma de `hablar_con` de dos palabras o más, con su preposición ("hablar con", "charlá con",
+ * "preguntarle a"), juntas y en orden? "hablame sobre el tratado" no: es un tema, no una orden de hablar con alguien.
+ */
+function esHablarConExplicito(texto, intenciones) {
+  const entrada = palabras(aVoseoInfinitivo(texto, intenciones));
+  return (intenciones ?? [])
+    .filter((i) => i.verbo === 'hablar_con')
+    .flatMap((i) => i.formas ?? [])
+    .some((f) => {
+      const forma = palabras(aVoseoInfinitivo(f, intenciones));
+      return forma.length >= 2 && buscarEnOrden(entrada, forma, { contiguo: true }) !== null;
+    });
+}
+
+/**
  * Decide qué hacer con una frase del jugador.
  * @param {string} texto
  * @param {{
@@ -784,6 +803,12 @@ export function decidir(texto, contexto = {}) {
   if (!esPregunta(texto)) {
     const { ambiguos, ...consulta } = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
     if (consulta.conocimientoId !== null && !esOrdenDeMovimiento(t, contexto.intenciones) && !esHablarConReferencia(t, coincidencia, contexto.npcsPresentes, diccionarios?.lexicoNpc)) {
+      // "hablar con" explícito, sin nombrar a nadie y sin léxico de NPC: la palabra clave no identifica a quién; se pregunta.
+      const presentes = contexto.npcsPresentes ?? [];
+      const nombra = presentes.some((n) => nombraA(tokenizar(t), n, false, diccionarios?.lexicoNpc));
+      if (coincidencia?.verbo === 'hablar_con' && !nombra && esHablarConExplicito(t, contexto.intenciones)) {
+        return reformular(MOTIVOS.FALTA_NPC, { nombres: nombresDe(presentes) });
+      }
       if (ambiguos) return reformular(MOTIVOS.NPC_AMBIGUO, { nombres: nombresDe(ambiguos) });
       return { tipo: 'consulta', ...consulta };
     }

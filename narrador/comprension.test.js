@@ -809,4 +809,23 @@ describe('R1 y R4 — consulta de tema y typos', () => {
     assert.equal(coincidirIntencion('hablá con serel', intenciones).verbo, 'hablar_con');
     assert.equal(coincidirIntencion('hablar con serel', intenciones).verbo, 'hablar_con');
   });
+
+  test('"hablar con el de la harina" sin léxico de NPC: la palabra clave no identifica a quién, se reformula', () => {
+    const d = decidir('hablar con el de la harina', ctx({ npcsPresentes: [npc('serel_panadero')] }));
+    assert.equal(d.tipo, 'reformular');
+    assert.equal(d.motivo, MOTIVOS.FALTA_NPC);
+    // Con el nombre del NPC y un tema, sigue siendo consulta.
+    assert.equal(decidir('hablá con Serel de la harina', ctx({ npcsPresentes: [npc('serel_panadero')] })).tipo, 'consulta');
+  });
+
+  test('"hablame sobre Serel": hablame es forma de hablar_con y el NPC está nombrado', () => {
+    for (const frase of ['hablame sobre Serel', 'háblame de Serel', 'hablá de Serel']) {
+      const d = decidir(frase, ctx({ npcsPresentes: [npc('serel_panadero')] }));
+      assert.equal(d.tipo, 'ejecutar', frase);
+      assert.equal(d.parametros.npcId, 'serel_panadero', frase);
+    }
+    // Con un tema de un NPC presente sigue siendo consulta; sin NPC presente que lo tenga, se pregunta.
+    assert.equal(decidir('hablame sobre la harina', ctx({ npcsPresentes: [npc('serel_panadero')] })).tipo, 'consulta');
+    assert.equal(decidir('hablame sobre el tratado', ctx({ npcsPresentes: [npc('serel_panadero')] })).motivo, MOTIVOS.FALTA_NPC);
+  });
 });
