@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { crearPartida, contenido, diccionarios } from './index.js';
 import { ejecutarTurno } from './turno.js';
 import { rngSembrado } from './utilsPrueba.js';
-import { MOTIVO_SIN_SALIDAS, MOTIVOS } from './motivos.js';
+import { MOTIVOS } from './motivos.js';
 
 const en = (escenaId) => {
   const e = crearPartida({ semilla: 4 });
@@ -35,7 +35,7 @@ describe('botón retirarse = "salir de acá"', () => {
     const sin = { ...contenido, escenas: contenido.escenas.map((e) => (e.id === 'escena_taberna_lareth' ? { ...e, salidas: [] } : e)) };
     const a = correr(en('escena_taberna_lareth'), frase, sin);
     const b = correr(en('escena_taberna_lareth'), boton, sin);
-    assert.equal(b.motivo, MOTIVO_SIN_SALIDAS);
+    assert.equal(b.motivo, MOTIVOS.SIN_SALIDAS);
     assert.deepEqual(b, a);
   });
 });

@@ -4,7 +4,7 @@
 // El texto del jugador solo se lee: nunca vuelve en los datos de salida.
 import { resolverNpcObjetivo } from '../core/orquestador/resolverNpcObjetivo.js';
 import { DESTINOS_CIUDAD } from './contenido.js';
-import { MOTIVOS, MOTIVO_SIN_SALIDAS } from './motivos.js';
+import { MOTIVOS } from './motivos.js';
 import { TIPOS_LEXICO_VERBO } from './diccionarios.js';
 
 export { MOTIVOS };
@@ -723,7 +723,7 @@ export function salirDeEscena(contexto) {
   const actual = escenas.find((e) => e.id === contexto.escena?.id);
   if (!Array.isArray(actual?.salidas)) return null;
   const salidas = actual.salidas.map((id) => escenas.find((e) => e.id === id)).filter(Boolean);
-  if (salidas.length === 0) return { tipo: 'reformular', motivo: MOTIVO_SIN_SALIDAS, datos: {} };
+  if (salidas.length === 0) return { tipo: 'reformular', motivo: MOTIVOS.SIN_SALIDAS, datos: {} };
   if (salidas.length > 1) return { tipo: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { opciones: nombresDe(salidas) } };
   const viajar = contexto.intenciones.find((i) => i.verbo === 'viajar');
   return { tipo: 'ejecutar', intencionId: viajar.id, parametros: { destino: salidas[0].id } };

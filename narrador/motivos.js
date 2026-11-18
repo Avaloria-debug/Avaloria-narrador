@@ -15,9 +15,6 @@ export const MOTIVOS = Object.freeze({
   SIN_SALIDAS: 'sin_salidas', // retirarse en una escena sin salidas
 });
 
-// Retirarse en una escena sin salidas (ahora con plantilla en el contenido; la clave sale de MOTIVOS).
-export const MOTIVO_SIN_SALIDAS = MOTIVOS.SIN_SALIDAS;
-
 // Pedido de repetir la segunda intención de una frase (repetirIntencionId de decidir).
 export const REPETIR_SEGUNDA = 'repetir_segunda';
 

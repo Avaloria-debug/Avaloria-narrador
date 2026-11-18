@@ -18,7 +18,7 @@ import {
   PALABRAS_VACIAS,
   MOTIVOS,
 } from './comprension.js';
-import { REPETIR_SEGUNDA, MOTIVO_SIN_SALIDAS } from './motivos.js';
+import { REPETIR_SEGUNDA } from './motivos.js';
 import { crearPartida, narrar } from './index.js';
 import { clasificarViaje, TIPOS_VIAJE } from './viaje.js';
 
@@ -869,8 +869,8 @@ describe('salir de acá (retirarse sin destino): sale por la salida de la escena
     const diccionarios = await dic();
     const escenas = contenido.escenas.map((e) => (e.id === PLAZA.id ? { ...e, salidas: [] } : e));
     const d = decidir('salir de acá', ctx({ escenas, diccionarios }));
-    assert.deepEqual(d, { tipo: 'reformular', motivo: MOTIVO_SIN_SALIDAS, intencionId: 'intencion_retirarse', datos: {} });
-    assert.equal(MOTIVO_SIN_SALIDAS, 'sin_salidas');
+    assert.deepEqual(d, { tipo: 'reformular', motivo: MOTIVOS.SIN_SALIDAS, intencionId: 'intencion_retirarse', datos: {} });
+    assert.equal(MOTIVOS.SIN_SALIDAS, 'sin_salidas');
   });
 
   test('de punta a punta: con una salida el jugador cambia de escena', async () => {
