@@ -12,6 +12,7 @@ export const MOTIVOS = Object.freeze({
   OBJETO_AMBIGUO: 'objeto_ambiguo',
   FALTA_DESTINO: 'falta_destino',
   DESTINO_AMBIGUO: 'destino_ambiguo',
+  DESTINO_REPETIDO: 'destino_repetido', // respuesta corta que coincide con más de una opción pendiente
   SIN_SALIDAS: 'sin_salidas', // retirarse en una escena sin salidas
 });
 

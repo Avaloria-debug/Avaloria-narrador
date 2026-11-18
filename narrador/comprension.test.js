@@ -653,7 +653,7 @@ describe('destinos dentro de la ciudad', () => {
 
 describe('reformulaciones — texto en el contenido', () => {
   test('hay 12 motivos y cada uno tiene texto', () => {
-    assert.equal(Object.keys(MOTIVOS).length, 12); // + sin_salidas
+    assert.equal(Object.keys(MOTIVOS).length, 13); // + sin_salidas, destino_repetido
     for (const motivo of Object.values(MOTIVOS)) {
       const textos = contenido.plantillas.reformulacion[motivo];
       assert.ok(Array.isArray(textos) && textos.length > 0, motivo);
@@ -694,7 +694,8 @@ describe('reformulaciones — texto en el contenido', () => {
       assert.ok(contenido.plantillas.reformulacion[r.motivo]?.length > 0, `${frase}: ${r.motivo}`);
       vistos.add(r.motivo);
     }
-    assert.deepEqual([...vistos].sort(), Object.values(MOTIVOS).sort());
+    // `destino_repetido` no lo devuelve decidir(): lo pone ejecutarTurno al responder con la pregunta de destino pendiente.
+    assert.deepEqual([...vistos].sort(), Object.values(MOTIVOS).filter((m) => m !== MOTIVOS.DESTINO_REPETIDO).sort());
   });
 
   test('los textos no traen ids ni placeholders desconocidos', () => {

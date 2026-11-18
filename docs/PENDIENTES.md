@@ -92,3 +92,9 @@ Cerrada con "fase 1 cierre: plantillas sin_salidas y destino_ambiguo; consulta n
 | `frases-patrones.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
 | `contexto-palabras.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
 | `temas-conocimiento.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+
+## Verificación en navegador: pregunta de destino (`verificarDestino.mjs`)
+- Comando: `node narrador/prueba/verificarDestino.mjs`. Requisito: Playwright con Chromium (`require('playwright')`); no es dependencia del repo ni parte de `npm test`.
+- Casos: control (página sin errores, Crear habilitado, versión), Mercado ("salir de acá", "norte"), Plaza ("salir de acá", "Taberna de la campana tardía", "camino", "banana") y consola sin errores al final. Cada caso imprime `OK` o `DISTINTO_DE_LO_ESPERADO`; código de salida 1 solo si hay alguno distinto.
+- Último resultado (v0.0.32, Chromium): los 8 veredictos en `OK`.
+

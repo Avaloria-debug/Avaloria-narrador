@@ -238,7 +238,7 @@ export function ejecutarTurno(estado, entrada, dependencias) {
   if (r.tipo === TIPOS_TURNO.ERROR) return r;
   // Pregunta de destino pendiente: solo la deja una pregunta de destino ambiguo (con ids); cualquier otro turno la borra.
   const { opciones, ids } = r.datos ?? {};
-  const pregunta = r.tipo === TIPOS_TURNO.REFORMULAR && r.motivo === MOTIVOS.DESTINO_AMBIGUO && Array.isArray(ids) && Array.isArray(opciones);
+  const pregunta = r.tipo === TIPOS_TURNO.REFORMULAR && [MOTIVOS.DESTINO_AMBIGUO, MOTIVOS.DESTINO_REPETIDO].includes(r.motivo) && Array.isArray(ids) && Array.isArray(opciones);
   const destinoPendiente = pregunta
     ? { opciones: ids.map((id, i) => ({ id, nombre: opciones[i] })), turno: (estado.numeroRegistro ?? 0) + 1 }
     : null;
@@ -261,7 +261,8 @@ function respuestaADestinoPendiente(estado, entrada, decision, contenido, diccio
   }
   return {
     tipo: 'reformular',
-    motivo: MOTIVOS.DESTINO_AMBIGUO,
+    // Coincide con más de una opción: "No me quedó claro…"; no coincide con ninguna: la misma pregunta.
+    motivo: r.estado === 'ambiguo' ? MOTIVOS.DESTINO_REPETIDO : MOTIVOS.DESTINO_AMBIGUO,
     intencionId: null,
     datos: { opciones: pend.opciones.map((o) => o.nombre), ids: pend.opciones.map((o) => o.id) },
   };
