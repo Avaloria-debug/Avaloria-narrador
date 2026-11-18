@@ -2,7 +2,7 @@
 // comprender -> resolver -> efectos sobre NPC -> avanzar reloj -> disparar y cerrar eventos -> mover NPCs.
 // Devuelve resultados estructurados, sin texto: la narración es del bloque 4.
 // No modifica el estado recibido.
-import { decidir, resolverNpc, resolverObjeto, salirDeEscena, MOTIVOS } from './comprension.js';
+import { decidir, resolverNpc, resolverObjeto, salirDeEscena, responderDestino, prepararDiccionarios, MOTIVOS } from './comprension.js';
 import { resolverAccion, aplicarEfectos, objetoDisponible, entradaDeInventario, MOTIVOS_FALLO } from './resolver.js';
 import { aplicarTransicion, disposicionEfectiva } from './npcs.js';
 import { conocimientoARevelar, conocimientoPorNarrativo, puedeRevelar, revelar, MOTIVOS_NO_REVELA } from './conocimientos.js';
@@ -233,11 +233,46 @@ function ejecutarConsulta(estado, decision, contenido) {
  *   repetirIntencionId?: string|null, reportes?: object[],
  * }}
  */
-export function ejecutarTurno(estado, entrada, { contenido, rng, diccionarios = null }) {
+export function ejecutarTurno(estado, entrada, dependencias) {
+  const r = ejecutarTurnoSinPendiente(estado, entrada, dependencias);
+  if (r.tipo === TIPOS_TURNO.ERROR) return r;
+  // Pregunta de destino pendiente: solo la deja una pregunta de destino ambiguo (con ids); cualquier otro turno la borra.
+  const { opciones, ids } = r.datos ?? {};
+  const pregunta = r.tipo === TIPOS_TURNO.REFORMULAR && r.motivo === MOTIVOS.DESTINO_AMBIGUO && Array.isArray(ids) && Array.isArray(opciones);
+  const destinoPendiente = pregunta
+    ? { opciones: ids.map((id, i) => ({ id, nombre: opciones[i] })), turno: (estado.numeroRegistro ?? 0) + 1 }
+    : null;
+  return { ...r, estado: { ...r.estado, destinoPendiente } };
+}
+
+/**
+ * Respuesta corta a la pregunta de destino pendiente: solo si la frase no se entendió como otra cosa.
+ * Una opción → viajar; varias o ninguna → vuelve a preguntar con las mismas opciones.
+ */
+function respuestaADestinoPendiente(estado, entrada, decision, contenido, diccionarios) {
+  const pend = estado.destinoPendiente;
+  const sinEntender = decision.tipo === 'ia' || (decision.tipo === 'reformular' && decision.motivo === MOTIVOS.NO_ENTENDIDO);
+  if (!pend || !Array.isArray(pend.opciones) || entrada?.tipo !== 'texto' || !sinEntender) return null;
+  const dic = prepararDiccionarios(diccionarios, contenido.intenciones);
+  const r = responderDestino(entrada.texto, pend.opciones, { lexico: dic?.lexicoEscena });
+  if (r.estado === 'resuelto') {
+    const viajar = contenido.intenciones.find((i) => i.verbo === 'viajar');
+    return { tipo: 'ejecutar', intencionId: viajar.id, parametros: { destino: r.destino }, repetirIntencionId: null, reportes: [] };
+  }
+  return {
+    tipo: 'reformular',
+    motivo: MOTIVOS.DESTINO_AMBIGUO,
+    intencionId: null,
+    datos: { opciones: pend.opciones.map((o) => o.nombre), ids: pend.opciones.map((o) => o.id) },
+  };
+}
+
+function ejecutarTurnoSinPendiente(estado, entrada, { contenido, rng, diccionarios = null }) {
   if (typeof rng !== 'function') throw new TypeError('ejecutarTurno necesita un rng');
 
   // 1. Comprender.
-  const decision = comprender(entrada, estado, contenido, diccionarios);
+  let decision = comprender(entrada, estado, contenido, diccionarios);
+  decision = respuestaADestinoPendiente(estado, entrada, decision, contenido, diccionarios) ?? decision;
   if (decision.tipo === 'error') return { tipo: TIPOS_TURNO.ERROR, estado, error: decision.error };
   if (decision.tipo === 'consulta') return ejecutarConsulta(estado, decision, contenido);
   // Saludo o reconocimiento ("hola", "ok"): lo responde el primer NPC presente. No gasta tiempo, no cambia nada,

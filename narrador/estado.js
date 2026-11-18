@@ -42,5 +42,6 @@ export function estadoInicial(contenido, { rng, nombre = '' } = {}) {
     inventario: [],
     marcas: [],
     reformulacionPendiente: false,
+    destinoPendiente: null,
   };
 }

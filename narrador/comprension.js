@@ -469,8 +469,26 @@ export function resolverDestino(texto, escenas, { lexico = null, exacto = false 
   if (hallados.length === 1) return { estado: 'resuelto', destino: hallados[0].id };
   // Sin destino: `falta_destino` no lleva lista. Con varios: `destino_ambiguo` los lista como `opciones`.
   if (hallados.length === 0) return { estado: 'reformular', motivo: MOTIVOS.FALTA_DESTINO, datos: { nombres: [] } };
-  return { estado: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { opciones: nombresDe(hallados) } };
+  return { estado: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { opciones: nombresDe(hallados), ids: hallados.map((d) => d.id) } };
 }
+
+/**
+ * Respuesta corta a una pregunta de destino ambiguo (`destinoPendiente`): nombre completo, parte del nombre o
+ * palabra clave del léxico de una de las opciones. Una sola coincidencia → resuelto; varias → ambiguo;
+ * ninguna (o una frase larga) → ninguna. `opciones`: [{ id, nombre }].
+ * @returns {{ estado: 'resuelto', destino: string } | { estado: 'ambiguo'|'ninguna' }}
+ */
+export function responderDestino(texto, opciones, { lexico = null } = {}) {
+  const entrada = tokenizar(texto);
+  if (entrada.length === 0 || entrada.length > MAX_PALABRAS_RESPUESTA) return { estado: 'ninguna' };
+  const coinciden = (opciones ?? []).filter((o) => {
+    const nombre = tokenizar(o.nombre);
+    return entrada.every((p) => nombre.some((t) => coincidePalabra(p, t) >= 0)) || palabrasDeLexico(entrada, lexico?.get(o.id)) > 0;
+  });
+  if (coinciden.length === 1) return { estado: 'resuelto', destino: coinciden[0].id };
+  return { estado: coinciden.length > 1 ? 'ambiguo' : 'ninguna' };
+}
+const MAX_PALABRAS_RESPUESTA = 8;
 
 // ---------------------------------------------------------------------------
 // Diccionarios (docs/formato-diccionarios.md): léxico y ortografía
@@ -724,7 +742,7 @@ export function salirDeEscena(contexto) {
   if (!Array.isArray(actual?.salidas)) return null;
   const salidas = actual.salidas.map((id) => escenas.find((e) => e.id === id)).filter(Boolean);
   if (salidas.length === 0) return { tipo: 'reformular', motivo: MOTIVOS.SIN_SALIDAS, datos: {} };
-  if (salidas.length > 1) return { tipo: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { opciones: nombresDe(salidas) } };
+  if (salidas.length > 1) return { tipo: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { opciones: nombresDe(salidas), ids: salidas.map((s) => s.id) } };
   const viajar = contexto.intenciones.find((i) => i.verbo === 'viajar');
   return { tipo: 'ejecutar', intencionId: viajar.id, parametros: { destino: salidas[0].id } };
 }

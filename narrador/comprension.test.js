@@ -862,7 +862,8 @@ describe('salir de acá (retirarse sin destino): sale por la salida de la escena
     const d = decidir('salir de acá', ctx({ diccionarios }));
     assert.equal(d.tipo, 'reformular');
     assert.equal(d.motivo, MOTIVOS.DESTINO_AMBIGUO);
-    assert.deepEqual(d.datos, { opciones: salidas.map(NOMBRE) });
+    assert.deepEqual(d.datos.opciones, salidas.map(NOMBRE)); // datos lleva además `ids` (pregunta pendiente)
+    assert.deepEqual(d.datos.ids, salidas);
   });
 
   test('sin salidas: reformula con el motivo sin_salidas (no hay salidas)', async () => {

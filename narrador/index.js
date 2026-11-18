@@ -105,6 +105,13 @@ export function crearPartida(opciones = {}) {
   };
 }
 
+/** Pregunta de destino pendiente: [{ id, nombre }] con turno, o null. */
+function destinoPendienteValido(p) {
+  if (!esObjeto(p) || !Array.isArray(p.opciones)) return null;
+  const opciones = p.opciones.filter((o) => esObjeto(o) && typeof o.id === 'string' && typeof o.nombre === 'string').map((o) => ({ id: o.id, nombre: o.nombre }));
+  return opciones.length > 0 ? { opciones, turno: Number.isInteger(p.turno) && p.turno >= 0 ? p.turno : 0 } : null;
+}
+
 function exigirFormaMinima(e) {
   const falta = (que) => {
     throw new Error(`cargarPartida: el estado no tiene la forma mínima (${que})`);
@@ -156,6 +163,7 @@ function conValoresPorDefecto(e) {
     inventario: e.inventario.map((i) => ({ objetoId: i.objetoId, usosRestantes: Number.isInteger(i.usosRestantes) ? i.usosRestantes : null })),
     marcas: [...e.marcas],
     reformulacionPendiente: e.reformulacionPendiente === true,
+    destinoPendiente: destinoPendienteValido(e.destinoPendiente),
     ventanaAperturas: lista(e.ventanaAperturas).filter((a) => typeof a === 'string').slice(-VENTANA_APERTURAS),
     ultimosTurnos: lista(e.ultimosTurnos).filter((t) => typeof t === 'string').slice(-MAX_ULTIMOS_TURNOS),
     numeroRegistro: Number.isInteger(e.numeroRegistro) && e.numeroRegistro >= 0 ? e.numeroRegistro : 0,
