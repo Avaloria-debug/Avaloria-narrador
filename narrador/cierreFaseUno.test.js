@@ -58,11 +58,29 @@ describe('sin_salidas y destino_ambiguo usan su plantilla, no el respaldo', () =
     assert.ok(reformulacion.destino_ambiguo.includes('Hay más de un camino: {opciones}. ¿Por cuál vas?'));
   });
 
-  test('destino_ambiguo (viaje a un destino que nombra dos): sigue con la variante de {nombres}', () => {
-    const { t, r } = jugar(en('escena_plaza_cambistas'), 'viajar a Lareth o a Halenor');
-    assert.equal(t.motivo, 'destino_ambiguo');
-    assert.equal(r.respaldo, false);
-    assert.ok(r.texto.startsWith('¿A dónde querés ir: '), r.texto);
+  test('destino_ambiguo es una sola plantilla, con {opciones}', () => {
+    assert.deepEqual(reformulacion.destino_ambiguo, ['Hay más de un camino: {opciones}. ¿Por cuál vas?']);
+  });
+
+  test('viaje a un destino ambiguo y "salir de acá": mismo texto para las mismas opciones', () => {
+    // Plaza: salidas = Taberna, Camino del norte, Camino del este. Se nombran las tres en la frase de viaje.
+    const salidas = contenido.escenas.find((e) => e.id === 'escena_plaza_cambistas').salidas.map((id) => contenido.escenas.find((e) => e.id === id).nombre);
+    const salir = jugar(en('escena_plaza_cambistas'), 'salir de acá');
+    const viaje = jugar(en('escena_plaza_cambistas'), 'viajar a la taberna o al camino del norte o al camino del este');
+    assert.equal(viaje.t.motivo, 'destino_ambiguo');
+    assert.equal(salir.t.motivo, 'destino_ambiguo');
+    assert.equal(viaje.r.respaldo, false);
+    assert.equal(salir.r.texto, `Hay más de un camino: ${salidas.join(', ').replace(/, ([^,]*)$/, ' o $1')}. ¿Por cuál vas?`);
+    assert.equal(viaje.r.texto.replace(/^Hay más de un camino: /, '').replace(/\. ¿Por cuál vas\?$/, '').split(/, | o /).sort().join('|'), [...salidas].sort().join('|'));
+    assert.match(viaje.r.texto, /^Hay más de un camino: .+\. ¿Por cuál vas\?$/);
+    // Mercado: salidas Archivo Real y Camino del norte. Las mismas dos, nombradas en la frase de viaje: texto idéntico.
+    const m1 = jugar(en('escena_mercado_circular'), 'salir de acá').r.texto;
+    const m2 = jugar(en('escena_mercado_circular'), 'viajar al archivo real o al camino del norte').r.texto;
+    assert.equal(m2, m1);
+    assert.equal(m1, 'Hay más de un camino: Archivo Real o Camino del norte. ¿Por cuál vas?');
+    // Con las mismas opciones, el mismo texto, sea cual sea el orden en que salgan.
+    const mismo = (a) => completar(reformulacion.destino_ambiguo[0], { opciones: a });
+    assert.equal(mismo(['Lareth', 'Halenor']), 'Hay más de un camino: Lareth o Halenor. ¿Por cuál vas?');
   });
 });
 

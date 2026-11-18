@@ -228,7 +228,7 @@ describe('sección 2.4 — viajar', () => {
     assert.equal(resolverDestino('ir a la biblioteca de Halenor', contenido.escenas).destino, 'escena_biblioteca_publica');
     const r = resolverDestino('ir a la biblioteca o a Lareth', contenido.escenas);
     assert.equal(r.motivo, MOTIVOS.DESTINO_AMBIGUO);
-    assert.deepEqual(r.datos.nombres.sort(), ['Biblioteca pública de Halenor', 'Lareth']);
+    assert.deepEqual(r.datos.opciones.sort(), ['Biblioteca pública de Halenor', 'Lareth']); // antes datos.nombres: plantilla unificada
   });
 
   test('ciudad por nombre, con typo', () => {
@@ -267,7 +267,7 @@ describe('sección 2.4 — viajar', () => {
   test('dos destinos en la frase: reformula con los nombres', () => {
     const r = resolverDestino('viajar a Lareth o a Halenor', contenido.escenas);
     assert.equal(r.motivo, MOTIVOS.DESTINO_AMBIGUO);
-    assert.deepEqual(r.datos.nombres.sort(), ['Halenor', 'Lareth']);
+    assert.deepEqual(r.datos.opciones.sort(), ['Halenor', 'Lareth']); // antes datos.nombres: plantilla unificada
   });
 
   test('decidir: viajar con destino ejecuta', () => {

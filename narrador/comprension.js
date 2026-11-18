@@ -458,7 +458,7 @@ function nombraDestino(entrada, d, exacto = false) {
 
 /**
  * @returns {{ estado: 'resuelto', destino: string }
- *   | { estado: 'reformular', motivo: string, datos: { nombres: string[] } }}
+ *   | { estado: 'reformular', motivo: string, datos: { nombres: string[] } | { opciones: string[] } }}
  */
 export function resolverDestino(texto, escenas, { lexico = null, exacto = false } = {}) {
   const entrada = tokenizar(texto);
@@ -467,11 +467,9 @@ export function resolverDestino(texto, escenas, { lexico = null, exacto = false 
   const ciudadesDeEscenas = new Set(hallados.filter((d) => d.tipo === 'escena').map((d) => d.ciudadId));
   hallados = hallados.filter((d) => !(d.tipo === 'ciudad' && ciudadesDeEscenas.has(d.id)));
   if (hallados.length === 1) return { estado: 'resuelto', destino: hallados[0].id };
-  return {
-    estado: 'reformular',
-    motivo: hallados.length === 0 ? MOTIVOS.FALTA_DESTINO : MOTIVOS.DESTINO_AMBIGUO,
-    datos: { nombres: nombresDe(hallados) },
-  };
+  // Sin destino: `falta_destino` no lleva lista. Con varios: `destino_ambiguo` los lista como `opciones`.
+  if (hallados.length === 0) return { estado: 'reformular', motivo: MOTIVOS.FALTA_DESTINO, datos: { nombres: [] } };
+  return { estado: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { opciones: nombresDe(hallados) } };
 }
 
 // ---------------------------------------------------------------------------
