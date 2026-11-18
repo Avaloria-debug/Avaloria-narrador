@@ -74,16 +74,17 @@ Ninguno. Con "comprension: hablame con NPC presente; test de harina corregido" p
 - Error de diccionarios en la página de prueba: verificado en Chromium con `narrador/prueba/verificarErrorPantalla.mjs` (servidor local, diccionario léxico quitado). Sigue sin verificar en otros navegadores.
 
 ### Verificación de la pantalla de error de diccionarios (manual)
-- Comando: `node narrador/prueba/verificarErrorPantalla.mjs [archivo.md]` (sin argumento quita `diccionario-lexico.md`). Requisito: Playwright con Chromium (`require('playwright')`); no es dependencia del repo.
+- Comando: `node narrador/prueba/verificarErrorPantalla.mjs [archivo.md]`. Sin argumento es el control (no se quita nada). Requisito: Playwright con Chromium (`require('playwright')`); no es dependencia del repo.
 - Es una verificación manual, **no** parte de `npm test`.
-- Limitación del script (fallo a corregir): no tiene modo de control. Con un archivo que no existe (`ninguno.md`, es decir, sin quitar nada) espera 5 s un `#aviso` que no llega y termina con `TimeoutError` y código 1, sin un veredicto claro. El control se corrió con una copia en la carpeta de scratch del agente (espera fija en lugar de esperar el aviso): `#aviso` vacío, consola sin errores, Crear y Cargar habilitados (la página arranca). Esa copia imprime "FALLA" porque el script espera un error; en el control es lo correcto.
-- Resultado de cada corrida (Chromium, servidor local con 404 para el archivo quitado): en los cinco casos `#aviso` dice "El narrador no puede arrancar: faltan o están vacíos los diccionarios: data/diccionarios/<archivo> (<archivo>: no se pudo leer (HTTP 404))", la consola trae el mismo mensaje (dos veces: el del módulo y el de la página) y Crear y Cargar quedan deshabilitados; el script da OK y código 0.
+- Veredicto por caso: `OK` (control: `#aviso` vacío, sin error en la consola, Crear y Cargar habilitados) o `ERROR_ESPERADO` (archivo quitado: `#aviso` y la consola nombran el archivo, Crear y Cargar deshabilitados). Código de salida 1 solo con `DISTINTO_DE_LO_ESPERADO`. El script espera a que la página cargue y a que `#aviso` y los botones dejen de cambiar, no a que aparezca un aviso. Un archivo que no existe (`ninguno.md`) da `DISTINTO_DE_LO_ESPERADO` y código 1, como corresponde.
+- Mensaje en consola: antes salía dos veces (`index.js` y `prueba/app.js`); se quitó el `console.error` de `app.js` (una línea). Ahora sale una vez.
+- Resultado de la última corrida (v0.0.27, Chromium, servidor local con 404 para el archivo quitado):
 
-| Quitado | `#aviso` | Consola | Crear / Cargar |
-|---|---|---|---|
-| (ninguno, control) | vacío | sin errores | habilitados / habilitados |
-| `diccionario-lexico.md` | error con ese archivo | error con ese archivo | deshabilitados / deshabilitados |
-| `ortografia-tipeo.md` | ídem | ídem | deshabilitados / deshabilitados |
-| `frases-patrones.md` | ídem | ídem | deshabilitados / deshabilitados |
-| `contexto-palabras.md` | ídem | ídem | deshabilitados / deshabilitados |
-| `temas-conocimiento.md` | ídem | ídem | deshabilitados / deshabilitados |
+| Caso | Veredicto | `#aviso` | Mensajes de error en consola | Crear / Cargar | Código |
+|---|---|---|---|---|---|
+| control (ninguno quitado) | OK | vacío | 0 | habilitados / habilitados | 0 |
+| `diccionario-lexico.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+| `ortografia-tipeo.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+| `frases-patrones.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+| `contexto-palabras.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+| `temas-conocimiento.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |

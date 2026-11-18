@@ -143,8 +143,7 @@ $('crear').addEventListener('click', () => {
 // Diccionarios obligatorios: si falta alguno, la página lo dice al abrirse y no deja crear ni cargar partidas.
 if (problemasDiccionarios.length > 0) {
   const mensaje = textoDeProblemasDeDiccionarios(problemasDiccionarios);
-  avisar(mensaje);
-  console.error(mensaje);
+  avisar(mensaje); // la consola ya la escribe index.js al cargar
   for (const id of ['crear', 'cargar']) if ($(id)) $(id).disabled = true;
 }
 
