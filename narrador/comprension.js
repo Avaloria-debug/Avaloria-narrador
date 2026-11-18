@@ -713,6 +713,24 @@ export function resolverConsulta(texto, npcsPresentes, { lexico = null } = {}) {
 // Sección 1, paso 6: decidir
 // ---------------------------------------------------------------------------
 
+/**
+ * `retirarse` sin destino ("salir de acá", y el botón): se va por la salida de la escena si hay una sola
+ * (`intencion_viajar` con ese destino); con varias, `destino_ambiguo` con los nombres; sin salidas, `sin_salidas`.
+ * Si la escena no está en el contenido, devuelve null y `retirarse` se ejecuta como antes.
+ * @returns {{ tipo: 'ejecutar', intencionId: string, parametros: { destino: string } }
+ *   | { tipo: 'reformular', motivo: string, datos: object } | null}
+ */
+export function salirDeEscena(contexto) {
+  const escenas = contexto?.escenas ?? [];
+  const actual = escenas.find((e) => e.id === contexto.escena?.id);
+  if (!Array.isArray(actual?.salidas)) return null;
+  const salidas = actual.salidas.map((id) => escenas.find((e) => e.id === id)).filter(Boolean);
+  if (salidas.length === 0) return { tipo: 'reformular', motivo: MOTIVO_SIN_SALIDAS, datos: {} };
+  if (salidas.length > 1) return { tipo: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { nombres: nombresDe(salidas) } };
+  const viajar = contexto.intenciones.find((i) => i.verbo === 'viajar');
+  return { tipo: 'ejecutar', intencionId: viajar.id, parametros: { destino: salidas[0].id } };
+}
+
 /** R1c: ¿la frase trae un verbo de movimiento del catálogo escrito exacto? */
 function esOrdenDeMovimiento(texto, intenciones) {
   const exacta = coincidirIntencion(texto, intenciones, { exacto: true });
@@ -831,23 +849,11 @@ export function decidir(texto, contexto = {}) {
   const parametros = {};
   const reportes = [];
 
-  // "salir de acá" (retirarse, sin destino): se va por la salida de la escena si hay una sola; con varias se pregunta
-  // cuál (por nombre); sin salidas se avisa. Si la escena no está en el contenido, se ejecuta como antes.
+  // "salir de acá" (retirarse, sin destino): ver `salirDeEscena`.
   if (verbo === 'retirarse') {
-    const actual = (contexto.escenas ?? []).find((e) => e.id === contexto.escena?.id);
-    if (Array.isArray(actual?.salidas)) {
-      const salidas = actual.salidas.map((id) => contexto.escenas.find((e) => e.id === id)).filter(Boolean);
-      if (salidas.length === 0) return reformular(MOTIVO_SIN_SALIDAS);
-      if (salidas.length > 1) return reformular(MOTIVOS.DESTINO_AMBIGUO, { nombres: nombresDe(salidas) });
-      const viajar = contexto.intenciones.find((i) => i.verbo === 'viajar');
-      return {
-        tipo: 'ejecutar',
-        intencionId: viajar.id,
-        parametros: { destino: salidas[0].id },
-        repetirIntencionId: coincidencia.segundaIntencionId,
-        reportes,
-      };
-    }
+    const salida = salirDeEscena(contexto);
+    if (salida?.tipo === 'reformular') return reformular(salida.motivo, salida.datos);
+    if (salida) return { ...salida, repetirIntencionId: coincidencia.segundaIntencionId, reportes };
   }
 
   if (verbo === 'viajar') {

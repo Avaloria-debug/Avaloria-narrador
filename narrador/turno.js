@@ -2,7 +2,7 @@
 // comprender -> resolver -> efectos sobre NPC -> avanzar reloj -> disparar y cerrar eventos -> mover NPCs.
 // Devuelve resultados estructurados, sin texto: la narración es del bloque 4.
 // No modifica el estado recibido.
-import { decidir, resolverNpc, resolverObjeto, MOTIVOS } from './comprension.js';
+import { decidir, resolverNpc, resolverObjeto, salirDeEscena, MOTIVOS } from './comprension.js';
 import { resolverAccion, aplicarEfectos, objetoDisponible, entradaDeInventario, MOTIVOS_FALLO } from './resolver.js';
 import { aplicarTransicion, disposicionEfectiva } from './npcs.js';
 import { conocimientoARevelar, conocimientoPorNarrativo, puedeRevelar, revelar, MOTIVOS_NO_REVELA } from './conocimientos.js';
@@ -80,6 +80,12 @@ function decidirBoton(entrada, estado, contenido) {
   const reportes = [];
   const reformular = (motivo, datos = { nombres: [] }) => ({ tipo: 'reformular', motivo, intencionId: intencion.id, datos });
 
+  // Retirarse sin destino: el mismo camino que la frase "salir de acá".
+  if (intencion.verbo === 'retirarse') {
+    const salida = salirDeEscena(ctx);
+    if (salida?.tipo === 'reformular') return reformular(salida.motivo, salida.datos);
+    if (salida) return { ...salida, repetirIntencionId: null, reportes };
+  }
   if (intencion.verbo === 'viajar') {
     if (typeof dados.destino !== 'string') return reformular(MOTIVOS.FALTA_DESTINO);
     parametros.destino = dados.destino;

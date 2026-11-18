@@ -71,4 +71,4 @@ Ninguno. Con "comprension: hablame con NPC presente; test de harina corregido" p
 ### Fase 1: pendientes que quedan
 - Plantilla `sin_salidas` en `plantillas.reformulacion` de `contenido-v3.json` (texto "no hay salidas"): hasta que Tomás la agregue, ese caso usa el respaldo. No ocurre con el contenido actual (todas las escenas tienen salidas).
 - Confirmar con Tomás el texto de `destino_ambiguo` para "salir de acá" con varias salidas ("¿A dónde querés ir: …?"), que es la plantilla existente.
-- Error de diccionarios en la página de prueba: SIN VERIFICAR en un navegador real con un archivo faltante (la carga por `fetch` tampoco).
+- Error de diccionarios en la página de prueba: verificado en Chromium con `narrador/prueba/verificarErrorPantalla.mjs` (servidor local, diccionario léxico quitado). Sigue sin verificar en otros navegadores.
