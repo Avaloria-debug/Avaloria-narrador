@@ -389,10 +389,10 @@ describe('turno — efectos de eventos', () => {
     const e = partida({
       eventosActivos: [{ id: 'evento_feria_intercambio', escenaId: 'escena_mercado_circular', turnosRestantes: 2, horaFin: null }],
     });
-    const uno = texto(e, 'retirarse');
+    const uno = texto(e, 'observar'); // antes 'retirarse': ahora mueve o reformula según las salidas de la escena
     assert.deepEqual(uno.escena.npcs, [{ id: 'serel_panadero', disposicion: 1 }]);
     assert.equal(uno.estado.npcs.serel_panadero.disposicion, 0);
-    const dos = texto(uno.estado, 'retirarse');
+    const dos = texto(uno.estado, 'observar');
     assert.deepEqual(dos.eventos.cerrados.map((c) => c.id), ['evento_feria_intercambio']);
     assert.deepEqual(dos.escena.npcs, [{ id: 'serel_panadero', disposicion: 0 }]);
   });
@@ -576,7 +576,9 @@ describe('turno — prueba de carga', () => {
       for (const i of estado.inventario) assert.ok(i.usosRestantes === null || i.usosRestantes > 0, i.objetoId);
       assert.deepEqual(JSON.parse(JSON.stringify(estado)), estado);
     }
-    assert.deepEqual([...vistos.tipos].sort(), ['accion', 'ia', 'reformular']);
+    // 'consulta': retirarse ahora mueve al jugador por su salida; la partida sembrada cambia de recorrido y llega a frases
+    // con un tema de un NPC presente (p. ej. "recorrer Recibo de deuda…" con Ivor). Antes no aparecía por azar del recorrido.
+    assert.deepEqual([...vistos.tipos].sort(), ['accion', 'consulta', 'ia', 'reformular']);
     assert.ok(vistos.verbos.size >= 20, `verbos ejecutados: ${vistos.verbos.size}`);
     assert.ok(vistos.escenas.size >= 8, `escenas visitadas: ${vistos.escenas.size}`);
     assert.ok(vistos.efectos.has('relacion') && vistos.efectos.has('dinero') && vistos.efectos.has('movimiento'));

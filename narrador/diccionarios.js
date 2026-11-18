@@ -271,3 +271,26 @@ function urlDe(dir, archivo) {
   // Ruta de disco: se une a mano para no depender de node:path en el navegador.
   return `${String(dir).replace(/[\\/]+$/, '')}/${archivo}`;
 }
+
+/**
+ * Diccionarios que el motor exige y no están: no se cargaron (archivo que falta o ilegible) o no trajeron ninguna entrada.
+ * @param {Record<string, { cargados: object[], errores: string[] }>|null} cargados salida de `cargarDiccionarios`
+ * @returns {{ nombre: string, archivo: string, motivo: string }[]} vacío si están los cinco
+ */
+export function problemasDeDiccionarios(cargados) {
+  const problemas = [];
+  for (const nombre of NOMBRES_DICCIONARIOS) {
+    const { archivo } = FORMATOS[nombre];
+    const d = cargados?.[nombre];
+    if (Array.isArray(d?.cargados) && d.cargados.length > 0) continue;
+    const causa = d?.errores?.[0];
+    problemas.push({ nombre, archivo, motivo: causa ?? (d ? 'sin entradas' : 'no se cargó') });
+  }
+  return problemas;
+}
+
+/** Texto del error de arranque: un renglón por archivo, con su ruta. */
+export function textoDeProblemasDeDiccionarios(problemas) {
+  const lista = problemas.map((p) => `data/diccionarios/${p.archivo} (${p.motivo})`).join('; ');
+  return `El narrador no puede arrancar: faltan o están vacíos los diccionarios: ${lista}.`;
+}

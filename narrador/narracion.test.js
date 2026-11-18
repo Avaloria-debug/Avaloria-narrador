@@ -295,7 +295,8 @@ describe('narración — textos limpios', () => {
       const t = ejecutarTurno(estado, entrada, { contenido, rng });
       const r = narrarTurno(t, { contenido, rng, aperturas });
       tipos.add(t.tipo);
-      if (t.tipo === 'accion' || t.tipo === 'reformular') {
+      // 'consulta': con el recorrido sembrado nuevo (retirarse ahora mueve) aparecen consultas de tema; también se narran.
+      if (t.tipo === 'accion' || t.tipo === 'reformular' || t.tipo === 'consulta') {
         limpio(r.texto);
         assert.equal(r.aperturas.at(-1), aperturaDe(r.texto));
         if (r.respaldo) respaldos++;

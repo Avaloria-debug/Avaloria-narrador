@@ -2,7 +2,8 @@
 // (pasos en docs/PENDIENTES.md). No usa ui/ ni index.html de Avaloria, ni Firestore.
 // La clave de Groq vive en localStorage de este navegador y solo viaja a la API de Groq (narrador/ia.js).
 // Todo lo que se muestra se escribe con textContent: el texto del jugador nunca se interpreta.
-import { crearPartida, cargarPartida, narrar, contenido } from '../index.js';
+import { crearPartida, cargarPartida, narrar, contenido, problemasDiccionarios } from '../index.js';
+import { textoDeProblemasDeDiccionarios } from '../diccionarios.js';
 import { crearColaDeRegistros } from '../registro.js';
 import { crearAlmacenIndexedDB } from '../../persistencia/adaptadores/almacenIndexedDB.js';
 import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, fijarRelacion, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
@@ -128,10 +129,24 @@ async function turno(entrada) {
 }
 
 $('crear').addEventListener('click', () => {
-  estado = crearPartida();
-  avisar('Partida creada.');
+  try {
+    estado = crearPartida();
+    avisar('Partida creada.');
+  } catch (e) {
+    // Sin diccionarios el narrador no arranca: el error se ve en pantalla y en la consola.
+    avisar(e instanceof Error ? e.message : String(e));
+    console.error(e);
+  }
   pintarEscena();
 });
+
+// Diccionarios obligatorios: si falta alguno, la página lo dice al abrirse y no deja crear ni cargar partidas.
+if (problemasDiccionarios.length > 0) {
+  const mensaje = textoDeProblemasDeDiccionarios(problemasDiccionarios);
+  avisar(mensaje);
+  console.error(mensaje);
+  for (const id of ['crear', 'cargar']) if ($(id)) $(id).disabled = true;
+}
 
 $('guardar').addEventListener('click', async () => {
   if (!estado) return;

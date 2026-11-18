@@ -67,3 +67,8 @@ Tests reescritos a R1/R2/R3: 9. Los 11 tests con frase de relleno ("sigo sin dec
 
 ### Tests rojos (0)
 Ninguno. Con "comprension: hablame con NPC presente; test de harina corregido" pasan "hablar con el de la harina" sin léxico (reformula) y "hablame sobre Serel" (habla con Serel). Suite completa en verde.
+
+### Fase 1: pendientes que quedan
+- Plantilla `sin_salidas` en `plantillas.reformulacion` de `contenido-v3.json` (texto "no hay salidas"): hasta que Tomás la agregue, ese caso usa el respaldo. No ocurre con el contenido actual (todas las escenas tienen salidas).
+- Confirmar con Tomás el texto de `destino_ambiguo` para "salir de acá" con varias salidas ("¿A dónde querés ir: …?"), que es la plantilla existente.
+- Error de diccionarios en la página de prueba: SIN VERIFICAR en un navegador real con un archivo faltante (la carga por `fetch` tampoco).

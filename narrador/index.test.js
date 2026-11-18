@@ -1,6 +1,7 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { crearPartida, cargarPartida, narrar, contenido, TIPOS_SALIDA } from './index.js';
+import { crearPartida, cargarPartida, narrar, contenido, TIPOS_SALIDA, problemasDiccionarios } from './index.js';
+import { cargarDiccionarios, problemasDeDiccionarios, textoDeProblemasDeDiccionarios } from './diccionarios.js';
 import { validarRegistro } from './registro.js';
 import { MENSAJE_SISTEMA } from './ia.js';
 import { ESTADOS_ESCENA } from './contenido.js';
@@ -516,5 +517,36 @@ describe('estado del caso', () => {
 
   test('un caso que no es un objeto queda en null', () => {
     assert.equal(cargarPartida({ ...crearPartida({ semilla: 1 }), caso: 'x' }).caso, null);
+  });
+});
+
+describe('diccionarios obligatorios: sin ellos el motor no arranca la partida', () => {
+  test('con los archivos reales no hay problemas y la partida arranca', () => {
+    assert.deepEqual(problemasDiccionarios, []);
+    assert.doesNotThrow(() => crearPartida({ semilla: 1 }));
+  });
+
+  test('léxico que no se carga: crearPartida y cargarPartida lanzan un error que nombra el archivo', async () => {
+    const leer = async (url) => {
+      if (String(url).endsWith('diccionario-lexico.md')) throw Object.assign(new Error('x'), { code: 'ENOENT' });
+      return (await import('node:fs/promises')).readFile(url, 'utf8');
+    };
+    const problemas = problemasDeDiccionarios(await cargarDiccionarios(contenido, { leer }));
+    assert.deepEqual(problemas.map((p) => p.archivo), ['diccionario-lexico.md']);
+    const texto = textoDeProblemasDeDiccionarios(problemas);
+    assert.match(texto, /data\/diccionarios\/diccionario-lexico\.md/);
+    assert.throws(() => crearPartida({ problemasDiccionarios: problemas }), { message: texto });
+    const guardada = JSON.stringify(crearPartida({ semilla: 1 }));
+    assert.throws(() => cargarPartida(guardada, { problemasDiccionarios: problemas }), { message: texto });
+  });
+
+  test('léxico vacío (o archivo con errores y ninguna entrada) también es un problema', async () => {
+    const vacio = '---\ntipo: diccionario-lexico\nversion: 1\nentradas: 0\n---\n\n## Verbos\n';
+    const leer = async (url) =>
+      String(url).endsWith('diccionario-lexico.md') ? vacio : (await import('node:fs/promises')).readFile(url, 'utf8');
+    const problemas = problemasDeDiccionarios(await cargarDiccionarios(contenido, { leer }));
+    assert.deepEqual(problemas.map((p) => p.archivo), ['diccionario-lexico.md']);
+    assert.equal(problemas[0].motivo, 'sin entradas');
+    assert.deepEqual(problemasDeDiccionarios(null).map((p) => p.motivo), Array(5).fill('no se cargó'));
   });
 });

@@ -14,10 +14,12 @@ import {
   destinosDeViaje,
   decidir,
   aVoseoInfinitivo,
+  INTENCIONES_MOVIMIENTO,
   PALABRAS_VACIAS,
   MOTIVOS,
 } from './comprension.js';
-import { REPETIR_SEGUNDA } from './motivos.js';
+import { REPETIR_SEGUNDA, MOTIVO_SIN_SALIDAS } from './motivos.js';
+import { crearPartida, narrar } from './index.js';
 import { clasificarViaje, TIPOS_VIAJE } from './viaje.js';
 
 let contenido;
@@ -829,5 +831,63 @@ describe('R1 y R4 — consulta de tema y typos', () => {
     // Con un tema de un NPC presente sigue siendo consulta; sin NPC presente que lo tenga, se pregunta.
     assert.equal(decidir('hablame sobre la harina', ctx({ npcsPresentes: [npc('serel_panadero')], diccionarios })).tipo, 'consulta');
     assert.equal(decidir('hablame sobre el tratado', ctx({ npcsPresentes: [npc('serel_panadero')], diccionarios })).motivo, MOTIVOS.FALTA_NPC);
+  });
+});
+
+describe('salir de acá (retirarse sin destino): sale por la salida de la escena', () => {
+  const NOMBRE = (id) => escena(id).nombre;
+  const dic = () => cargarDiccionarios(contenido);
+
+  test('una sola salida: ejecuta el movimiento a esa salida (intencion_viajar con destino)', async () => {
+    const diccionarios = await dic();
+    assert.deepEqual(escena('escena_taberna_lareth').salidas, ['escena_plaza_cambistas']);
+    for (const frase of ['salir de acá', 'retirarse']) {
+      const d = decidir(frase, ctx({ escena: { id: 'escena_taberna_lareth' }, diccionarios }));
+      assert.deepEqual(d, {
+        tipo: 'ejecutar',
+        intencionId: 'intencion_viajar',
+        parametros: { destino: 'escena_plaza_cambistas' },
+        repetirIntencionId: null,
+        reportes: [],
+      }, frase);
+    }
+  });
+
+  test('varias salidas: reformula listando las salidas por nombre', async () => {
+    const diccionarios = await dic();
+    const salidas = escena('escena_plaza_cambistas').salidas;
+    assert.ok(salidas.length > 1);
+    const d = decidir('salir de acá', ctx({ diccionarios }));
+    assert.equal(d.tipo, 'reformular');
+    assert.equal(d.motivo, MOTIVOS.DESTINO_AMBIGUO);
+    assert.deepEqual(d.datos, { nombres: salidas.map(NOMBRE) });
+  });
+
+  test('sin salidas: reformula con el motivo sin_salidas (no hay salidas)', async () => {
+    const diccionarios = await dic();
+    const escenas = contenido.escenas.map((e) => (e.id === PLAZA.id ? { ...e, salidas: [] } : e));
+    const d = decidir('salir de acá', ctx({ escenas, diccionarios }));
+    assert.deepEqual(d, { tipo: 'reformular', motivo: MOTIVO_SIN_SALIDAS, intencionId: 'intencion_retirarse', datos: {} });
+    assert.equal(MOTIVO_SIN_SALIDAS, 'sin_salidas');
+  });
+
+  test('de punta a punta: con una salida el jugador cambia de escena', async () => {
+    const e = crearPartida({ semilla: 3 });
+    const en = { ...e, jugador: { ...e.jugador, escenaId: 'escena_taberna_lareth' } };
+    const r = await narrar(en, { tipo: 'texto', texto: 'salir de acá' });
+    assert.equal(r.estado.jugador.escenaId, 'escena_plaza_cambistas');
+  });
+});
+
+describe('R1c: el movimiento sale del catálogo, por id de intención', () => {
+  test('INTENCIONES_MOVIMIENTO son ids que existen en el catálogo', () => {
+    assert.deepEqual([...INTENCIONES_MOVIMIENTO], ['intencion_viajar', 'intencion_retirarse']);
+    for (const id of INTENCIONES_MOVIMIENTO) assert.ok(intenciones.some((i) => i.id === id), id);
+  });
+  test('una orden de movimiento con una palabra clave de tema no es consulta', () => {
+    const serel = ctx({ npcsPresentes: [npc('serel_panadero')], escena: { id: 'escena_mercado_circular' } });
+    assert.equal(decidir('viajar al norte por la harina', serel).tipo, 'ejecutar');
+    // Mercado: dos salidas, así que retirarse pregunta a dónde; no es una consulta de tema.
+    assert.equal(decidir('retirarse con la harina', serel).motivo, MOTIVOS.DESTINO_AMBIGUO);
   });
 });

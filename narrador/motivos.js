@@ -14,6 +14,10 @@ export const MOTIVOS = Object.freeze({
   DESTINO_AMBIGUO: 'destino_ambiguo',
 });
 
+// Retirarse en una escena sin salidas. No tiene plantilla en el contenido (no se modifica contenido-v3.json): la
+// narración usa el respaldo. Está fuera de MOTIVOS a propósito: el validador exige plantilla a cada motivo de MOTIVOS.
+export const MOTIVO_SIN_SALIDAS = 'sin_salidas';
+
 // Pedido de repetir la segunda intención de una frase (repetirIntencionId de decidir).
 export const REPETIR_SEGUNDA = 'repetir_segunda';
 

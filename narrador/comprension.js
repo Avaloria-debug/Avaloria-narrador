@@ -4,7 +4,7 @@
 // El texto del jugador solo se lee: nunca vuelve en los datos de salida.
 import { resolverNpcObjetivo } from '../core/orquestador/resolverNpcObjetivo.js';
 import { DESTINOS_CIUDAD } from './contenido.js';
-import { MOTIVOS } from './motivos.js';
+import { MOTIVOS, MOTIVO_SIN_SALIDAS } from './motivos.js';
 import { TIPOS_LEXICO_VERBO } from './diccionarios.js';
 
 export { MOTIVOS };
@@ -28,9 +28,9 @@ export const VERBOS_SIN_OBJETIVO_PERMITIDO = Object.freeze(['observar', 'defende
 export const VERBOS_NPC_SOLO_NOMBRADO = Object.freeze(['usar']);
 // R4 (ajuste): verbos de acción de riesgo. Sin tolerancia a typos: solo la forma escrita exacta ("huri" no es huir).
 export const VERBOS_DE_RIESGO = Object.freeze(['huir', 'atacar', 'emboscar', 'abortar', 'rendirse', 'defender']);
-// R1c: verbos de movimiento del catálogo (intenciones de `contenido-v3.json`: viajar, retirarse, huir, avanzar_cautela).
-// Escritos exactos, una frase con ellos no es una consulta de tema. La lista también está en docs/comprension-v1.md §4.
-export const VERBOS_MOVIMIENTO = Object.freeze(['viajar', 'retirarse', 'huir', 'avanzar_cautela']);
+// R1c: intenciones de movimiento del catálogo (`contenido-v3.json`), por id: las que cambian al jugador de lugar.
+// Escritas exactas, una frase con ellas no es una consulta de tema. Sale del catálogo (docs/comprension-v1.md §4).
+export const INTENCIONES_MOVIMIENTO = Object.freeze(['intencion_viajar', 'intencion_retirarse']);
 // Sección 4.3.
 export const VERBOS_OBJETO_EXIGIDO = Object.freeze(['usar', 'examinar']);
 export const VERBOS_OBJETO_OPCIONAL = Object.freeze(['comprar', 'atacar']);
@@ -716,7 +716,7 @@ export function resolverConsulta(texto, npcsPresentes, { lexico = null } = {}) {
 /** R1c: ¿la frase trae un verbo de movimiento del catálogo escrito exacto? */
 function esOrdenDeMovimiento(texto, intenciones) {
   const exacta = coincidirIntencion(texto, intenciones, { exacto: true });
-  return exacta !== null && VERBOS_MOVIMIENTO.includes(exacta.verbo);
+  return exacta !== null && INTENCIONES_MOVIMIENTO.includes(exacta.intencionId);
 }
 
 /**
@@ -830,6 +830,25 @@ export function decidir(texto, contexto = {}) {
   const { verbo } = coincidencia;
   const parametros = {};
   const reportes = [];
+
+  // "salir de acá" (retirarse, sin destino): se va por la salida de la escena si hay una sola; con varias se pregunta
+  // cuál (por nombre); sin salidas se avisa. Si la escena no está en el contenido, se ejecuta como antes.
+  if (verbo === 'retirarse') {
+    const actual = (contexto.escenas ?? []).find((e) => e.id === contexto.escena?.id);
+    if (Array.isArray(actual?.salidas)) {
+      const salidas = actual.salidas.map((id) => contexto.escenas.find((e) => e.id === id)).filter(Boolean);
+      if (salidas.length === 0) return reformular(MOTIVO_SIN_SALIDAS);
+      if (salidas.length > 1) return reformular(MOTIVOS.DESTINO_AMBIGUO, { nombres: nombresDe(salidas) });
+      const viajar = contexto.intenciones.find((i) => i.verbo === 'viajar');
+      return {
+        tipo: 'ejecutar',
+        intencionId: viajar.id,
+        parametros: { destino: salidas[0].id },
+        repetirIntencionId: coincidencia.segundaIntencionId,
+        reportes,
+      };
+    }
+  }
 
   if (verbo === 'viajar') {
     // El destino también tiene que estar escrito bien: "viajá al nrte" no viaja.

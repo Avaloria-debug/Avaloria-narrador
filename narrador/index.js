@@ -16,7 +16,7 @@ import { pedirRespuestaIA, datosDeContexto, validarSalida, SIN_IA, MOTIVOS_IA } 
 import { registroDeTurno, ORIGENES, MAX_ULTIMOS_TURNOS } from './registro.js';
 import { estadoDeEscena } from './estadoEscena.js';
 import { destinosDeViaje, prepararDiccionarios } from './comprension.js';
-import { cargarDiccionarios } from './diccionarios.js';
+import { cargarDiccionarios, problemasDeDiccionarios, textoDeProblemasDeDiccionarios } from './diccionarios.js';
 import { npcInicial, clampRelacion, clampDisposicion } from './npcs.js';
 import { esHora } from './reloj.js';
 import { MOTIVOS } from './motivos.js';
@@ -59,11 +59,24 @@ async function leerContenidoPorDefecto() {
 export const contenido = exigirContenidoValido(await leerContenidoPorDefecto());
 
 /**
- * Diccionarios de la comprensión (léxico y ortografía), cargados una vez. `cargarDiccionarios` nunca lanza:
- * si un archivo falta o trae errores, ese diccionario no se usa y el narrador sigue con el catálogo solo.
+ * Diccionarios de la comprensión, cargados una vez. `cargarDiccionarios` no lanza: anota en cada diccionario lo que
+ * falló. Son obligatorios: si falta uno o viene vacío, `problemasDiccionarios` lo dice (con el archivo), se escribe en la
+ * consola y `crearPartida` y `cargarPartida` se niegan a arrancar una partida (`exigirDiccionarios`).
  * SIN VERIFICAR: la carga por `fetch` en el navegador.
  */
-export const diccionarios = prepararDiccionarios(await cargarDiccionarios(contenido), contenido.intenciones);
+const diccionariosCargados = await cargarDiccionarios(contenido);
+export const diccionarios = prepararDiccionarios(diccionariosCargados, contenido.intenciones);
+export const problemasDiccionarios = problemasDeDiccionarios(diccionariosCargados);
+if (problemasDiccionarios.length > 0) console.error(textoDeProblemasDeDiccionarios(problemasDiccionarios));
+
+/**
+ * Error de arranque por diccionarios que faltan. `opciones.problemasDiccionarios` es para tests.
+ * @throws {Error} con el archivo que falta
+ */
+function exigirDiccionarios(opciones) {
+  const problemas = Array.isArray(opciones?.problemasDiccionarios) ? opciones.problemasDiccionarios : problemasDiccionarios;
+  if (problemas.length > 0) throw new Error(textoDeProblemasDeDiccionarios(problemas));
+}
 
 const lista = (v) => (Array.isArray(v) ? v : []);
 const esObjeto = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -75,6 +88,7 @@ const porId = (l, id) => lista(l).find((x) => x.id === id);
  * @param {{ semilla?: number|string }} [opciones] con semilla, la partida es reproducible
  */
 export function crearPartida(opciones = {}) {
+  exigirDiccionarios(opciones);
   const semilla = opciones?.semilla;
   const rng = crearRng(semilla === undefined || semilla === null ? semillaAlAzar() : semillaAEntero(semilla));
   const base = estadoInicial(contenido, { rng });
@@ -184,7 +198,8 @@ function reconstruir(e) {
  * (saca lo que ya no existe, agrega los NPCs nuevos) y deja un aviso en `estado.avisos`.
  * @param {string|object} json
  */
-export function cargarPartida(json) {
+export function cargarPartida(json, opciones = {}) {
+  exigirDiccionarios(opciones);
   let crudo = json;
   if (typeof json === 'string') {
     try {
