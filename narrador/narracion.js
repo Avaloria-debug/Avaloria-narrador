@@ -6,7 +6,7 @@ import { destinosDeViaje } from './comprension.js';
 import { BLOQUE_REFORMULACION, MOTIVOS, REPETIR_SEGUNDA, YA_EN_DESTINO } from './motivos.js';
 
 export const VENTANA_APERTURAS = 5;
-export const PLACEHOLDERS = Object.freeze(['npc', 'objeto', 'lugar', 'conocimiento', 'nombres']);
+export const PLACEHOLDERS = Object.freeze(['npc', 'objeto', 'lugar', 'conocimiento', 'nombres', 'opciones']);
 export const SEPARADOR_NOMBRES = ', ';
 
 const BLOQUE_REVELAR = 'revelar_conocimiento';
@@ -30,12 +30,19 @@ export function aperturaDe(texto) {
   return palabra.toLowerCase().replace(/[^\p{L}\p{N}]/gu, '');
 }
 
-/** Deja solo los valores que sirven: textos no vacíos; `nombres` puede llegar como lista. */
+/** Lista para leer en voz alta: "A", "A o B", "A, B o C". Sin elementos vacíos. */
+export function formatearOpciones(lista) {
+  const items = (Array.isArray(lista) ? lista : []).map(textoUtil).filter(Boolean);
+  if (items.length <= 1) return items[0] ?? null;
+  return `${items.slice(0, -1).join(SEPARADOR_NOMBRES)} o ${items.at(-1)}`;
+}
+
+/** Deja solo los valores que sirven: textos no vacíos; `nombres` y `opciones` pueden llegar como lista. */
 export function limpiarValores(valores = {}) {
   const limpios = {};
   for (const nombre of PLACEHOLDERS) {
     const v = valores[nombre];
-    const texto = Array.isArray(v) ? textoUtil(v.map(textoUtil).filter(Boolean).join(SEPARADOR_NOMBRES)) : textoUtil(v);
+    const texto = nombre === 'opciones' && Array.isArray(v) ? formatearOpciones(v) : Array.isArray(v) ? textoUtil(v.map(textoUtil).filter(Boolean).join(SEPARADOR_NOMBRES)) : textoUtil(v);
     // Un valor con llaves no se usa: dejaría un placeholder a la vista.
     if (texto && !/[{}]/.test(texto)) limpios[nombre] = texto;
   }
@@ -168,7 +175,7 @@ export function narrarTurno(turno, { contenido, rng, aperturas = [] }) {
   });
 
   if (turno?.tipo === 'reformular') {
-    return salida([narrarReformulacion(contenido, turno.motivo, { nombres: turno.datos?.nombres }, opciones)]);
+    return salida([narrarReformulacion(contenido, turno.motivo, { nombres: turno.datos?.nombres, opciones: turno.datos?.opciones }, opciones)]);
   }
   if (turno?.tipo === 'consulta' && turno.consulta) {
     const { npcId, conocimientoId, resultado } = turno.consulta;

@@ -30,7 +30,7 @@ const partida = (extra = {}) => {
 };
 const turnoDe = (estado, frase, rng = rngDe([0.1])) => ejecutarTurno(estado, { tipo: 'texto', texto: frase }, { contenido, rng });
 const narrar = (turno, aperturas = [], rng = rngDe([0])) => narrarTurno(turno, { contenido, rng, aperturas });
-const COMPLETOS = { npc: 'Serel', objeto: 'Antorcha', lugar: 'Mercado Circular', conocimiento: 'Un dato', nombres: ['Serel', 'Maren'] };
+const COMPLETOS = { npc: 'Serel', objeto: 'Antorcha', lugar: 'Mercado Circular', conocimiento: 'Un dato', nombres: ['Serel', 'Maren'], opciones: ['Serel', 'Maren'] };
 
 /** Sin placeholders, corchetes ni ids (los ids llevan guion bajo). */
 const limpio = (texto) => {

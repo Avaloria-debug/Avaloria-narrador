@@ -27,7 +27,7 @@ describe('botón retirarse = "salir de acá"', () => {
     const b = correr(en('escena_plaza_cambistas'), boton);
     assert.equal(b.tipo, 'reformular');
     assert.equal(b.motivo, MOTIVOS.DESTINO_AMBIGUO);
-    assert.deepEqual(b.datos.nombres.length, 3);
+    assert.deepEqual(b.datos.opciones.length, 3);
     assert.deepEqual(b, a);
   });
 

@@ -68,10 +68,14 @@ Tests reescritos a R1/R2/R3: 9. Los 11 tests con frase de relleno ("sigo sin dec
 ### Tests rojos (0)
 Ninguno. Con "comprension: hablame con NPC presente; test de harina corregido" pasan "hablar con el de la harina" sin léxico (reformula) y "hablame sobre Serel" (habla con Serel). Suite completa en verde.
 
-### Fase 1: pendientes que quedan
-- Plantilla `sin_salidas` en `plantillas.reformulacion` de `contenido-v3.json` (texto "no hay salidas"): hasta que Tomás la agregue, ese caso usa el respaldo. No ocurre con el contenido actual (todas las escenas tienen salidas).
-- Confirmar con Tomás el texto de `destino_ambiguo` para "salir de acá" con varias salidas ("¿A dónde querés ir: …?"), que es la plantilla existente.
-- Error de diccionarios en la página de prueba: verificado en Chromium con `narrador/prueba/verificarErrorPantalla.mjs` (servidor local, diccionario léxico quitado). Sigue sin verificar en otros navegadores.
+### Fase 1: cerrada
+Cerrada con "fase 1 cierre: plantillas sin_salidas y destino_ambiguo; consulta narrada". Las decisiones están en `docs/SUPUESTOS.md` como "decididas". La única parte sin verificar en otros entornos es la pantalla de error en navegadores distintos de Chromium (abajo).
+
+### Fase 2: lo que queda
+- Navegador real (otros navegadores), Groq real, Firebase real, HTML de Avaloria y política de privacidad (secciones 1 a 5 de este documento).
+- Consultas de tema, paso C: contenido a aprobar por Tomás (sección 7).
+- Motor de caso (sección 8) y futuro sin implementar (sección 9).
+- Pendientes de Tomás que siguen sin respuesta (ver `docs/SUPUESTOS.md`, "Pendiente de Tomás").
 
 ### Verificación de la pantalla de error de diccionarios (manual)
 - Comando: `node narrador/prueba/verificarErrorPantalla.mjs [archivo.md]`. Sin argumento es el control (no se quita nada). Requisito: Playwright con Chromium (`require('playwright')`); no es dependencia del repo.

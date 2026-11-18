@@ -726,7 +726,7 @@ export function salirDeEscena(contexto) {
   if (!Array.isArray(actual?.salidas)) return null;
   const salidas = actual.salidas.map((id) => escenas.find((e) => e.id === id)).filter(Boolean);
   if (salidas.length === 0) return { tipo: 'reformular', motivo: MOTIVO_SIN_SALIDAS, datos: {} };
-  if (salidas.length > 1) return { tipo: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { nombres: nombresDe(salidas) } };
+  if (salidas.length > 1) return { tipo: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { opciones: nombresDe(salidas) } };
   const viajar = contexto.intenciones.find((i) => i.verbo === 'viajar');
   return { tipo: 'ejecutar', intencionId: viajar.id, parametros: { destino: salidas[0].id } };
 }

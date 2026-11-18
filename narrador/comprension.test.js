@@ -652,8 +652,8 @@ describe('destinos dentro de la ciudad', () => {
 });
 
 describe('reformulaciones — texto en el contenido', () => {
-  test('hay 11 motivos y cada uno tiene texto', () => {
-    assert.equal(Object.keys(MOTIVOS).length, 11);
+  test('hay 12 motivos y cada uno tiene texto', () => {
+    assert.equal(Object.keys(MOTIVOS).length, 12); // + sin_salidas
     for (const motivo of Object.values(MOTIVOS)) {
       const textos = contenido.plantillas.reformulacion[motivo];
       assert.ok(Array.isArray(textos) && textos.length > 0, motivo);
@@ -684,6 +684,8 @@ describe('reformulaciones — texto en el contenido', () => {
       ['usar el pan', ctx({ objetosAplicables: panes })],
       ['ir a la casa', ctx()],
       ['viajar a Lareth o a Halenor', ctx()],
+      ['retirarse', ctx()], // destino_ambiguo (varias salidas)
+      ['retirarse', ctx({ escenas: contenido.escenas.map((e) => ({ ...e, salidas: [] })) })], // sin_salidas
     ];
     const vistos = new Set();
     for (const [frase, c] of casos) {
@@ -699,7 +701,7 @@ describe('reformulaciones — texto en el contenido', () => {
     for (const [clave, textos] of Object.entries(contenido.plantillas.reformulacion)) {
       for (const t of textos) {
         assert.ok(!/(escena|objeto|evento|intencion|conocimiento|ciudad)_/.test(t), clave);
-        assert.deepEqual((t.match(/\{[^}]*\}/g) ?? []).filter((p) => p !== '{nombres}' && p !== '{lugar}'), [], clave);
+        assert.deepEqual((t.match(/\{[^}]*\}/g) ?? []).filter((p) => p !== '{nombres}' && p !== '{lugar}' && p !== '{opciones}'), [], clave);
       }
     }
   });
@@ -860,7 +862,7 @@ describe('salir de acá (retirarse sin destino): sale por la salida de la escena
     const d = decidir('salir de acá', ctx({ diccionarios }));
     assert.equal(d.tipo, 'reformular');
     assert.equal(d.motivo, MOTIVOS.DESTINO_AMBIGUO);
-    assert.deepEqual(d.datos, { nombres: salidas.map(NOMBRE) });
+    assert.deepEqual(d.datos, { opciones: salidas.map(NOMBRE) });
   });
 
   test('sin salidas: reformula con el motivo sin_salidas (no hay salidas)', async () => {

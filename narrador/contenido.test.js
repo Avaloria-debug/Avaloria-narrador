@@ -351,7 +351,7 @@ describe('contenido — alias de NPC', () => {
 describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
   test('archivo real: una clave por motivo, más repetir_segunda', () => {
     assert.deepEqual(Object.keys(base.plantillas.reformulacion).sort(), [...CLAVES_REFORMULACION].sort());
-    assert.equal(CLAVES_REFORMULACION.length, 13);
+    assert.equal(CLAVES_REFORMULACION.length, 14); // + sin_salidas
     assert.deepEqual(base.plantillas.reformulacion.ya_en_destino, ['Ya estás en {lugar}.']);
   });
 
