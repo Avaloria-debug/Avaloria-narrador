@@ -2,6 +2,8 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { crearPartida, narrar, contenido } from '../index.js';
 import { readFile, readdir } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import { relative } from 'node:path';
 import { fijarRelacion, opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, tokensDeLlamadas, armarPanel } from './panel.js';
 
 test('opcionesDeEscena: una intención por botón y las listas de la escena inicial', () => {
@@ -83,6 +85,8 @@ describe('el panel de relación solo está en la página de prueba', () => {
   });
 
   test('ningún otro archivo del narrador, ni index.html de la raíz ni ui/, lo menciona', async () => {
+    // Raíz del repo según donde está este archivo: no depende del nombre de la carpeta de la copia.
+    const RAIZ = fileURLToPath(new URL('../../', import.meta.url));
     const hallados = [];
     const revisar = async (dir) => {
       for (const e of await readdir(dir, { withFileTypes: true })) {
@@ -91,7 +95,7 @@ describe('el panel de relación solo está en la página de prueba', () => {
           if (e.name !== 'node_modules') await revisar(ruta);
         } else if (/\.(js|html|json)$/.test(e.name)) {
           const t = await readFile(ruta, 'utf8');
-          if (/panelRelacion|solo prueba|fijarRelacion/.test(t)) hallados.push(ruta.pathname.split('/Avaloria-narrador/')[1]);
+          if (/panelRelacion|solo prueba|fijarRelacion/.test(t)) hallados.push(relative(RAIZ, fileURLToPath(ruta)).split('\\').join('/'));
         }
       }
     };
@@ -105,6 +109,7 @@ describe('el panel de relación solo está en la página de prueba', () => {
       }
     }
     const permitidos = ['narrador/prueba/index.html', 'narrador/prueba/app.js', 'narrador/prueba/panel.js', 'narrador/prueba/panel.test.js'];
+    assert.deepEqual([...hallados].sort(), [...permitidos].sort()); // rutas relativas a la raíz, sin undefined
     assert.deepEqual(hallados.filter((h) => !permitidos.includes(h)), []);
   });
 
