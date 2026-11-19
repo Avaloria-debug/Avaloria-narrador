@@ -73,20 +73,31 @@ export function crearRegistroTurno({ version, fecha, escena, relacion = null, fr
 }
 
 /**
- * Registro de un turno de texto libre a partir de lo que devuelve `narrar`. Los botones no se registran (null).
- * `relacion` y `motivo` quedan en null: `narrar` no los devuelve. `respuestaIA` solo si la respuesta vino de la IA.
- * @param {{ version: string, fecha: Date|string|number, entrada: { tipo: string, texto?: string },
- *   estadoAntes: { jugador: { escenaId: string } }, salida: { tipo: string, texto?: string, registro?: { intencion_detectada?: string|null }|null } }} datos
+ * Registro de un turno de texto libre que el código NO resolvió por regla: una reformulación (con su motivo, que
+ * incluye `no_entendido`) o un turno que pasó a la IA. Los turnos resueltos por regla (acciones, consultas,
+ * saludos) y los botones devuelven null.
+ * - `motivo`: el que devolvió decidir() en una reformulación; en un turno que pasó a la IA, `no_entendido`
+ *   (la frase no se resolvió ni tras reformular).
+ * - `respuestaIA`: solo si la respuesta mostrada vino de la IA.
+ * - `relacion`: la del NPC presente (el primero), o null si no hay NPC.
+ * @param {{ version: string, fecha: Date|string|number, entrada: { tipo: string, texto?: string }, escena: string,
+ *   turno: { tipo: string, motivo?: string, intencionId?: string|null }, origen?: 'codigo'|'ia', respuesta?: string|null,
+ *   relacion?: number|null }} datos
  */
-export function registroDesdeTurno({ version, fecha, entrada, estadoAntes, salida }) {
-  if (entrada?.tipo !== 'texto' || typeof entrada.texto !== 'string' || salida?.tipo === 'error') return null;
+export function registroDeTurnoNoResuelto({ version, fecha, entrada, escena, turno, origen = 'codigo', respuesta = null, relacion = null }) {
+  if (entrada?.tipo !== 'texto' || typeof entrada.texto !== 'string') return null;
+  const reformulacion = turno?.tipo === 'reformular';
+  const porIa = turno?.tipo === 'ia';
+  if (!reformulacion && !porIa) return null;
   return crearRegistroTurno({
     version,
     fecha,
-    escena: estadoAntes.jugador.escenaId,
+    escena,
+    relacion: typeof relacion === 'number' && Number.isFinite(relacion) ? relacion : null,
     frase: entrada.texto,
-    intencion: salida?.registro?.intencion_detectada ?? null,
-    respuestaIA: salida?.tipo === 'dialogo_ia' && typeof salida.texto === 'string' ? salida.texto : null,
+    motivo: reformulacion ? turno.motivo ?? null : 'no_entendido',
+    intencion: turno.intencionId ?? null,
+    respuestaIA: porIa && origen === 'ia' && typeof respuesta === 'string' ? respuesta : null,
   });
 }
 

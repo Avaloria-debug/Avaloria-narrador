@@ -5,9 +5,7 @@
 import { crearPartida, cargarPartida, narrar, contenido, problemasDiccionarios } from '../index.js';
 import { textoDeProblemasDeDiccionarios } from '../diccionarios.js';
 import { crearColaDeRegistros } from '../registro.js';
-import { VERSION } from '../version.js';
 import { ExportacionArchivo } from '../registro/exportacionArchivo.js';
-import { registroDesdeTurno } from '../registro/registroTurnos.js';
 import { crearAlmacenIndexedDB } from '../../persistencia/adaptadores/almacenIndexedDB.js';
 import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, fijarRelacion, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
 
@@ -25,6 +23,9 @@ const cola = crearColaDeRegistros({
 });
 // Registros de turnos de esta sesión, solo en memoria; se bajan con "Exportar registros". No se envía nada por red.
 const exportacion = new ExportacionArchivo();
+const pintarContador = () => {
+  $('exportar').textContent = `Exportar registros (${exportacion.cantidad})`;
+};
 let almacen = null;
 const abrirAlmacen = () => (almacen ??= crearAlmacenIndexedDB({ nombreBD: BD_PRUEBA }));
 
@@ -47,6 +48,7 @@ function llenarSelect(select, opciones) {
 }
 
 function pintarEscena() {
+  pintarContador();
   pintarRelaciones();
   const hay = estado !== null;
   for (const id of ['guardar', 'entrada', 'enviar']) $(id).disabled = !hay || ocupado;
@@ -121,21 +123,14 @@ async function turno(entrada) {
     return respuesta;
   };
   let salida;
-  const antes = estado;
-  try {
-    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola });
+    try {
+    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola, registroTurnos: exportacion });
     estado = salida.estado;
   } catch (e) {
     // `narrar` no lanza; por si acaso, se muestra como error de la página.
     salida = { texto: '', tipo: 'error', registro: null, errores: [`pagina: ${e instanceof Error ? e.message : String(e)}`] };
   }
-  try {
-    const registro = registroDesdeTurno({ version: VERSION, fecha: new Date(), entrada, estadoAntes: antes, salida });
-    if (registro) await exportacion.guardar(registro);
-  } catch (e) {
-    salida = { ...salida, errores: [...(salida.errores ?? []), `registro de turnos: ${e instanceof Error ? e.message : String(e)}`] };
-  }
-  $('exportar').textContent = `Exportar registros (${exportacion.cantidad})`;
+  pintarContador();
   ocupado = false;
   pintarPanel(armarPanel(salida, { llamadas, pendientes: cola.pendientes().length }));
   pintarEscena();

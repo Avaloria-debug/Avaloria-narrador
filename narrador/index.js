@@ -10,7 +10,9 @@
 import { exigirContenidoValido } from './contenido.js';
 import { estadoInicial, VERSION_ESTADO } from './estado.js';
 import { crearRng, semillaAEntero, semillaAlAzar } from './azar.js';
-import { ejecutarTurno, TIPOS_TURNO } from './turno.js';
+import { ejecutarTurno, npcsPresentes, TIPOS_TURNO } from './turno.js';
+import { VERSION } from './version.js';
+import { registroDeTurnoNoResuelto } from './registro/registroTurnos.js';
 import { narrarTurno, narrarReformulacion, VENTANA_APERTURAS, anotarApertura } from './narracion.js';
 import { pedirRespuestaIA, datosDeContexto, validarSalida, SIN_IA, MOTIVOS_IA } from './ia.js';
 import { registroDeTurno, ORIGENES, MAX_ULTIMOS_TURNOS } from './registro.js';
@@ -481,6 +483,26 @@ export async function narrar(estado, entrada, opciones = {}) {
       iaAgotadaDia,
       semilla: rng.estado(),
     };
+    // Registro de turnos (narrador/registro/): solo con `opciones.registroTurnos` (un RegistroTurnos). Solo los turnos
+    // que el código no resolvió por regla: reformulación (con su motivo) o IA. Un fallo al guardar no rompe el turno.
+    if (typeof opciones?.registroTurnos?.guardar === 'function' && entrada?.tipo === 'texto') {
+      try {
+        const presente = npcsPresentes(partida, contenido)[0];
+        const registroTurno = registroDeTurnoNoResuelto({
+          version: VERSION,
+          fecha: new Date(ahora),
+          entrada,
+          escena: partida.jugador.escenaId,
+          turno,
+          origen,
+          respuesta: texto,
+          relacion: presente ? partida.npcs?.[presente.id]?.relacion ?? null : null,
+        });
+        if (registroTurno) await opciones.registroTurnos.guardar(registroTurno);
+      } catch (e) {
+        anotar(ERRORES.REGISTRO, e instanceof Error ? e.message : '');
+      }
+    }
     return { texto, estado: nuevo, tipo, registro, errores };
   } catch (e) {
     return error(ERRORES.ERROR_INTERNO, e instanceof Error ? e.message : '');

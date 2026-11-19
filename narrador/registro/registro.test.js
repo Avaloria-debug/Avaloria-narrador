@@ -2,36 +2,97 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { VERSION } from '../version.js';
-import { crearRegistroTurno, erroresDeRegistroTurno, registroDesdeTurno, RegistroTurnos, CAMPOS_REGISTRO_TURNO, VERSION_ESQUEMA } from './registroTurnos.js';
+import { crearRegistroTurno, erroresDeRegistroTurno, registroDeTurnoNoResuelto, RegistroTurnos, CAMPOS_REGISTRO_TURNO, VERSION_ESQUEMA } from './registroTurnos.js';
 import { ExportacionArchivo } from './exportacionArchivo.js';
 import { FirestoreRegistro } from './firestoreRegistro.js';
 import { firebaseConfig, COLECCION_REGISTROS_TURNOS } from './firebaseConfig.js';
-import { narrar, crearPartida } from '../index.js';
+import { narrar, crearPartida, contenido } from '../index.js';
+import { npcsPresentes } from '../turno.js';
 
 const base = (extra = {}) => crearRegistroTurno({ version: VERSION, fecha: '2026-11-19T10:00:00.000Z', escena: 'escena_mercado_circular', frase: '¿Qué onda, Serel?', ...extra });
 
+const texto = (t) => ({ tipo: 'texto', texto: t });
 describe('formato del registro de turno', () => {
   test('un registro real (de narrar) trae todos los campos fijos', async () => {
+    const exportacion = new ExportacionArchivo();
     const estado = crearPartida({ semilla: 1 });
-    const entrada = { tipo: 'texto', texto: 'hablar con serel' };
-    const salida = await narrar(estado, entrada, { ahora: () => '2026-11-19T10:00:00Z' });
-    const r = registroDesdeTurno({ version: VERSION, fecha: new Date('2026-11-19T10:00:00Z'), entrada, estadoAntes: estado, salida });
+    const r0 = await narrar(estado, texto('banana xyz'), { ahora: () => '2026-11-19T10:00:00Z', registroTurnos: exportacion });
+    assert.equal(r0.tipo, 'reformulacion');
+    const [r] = exportacion.registros();
     assert.deepEqual(Object.keys(r), CAMPOS_REGISTRO_TURNO);
     assert.equal(r.version, VERSION);
     assert.equal(r.versionEsquema, '1');
     assert.equal(r.fecha, '2026-11-19T10:00:00.000Z');
     assert.equal(r.escena, estado.jugador.escenaId);
-    assert.equal(r.relacion, null);
-    assert.equal(r.frase, 'hablar con serel'); // texto exacto
+    assert.equal(r.frase, 'banana xyz'); // texto exacto
+    assert.equal(r.motivo, 'no_entendido'); // el que devolvió decidir()
     assert.equal(r.respuestaIA, null); // sin llamada a la IA
     assert.equal(r.sinDatosPersonales, true);
     assert.deepEqual(erroresDeRegistroTurno(r), []);
   });
-  test('los botones no se registran y la respuesta de la IA solo va si hubo IA', () => {
-    const estadoAntes = { jugador: { escenaId: 'e' } };
-    assert.equal(registroDesdeTurno({ version: 'v', fecha: 0, entrada: { tipo: 'boton' }, estadoAntes, salida: { tipo: 'narracion' } }), null);
-    const ia = registroDesdeTurno({ version: 'v', fecha: 0, entrada: { tipo: 'texto', texto: 'x' }, estadoAntes, salida: { tipo: 'dialogo_ia', texto: 'respuesta' } });
-    assert.equal(ia.respuestaIA, 'respuesta');
+  test('turno resuelto por regla no genera registro (acción, consulta, saludo, botón)', async () => {
+    const exportacion = new ExportacionArchivo();
+    let e = crearPartida({ semilla: 1 });
+    for (const frase of ['hablar con marem', 'hablar con serel', 'hola', 'observar', 'ir al archivo real']) {
+      e = (await narrar(e, texto(frase), { registroTurnos: exportacion })).estado;
+    }
+    e = (await narrar(e, { tipo: 'boton', intencionId: 'intencion_observar' }, { registroTurnos: exportacion })).estado;
+    assert.equal(exportacion.cantidad, 0);
+  });
+  test('una reformulación con motivo propio guarda ese motivo; sin registroTurnos no pasa nada', async () => {
+    const exportacion = new ExportacionArchivo();
+    const e = crearPartida({ semilla: 1 });
+    await narrar(e, texto('viajar'), { registroTurnos: exportacion });
+    assert.deepEqual(exportacion.registros().map((r) => r.motivo), ['falta_destino']);
+    await narrar(e, texto('banana xyz')); // sin registroTurnos
+    assert.equal(exportacion.cantidad, 1);
+  });
+  test('turno que pasa a la IA: se registra; respuestaIA solo si respondió la IA', async () => {
+    const exportacion = new ExportacionArchivo();
+    let e = crearPartida({ semilla: 1 });
+    const ok = { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: 'Serel se encoge de hombros.' } }], usage: {} }), text: async () => '' };
+    const http = async () => ok;
+    e = (await narrar(e, texto('banana xyz'), { registroTurnos: exportacion })).estado;
+    const ia = await narrar(e, texto('banana xyz'), { registroTurnos: exportacion, groqKey: 'gsk_prueba_prueba_123', http, esperar: async () => {} });
+    const regs = exportacion.registros();
+    assert.equal(regs.length, 2);
+    assert.equal(regs[1].motivo, 'no_entendido');
+    assert.equal(regs[1].respuestaIA, ia.tipo === 'dialogo_ia' ? ia.texto : null);
+    const sinClave = new ExportacionArchivo();
+    const e2 = (await narrar(crearPartida({ semilla: 1 }), texto('banana xyz'))).estado;
+    await narrar(e2, texto('banana xyz'), { registroTurnos: sinClave });
+    assert.equal(sinClave.registros()[0].respuestaIA, null);
+  });
+  test('relacion: número del NPC presente en la escena; null si no se conoce', async () => {
+    for (const escenaId of ['escena_mercado_circular', 'escena_archivo_real', 'escena_plaza_cambistas']) {
+      const x = new ExportacionArchivo();
+      const base0 = crearPartida({ semilla: 1 });
+      const estado = { ...base0, jugador: { ...base0.jugador, escenaId } };
+      await narrar(estado, texto('banana xyz'), { registroTurnos: x });
+      const presente = npcsPresentes(estado, contenido)[0];
+      assert.equal(typeof x.registros()[0].relacion, 'number', escenaId);
+      assert.equal(x.registros()[0].relacion, estado.npcs[presente.id].relacion, escenaId);
+    }
+    // Con otra relación guardada, el registro la refleja.
+    const x = new ExportacionArchivo();
+    const e0 = crearPartida({ semilla: 1 });
+    const npcId = npcsPresentes(e0, contenido)[0].id;
+    const e1 = { ...e0, npcs: { ...e0.npcs, [npcId]: { ...e0.npcs[npcId], relacion: 7 } } };
+    await narrar(e1, texto('banana xyz'), { registroTurnos: x });
+    assert.equal(x.registros()[0].relacion, 7);
+    // Sin NPC conocido, null.
+    const base2 = { version: 'v', fecha: 0, escena: 'e', entrada: texto('x'), turno: { tipo: 'reformular', motivo: 'no_entendido' } };
+    assert.equal(registroDeTurnoNoResuelto(base2).relacion, null);
+    assert.equal(registroDeTurnoNoResuelto({ ...base2, relacion: 3 }).relacion, 3);
+  });
+  test('registroDeTurnoNoResuelto: solo reformulación o IA, solo texto', () => {
+    const base2 = { version: 'v', fecha: 0, escena: 'e' };
+    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: { tipo: 'boton' }, turno: { tipo: 'reformular', motivo: 'x' } }), null);
+    for (const tipo of ['accion', 'consulta', 'saludo', 'reconocimiento']) {
+      assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: texto('x'), turno: { tipo } }), null, tipo);
+    }
+    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: texto('x'), turno: { tipo: 'reformular', motivo: 'falta_npc' } }).motivo, 'falta_npc');
+    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: texto('x'), turno: { tipo: 'ia' }, origen: 'ia', respuesta: 'r' }).respuestaIA, 'r');
   });
   test('validación: version obligatoria, esquema, fecha ISO, campos extra y claves de Groq', () => {
     assert.equal(VERSION_ESQUEMA, '1');
