@@ -14,12 +14,17 @@ import { npcsPresentes } from '../turno.js';
 const base = (extra = {}) => crearRegistroTurno({ version: VERSION, fecha: '2026-11-19T10:00:00.000Z', escena: 'escena_mercado_circular', frase: '¿Qué onda, Serel?', ...extra });
 
 const texto = (t) => ({ tipo: 'texto', texto: t });
+const BOTON = { tipo: 'boton', intencionId: 'intencion_observar' };
+// Un turno de botón cierra la reformulación pendiente (su línea se escribe al cerrar ese turno).
+const cerrar = (estado, x) => narrar(estado, BOTON, { registroTurnos: x });
 describe('formato del registro de turno', () => {
   test('un registro real (de narrar) trae todos los campos fijos', async () => {
     const exportacion = new ExportacionArchivo();
     const estado = crearPartida({ semilla: 1 });
     const r0 = await narrar(estado, texto('banana xyz'), { ahora: () => '2026-11-19T10:00:00Z', registroTurnos: exportacion });
     assert.equal(r0.tipo, 'reformulacion');
+    assert.equal(exportacion.cantidad, 0); // pendiente hasta el turno siguiente
+    await cerrar(r0.estado, exportacion);
     const [r] = exportacion.registros();
     assert.deepEqual(Object.keys(r), CAMPOS_REGISTRO_TURNO);
     assert.equal(r.version, VERSION);
@@ -61,8 +66,8 @@ describe('formato del registro de turno', () => {
     const ia = await narrar(e, texto('plugh xyzzy'), conIa(x));
     assert.equal(ia.tipo, 'dialogo_ia');
     const regs = x.registros();
-    assert.deepEqual(regs.map((r) => r.motivo), ['no_entendido', 'no_entendido']);
-    assert.equal(regs[1].respuestaIA, ia.texto);
+    assert.deepEqual(regs.map((r) => [r.frase, r.motivo]), [['plugh xyzzy', 'no_entendido']]); // una sola línea, la de la IA
+    assert.equal(regs[0].respuestaIA, ia.texto);
     assert.equal(ia.estado.motivoReformulacion, null); // el turno de IA no deja motivo
   });
   test('la IA registra el motivo ORIGINAL de la reformulación (aunque sea de aclaración), no no_entendido', async () => {
@@ -102,7 +107,7 @@ describe('formato del registro de turno', () => {
       const x = new ExportacionArchivo();
       const base0 = crearPartida({ semilla: 1 });
       const estado = { ...base0, jugador: { ...base0.jugador, escenaId } };
-      await narrar(estado, texto('banana xyz'), { registroTurnos: x });
+      await cerrar((await narrar(estado, texto('banana xyz'), { registroTurnos: x })).estado, x);
       const presente = npcsPresentes(estado, contenido)[0];
       assert.equal(typeof x.registros()[0].relacion, 'number', escenaId);
       assert.equal(x.registros()[0].relacion, estado.npcs[presente.id].relacion, escenaId);
@@ -112,7 +117,7 @@ describe('formato del registro de turno', () => {
     const e0 = crearPartida({ semilla: 1 });
     const npcId = npcsPresentes(e0, contenido)[0].id;
     const e1 = { ...e0, npcs: { ...e0.npcs, [npcId]: { ...e0.npcs[npcId], relacion: 7 } } };
-    await narrar(e1, texto('banana xyz'), { registroTurnos: x });
+    await cerrar((await narrar(e1, texto('banana xyz'), { registroTurnos: x })).estado, x);
     assert.equal(x.registros()[0].relacion, 7);
     // Sin NPC conocido, null.
     const base2 = { version: 'v', fecha: 0, escena: 'e', entrada: texto('x'), turno: { tipo: 'reformular', motivo: 'no_entendido' } };
@@ -159,6 +164,60 @@ describe('formato del registro de turno', () => {
     const p = new RegistroTurnos().guardar(base());
     assert.ok(p instanceof Promise);
     await assert.rejects(p);
+  });
+});
+
+describe('una línea por frase: la reformulación queda pendiente hasta el turno siguiente', () => {
+  const respuestaIA = { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: 'Serel se encoge de hombros.' } }], usage: {} }), text: async () => '' };
+  const conIa = (x) => ({ registroTurnos: x, groqKey: 'gsk_prueba_prueba_123', http: async () => respuestaIA, esperar: async () => {} });
+
+  test('no entendida + frase que el motor entiende: 0 líneas (ni la primera ni la segunda)', async () => {
+    const x = new ExportacionArchivo();
+    const r1 = await narrar(crearPartida({ semilla: 1 }), texto('banana xyz'), { registroTurnos: x });
+    assert.equal(r1.tipo, 'reformulacion');
+    const r2 = await narrar(r1.estado, texto('observar'), { registroTurnos: x });
+    assert.equal(r2.tipo, 'narracion');
+    await cerrar(r2.estado, x); // un botón después no revive la pendiente descartada
+    assert.equal(x.cantidad, 0);
+  });
+  test('no entendida + frase que pasa a la IA: 1 línea, la de la IA, con respuestaIA y motivo original', async () => {
+    const x = new ExportacionArchivo();
+    const r1 = await narrar(crearPartida({ semilla: 1 }), texto('banana xyz'), conIa(x));
+    const ia = await narrar(r1.estado, texto('plugh xyzzy'), conIa(x));
+    assert.equal(ia.tipo, 'dialogo_ia');
+    await cerrar(ia.estado, x);
+    assert.deepEqual(x.registros().map((r) => [r.frase, r.motivo, r.respuestaIA]), [['plugh xyzzy', 'no_entendido', ia.texto]]);
+  });
+  test('no entendida + frase no entendida sin IA (sin_ia): 1 línea, motivo original y respuestaIA null', async () => {
+    const x = new ExportacionArchivo();
+    const r1 = await narrar(crearPartida({ semilla: 1 }), texto('banana xyz'), { registroTurnos: x });
+    const r2 = await narrar(r1.estado, texto('plugh xyzzy'), { registroTurnos: x });
+    assert.ok(r2.errores.some((e) => e.includes('sin_ia')), r2.errores.join());
+    await cerrar(r2.estado, x);
+    assert.deepEqual(x.registros().map((r) => [r.frase, r.motivo, r.respuestaIA]), [['plugh xyzzy', 'no_entendido', null]]);
+  });
+  test('no entendida + botón: al cerrar el botón se escribe la pendiente, una vez, con su motivo', async () => {
+    const x = new ExportacionArchivo();
+    const r1 = await narrar(crearPartida({ semilla: 1 }), texto('banana xyz'), { registroTurnos: x });
+    assert.equal(x.cantidad, 0);
+    const b1 = await cerrar(r1.estado, x);
+    assert.deepEqual(x.registros().map((r) => [r.frase, r.motivo, r.respuestaIA]), [['banana xyz', 'no_entendido', null]]);
+    await cerrar(b1.estado, x); // otro botón: no se repite
+    await cerrar(r1.estado, x); // ni reusando el estado anterior
+    assert.equal(x.cantidad, 1);
+    assert.ok(!JSON.stringify(b1.estado).includes('banana')); // la frase no queda en el estado
+    assert.equal(r1.estado.motivoReformulacion, 'no_entendido'); // solo el id
+  });
+  test('ninguna frase queda duplicada en el archivo exportado', async () => {
+    const x = new ExportacionArchivo();
+    let e = crearPartida({ semilla: 1 });
+    const pasos = [texto('banana xyz'), texto('plugh xyzzy'), texto('blorp qwerty'), BOTON, texto('zzz yyy'), texto('observar'),
+      texto('viajar'), texto('qwop asdf'), texto('frobnicar trus'), BOTON, BOTON, texto('hola'), texto('glub glub'), texto('glab glab')];
+    for (const p of pasos) e = (await narrar(e, p, { registroTurnos: x })).estado;
+    await cerrar(e, x);
+    const frases = x.aJsonLines().trim().split('\n').map((l) => JSON.parse(l).frase);
+    assert.ok(frases.length >= 4, frases.join(' | '));
+    assert.equal(new Set(frases).size, frases.length, frases.join(' | '));
   });
 });
 

@@ -13,6 +13,10 @@ import { crearRng, semillaAEntero, semillaAlAzar } from './azar.js';
 import { ejecutarTurno, npcsPresentes, TIPOS_TURNO } from './turno.js';
 import { VERSION } from './version.js';
 import { registroDeTurnoNoResuelto } from './registro/registroTurnos.js';
+
+// Línea de registro de análisis de una reformulación, en espera del turno siguiente. Clave: el RegistroTurnos.
+// Vive solo en memoria: la frase del jugador no entra al estado de la partida.
+const lineasPendientes = new WeakMap();
 import { narrarTurno, narrarReformulacion, VENTANA_APERTURAS, anotarApertura } from './narracion.js';
 import { pedirRespuestaIA, datosDeContexto, validarSalida, SIN_IA, MOTIVOS_IA } from './ia.js';
 import { registroDeTurno, ORIGENES, MAX_ULTIMOS_TURNOS } from './registro.js';
@@ -489,23 +493,43 @@ export async function narrar(estado, entrada, opciones = {}) {
       iaAgotadaDia,
       semilla: rng.estado(),
     };
-    // Registro de turnos (narrador/registro/): solo con `opciones.registroTurnos` (un RegistroTurnos). Solo los turnos
-    // que el código no resolvió por regla: reformulación (con su motivo) o IA. Un fallo al guardar no rompe el turno.
-    if (typeof opciones?.registroTurnos?.guardar === 'function' && entrada?.tipo === 'texto') {
+    // Registro de turnos (narrador/registro/): solo con `opciones.registroTurnos` (un RegistroTurnos). Una línea por
+    // frase no resuelta por regla (docs/fase2-aprendizaje.md):
+    // - reformulación registrable: la línea queda PENDIENTE en memoria (nunca en el estado, que guarda solo el id del motivo);
+    // - turno siguiente que pasa a la IA (o a sin_ia): se escribe solo la línea de la IA, con el motivo original;
+    // - turno siguiente de texto resuelto por regla o pedido de aclaración: la pendiente se descarta;
+    // - turno siguiente que no es texto (botón): la pendiente se escribe una vez, al cerrar ese turno.
+    // Un fallo al guardar no rompe el turno.
+    if (typeof opciones?.registroTurnos?.guardar === 'function') {
       try {
-        const presente = npcsPresentes(partida, contenido)[0];
-        const registroTurno = registroDeTurnoNoResuelto({
-          version: VERSION,
-          fecha: new Date(ahora),
-          entrada,
-          escena: partida.jugador.escenaId,
-          turno,
-          origen,
-          motivoPrevio: partida.motivoReformulacion ?? null,
-          respuesta: texto,
-          relacion: presente ? partida.npcs?.[presente.id]?.relacion ?? null : null,
-        });
-        if (registroTurno) await opciones.registroTurnos.guardar(registroTurno);
+        const destino = opciones.registroTurnos;
+        const pendiente = lineasPendientes.get(destino);
+        lineasPendientes.delete(destino);
+        // Vale solo si la partida sigue en esa reformulación (mismo id de motivo en el estado).
+        const vigente = pendiente && pendiente.motivo === partida.motivoReformulacion ? pendiente : null;
+        if (entrada?.tipo === 'texto') {
+          const presente = npcsPresentes(partida, contenido)[0];
+          const registroTurno = registroDeTurnoNoResuelto({
+            version: VERSION,
+            fecha: new Date(ahora),
+            entrada,
+            escena: partida.jugador.escenaId,
+            turno,
+            origen,
+            motivoPrevio: partida.motivoReformulacion ?? null,
+            respuesta: texto,
+            relacion: presente ? partida.npcs?.[presente.id]?.relacion ?? null : null,
+          });
+          if (registroTurno && turno.tipo === TIPOS_TURNO.REFORMULAR) {
+            // SUPUESTO: dos reformulaciones registrables seguidas son dos frases distintas; la anterior se escribe.
+            if (vigente) await destino.guardar(vigente.linea);
+            lineasPendientes.set(destino, { linea: registroTurno, motivo: turno.motivo });
+          } else if (registroTurno) {
+            await destino.guardar(registroTurno); // turno de IA: una sola línea, la pendiente no se escribe
+          }
+        } else if (vigente) {
+          await destino.guardar(vigente.linea);
+        }
       } catch (e) {
         anotar(ERRORES.REGISTRO, e instanceof Error ? e.message : '');
       }

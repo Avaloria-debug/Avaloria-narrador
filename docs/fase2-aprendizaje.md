@@ -29,5 +29,23 @@ El código lo fija `MOTIVOS_REGISTRABLES` y `MOTIVOS_DE_ACLARACION` (`narrador/r
 ## Turnos que pasan a la IA
 Siempre se registran (la frase no se resolvió ni tras reformular). Su `motivo` es el de la reformulación anterior (por ejemplo `falta_destino`), no `no_entendido` genérico: el estado guarda `motivoReformulacion` (solo el id, nunca la frase) y se borra con cualquier turno que no sea reformulación. `respuestaIA` solo si respondió la IA; sin clave (plantilla `sin_ia`) queda `null`.
 
+## Una línea por frase (v0.0.36)
+Una reformulación registrable no se escribe en el momento: su línea queda **pendiente en memoria** (un `WeakMap` de `narrador/index.js`, por destino `RegistroTurnos`); el estado de la partida sigue guardando solo `motivoReformulacion` (id). El turno siguiente decide:
+
+| Turno siguiente | Líneas |
+|---|---|
+| texto que el motor resuelve por regla | 0: la pendiente se descarta; la segunda no se registra |
+| texto que pasa a la IA | 1: la del turno de IA, con `respuestaIA` y el motivo original |
+| texto no entendido sin IA (plantilla `sin_ia`) | 1: la del turno `sin_ia`, motivo original, `respuestaIA: null` |
+| botón (no es texto) | 1: la pendiente, con su motivo, escrita al cerrar ese turno, una vez |
+
+La pendiente solo vale si el estado recibido sigue en esa reformulación (mismo id de motivo); si no, se descarta. La lista de motivos registrables y el formato del registro no cambian.
+
+- SUPUESTO: texto seguido de un pedido de aclaración (p. ej. `banana xyz` → `viajar`, que da `falta_destino`) cuenta como "el motor entiende": la pendiente se descarta.
+- SUPUESTO: dos reformulaciones registrables seguidas (dos frases distintas) escriben la primera y dejan pendiente la segunda.
+- SUPUESTO: una pendiente que no llegó a cerrarse (se cierra la página, se exporta antes del turno siguiente) no está en el archivo exportado: el turno no terminó.
+- SUPUESTO: un turno con entrada inválida (error) no toca la pendiente.
+- SUPUESTO: la pendiente es por destino `RegistroTurnos`, no por partida: dos partidas que comparten destino a la vez se pisan (hoy la página de prueba usa una sola).
+
 ## Qué no se registra
 Acciones, consultas, saludos, reconocimientos y botones.
