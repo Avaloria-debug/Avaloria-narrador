@@ -98,3 +98,7 @@ Cerrada con "fase 1 cierre: plantillas sin_salidas y destino_ambiguo; consulta n
 - Casos: control (página sin errores, Crear habilitado, versión), Mercado ("salir de acá", "norte"), Plaza ("salir de acá", "Taberna de la campana tardía", "camino", "banana") y consola sin errores al final. Cada caso imprime `OK` o `DISTINTO_DE_LO_ESPERADO`; código de salida 1 solo si hay alguno distinto.
 - Último resultado (v0.0.32, Chromium): los 8 veredictos en `OK`.
 
+## Registro de turnos (`narrador/registro/`, v0.0.33)
+- `ExportacionArchivo` acumula en memoria y el botón "Exportar registros" de la página de prueba baja un `.jsonl` (una línea JSON por registro, sin red). Verificado en Chromium con Playwright.
+- `FirestoreRegistro` (colección `registros_turnos`) está desactivado y no se usa en ningún lado. Para activarlo hace falta `habilitarFirestore: true`, la configuración web completa en `firebaseConfig.js` y un empaquetador (o import map) para `firebase`: sin verificar en navegador ni contra el proyecto real. Revisar antes `firestore.rules` (no tiene reglas para `registros_turnos`) y la política de privacidad.
+

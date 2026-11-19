@@ -5,7 +5,10 @@ import assert from 'node:assert/strict';
 import { readdirSync } from 'node:fs';
 
 const DIR = new URL('./', import.meta.url);
-const modulos = readdirSync(DIR).filter((f) => f.endsWith('.js') && !f.endsWith('.test.js'));
+const modulos = [
+  ...readdirSync(DIR).filter((f) => f.endsWith('.js') && !f.endsWith('.test.js')),
+  ...readdirSync(new URL('registro/', DIR)).filter((f) => f.endsWith('.js') && !f.endsWith('.test.js')).map((f) => `registro/${f}`),
+];
 
 describe('módulos ES de narrador/ se enlazan', () => {
   test('hay módulos que revisar', () => assert.ok(modulos.length > 10));

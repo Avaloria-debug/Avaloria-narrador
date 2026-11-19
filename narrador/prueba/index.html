@@ -50,6 +50,7 @@
     <input id="entrada" type="text" autocomplete="off" placeholder="Escribí qué hacés" disabled>
     <button id="enviar" disabled>Enviar</button>
   </form>
+  <div class="fila"><button id="exportar" type="button">Exportar registros (0)</button> <span class="nota">Descarga un archivo .jsonl de esta sesión; no se envía nada por red.</span></div>
   <div class="fila">
     <label>NPC <select id="npc"></select></label>
     <label>Objeto <select id="objeto"></select></label>
@@ -76,7 +77,7 @@
   </dl>
 </section>
 
-<div id="version">v0.0.32</div>
+<div id="version">v0.0.33</div>
 
 <script type="module" src="./app.js"></script>
 </body>
