@@ -43,5 +43,6 @@ export function estadoInicial(contenido, { rng, nombre = '' } = {}) {
     marcas: [],
     reformulacionPendiente: false,
     destinoPendiente: null,
+    motivoReformulacion: null,
   };
 }

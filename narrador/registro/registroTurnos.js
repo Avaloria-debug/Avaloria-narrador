@@ -5,6 +5,15 @@
 
 export const VERSION_ESQUEMA = '1';
 
+// Regla: se registra cuando "el jugador escribió algo que el motor no entendió". Un pedido de aclaración
+// (el motor entendió y falta un dato, o el mundo no lo permite) no es una frase no entendida y no se registra.
+// Lista revisable: docs/fase2-aprendizaje.md y docs/SUPUESTOS.md.
+export const MOTIVOS_REGISTRABLES = Object.freeze(['no_entendido', 'intencion_ambigua']);
+export const MOTIVOS_DE_ACLARACION = Object.freeze([
+  'falta_npc', 'npc_ambiguo', 'npc_ausente', 'sin_npcs', 'falta_objeto', 'objeto_ambiguo', 'sin_objetos',
+  'falta_destino', 'destino_ambiguo', 'destino_repetido', 'sin_salidas',
+]);
+
 export const CAMPOS_REGISTRO_TURNO = Object.freeze([
   'version', 'versionEsquema', 'fecha', 'escena', 'relacion', 'frase', 'motivo', 'intencion', 'respuestaIA', 'sinDatosPersonales',
 ]);
@@ -76,26 +85,28 @@ export function crearRegistroTurno({ version, fecha, escena, relacion = null, fr
  * Registro de un turno de texto libre que el código NO resolvió por regla: una reformulación (con su motivo, que
  * incluye `no_entendido`) o un turno que pasó a la IA. Los turnos resueltos por regla (acciones, consultas,
  * saludos) y los botones devuelven null.
- * - `motivo`: el que devolvió decidir() en una reformulación; en un turno que pasó a la IA, `no_entendido`
- *   (la frase no se resolvió ni tras reformular).
+ * - Una reformulación solo se registra si su motivo es de `MOTIVOS_REGISTRABLES`; los pedidos de aclaración no.
+ * - `motivo`: el que devolvió decidir(); en un turno que pasó a la IA, el de la reformulación anterior
+ *   (`motivoPrevio`, guardado en el estado como id), o `no_entendido` si no se conoce. Un turno de IA siempre se registra.
  * - `respuestaIA`: solo si la respuesta mostrada vino de la IA.
  * - `relacion`: la del NPC presente (el primero), o null si no hay NPC.
  * @param {{ version: string, fecha: Date|string|number, entrada: { tipo: string, texto?: string }, escena: string,
  *   turno: { tipo: string, motivo?: string, intencionId?: string|null }, origen?: 'codigo'|'ia', respuesta?: string|null,
- *   relacion?: number|null }} datos
+ *   relacion?: number|null, motivoPrevio?: string|null }} datos
  */
-export function registroDeTurnoNoResuelto({ version, fecha, entrada, escena, turno, origen = 'codigo', respuesta = null, relacion = null }) {
+export function registroDeTurnoNoResuelto({ version, fecha, entrada, escena, turno, origen = 'codigo', respuesta = null, relacion = null, motivoPrevio = null }) {
   if (entrada?.tipo !== 'texto' || typeof entrada.texto !== 'string') return null;
   const reformulacion = turno?.tipo === 'reformular';
   const porIa = turno?.tipo === 'ia';
   if (!reformulacion && !porIa) return null;
+  if (reformulacion && !MOTIVOS_REGISTRABLES.includes(turno.motivo)) return null;
   return crearRegistroTurno({
     version,
     fecha,
     escena,
     relacion: typeof relacion === 'number' && Number.isFinite(relacion) ? relacion : null,
     frase: entrada.texto,
-    motivo: reformulacion ? turno.motivo ?? null : 'no_entendido',
+    motivo: reformulacion ? turno.motivo : typeof motivoPrevio === 'string' && motivoPrevio !== '' ? motivoPrevio : 'no_entendido',
     intencion: turno.intencionId ?? null,
     respuestaIA: porIa && origen === 'ia' && typeof respuesta === 'string' ? respuesta : null,
   });

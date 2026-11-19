@@ -2,11 +2,13 @@ import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { VERSION } from '../version.js';
-import { crearRegistroTurno, erroresDeRegistroTurno, registroDeTurnoNoResuelto, RegistroTurnos, CAMPOS_REGISTRO_TURNO, VERSION_ESQUEMA } from './registroTurnos.js';
+import { crearRegistroTurno, erroresDeRegistroTurno, registroDeTurnoNoResuelto, MOTIVOS_REGISTRABLES, MOTIVOS_DE_ACLARACION, RegistroTurnos, CAMPOS_REGISTRO_TURNO, VERSION_ESQUEMA } from './registroTurnos.js';
 import { ExportacionArchivo } from './exportacionArchivo.js';
 import { FirestoreRegistro } from './firestoreRegistro.js';
 import { firebaseConfig, COLECCION_REGISTROS_TURNOS } from './firebaseConfig.js';
-import { narrar, crearPartida, contenido } from '../index.js';
+import { narrar, crearPartida, cargarPartida, contenido } from '../index.js';
+import { MOTIVOS } from '../motivos.js';
+import { CAMPOS_REGISTRO, crearColaDeRegistros } from '../registro.js';
 import { npcsPresentes } from '../turno.js';
 
 const base = (extra = {}) => crearRegistroTurno({ version: VERSION, fecha: '2026-11-19T10:00:00.000Z', escena: 'escena_mercado_circular', frase: '¿Qué onda, Serel?', ...extra });
@@ -39,29 +41,61 @@ describe('formato del registro de turno', () => {
     e = (await narrar(e, { tipo: 'boton', intencionId: 'intencion_observar' }, { registroTurnos: exportacion })).estado;
     assert.equal(exportacion.cantidad, 0);
   });
-  test('una reformulación con motivo propio guarda ese motivo; sin registroTurnos no pasa nada', async () => {
+  test('falta_destino (pedido de aclaración) no se registra; sin registroTurnos no pasa nada', async () => {
     const exportacion = new ExportacionArchivo();
     const e = crearPartida({ semilla: 1 });
-    await narrar(e, texto('viajar'), { registroTurnos: exportacion });
-    assert.deepEqual(exportacion.registros().map((r) => r.motivo), ['falta_destino']);
+    const r = await narrar(e, texto('viajar'), { registroTurnos: exportacion });
+    assert.equal(r.tipo, 'reformulacion');
+    assert.equal(exportacion.cantidad, 0);
     await narrar(e, texto('banana xyz')); // sin registroTurnos
-    assert.equal(exportacion.cantidad, 1);
+    assert.equal(exportacion.cantidad, 0);
   });
-  test('turno que pasa a la IA: se registra; respuestaIA solo si respondió la IA', async () => {
-    const exportacion = new ExportacionArchivo();
+  const respuestaIA = { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: 'Serel se encoge de hombros.' } }], usage: {} }), text: async () => '' };
+  const conIa = (exportacion, groqKey = 'gsk_prueba_prueba_123') => ({ registroTurnos: exportacion, groqKey, http: async () => respuestaIA, esperar: async () => {} });
+
+  test('frase no entendida + segunda sin sentido que pasa a la IA: motivo no_entendido y respuestaIA no null', async () => {
+    const x = new ExportacionArchivo();
     let e = crearPartida({ semilla: 1 });
-    const ok = { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: 'Serel se encoge de hombros.' } }], usage: {} }), text: async () => '' };
-    const http = async () => ok;
-    e = (await narrar(e, texto('banana xyz'), { registroTurnos: exportacion })).estado;
-    const ia = await narrar(e, texto('banana xyz'), { registroTurnos: exportacion, groqKey: 'gsk_prueba_prueba_123', http, esperar: async () => {} });
-    const regs = exportacion.registros();
-    assert.equal(regs.length, 2);
-    assert.equal(regs[1].motivo, 'no_entendido');
-    assert.equal(regs[1].respuestaIA, ia.tipo === 'dialogo_ia' ? ia.texto : null);
-    const sinClave = new ExportacionArchivo();
-    const e2 = (await narrar(crearPartida({ semilla: 1 }), texto('banana xyz'))).estado;
-    await narrar(e2, texto('banana xyz'), { registroTurnos: sinClave });
-    assert.equal(sinClave.registros()[0].respuestaIA, null);
+    e = (await narrar(e, texto('banana xyz'), conIa(x))).estado;
+    assert.equal(e.motivoReformulacion, 'no_entendido');
+    const ia = await narrar(e, texto('plugh xyzzy'), conIa(x));
+    assert.equal(ia.tipo, 'dialogo_ia');
+    const regs = x.registros();
+    assert.deepEqual(regs.map((r) => r.motivo), ['no_entendido', 'no_entendido']);
+    assert.equal(regs[1].respuestaIA, ia.texto);
+    assert.equal(ia.estado.motivoReformulacion, null); // el turno de IA no deja motivo
+  });
+  test('la IA registra el motivo ORIGINAL de la reformulación (aunque sea de aclaración), no no_entendido', async () => {
+    const x = new ExportacionArchivo();
+    let e = crearPartida({ semilla: 1 });
+    const r1 = await narrar(e, texto('viajar'), conIa(x)); // falta_destino: no se registra
+    assert.equal(x.cantidad, 0);
+    assert.equal(r1.estado.motivoReformulacion, 'falta_destino');
+    const ia = await narrar(r1.estado, texto('plugh xyzzy'), conIa(x));
+    assert.equal(ia.tipo, 'dialogo_ia');
+    const [reg] = x.registros();
+    assert.equal(reg.motivo, 'falta_destino');
+    assert.equal(reg.respuestaIA, ia.texto);
+    assert.notEqual(reg.respuestaIA, null);
+  });
+  test('sin clave: el turno que pasa a plantilla sin_ia también lleva el motivo original y respuestaIA null', async () => {
+    const x = new ExportacionArchivo();
+    const e = (await narrar(crearPartida({ semilla: 1 }), texto('viajar'), { registroTurnos: x })).estado;
+    await narrar(e, texto('plugh xyzzy'), { registroTurnos: x });
+    assert.deepEqual(x.registros().map((r) => [r.motivo, r.respuestaIA]), [['falta_destino', null]]);
+  });
+  test('un turno entendido entre medio borra el motivo guardado', async () => {
+    let e = (await narrar(crearPartida({ semilla: 1 }), texto('viajar'))).estado;
+    assert.equal(e.motivoReformulacion, 'falta_destino');
+    e = (await narrar(e, texto('observar'))).estado;
+    assert.equal(e.motivoReformulacion, null);
+  });
+  test('el estado guarda solo un id de motivo: se conserva al guardar y cargar, y un valor ajeno se descarta', async () => {
+    const e = (await narrar(crearPartida({ semilla: 1 }), texto('banana xyz'))).estado;
+    assert.equal(cargarPartida(JSON.stringify(e)).motivoReformulacion, 'no_entendido');
+    assert.equal(cargarPartida(JSON.stringify({ ...e, motivoReformulacion: 'mi frase secreta' })).motivoReformulacion, null);
+    assert.equal(cargarPartida(JSON.stringify({ ...e, motivoReformulacion: 7 })).motivoReformulacion, null);
+    assert.ok(!JSON.stringify(e).includes('banana')); // la frase del jugador no queda en el estado
   });
   test('relacion: número del NPC presente en la escena; null si no se conoce', async () => {
     for (const escenaId of ['escena_mercado_circular', 'escena_archivo_real', 'escena_plaza_cambistas']) {
@@ -85,14 +119,31 @@ describe('formato del registro de turno', () => {
     assert.equal(registroDeTurnoNoResuelto(base2).relacion, null);
     assert.equal(registroDeTurnoNoResuelto({ ...base2, relacion: 3 }).relacion, 3);
   });
-  test('registroDeTurnoNoResuelto: solo reformulación o IA, solo texto', () => {
+  test('registroDeTurnoNoResuelto: solo reformulación registrable o IA, solo texto', () => {
     const base2 = { version: 'v', fecha: 0, escena: 'e' };
-    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: { tipo: 'boton' }, turno: { tipo: 'reformular', motivo: 'x' } }), null);
+    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: { tipo: 'boton' }, turno: { tipo: 'reformular', motivo: 'no_entendido' } }), null);
     for (const tipo of ['accion', 'consulta', 'saludo', 'reconocimiento']) {
       assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: texto('x'), turno: { tipo } }), null, tipo);
     }
-    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: texto('x'), turno: { tipo: 'reformular', motivo: 'falta_npc' } }).motivo, 'falta_npc');
-    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: texto('x'), turno: { tipo: 'ia' }, origen: 'ia', respuesta: 'r' }).respuestaIA, 'r');
+    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: texto('x'), turno: { tipo: 'ia' }, origen: 'ia', respuesta: 'r', motivoPrevio: 'falta_npc' }).respuestaIA, 'r');
+    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: texto('x'), turno: { tipo: 'ia' }, motivoPrevio: 'falta_npc' }).motivo, 'falta_npc');
+    assert.equal(registroDeTurnoNoResuelto({ ...base2, entrada: texto('x'), turno: { tipo: 'ia' } }).motivo, 'no_entendido');
+  });
+  for (const motivo of MOTIVOS_REGISTRABLES) {
+    test(`motivo incluido: ${motivo} se registra`, () => {
+      const r = registroDeTurnoNoResuelto({ version: 'v', fecha: 0, escena: 'e', entrada: texto('x'), turno: { tipo: 'reformular', motivo } });
+      assert.equal(r.motivo, motivo);
+    });
+  }
+  for (const motivo of MOTIVOS_DE_ACLARACION) {
+    test(`motivo excluido: ${motivo} no se registra`, () => {
+      assert.equal(registroDeTurnoNoResuelto({ version: 'v', fecha: 0, escena: 'e', entrada: texto('x'), turno: { tipo: 'reformular', motivo } }), null);
+    });
+  }
+  test('la lista incluida + excluida cubre todos los motivos de reformulación del motor (menos los de uso interno)', () => {
+    const todos = Object.values(MOTIVOS);
+    const cubiertos = [...MOTIVOS_REGISTRABLES, ...MOTIVOS_DE_ACLARACION];
+    assert.deepEqual(todos.filter((m) => !cubiertos.includes(m)), [], 'motivo nuevo sin clasificar: decidir si se registra');
   });
   test('validación: version obligatoria, esquema, fecha ISO, campos extra y claves de Groq', () => {
     assert.equal(VERSION_ESQUEMA, '1');
@@ -197,5 +248,31 @@ describe('FirestoreRegistro', () => {
   });
   test('el módulo no importa firebase al cargarse (el SDK se carga solo si está activado)', () => {
     assert.ok(!/^import .*from 'firebase/m.test(readFileSync(new URL('./firestoreRegistro.js', import.meta.url), 'utf8')));
+  });
+});
+
+describe('la cola de la partida (registro.js) sigue igual', () => {
+  test('con registroTurnos y cola a la vez: la cola recibe el registro de siempre, sin datos de análisis', async () => {
+    const enviados = [];
+    const cola = crearColaDeRegistros({ enviar: async (r) => { enviados.push(r); }, validarAlAgregar: false });
+    const x = new ExportacionArchivo();
+    const e = crearPartida({ semilla: 1 });
+    // Los tres turnos de texto van a la cola (también el que no se registra en el análisis).
+    let est = (await narrar(e, texto('viajar'), { cola, registroTurnos: x })).estado;
+    est = (await narrar(est, texto('banana xyz'), { cola, registroTurnos: x })).estado;
+    await narrar(est, texto('observar'), { cola, registroTurnos: x });
+    assert.equal(cola.pendientes().length, 3);
+    assert.deepEqual(x.registros().map((r) => r.motivo), ['falta_destino']); // análisis: solo el turno de IA, con el motivo original
+    for (const r of cola.pendientes()) {
+      assert.deepEqual(Object.keys(r), CAMPOS_REGISTRO);
+      for (const k of ['motivo', 'relacion', 'respuestaIA', 'sinDatosPersonales', 'version', 'frase']) assert.ok(!(k in r), k);
+    }
+    assert.deepEqual(cola.pendientes().map((r) => [r.texto_jugador, r.ruta]), [['viajar', 'reformulacion'], ['banana xyz', 'grupo_2'], ['observar', 'grupo_1']]);
+  });
+  test('sin registroTurnos, la cola recibe lo mismo', async () => {
+    const cola = crearColaDeRegistros({ enviar: async () => {}, validarAlAgregar: false });
+    await narrar(crearPartida({ semilla: 1 }), texto('banana xyz'), { cola });
+    assert.equal(cola.pendientes().length, 1);
+    assert.deepEqual(Object.keys(cola.pendientes()[0]), CAMPOS_REGISTRO);
   });
 });

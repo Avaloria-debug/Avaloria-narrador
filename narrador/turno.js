@@ -242,7 +242,9 @@ export function ejecutarTurno(estado, entrada, dependencias) {
   const destinoPendiente = pregunta
     ? { opciones: ids.map((id, i) => ({ id, nombre: opciones[i] })), turno: (estado.numeroRegistro ?? 0) + 1 }
     : null;
-  return { ...r, estado: { ...r.estado, destinoPendiente } };
+  // Motivo de la última reformulación (solo el id, nunca la frase): lo usa el registro si el turno siguiente pasa a la IA.
+  const motivoReformulacion = r.tipo === TIPOS_TURNO.REFORMULAR && typeof r.motivo === 'string' ? r.motivo : null;
+  return { ...r, estado: { ...r.estado, destinoPendiente, motivoReformulacion } };
 }
 
 /**

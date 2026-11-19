@@ -21,7 +21,7 @@ import { destinosDeViaje, prepararDiccionarios } from './comprension.js';
 import { cargarDiccionarios, problemasDeDiccionarios, textoDeProblemasDeDiccionarios } from './diccionarios.js';
 import { npcInicial, clampRelacion, clampDisposicion } from './npcs.js';
 import { esHora } from './reloj.js';
-import { MOTIVOS } from './motivos.js';
+import { MOTIVOS, CLAVES_REFORMULACION } from './motivos.js';
 import { minutosAbsolutos } from './reloj.js';
 import { posicionesDeNpcs } from './movimientoNpcs.js';
 import { turnoDeCaso } from './casos/narrar.js';
@@ -114,6 +114,11 @@ function destinoPendienteValido(p) {
   return opciones.length > 0 ? { opciones, turno: Number.isInteger(p.turno) && p.turno >= 0 ? p.turno : 0 } : null;
 }
 
+/** Motivo de la última reformulación: solo un id de motivo conocido (nunca texto del jugador), o null. */
+function motivoReformulacionValido(m) {
+  return typeof m === 'string' && CLAVES_REFORMULACION.includes(m) ? m : null;
+}
+
 function exigirFormaMinima(e) {
   const falta = (que) => {
     throw new Error(`cargarPartida: el estado no tiene la forma mínima (${que})`);
@@ -166,6 +171,7 @@ function conValoresPorDefecto(e) {
     marcas: [...e.marcas],
     reformulacionPendiente: e.reformulacionPendiente === true,
     destinoPendiente: destinoPendienteValido(e.destinoPendiente),
+    motivoReformulacion: motivoReformulacionValido(e.motivoReformulacion),
     ventanaAperturas: lista(e.ventanaAperturas).filter((a) => typeof a === 'string').slice(-VENTANA_APERTURAS),
     ultimosTurnos: lista(e.ultimosTurnos).filter((t) => typeof t === 'string').slice(-MAX_ULTIMOS_TURNOS),
     numeroRegistro: Number.isInteger(e.numeroRegistro) && e.numeroRegistro >= 0 ? e.numeroRegistro : 0,
@@ -495,6 +501,7 @@ export async function narrar(estado, entrada, opciones = {}) {
           escena: partida.jugador.escenaId,
           turno,
           origen,
+          motivoPrevio: partida.motivoReformulacion ?? null,
           respuesta: texto,
           relacion: presente ? partida.npcs?.[presente.id]?.relacion ?? null : null,
         });
