@@ -10,16 +10,26 @@
 import { exigirContenidoValido } from './contenido.js';
 import { estadoInicial, VERSION_ESTADO } from './estado.js';
 import { crearRng, semillaAEntero, semillaAlAzar } from './azar.js';
-import { ejecutarTurno, TIPOS_TURNO } from './turno.js';
+import { ejecutarTurno, npcsPresentes, TIPOS_TURNO } from './turno.js';
+import { VERSION } from './version.js';
+import { registroDeTurnoNoResuelto } from './registro/registroTurnos.js';
+
+// Línea de registro de análisis de una reformulación, en espera del turno siguiente. Clave: el RegistroTurnos.
+// Vive solo en memoria: la frase del jugador no entra al estado de la partida.
+const lineasPendientes = new WeakMap();
 import { narrarTurno, narrarReformulacion, VENTANA_APERTURAS, anotarApertura } from './narracion.js';
 import { pedirRespuestaIA, datosDeContexto, validarSalida, SIN_IA, MOTIVOS_IA } from './ia.js';
 import { registroDeTurno, ORIGENES, MAX_ULTIMOS_TURNOS } from './registro.js';
 import { estadoDeEscena } from './estadoEscena.js';
 import { destinosDeViaje, prepararDiccionarios } from './comprension.js';
-import { cargarDiccionarios } from './diccionarios.js';
+import { cargarDiccionarios, problemasDeDiccionarios, textoDeProblemasDeDiccionarios } from './diccionarios.js';
 import { npcInicial, clampRelacion, clampDisposicion } from './npcs.js';
 import { esHora } from './reloj.js';
-import { MOTIVOS } from './motivos.js';
+import { MOTIVOS, CLAVES_REFORMULACION } from './motivos.js';
+import { minutosAbsolutos } from './reloj.js';
+import { posicionesDeNpcs } from './movimientoNpcs.js';
+import { turnoDeCaso } from './casos/narrar.js';
+import { accionesDeIntencion } from './casos/acciones.js';
 
 export const TIPOS_SALIDA = Object.freeze({
   NARRACION: 'narracion',
@@ -36,6 +46,7 @@ export const ERRORES = Object.freeze({
   NARRACION_DE_RESPALDO: 'narracion_de_respaldo',
   REGISTRO: 'registro',
   IA: 'ia',
+  CASO: 'caso',
 });
 
 export const AVISO_VERSION_CONTENIDO = 'version_contenido';
@@ -54,11 +65,24 @@ async function leerContenidoPorDefecto() {
 export const contenido = exigirContenidoValido(await leerContenidoPorDefecto());
 
 /**
- * Diccionarios de la comprensión (léxico y ortografía), cargados una vez. `cargarDiccionarios` nunca lanza:
- * si un archivo falta o trae errores, ese diccionario no se usa y el narrador sigue con el catálogo solo.
+ * Diccionarios de la comprensión, cargados una vez. `cargarDiccionarios` no lanza: anota en cada diccionario lo que
+ * falló. Son obligatorios: si falta uno o viene vacío, `problemasDiccionarios` lo dice (con el archivo), se escribe en la
+ * consola y `crearPartida` y `cargarPartida` se niegan a arrancar una partida (`exigirDiccionarios`).
  * SIN VERIFICAR: la carga por `fetch` en el navegador.
  */
-export const diccionarios = prepararDiccionarios(await cargarDiccionarios(contenido), contenido.intenciones);
+const diccionariosCargados = await cargarDiccionarios(contenido);
+export const diccionarios = prepararDiccionarios(diccionariosCargados, contenido.intenciones);
+export const problemasDiccionarios = problemasDeDiccionarios(diccionariosCargados);
+if (problemasDiccionarios.length > 0) console.error(textoDeProblemasDeDiccionarios(problemasDiccionarios));
+
+/**
+ * Error de arranque por diccionarios que faltan. `opciones.problemasDiccionarios` es para tests.
+ * @throws {Error} con el archivo que falta
+ */
+function exigirDiccionarios(opciones) {
+  const problemas = Array.isArray(opciones?.problemasDiccionarios) ? opciones.problemasDiccionarios : problemasDiccionarios;
+  if (problemas.length > 0) throw new Error(textoDeProblemasDeDiccionarios(problemas));
+}
 
 const lista = (v) => (Array.isArray(v) ? v : []);
 const esObjeto = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -70,6 +94,7 @@ const porId = (l, id) => lista(l).find((x) => x.id === id);
  * @param {{ semilla?: number|string }} [opciones] con semilla, la partida es reproducible
  */
 export function crearPartida(opciones = {}) {
+  exigirDiccionarios(opciones);
   const semilla = opciones?.semilla;
   const rng = crearRng(semilla === undefined || semilla === null ? semillaAlAzar() : semillaAEntero(semilla));
   const base = estadoInicial(contenido, { rng });
@@ -81,8 +106,21 @@ export function crearPartida(opciones = {}) {
     numeroRegistro: 0,
     iaAgotadaDia: null,
     avisos: [],
+    caso: null,
     semilla: rng.estado(),
   };
+}
+
+/** Pregunta de destino pendiente: [{ id, nombre }] con turno, o null. */
+function destinoPendienteValido(p) {
+  if (!esObjeto(p) || !Array.isArray(p.opciones)) return null;
+  const opciones = p.opciones.filter((o) => esObjeto(o) && typeof o.id === 'string' && typeof o.nombre === 'string').map((o) => ({ id: o.id, nombre: o.nombre }));
+  return opciones.length > 0 ? { opciones, turno: Number.isInteger(p.turno) && p.turno >= 0 ? p.turno : 0 } : null;
+}
+
+/** Motivo de la última reformulación: solo un id de motivo conocido (nunca texto del jugador), o null. */
+function motivoReformulacionValido(m) {
+  return typeof m === 'string' && CLAVES_REFORMULACION.includes(m) ? m : null;
 }
 
 function exigirFormaMinima(e) {
@@ -136,11 +174,15 @@ function conValoresPorDefecto(e) {
     inventario: e.inventario.map((i) => ({ objetoId: i.objetoId, usosRestantes: Number.isInteger(i.usosRestantes) ? i.usosRestantes : null })),
     marcas: [...e.marcas],
     reformulacionPendiente: e.reformulacionPendiente === true,
+    destinoPendiente: destinoPendienteValido(e.destinoPendiente),
+    motivoReformulacion: motivoReformulacionValido(e.motivoReformulacion),
     ventanaAperturas: lista(e.ventanaAperturas).filter((a) => typeof a === 'string').slice(-VENTANA_APERTURAS),
     ultimosTurnos: lista(e.ultimosTurnos).filter((t) => typeof t === 'string').slice(-MAX_ULTIMOS_TURNOS),
     numeroRegistro: Number.isInteger(e.numeroRegistro) && e.numeroRegistro >= 0 ? e.numeroRegistro : 0,
     iaAgotadaDia: typeof e.iaAgotadaDia === 'string' ? e.iaAgotadaDia : null,
     avisos: lista(e.avisos).filter(esObjeto).map((a) => ({ ...a })),
+    // Estado del motor de caso (tags, hitos, instancia): se conserva tal cual, copiado.
+    caso: esObjeto(e.caso) ? structuredClone(e.caso) : null,
     semilla: Number.isInteger(e.semilla) ? e.semilla | 0 : semillaAlAzar(),
   };
 }
@@ -176,7 +218,8 @@ function reconstruir(e) {
  * (saca lo que ya no existe, agrega los NPCs nuevos) y deja un aviso en `estado.avisos`.
  * @param {string|object} json
  */
-export function cargarPartida(json) {
+export function cargarPartida(json, opciones = {}) {
+  exigirDiccionarios(opciones);
   let crudo = json;
   if (typeof json === 'string') {
     try {
@@ -221,6 +264,55 @@ function textoMostrable(texto) {
   return typeof texto === 'string' && texto.trim() !== '' && !/[{}[\]<>]/.test(texto) && !/[\p{L}\p{N}]_[\p{L}\p{N}]/u.test(texto);
 }
 
+/**
+ * Motor de caso en un turno de acción. Solo corre si el estado tiene un caso activo (`estado.caso` con casoId,
+ * sin cerrar) y su plantilla llega en `opciones.casos`. Sin caso activo devuelve null y el turno no cambia.
+ * El contenido v3 no trae casos: la plantilla entra por opciones (SUPUESTO, docs/SUPUESTOS.md).
+ * @returns {Promise<null|{caso:object, npcs:object, texto:string|null}>}
+ */
+async function turnoConCaso(partida, turno, opciones) {
+  const estadoCaso = partida.caso;
+  if (!esObjeto(estadoCaso) || typeof estadoCaso.casoId !== 'string' || estadoCaso.cerrado) return null;
+  if (turno.tipo !== TIPOS_TURNO.ACCION) return null;
+  const plantilla = lista(opciones?.casos).find((c) => c?.id === estadoCaso.casoId);
+  if (!plantilla) return null;
+
+  const nuevo = turno.estado;
+  const posiciones = posicionesDeNpcs(nuevo.reloj, contenido);
+  const npcs = Object.fromEntries(
+    Object.entries(nuevo.npcs).map(([id, n]) => [id, { escena: posiciones[id] ?? null, relacion: n.relacion, bloqueadoConocimientos: n.bloqueadoConocimientos === true }]),
+  );
+  const parametros = turno.accion.parametros ?? {};
+  const accionId = accionesDeIntencion(turno.accion.intencionId)[0] ?? null;
+  const escenaAccion = porId(contenido.escenas, turno.accion.escenaAnterior);
+  const contadorTurnos = (estadoCaso.contadorTurnos ?? 0) + 1;
+  const r = await turnoDeCaso({
+    estadoCaso,
+    caso: plantilla,
+    accion: accionId ? { accionId, npcId: parametros.npcId ?? null, escenaId: turno.accion.escenaAnterior, ciudad: escenaAccion?.ciudad ?? null } : null,
+    mundo: {
+      hora: minutosAbsolutos(nuevo.reloj) / 60,
+      turno: contadorTurnos,
+      escena: nuevo.jugador.escenaId,
+      estadoEvento: turno.escena?.estado ?? null,
+      npcs,
+    },
+    horasAvanzadas: turno.accion.costoHoras ?? 0,
+    contenido,
+    semilla: partida.semilla,
+    persistencia: opciones?.persistenciaCasos ?? null,
+    jugadorId: opciones?.jugadorId ?? null,
+    partidaId: opciones?.partidaId ?? null,
+  });
+  const npcsNuevos = Object.fromEntries(
+    Object.entries(nuevo.npcs).map(([id, n]) => {
+      const m = r.npcs[id];
+      return [id, m ? { ...n, relacion: clampRelacion(m.relacion), bloqueadoConocimientos: m.bloqueadoConocimientos === true } : n];
+    }),
+  );
+  return { caso: { ...r.estadoCaso, contadorTurnos }, npcs: npcsNuevos, texto: r.texto?.texto ?? null };
+}
+
 const diaReal = (fecha) => new Date(fecha).toISOString().slice(0, 10);
 
 /** Fecha real del turno. Si el reloj inyectado falla o da algo que no es una fecha, usa el del sistema. */
@@ -243,6 +335,7 @@ function fechaActual(ahora) {
  *   groqKey?: string|null,
  *   http?: Function, esperar?: (ms: number) => Promise<void>, ahora?: () => Date|number|string,
  *   cola?: { agregar: (registro: object) => unknown }, diccionarios?: object|null,
+ *   casos?: object[], persistenciaCasos?: object, jugadorId?: string, partidaId?: string,
  * }} [opciones] `http`, `esperar` y `ahora` son para tests: por defecto, `fetch` y el reloj del sistema.
  *   `cola`: la cola de registros (narrador/registroFirestore.js); si llega, el registro del turno se encola.
  * @returns {Promise<{
@@ -348,6 +441,18 @@ export async function narrar(estado, entrada, opciones = {}) {
       }
     }
 
+    // Motor de caso: solo con caso activo. Sin caso, el turno queda igual.
+    let conCaso = null;
+    try {
+      conCaso = await turnoConCaso(partida, turno, opciones);
+    } catch (e) {
+      anotar(ERRORES.CASO, e instanceof Error ? e.message : '');
+    }
+    if (conCaso?.texto) {
+      if (textoMostrable(conCaso.texto)) texto = `${texto}\n\n${conCaso.texto}`;
+      else anotar(ERRORES.TEXTO_INVALIDO, 'caso');
+    }
+
     // Registro: solo los turnos con texto libre.
     let registro = null;
     let numeroRegistro = partida.numeroRegistro;
@@ -381,12 +486,54 @@ export async function narrar(estado, entrada, opciones = {}) {
     const etiqueta = turno.tipo === TIPOS_TURNO.ACCION ? etiquetaDeAccion(turno.accion) : null;
     const nuevo = {
       ...turno.estado,
+      ...(conCaso ? { caso: conCaso.caso, npcs: conCaso.npcs } : {}),
       ventanaAperturas: aperturas,
       ultimosTurnos: etiqueta ? [...partida.ultimosTurnos, etiqueta].slice(-MAX_ULTIMOS_TURNOS) : partida.ultimosTurnos,
       numeroRegistro,
       iaAgotadaDia,
       semilla: rng.estado(),
     };
+    // Registro de turnos (narrador/registro/): solo con `opciones.registroTurnos` (un RegistroTurnos). Una línea por
+    // frase no resuelta por regla (docs/fase2-aprendizaje.md):
+    // - reformulación registrable: la línea queda PENDIENTE en memoria (nunca en el estado, que guarda solo el id del motivo);
+    // - turno siguiente que pasa a la IA (o a sin_ia): se escribe solo la línea de la IA, con el motivo original;
+    // - turno siguiente de texto resuelto por regla o pedido de aclaración: la pendiente se descarta;
+    // - turno siguiente que no es texto (botón): la pendiente se escribe una vez, al cerrar ese turno.
+    // Un fallo al guardar no rompe el turno.
+    if (typeof opciones?.registroTurnos?.guardar === 'function') {
+      try {
+        const destino = opciones.registroTurnos;
+        const pendiente = lineasPendientes.get(destino);
+        lineasPendientes.delete(destino);
+        // Vale solo si la partida sigue en esa reformulación (mismo id de motivo en el estado).
+        const vigente = pendiente && pendiente.motivo === partida.motivoReformulacion ? pendiente : null;
+        if (entrada?.tipo === 'texto') {
+          const presente = npcsPresentes(partida, contenido)[0];
+          const registroTurno = registroDeTurnoNoResuelto({
+            version: VERSION,
+            fecha: new Date(ahora),
+            entrada,
+            escena: partida.jugador.escenaId,
+            turno,
+            origen,
+            motivoPrevio: partida.motivoReformulacion ?? null,
+            respuesta: texto,
+            relacion: presente ? partida.npcs?.[presente.id]?.relacion ?? null : null,
+          });
+          if (registroTurno && turno.tipo === TIPOS_TURNO.REFORMULAR) {
+            // SUPUESTO: dos reformulaciones registrables seguidas son dos frases distintas; la anterior se escribe.
+            if (vigente) await destino.guardar(vigente.linea);
+            lineasPendientes.set(destino, { linea: registroTurno, motivo: turno.motivo });
+          } else if (registroTurno) {
+            await destino.guardar(registroTurno); // turno de IA: una sola línea, la pendiente no se escribe
+          }
+        } else if (vigente) {
+          await destino.guardar(vigente.linea);
+        }
+      } catch (e) {
+        anotar(ERRORES.REGISTRO, e instanceof Error ? e.message : '');
+      }
+    }
     return { texto, estado: nuevo, tipo, registro, errores };
   } catch (e) {
     return error(ERRORES.ERROR_INTERNO, e instanceof Error ? e.message : '');

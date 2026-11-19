@@ -2,10 +2,12 @@
 // (pasos en docs/PENDIENTES.md). No usa ui/ ni index.html de Avaloria, ni Firestore.
 // La clave de Groq vive en localStorage de este navegador y solo viaja a la API de Groq (narrador/ia.js).
 // Todo lo que se muestra se escribe con textContent: el texto del jugador nunca se interpreta.
-import { crearPartida, cargarPartida, narrar, contenido } from '../index.js';
+import { crearPartida, cargarPartida, narrar, contenido, problemasDiccionarios } from '../index.js';
+import { textoDeProblemasDeDiccionarios } from '../diccionarios.js';
 import { crearColaDeRegistros } from '../registro.js';
+import { ExportacionArchivo } from '../registro/exportacionArchivo.js';
 import { crearAlmacenIndexedDB } from '../../persistencia/adaptadores/almacenIndexedDB.js';
-import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
+import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, fijarRelacion, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
 
 const $ = (id) => document.getElementById(id);
 const SIN_DATO = '—';
@@ -19,6 +21,11 @@ const cola = crearColaDeRegistros({
   },
   validarAlAgregar: false,
 });
+// Registros de turnos de esta sesión, solo en memoria; se bajan con "Exportar registros". No se envía nada por red.
+const exportacion = new ExportacionArchivo();
+const pintarContador = () => {
+  $('exportar').textContent = `Exportar registros (${exportacion.cantidad})`;
+};
 let almacen = null;
 const abrirAlmacen = () => (almacen ??= crearAlmacenIndexedDB({ nombreBD: BD_PRUEBA }));
 
@@ -41,6 +48,8 @@ function llenarSelect(select, opciones) {
 }
 
 function pintarEscena() {
+  pintarContador();
+  pintarRelaciones();
   const hay = estado !== null;
   for (const id of ['guardar', 'entrada', 'enviar']) $(id).disabled = !hay || ocupado;
   if (!hay) return;
@@ -62,6 +71,29 @@ function pintarEscena() {
       return boton;
     }),
   );
+}
+
+// Atajo de prueba, no es parte del juego: un campo numérico por NPC que fija su relación en la partida actual.
+function pintarRelaciones() {
+  const campos = contenido.npcs.map((npc) => {
+    const entrada = document.createElement('input');
+    entrada.type = 'number';
+    entrada.min = '-100';
+    entrada.max = '100';
+    entrada.step = '1';
+    entrada.id = `relacion_${npc.id}`;
+    entrada.disabled = estado === null;
+    entrada.value = estado ? String(estado.npcs[npc.id]?.relacion ?? 0) : '';
+    entrada.addEventListener('change', () => {
+      if (!estado) return;
+      estado = fijarRelacion(estado, npc.id, entrada.value);
+      entrada.value = String(estado.npcs[npc.id].relacion);
+    });
+    const etiqueta = document.createElement('label');
+    etiqueta.append(`${npc.nombre} `, entrada);
+    return etiqueta;
+  });
+  $('relaciones').replaceChildren(...campos);
 }
 
 function pintarPanel(panel) {
@@ -91,23 +123,42 @@ async function turno(entrada) {
     return respuesta;
   };
   let salida;
-  try {
-    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola });
+    try {
+    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola, registroTurnos: exportacion });
     estado = salida.estado;
   } catch (e) {
     // `narrar` no lanza; por si acaso, se muestra como error de la página.
     salida = { texto: '', tipo: 'error', registro: null, errores: [`pagina: ${e instanceof Error ? e.message : String(e)}`] };
   }
+  pintarContador();
   ocupado = false;
   pintarPanel(armarPanel(salida, { llamadas, pendientes: cola.pendientes().length }));
   pintarEscena();
 }
 
+$('exportar').addEventListener('click', () => {
+  if (exportacion.cantidad === 0) return avisar('No hay registros para exportar.');
+  exportacion.descargar('registros-turnos.jsonl');
+});
+
 $('crear').addEventListener('click', () => {
-  estado = crearPartida();
-  avisar('Partida creada.');
+  try {
+    estado = crearPartida();
+    avisar('Partida creada.');
+  } catch (e) {
+    // Sin diccionarios el narrador no arranca: el error se ve en pantalla y en la consola.
+    avisar(e instanceof Error ? e.message : String(e));
+    console.error(e);
+  }
   pintarEscena();
 });
+
+// Diccionarios obligatorios: si falta alguno, la página lo dice al abrirse y no deja crear ni cargar partidas.
+if (problemasDiccionarios.length > 0) {
+  const mensaje = textoDeProblemasDeDiccionarios(problemasDiccionarios);
+  avisar(mensaje); // la consola ya la escribe index.js al cargar
+  for (const id of ['crear', 'cargar']) if ($(id)) $(id).disabled = true;
+}
 
 $('guardar').addEventListener('click', async () => {
   if (!estado) return;

@@ -49,6 +49,56 @@ Sin verificar: Groq real desde el navegador (clave real, CORS, forma de `usage`)
 - Paso C, sin hacer: ampliar el contenido de conocimientos y de respuestas de tema (más conocimientos por NPC, más palabras clave, más variantes de `no_se`). Todo texto nuevo lo aprueba Tomás.
 - Las `palabrasClave` actuales, salvo las de Serel, son una primera propuesta y también quedan a aprobar.
 
-## 8. Futuro (sin implementar)
+## 8. Motor de caso
+- Bloque C (desenlaces, validador, narrar e integración): cerrado.
+- Bloques A y B (modelo, tags, decaimiento, instancias, hitos, textos): hechos en código y probados con `npm test`. Falta la simulación en lote (`narrador/sim/`) fuera de npm test.
+- Casos: caso_01 a caso_04 escritos y verificados (ronda Opus, sin errores). p1 de caso_02 a caso_04 con un solo conocimiento válido: decisión pendiente de Tomás (`docs/SUPUESTOS.md`, "Ronda Opus").
+- HECHO — conocimientos _2: aprobados y cargados en `contenido-v3.json` (12, uno por NPC), con orden de revelación _1 antes que _2 y entradas en `temas-conocimiento.md`.
+- Tanda 2 de casos (caso_05 a caso_12): sin escribir.
+
+## 9. Futuro (sin implementar)
 - NPCs secundarios: con poco lore.
 - NPCs terciarios: sin importancia real.
+
+## 6. Diagnóstico de comprensión
+Diagnóstico completo, con todos los casos: `docs/diagnostico-comprension.md` (se regenera con `node narrador/diagnosticoComprension.js`).
+Con las reglas R1–R5 ("comprension: reglas R1-R5 finales"): 106 casos, 0 no coinciden. Los 4 casos "hablame sobre el tratado de la guerra" con Serel (relaciones 0, 39, 40 y 50) reformulan: "tratado" es palabra clave de Maren, ausente (R3). Secuencias de dos preguntas: 2 de 2 OK.
+Tests reescritos a R1/R2/R3: 9. Los 11 tests con frase de relleno ("sigo sin decir nada claro") vuelven a pasar con R4 sin tocarlos.
+
+### Tests rojos (0)
+Ninguno. Con "comprension: hablame con NPC presente; test de harina corregido" pasan "hablar con el de la harina" sin léxico (reformula) y "hablame sobre Serel" (habla con Serel). Suite completa en verde.
+
+### Fase 1: cerrada
+Cerrada con "fase 1 cierre: plantillas sin_salidas y destino_ambiguo; consulta narrada". Las decisiones están en `docs/SUPUESTOS.md` como "decididas". La única parte sin verificar en otros entornos es la pantalla de error en navegadores distintos de Chromium (abajo).
+
+### Fase 2: lo que queda
+- Navegador real (otros navegadores), Groq real, Firebase real, HTML de Avaloria y política de privacidad (secciones 1 a 5 de este documento).
+- Consultas de tema, paso C: contenido a aprobar por Tomás (sección 7).
+- Motor de caso (sección 8) y futuro sin implementar (sección 9).
+- Pendientes de Tomás que siguen sin respuesta (ver `docs/SUPUESTOS.md`, "Pendiente de Tomás").
+
+### Verificación de la pantalla de error de diccionarios (manual)
+- Comando: `node narrador/prueba/verificarErrorPantalla.mjs [archivo.md]`. Sin argumento es el control (no se quita nada). Requisito: Playwright con Chromium (`require('playwright')`); no es dependencia del repo.
+- Es una verificación manual, **no** parte de `npm test`.
+- Veredicto por caso: `OK` (control: `#aviso` vacío, sin error en la consola, Crear y Cargar habilitados) o `ERROR_ESPERADO` (archivo quitado: `#aviso` y la consola nombran el archivo, Crear y Cargar deshabilitados). Código de salida 1 solo con `DISTINTO_DE_LO_ESPERADO`. El script espera a que la página cargue y a que `#aviso` y los botones dejen de cambiar, no a que aparezca un aviso. Un archivo que no existe (`ninguno.md`) da `DISTINTO_DE_LO_ESPERADO` y código 1, como corresponde.
+- Mensaje en consola: antes salía dos veces (`index.js` y `prueba/app.js`); se quitó el `console.error` de `app.js` (una línea). Ahora sale una vez.
+- Resultado de la última corrida (v0.0.27, Chromium, servidor local con 404 para el archivo quitado):
+
+| Caso | Veredicto | `#aviso` | Mensajes de error en consola | Crear / Cargar | Código |
+|---|---|---|---|---|---|
+| control (ninguno quitado) | OK | vacío | 0 | habilitados / habilitados | 0 |
+| `diccionario-lexico.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+| `ortografia-tipeo.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+| `frases-patrones.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+| `contexto-palabras.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+| `temas-conocimiento.md` | ERROR_ESPERADO | con el archivo | 1 | deshabilitados / deshabilitados | 0 |
+
+## Verificación en navegador: pregunta de destino (`verificarDestino.mjs`)
+- Comando: `node narrador/prueba/verificarDestino.mjs`. Requisito: Playwright con Chromium (`require('playwright')`); no es dependencia del repo ni parte de `npm test`.
+- Casos: control (página sin errores, Crear habilitado, versión), Mercado ("salir de acá", "norte"), Plaza ("salir de acá", "Taberna de la campana tardía", "camino", "banana") y consola sin errores al final. Cada caso imprime `OK` o `DISTINTO_DE_LO_ESPERADO`; código de salida 1 solo si hay alguno distinto.
+- Último resultado (v0.0.32, Chromium): los 8 veredictos en `OK`.
+
+## Registro de turnos (`narrador/registro/`, v0.0.33)
+- `ExportacionArchivo` acumula en memoria y el botón "Exportar registros" de la página de prueba baja un `.jsonl` (una línea JSON por registro, sin red). Verificado en Chromium con Playwright.
+- `FirestoreRegistro` (colección `registros_turnos`) está desactivado y no se usa en ningún lado. Para activarlo hace falta `habilitarFirestore: true`, la configuración web completa en `firebaseConfig.js` y un empaquetador (o import map) para `firebase`: sin verificar en navegador ni contra el proyecto real. Revisar antes `firestore.rules` (no tiene reglas para `registros_turnos`) y la política de privacidad.
+

@@ -98,7 +98,7 @@ describe('turno — comprender', () => {
   });
 
   test('si la segunda frase se entiende, se ejecuta', () => {
-    const uno = texto(partida(), 'hablar con');
+    const uno = texto(partida(), 'hablar del tratado');
     assert.equal(uno.motivo, 'falta_npc');
     assert.deepEqual(uno.datos.nombres, ['Serel Norlen']);
     const dos = texto(uno.estado, 'hablar con el panadero');
@@ -138,14 +138,17 @@ describe('turno — botones', () => {
 
   test('sin parámetros usa las reglas de la comprensión', () => {
     assert.equal(boton(partida(), 'intencion_ayudar').accion.parametros.npcId, 'serel_panadero');
-    assert.equal(boton(partida(), 'intencion_hablar_con').motivo, 'falta_npc');
+    assert.equal(boton(partida(), 'intencion_hablar_con').accion.parametros.npcId, 'serel_panadero');
+    const enSur = partida({ jugador: { escenaId: 'escena_camino_sur' }, reloj: { dia: 1, hora: '16:00' } });
+    assert.equal(boton(enSur, 'intencion_hablar_con').motivo, 'falta_npc');
     assert.equal(boton(partida(), 'intencion_viajar').motivo, 'falta_destino');
     assert.equal(boton(partida(), 'intencion_usar', { objetoId: 'objeto_daga' }).motivo, 'sin_objetos');
     assert.equal(boton(partida(), 'intencion_hablar_con', { npcId: 'maren_archivista' }).motivo, 'npc_ausente');
   });
 
   test('un botón nunca pasa a IA', () => {
-    const uno = boton(partida(), 'intencion_hablar_con');
+    const enSur = partida({ jugador: { escenaId: 'escena_camino_sur' }, reloj: { dia: 1, hora: '16:00' } });
+    const uno = boton(enSur, 'intencion_hablar_con');
     assert.equal(boton(uno.estado, 'intencion_hablar_con').tipo, TIPOS_TURNO.REFORMULAR);
   });
 
@@ -211,9 +214,12 @@ describe('turno — conocimientos', () => {
       por: 'conversacion',
     });
     assert.deepEqual(t.estado.npcs.serel_panadero.conocimientosRevelados, ['conocimiento_serel_1']);
+    // Con el _1 revelado, la siguiente charla revela el _2 (sin condición); después, nada.
     const otra = texto(t.estado, 'hablar con Serel');
-    assert.equal(efecto(otra, 'conocimiento_revelado'), undefined);
-    assert.deepEqual(otra.estado.npcs.serel_panadero.conocimientosRevelados, ['conocimiento_serel_1']);
+    assert.equal(efecto(otra, 'conocimiento_revelado').conocimientoId, 'conocimiento_serel_2');
+    const tercera = texto(otra.estado, 'hablar con Serel');
+    assert.equal(efecto(tercera, 'conocimiento_revelado'), undefined);
+    assert.deepEqual(tercera.estado.npcs.serel_panadero.conocimientosRevelados, ['conocimiento_serel_1', 'conocimiento_serel_2']);
   });
 
   test('por debajo del umbral, o con fallo, no revela', () => {
@@ -338,7 +344,7 @@ describe('turno — huir y viajar', () => {
     assert.equal(t.estado.jugador.escenaId, 'escena_plaza_cambistas');
     assert.deepEqual(t.estado.reloj, { dia: 2, hora: '20:00' });
     assert.equal(t.accion.costoHoras, 36);
-    assert.deepEqual(t.npcsMovidos.map((m) => m.npcId).sort(), ['brenn_arriero', 'sarin_mensajera']);
+    assert.deepEqual(t.npcsMovidos.map((m) => m.npcId).sort(), ['brenn_arriero', 'hollis_pastor', 'sarin_mensajera', 'ysolde_pescadora']);
     assert.deepEqual(t.escena.npcs.map((n) => n.id), ['ivor_cambista']);
   });
 
@@ -383,10 +389,10 @@ describe('turno — efectos de eventos', () => {
     const e = partida({
       eventosActivos: [{ id: 'evento_feria_intercambio', escenaId: 'escena_mercado_circular', turnosRestantes: 2, horaFin: null }],
     });
-    const uno = texto(e, 'retirarse');
+    const uno = texto(e, 'observar'); // antes 'retirarse': ahora mueve o reformula según las salidas de la escena
     assert.deepEqual(uno.escena.npcs, [{ id: 'serel_panadero', disposicion: 1 }]);
     assert.equal(uno.estado.npcs.serel_panadero.disposicion, 0);
-    const dos = texto(uno.estado, 'retirarse');
+    const dos = texto(uno.estado, 'observar');
     assert.deepEqual(dos.eventos.cerrados.map((c) => c.id), ['evento_feria_intercambio']);
     assert.deepEqual(dos.escena.npcs, [{ id: 'serel_panadero', disposicion: 0 }]);
   });
@@ -570,7 +576,9 @@ describe('turno — prueba de carga', () => {
       for (const i of estado.inventario) assert.ok(i.usosRestantes === null || i.usosRestantes > 0, i.objetoId);
       assert.deepEqual(JSON.parse(JSON.stringify(estado)), estado);
     }
-    assert.deepEqual([...vistos.tipos].sort(), ['accion', 'ia', 'reformular']);
+    // 'consulta': retirarse ahora mueve al jugador por su salida; la partida sembrada cambia de recorrido y llega a frases
+    // con un tema de un NPC presente (p. ej. "recorrer Recibo de deuda…" con Ivor). Antes no aparecía por azar del recorrido.
+    assert.deepEqual([...vistos.tipos].sort(), ['accion', 'consulta', 'ia', 'reformular']);
     assert.ok(vistos.verbos.size >= 20, `verbos ejecutados: ${vistos.verbos.size}`);
     assert.ok(vistos.escenas.size >= 8, `escenas visitadas: ${vistos.escenas.size}`);
     assert.ok(vistos.efectos.has('relacion') && vistos.efectos.has('dinero') && vistos.efectos.has('movimiento'));

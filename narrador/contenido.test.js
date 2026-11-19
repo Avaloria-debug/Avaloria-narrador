@@ -277,8 +277,8 @@ describe('contenido — conocimientos y marcas', () => {
     hay(c, /serel_panadero\.conocimientos\[0\]: id de conocimiento repetido conocimiento_maren_1/);
     const d = copia();
     const m = npc(d, 'maren_archivista');
-    m.conocimientos.push({ ...m.conocimientos[0] });
-    hay(d, /maren_archivista\.conocimientos\[1\]: id de conocimiento repetido/);
+    m.conocimientos.push({ ...m.conocimientos.find((k) => k.id === 'conocimiento_maren_1') });
+    hay(d, new RegExp(`maren_archivista\\.conocimientos\\[${m.conocimientos.length - 1}\\]: id de conocimiento repetido`));
   });
 
   test('conocimiento sin id o con id mal formado', () => {
@@ -351,7 +351,7 @@ describe('contenido — alias de NPC', () => {
 describe('contenido — reformulaciones y viaje dentro de la ciudad', () => {
   test('archivo real: una clave por motivo, más repetir_segunda', () => {
     assert.deepEqual(Object.keys(base.plantillas.reformulacion).sort(), [...CLAVES_REFORMULACION].sort());
-    assert.equal(CLAVES_REFORMULACION.length, 13);
+    assert.equal(CLAVES_REFORMULACION.length, 15); // + sin_salidas, destino_repetido
     assert.deepEqual(base.plantillas.reformulacion.ya_en_destino, ['Ya estás en {lugar}.']);
   });
 

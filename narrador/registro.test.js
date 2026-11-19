@@ -185,7 +185,7 @@ describe('registro — un registro por turno con texto libre', () => {
   });
 
   test('reformular y después entender: ruta reformulacion, y el turno que resuelve va a grupo_1 con intento_reformulacion', () => {
-    const uno = jugar(partida(), 'hablar', 1);
+    const uno = jugar(partida(), 'hablar del tratado', 1);
     assert.equal(uno.turno.tipo, 'reformular');
     assert.deepEqual(
       [uno.registro.ruta, uno.registro.origen_respuesta, uno.registro.intencion_detectada, uno.registro.intento_reformulacion],

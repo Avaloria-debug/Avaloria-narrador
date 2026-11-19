@@ -30,7 +30,7 @@ const partida = (extra = {}) => {
 };
 const turnoDe = (estado, frase, rng = rngDe([0.1])) => ejecutarTurno(estado, { tipo: 'texto', texto: frase }, { contenido, rng });
 const narrar = (turno, aperturas = [], rng = rngDe([0])) => narrarTurno(turno, { contenido, rng, aperturas });
-const COMPLETOS = { npc: 'Serel', objeto: 'Antorcha', lugar: 'Mercado Circular', conocimiento: 'Un dato', nombres: ['Serel', 'Maren'] };
+const COMPLETOS = { npc: 'Serel', objeto: 'Antorcha', lugar: 'Mercado Circular', conocimiento: 'Un dato', nombres: ['Serel', 'Maren'], opciones: ['Serel', 'Maren'] };
 
 /** Sin placeholders, corchetes ni ids (los ids llevan guion bajo). */
 const limpio = (texto) => {
@@ -295,7 +295,8 @@ describe('narración — textos limpios', () => {
       const t = ejecutarTurno(estado, entrada, { contenido, rng });
       const r = narrarTurno(t, { contenido, rng, aperturas });
       tipos.add(t.tipo);
-      if (t.tipo === 'accion' || t.tipo === 'reformular') {
+      // 'consulta': con el recorrido sembrado nuevo (retirarse ahora mueve) aparecen consultas de tema; también se narran.
+      if (t.tipo === 'accion' || t.tipo === 'reformular' || t.tipo === 'consulta') {
         limpio(r.texto);
         assert.equal(r.aperturas.at(-1), aperturaDe(r.texto));
         if (r.respaldo) respaldos++;

@@ -1,6 +1,7 @@
 import { test, describe, before } from 'node:test';
 import assert from 'node:assert/strict';
 import { leerContenido } from './cargarContenido.js';
+import { cargarDiccionarios } from './diccionarios.js';
 import {
   normalizar,
   tokenizar,
@@ -12,10 +13,13 @@ import {
   resolverDestino,
   destinosDeViaje,
   decidir,
+  aVoseoInfinitivo,
+  INTENCIONES_MOVIMIENTO,
   PALABRAS_VACIAS,
   MOTIVOS,
 } from './comprension.js';
 import { REPETIR_SEGUNDA } from './motivos.js';
+import { crearPartida, narrar } from './index.js';
 import { clasificarViaje, TIPOS_VIAJE } from './viaje.js';
 
 let contenido;
@@ -84,7 +88,7 @@ describe('sección 2.1 — tolerancia a typos', () => {
   test('más de 4 letras: distancia hasta 2', () => {
     assert.equal(coincidePalabra('sitiacion', 'situacion'), 1);
     assert.equal(coincidePalabra('atacqr', 'atacar'), 1);
-    assert.equal(coincidePalabra('comrpar', 'comprar'), 2);
+    assert.equal(coincidePalabra('comrpar', 'comprar'), 1); // R4 final: Damerau, la transposición cuesta 1
     assert.equal(coincidePalabra('cxmyrzr', 'comprar'), -1);
   });
 
@@ -224,7 +228,7 @@ describe('sección 2.4 — viajar', () => {
     assert.equal(resolverDestino('ir a la biblioteca de Halenor', contenido.escenas).destino, 'escena_biblioteca_publica');
     const r = resolverDestino('ir a la biblioteca o a Lareth', contenido.escenas);
     assert.equal(r.motivo, MOTIVOS.DESTINO_AMBIGUO);
-    assert.deepEqual(r.datos.nombres.sort(), ['Biblioteca pública de Halenor', 'Lareth']);
+    assert.deepEqual(r.datos.opciones.sort(), ['Biblioteca pública de Halenor', 'Lareth']); // antes datos.nombres: plantilla unificada
   });
 
   test('ciudad por nombre, con typo', () => {
@@ -263,7 +267,7 @@ describe('sección 2.4 — viajar', () => {
   test('dos destinos en la frase: reformula con los nombres', () => {
     const r = resolverDestino('viajar a Lareth o a Halenor', contenido.escenas);
     assert.equal(r.motivo, MOTIVOS.DESTINO_AMBIGUO);
-    assert.deepEqual(r.datos.nombres.sort(), ['Halenor', 'Lareth']);
+    assert.deepEqual(r.datos.opciones.sort(), ['Halenor', 'Lareth']); // antes datos.nombres: plantilla unificada
   });
 
   test('decidir: viajar con destino ejecuta', () => {
@@ -291,9 +295,10 @@ describe('sección 3 — resolver NPC', () => {
     assert.deepEqual(r, { estado: 'reformular', motivo: MOTIVOS.NPC_AUSENTE, datos: { nombres: [] } });
   });
 
-  test('3.1: sin la lista de ausentes, el ausente no se reconoce', () => {
+  test('3.1: sin la lista de ausentes, el ausente no se reconoce (R2: con un solo presente, habla con ese)', () => {
     const r = resolverNpc('hablar con Maren', PLAZA, [npc('ivor_cambista')], 'hablar_con');
-    assert.equal(r.motivo, MOTIVOS.FALTA_NPC);
+    assert.equal(r.estado, 'resuelto');
+    assert.equal(r.npcId, 'ivor_cambista');
   });
 
   test('3.1: el ausente solo se reconoce escrito exacto', () => {
@@ -318,7 +323,7 @@ describe('sección 3 — resolver NPC', () => {
   });
 });
 
-describe('sección 4.1 — hablar_con nunca elige por el jugador', () => {
+describe('sección 4.1 — hablar_con sin nombre (R2, R3)', () => {
   test('sin NPC en la escena', () => {
     assert.deepEqual(resolverNpc('hablar con', PLAZA, [], 'hablar_con'), {
       estado: 'reformular',
@@ -327,11 +332,20 @@ describe('sección 4.1 — hablar_con nunca elige por el jugador', () => {
     });
   });
 
-  test('un NPC y ningún nombre: pregunta, no elige', () => {
+  test('R2: un NPC y ningún nombre: habla con ese NPC, sin reformular', () => {
     assert.deepEqual(resolverNpc('hablar con', PLAZA, [npc('ivor_cambista')], 'hablar_con'), {
+      estado: 'resuelto',
+      npcId: 'ivor_cambista',
+      ambiguo: false,
+      reportes: [],
+    });
+  });
+
+  test('R3: un NPC presente y la palabra clave de un NPC ausente: se reformula', () => {
+    assert.deepEqual(resolverNpc('hablar del tratado', PLAZA, [npc('serel_panadero')], 'hablar_con', { npcsAusentes: contenido.npcs }), {
       estado: 'reformular',
       motivo: MOTIVOS.FALTA_NPC,
-      datos: { nombres: ['Ivor Aster'] },
+      datos: { nombres: ['Serel Norlen'] },
     });
   });
 
@@ -638,8 +652,8 @@ describe('destinos dentro de la ciudad', () => {
 });
 
 describe('reformulaciones — texto en el contenido', () => {
-  test('hay 11 motivos y cada uno tiene texto', () => {
-    assert.equal(Object.keys(MOTIVOS).length, 11);
+  test('hay 12 motivos y cada uno tiene texto', () => {
+    assert.equal(Object.keys(MOTIVOS).length, 13); // + sin_salidas, destino_repetido
     for (const motivo of Object.values(MOTIVOS)) {
       const textos = contenido.plantillas.reformulacion[motivo];
       assert.ok(Array.isArray(textos) && textos.length > 0, motivo);
@@ -670,6 +684,8 @@ describe('reformulaciones — texto en el contenido', () => {
       ['usar el pan', ctx({ objetosAplicables: panes })],
       ['ir a la casa', ctx()],
       ['viajar a Lareth o a Halenor', ctx()],
+      ['retirarse', ctx()], // destino_ambiguo (varias salidas)
+      ['retirarse', ctx({ escenas: contenido.escenas.map((e) => ({ ...e, salidas: [] })) })], // sin_salidas
     ];
     const vistos = new Set();
     for (const [frase, c] of casos) {
@@ -678,14 +694,15 @@ describe('reformulaciones — texto en el contenido', () => {
       assert.ok(contenido.plantillas.reformulacion[r.motivo]?.length > 0, `${frase}: ${r.motivo}`);
       vistos.add(r.motivo);
     }
-    assert.deepEqual([...vistos].sort(), Object.values(MOTIVOS).sort());
+    // `destino_repetido` no lo devuelve decidir(): lo pone ejecutarTurno al responder con la pregunta de destino pendiente.
+    assert.deepEqual([...vistos].sort(), Object.values(MOTIVOS).filter((m) => m !== MOTIVOS.DESTINO_REPETIDO).sort());
   });
 
   test('los textos no traen ids ni placeholders desconocidos', () => {
     for (const [clave, textos] of Object.entries(contenido.plantillas.reformulacion)) {
       for (const t of textos) {
         assert.ok(!/(escena|objeto|evento|intencion|conocimiento|ciudad)_/.test(t), clave);
-        assert.deepEqual((t.match(/\{[^}]*\}/g) ?? []).filter((p) => p !== '{nombres}' && p !== '{lugar}'), [], clave);
+        assert.deepEqual((t.match(/\{[^}]*\}/g) ?? []).filter((p) => p !== '{nombres}' && p !== '{lugar}' && p !== '{opciones}'), [], clave);
       }
     }
   });
@@ -730,5 +747,151 @@ describe('sección 2.3 — una coincidencia exacta le gana a una con typo', () =
         assert.equal(coincidirIntencion(`${forma} Ysolde`, intenciones)?.intencionId, intencion.id, forma);
       }
     }
+  });
+});
+
+describe('R1 y R4 — consulta de tema y typos', () => {
+  const conClave = (id, clave) => ({ id, nombre: id === 'a' ? 'Ana' : id === 'b' ? 'Beto' : id, conocimientos: [{ id: `${id}_1`, palabrasClave: [clave] }] });
+
+  test('R1: palabra clave de un NPC presente, sin pregunta: consulta con ese NPC', () => {
+    const d = decidir('tratado', ctx({ npcsPresentes: [npc('maren_archivista')] }));
+    assert.equal(d.tipo, 'consulta');
+    assert.equal(d.npcId, 'maren_archivista');
+    assert.equal(d.ambiguos, undefined);
+  });
+
+  test('R1: la palabra clave es de dos NPC presentes: se reformula con sus nombres', () => {
+    const d = decidir('tratado', ctx({ npcsPresentes: [conClave('a', 'tratado'), conClave('b', 'tratado')] }));
+    assert.equal(d.tipo, 'reformular');
+    assert.equal(d.motivo, MOTIVOS.NPC_AMBIGUO);
+    assert.deepEqual(d.datos.nombres, ['Ana', 'Beto']);
+  });
+
+  test('R1: nombrando a uno de los dos, la consulta es con ese NPC', () => {
+    const d = decidir('tratado con Ana', ctx({ npcsPresentes: [conClave('a', 'tratado'), conClave('b', 'tratado')] }));
+    assert.equal(d.tipo, 'consulta');
+    assert.equal(d.npcId, 'a');
+  });
+
+  test('R1: un verbo exacto distinto de hablar ya no desvía la consulta', () => {
+    const d = decidir('trabajar con la harina', ctx({ npcsPresentes: [npc('serel_panadero')] }));
+    assert.equal(d.tipo, 'consulta');
+  });
+
+  test('R4: Damerau-Levenshtein con costo 1 sobre la palabra completa; "decir" no es "decirle"', () => {
+    assert.equal(coincidePalabra('decir', 'decirle'), -1);
+    assert.equal(coincidePalabra('comprxr', 'comprar'), 1);
+    assert.equal(coincidePalabra('cmoprar', 'comprar'), 1);
+    assert.equal(coincidePalabra('comrpxr', 'comprar'), -1); // dos errores
+    assert.equal(coincidePalabra('comprat', 'comprar'), 1);
+    assert.equal(coincidirIntencion('sigo sin decir nada claro', intenciones), null);
+  });
+
+  test('R1c: un verbo de movimiento exacto nunca es consulta de tema', () => {
+    const presentes = [{ ...npc('brenn_arriero'), relacion: 0 }];
+    const d = decidir('salir de acá posada', ctx({ npcsPresentes: presentes }));
+    assert.notEqual(d.tipo, 'consulta');
+    assert.equal(d.intencionId, 'intencion_retirarse');
+  });
+
+  test('R4 ajustada: los verbos de riesgo solo coinciden exactos ("huri" no es huir)', () => {
+    for (const frase of ['huri', 'atacra', 'defnder', 'rendirem']) assert.equal(coincidirIntencion(frase, intenciones), null, frase);
+    assert.equal(coincidirIntencion('huir', intenciones).verbo, 'huir');
+    assert.equal(coincidirIntencion('huí', intenciones).verbo, 'huir');
+    const d = decidir('huri', ctx({ npcsPresentes: [npc('serel_panadero')] }));
+    assert.equal(d.tipo, 'reformular');
+    // Un verbo que no es de riesgo conserva la tolerancia.
+    assert.equal(coincidirIntencion('comrpar', intenciones).verbo, 'comprar');
+  });
+
+  test('R6: voseo al infinitivo si el infinitivo está en el catálogo', () => {
+    assert.equal(aVoseoInfinitivo('viajá al norte', intenciones), 'viajar al norte');
+    assert.equal(aVoseoInfinitivo('leé un rato', intenciones), 'leer un rato');
+    assert.equal(aVoseoInfinitivo('dormí', intenciones), 'dormir');
+    assert.equal(aVoseoInfinitivo('hablá con serel', intenciones), 'hablar con serel');
+    // Sin el infinitivo en el catálogo o sin tilde, no se toca.
+    assert.equal(aVoseoInfinitivo('comé pan', intenciones), 'comé pan');
+    assert.equal(aVoseoInfinitivo('esta mañana', intenciones), 'esta mañana');
+    assert.equal(coincidirIntencion('hablá con serel', intenciones).verbo, 'hablar_con');
+    assert.equal(coincidirIntencion('hablar con serel', intenciones).verbo, 'hablar_con');
+  });
+
+  test('"hablar con el de la harina" sin léxico de NPC: la palabra clave no identifica a quién, se reformula', () => {
+    const d = decidir('hablar con el de la harina', ctx({ npcsPresentes: [npc('serel_panadero')] }));
+    assert.equal(d.tipo, 'reformular');
+    assert.equal(d.motivo, MOTIVOS.FALTA_NPC);
+    // Con el nombre del NPC y un tema, sigue siendo consulta.
+    assert.equal(decidir('hablá con Serel de la harina', ctx({ npcsPresentes: [npc('serel_panadero')] })).tipo, 'consulta');
+  });
+
+  test('"hablame sobre Serel": hablame es forma de hablar_con (diccionario léxico) y el NPC está nombrado', async () => {
+    const diccionarios = await cargarDiccionarios(contenido);
+    for (const frase of ['hablame sobre Serel', 'háblame de Serel', 'hablá de Serel']) {
+      const d = decidir(frase, ctx({ npcsPresentes: [npc('serel_panadero')], diccionarios }));
+      assert.equal(d.tipo, 'ejecutar', frase);
+      assert.equal(d.parametros.npcId, 'serel_panadero', frase);
+    }
+    // Con un tema de un NPC presente sigue siendo consulta; sin NPC presente que lo tenga, se pregunta.
+    assert.equal(decidir('hablame sobre la harina', ctx({ npcsPresentes: [npc('serel_panadero')], diccionarios })).tipo, 'consulta');
+    assert.equal(decidir('hablame sobre el tratado', ctx({ npcsPresentes: [npc('serel_panadero')], diccionarios })).motivo, MOTIVOS.FALTA_NPC);
+  });
+});
+
+describe('salir de acá (retirarse sin destino): sale por la salida de la escena', () => {
+  const NOMBRE = (id) => escena(id).nombre;
+  const dic = () => cargarDiccionarios(contenido);
+
+  test('una sola salida: ejecuta el movimiento a esa salida (intencion_viajar con destino)', async () => {
+    const diccionarios = await dic();
+    assert.deepEqual(escena('escena_taberna_lareth').salidas, ['escena_plaza_cambistas']);
+    for (const frase of ['salir de acá', 'retirarse']) {
+      const d = decidir(frase, ctx({ escena: { id: 'escena_taberna_lareth' }, diccionarios }));
+      assert.deepEqual(d, {
+        tipo: 'ejecutar',
+        intencionId: 'intencion_viajar',
+        parametros: { destino: 'escena_plaza_cambistas' },
+        repetirIntencionId: null,
+        reportes: [],
+      }, frase);
+    }
+  });
+
+  test('varias salidas: reformula listando las salidas por nombre', async () => {
+    const diccionarios = await dic();
+    const salidas = escena('escena_plaza_cambistas').salidas;
+    assert.ok(salidas.length > 1);
+    const d = decidir('salir de acá', ctx({ diccionarios }));
+    assert.equal(d.tipo, 'reformular');
+    assert.equal(d.motivo, MOTIVOS.DESTINO_AMBIGUO);
+    assert.deepEqual(d.datos.opciones, salidas.map(NOMBRE)); // datos lleva además `ids` (pregunta pendiente)
+    assert.deepEqual(d.datos.ids, salidas);
+  });
+
+  test('sin salidas: reformula con el motivo sin_salidas (no hay salidas)', async () => {
+    const diccionarios = await dic();
+    const escenas = contenido.escenas.map((e) => (e.id === PLAZA.id ? { ...e, salidas: [] } : e));
+    const d = decidir('salir de acá', ctx({ escenas, diccionarios }));
+    assert.deepEqual(d, { tipo: 'reformular', motivo: MOTIVOS.SIN_SALIDAS, intencionId: 'intencion_retirarse', datos: {} });
+    assert.equal(MOTIVOS.SIN_SALIDAS, 'sin_salidas');
+  });
+
+  test('de punta a punta: con una salida el jugador cambia de escena', async () => {
+    const e = crearPartida({ semilla: 3 });
+    const en = { ...e, jugador: { ...e.jugador, escenaId: 'escena_taberna_lareth' } };
+    const r = await narrar(en, { tipo: 'texto', texto: 'salir de acá' });
+    assert.equal(r.estado.jugador.escenaId, 'escena_plaza_cambistas');
+  });
+});
+
+describe('R1c: el movimiento sale del catálogo, por id de intención', () => {
+  test('INTENCIONES_MOVIMIENTO son ids que existen en el catálogo', () => {
+    assert.deepEqual([...INTENCIONES_MOVIMIENTO], ['intencion_viajar', 'intencion_retirarse']);
+    for (const id of INTENCIONES_MOVIMIENTO) assert.ok(intenciones.some((i) => i.id === id), id);
+  });
+  test('una orden de movimiento con una palabra clave de tema no es consulta', () => {
+    const serel = ctx({ npcsPresentes: [npc('serel_panadero')], escena: { id: 'escena_mercado_circular' } });
+    assert.equal(decidir('viajar al norte por la harina', serel).tipo, 'ejecutar');
+    // Mercado: dos salidas, así que retirarse pregunta a dónde; no es una consulta de tema.
+    assert.equal(decidir('retirarse con la harina', serel).motivo, MOTIVOS.DESTINO_AMBIGUO);
   });
 });

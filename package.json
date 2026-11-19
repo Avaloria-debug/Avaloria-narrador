@@ -4,5 +4,11 @@
   "type": "module",
   "scripts": {
     "test": "node --test"
+  },
+  "devDependencies": {
+    "fake-indexeddb": "^6.2.8"
+  },
+  "dependencies": {
+    "firebase": "^13.4.0"
   }
 }

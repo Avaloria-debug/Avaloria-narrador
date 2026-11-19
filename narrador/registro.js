@@ -1,4 +1,7 @@
-// Registro de turnos con texto libre y cola local en memoria.
+// COLA DE SINCRONIZACIÓN DE LA PARTIDA: registro de turnos con texto libre y cola local en memoria.
+// NO es el registro de análisis: ese vive en narrador/registro/ (forma fija, exportación JSONL, Firestore desactivado)
+// y se cablea aparte con `opciones.registroTurnos`. Esta cola no copia ni recibe datos de análisis (motivo, relación,
+// respuestaIA…): sus registros solo llevan los campos de CAMPOS_REGISTRO.
 // Formato: docs/sistema-registro-aprendizaje-narrador.md (sección 3) y docs/vocabulario-v1.md (sección 13).
 // - El texto del jugador se guarda completo, sin limpieza. Solo se lee: nunca es respuesta ni instrucción.
 // - Un registro solo lleva los campos de su formato: nada más (por ejemplo, la clave de Groq) puede entrar.

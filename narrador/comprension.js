@@ -26,6 +26,11 @@ export const VERBOS_NPC_AUTOMATICO = Object.freeze([
 export const VERBOS_SIN_OBJETIVO_PERMITIDO = Object.freeze(['observar', 'defender', 'distraer']);
 // Solo toman un NPC si el jugador lo nombra.
 export const VERBOS_NPC_SOLO_NOMBRADO = Object.freeze(['usar']);
+// R4 (ajuste): verbos de acción de riesgo. Sin tolerancia a typos: solo la forma escrita exacta ("huri" no es huir).
+export const VERBOS_DE_RIESGO = Object.freeze(['huir', 'atacar', 'emboscar', 'abortar', 'rendirse', 'defender']);
+// R1c: intenciones de movimiento del catálogo (`contenido-v3.json`), por id: las que cambian al jugador de lugar.
+// Escritas exactas, una frase con ellas no es una consulta de tema. Sale del catálogo (docs/comprension-v1.md §4).
+export const INTENCIONES_MOVIMIENTO = Object.freeze(['intencion_viajar', 'intencion_retirarse']);
 // Sección 4.3.
 export const VERBOS_OBJETO_EXIGIDO = Object.freeze(['usar', 'examinar']);
 export const VERBOS_OBJETO_OPCIONAL = Object.freeze(['comprar', 'atacar']);
@@ -61,10 +66,14 @@ export function tokenizar(texto) {
 // Sección 2.1: tolerancia a typos
 // ---------------------------------------------------------------------------
 
-/** Distancia de edición (Levenshtein). Corta en `tope + 1`. */
+/**
+ * Distancia de edición de Damerau-Levenshtein (R4): insertar, borrar, cambiar una letra o intercambiar dos letras
+ * adyacentes cuesta 1 cada cosa. Corta en `tope + 1`.
+ */
 export function distanciaEdicion(a, b, tope = Infinity) {
   if (a === b) return 0;
   if (Math.abs(a.length - b.length) > tope) return tope + 1;
+  let anterior = null; // fila i - 2
   let previa = Array.from({ length: b.length + 1 }, (_, j) => j);
   for (let i = 1; i <= a.length; i++) {
     const fila = [i];
@@ -72,19 +81,21 @@ export function distanciaEdicion(a, b, tope = Infinity) {
     for (let j = 1; j <= b.length; j++) {
       const costo = a[i - 1] === b[j - 1] ? 0 : 1;
       fila[j] = Math.min(previa[j] + 1, fila[j - 1] + 1, previa[j - 1] + costo);
+      if (anterior && i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        fila[j] = Math.min(fila[j], anterior[j - 2] + 1);
+      }
       if (fila[j] < minimo) minimo = fila[j];
     }
-    if (minimo > tope) return tope + 1;
+    if (minimo > tope && (!anterior || Math.min(...previa) > tope)) return tope + 1;
+    anterior = previa;
     previa = fila;
   }
-  return previa[b.length];
+  return previa[b.length] > tope ? tope + 1 : previa[b.length];
 }
 
 /** Distancia máxima permitida para una palabra de ese largo. */
 export function toleranciaPara(largo) {
-  if (largo <= 3) return 0;
-  if (largo === 4) return 1;
-  return 2;
+  return largo <= 3 ? 0 : 1;
 }
 
 /**
@@ -152,6 +163,33 @@ function compararCandidatos(a, b) {
   return b.palabras - a.palabras || a.distancia - b.distancia || b.formaCompleta - a.formaCompleta || a.inicio - b.inicio;
 }
 
+// R6: voseo. "viajá" → "viajar", "leé" → "leer", "dormí" → "dormir", pero solo si el infinitivo es una palabra de
+// alguna forma del catálogo de intenciones. Se hace antes de sacar las tildes: después "viajá" y "viaja" son lo mismo.
+const SUFIJOS_VOSEO = Object.freeze({ á: 'ar', é: 'er', í: 'ir' });
+const palabrasDelCatalogo = new WeakMap();
+
+function palabrasDeFormas(intenciones) {
+  if (!Array.isArray(intenciones)) return new Set();
+  if (!palabrasDelCatalogo.has(intenciones)) {
+    palabrasDelCatalogo.set(intenciones, new Set(intenciones.flatMap((i) => (i.formas ?? []).flatMap((f) => palabras(f)))));
+  }
+  return palabrasDelCatalogo.get(intenciones);
+}
+
+/** R6: cambia las formas de voseo (-á, -é, -í) por el infinitivo cuando ese infinitivo existe en el catálogo. */
+export function aVoseoInfinitivo(texto, intenciones) {
+  if (typeof texto !== 'string') return texto;
+  const conocidas = palabrasDeFormas(intenciones);
+  if (conocidas.size === 0) return texto;
+  return texto.normalize('NFC').replace(/[\p{L}\p{N}]+/gu, (palabra) => {
+    const minuscula = palabra.toLowerCase();
+    const terminacion = SUFIJOS_VOSEO[minuscula.at(-1)];
+    if (!terminacion || minuscula.length < 3) return palabra;
+    const infinitivo = minuscula.slice(0, -1) + terminacion;
+    return conocidas.has(normalizar(infinitivo)) ? infinitivo : palabra;
+  });
+}
+
 /**
  * Busca la intención de la frase.
  * `exacto`: sin tolerancia a typos (las palabras tienen que ser iguales). `contiguo`: las palabras de una forma
@@ -162,6 +200,16 @@ function compararCandidatos(a, b) {
  * }}
  */
 export function coincidirIntencion(texto, intenciones, opciones = {}) {
+  // R6: primero con el voseo llevado al infinitivo (frase y formas); si no coincide nada, la comparación de siempre.
+  const conVoseo = aVoseoInfinitivo(texto, intenciones);
+  return (
+    (conVoseo !== texto ? coincidirIntencionBase(conVoseo, intenciones, opciones, true) : null) ??
+    coincidirIntencionBase(texto, intenciones, opciones, false)
+  );
+}
+
+function coincidirIntencionBase(texto, intenciones, opciones, voseo) {
+  const forma_ = (f) => (voseo ? aVoseoInfinitivo(f, intenciones) : f);
   const entrada = tokenizar(texto);
   // Para la forma completa, "al" y "del" valen como "a" y "de": "irme al norte" trae la forma "irme a".
   const entradaCompleta = palabras(texto).map((p) => CONTRACCIONES[p] ?? p);
@@ -171,15 +219,17 @@ export function coincidirIntencion(texto, intenciones, opciones = {}) {
   const candidatos = [];
   for (const intencion of intenciones) {
     let mejor = null;
-    for (const forma of intencion.formas ?? []) {
-      const m = buscarEnOrden(entrada, tokenizar(forma), opciones);
+    // R4 (ajuste): los verbos de riesgo solo coinciden escritos exactos.
+    const opcionesDe = VERBOS_DE_RIESGO.includes(intencion.verbo) ? { ...opciones, exacto: true } : opciones;
+    for (const forma of (intencion.formas ?? [])) {
+      const m = buscarEnOrden(entrada, tokenizar(forma_(forma)), opcionesDe);
       if (!m) continue;
-      const completa = palabras(forma);
+      const completa = palabras(forma_(forma));
       const candidato = {
         intencionId: intencion.id,
         verbo: intencion.verbo,
         palabras: m.posiciones.length,
-        formaCompleta: buscarEnOrden(entradaCompleta, completa, opciones) ? completa.length : 0,
+        formaCompleta: buscarEnOrden(entradaCompleta, completa, opcionesDe) ? completa.length : 0,
         inicio: m.posiciones[0],
         distancia: m.distancia,
         posiciones: m.posiciones,
@@ -239,6 +289,13 @@ function nombraA(entrada, npc, exacto = false, lexico = null) {
 
 const nombresDe = (lista) => lista.map((x) => x.nombre);
 
+/** ¿La frase trae una palabra clave de un conocimiento de un NPC que no es `npc`? */
+function traePalabraClaveDeOtro(entrada, npc, otros) {
+  return (otros ?? []).some(
+    (o) => o.id !== npc.id && (o.conocimientos ?? []).some((k) => (k.palabrasClave ?? []).some((c) => entrada.includes(normalizar(c)))),
+  );
+}
+
 /**
  * Resuelve el NPC objetivo de un verbo.
  * @param {string} texto
@@ -275,7 +332,9 @@ export function resolverNpc(texto, escena, npcsPresentes, verbo, { npcsAusentes 
 
   if (soloNombrado) return { estado: 'sin_objetivo' };
 
-  // 4.1: hablar_con nunca elige por el jugador.
+  // 4.1 (R2, R3): hablar_con sin nombre. Un solo NPC presente y ninguna palabra clave de otro NPC (presente o no):
+  // es ese NPC. Con dos o más NPC, o con la palabra clave de un NPC ausente, se reformula.
+  if (exigido && presentes.length === 1 && !traePalabraClaveDeOtro(entrada, presentes[0], npcsAusentes)) return resuelto(presentes[0]);
   if (exigido) return reformular(presentes.length === 0 ? MOTIVOS.SIN_NPCS : MOTIVOS.FALTA_NPC, presentes);
 
   // 4.2
@@ -399,7 +458,7 @@ function nombraDestino(entrada, d, exacto = false) {
 
 /**
  * @returns {{ estado: 'resuelto', destino: string }
- *   | { estado: 'reformular', motivo: string, datos: { nombres: string[] } }}
+ *   | { estado: 'reformular', motivo: string, datos: { nombres: string[] } | { opciones: string[] } }}
  */
 export function resolverDestino(texto, escenas, { lexico = null, exacto = false } = {}) {
   const entrada = tokenizar(texto);
@@ -408,12 +467,28 @@ export function resolverDestino(texto, escenas, { lexico = null, exacto = false 
   const ciudadesDeEscenas = new Set(hallados.filter((d) => d.tipo === 'escena').map((d) => d.ciudadId));
   hallados = hallados.filter((d) => !(d.tipo === 'ciudad' && ciudadesDeEscenas.has(d.id)));
   if (hallados.length === 1) return { estado: 'resuelto', destino: hallados[0].id };
-  return {
-    estado: 'reformular',
-    motivo: hallados.length === 0 ? MOTIVOS.FALTA_DESTINO : MOTIVOS.DESTINO_AMBIGUO,
-    datos: { nombres: nombresDe(hallados) },
-  };
+  // Sin destino: `falta_destino` no lleva lista. Con varios: `destino_ambiguo` los lista como `opciones`.
+  if (hallados.length === 0) return { estado: 'reformular', motivo: MOTIVOS.FALTA_DESTINO, datos: { nombres: [] } };
+  return { estado: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { opciones: nombresDe(hallados), ids: hallados.map((d) => d.id) } };
 }
+
+/**
+ * Respuesta corta a una pregunta de destino ambiguo (`destinoPendiente`): nombre completo, parte del nombre o
+ * palabra clave del léxico de una de las opciones. Una sola coincidencia → resuelto; varias → ambiguo;
+ * ninguna (o una frase larga) → ninguna. `opciones`: [{ id, nombre }].
+ * @returns {{ estado: 'resuelto', destino: string } | { estado: 'ambiguo'|'ninguna' }}
+ */
+export function responderDestino(texto, opciones, { lexico = null } = {}) {
+  const entrada = tokenizar(texto);
+  if (entrada.length === 0 || entrada.length > MAX_PALABRAS_RESPUESTA) return { estado: 'ninguna' };
+  const coinciden = (opciones ?? []).filter((o) => {
+    const nombre = tokenizar(o.nombre);
+    return entrada.every((p) => nombre.some((t) => coincidePalabra(p, t) >= 0)) || palabrasDeLexico(entrada, lexico?.get(o.id)) > 0;
+  });
+  if (coinciden.length === 1) return { estado: 'resuelto', destino: coinciden[0].id };
+  return { estado: coinciden.length > 1 ? 'ambiguo' : 'ninguna' };
+}
+const MAX_PALABRAS_RESPUESTA = 8;
 
 // ---------------------------------------------------------------------------
 // Diccionarios (docs/formato-diccionarios.md): léxico y ortografía
@@ -632,19 +707,82 @@ export function resolverConsulta(texto, npcsPresentes, { lexico = null } = {}) {
   const nombrados = presentes.filter((n) => nombraA(entrada, n) || palabrasDeLexico(sinVacias, lexico?.get(n.id)) > 0);
   const candidatos = nombrados.length > 0 ? nombrados : presentes;
   let mejor = null;
+  const dueños = new Map(); // palabra clave de la frase -> NPCs que la tienen
   for (const n of candidatos) {
     for (const k of n.conocimientos ?? []) {
-      const puntos = new Set((k.palabrasClave ?? []).map(normalizar).filter((c) => c !== '' && entrada.includes(c))).size;
+      const claves = new Set((k.palabrasClave ?? []).map(normalizar).filter((c) => c !== '' && entrada.includes(c)));
+      for (const c of claves) dueños.set(c, new Set([...(dueños.get(c) ?? []), n.id]));
+      const puntos = claves.size;
       if (puntos > 0 && (!mejor || puntos > mejor.puntos)) mejor = { npcId: n.id, conocimientoId: k.id, puntos };
     }
   }
-  if (mejor) return { npcId: mejor.npcId, conocimientoId: mejor.conocimientoId };
+  if (mejor) {
+    // R1: una palabra clave que tienen dos o más NPCs de los candidatos no dice a quién se le pregunta.
+    const ids = new Set([...dueños.values()].filter((d) => d.size > 1).flatMap((d) => [...d]));
+    const ambiguos = candidatos.filter((n) => ids.has(n.id));
+    return { npcId: mejor.npcId, conocimientoId: mejor.conocimientoId, ...(ambiguos.length > 0 ? { ambiguos } : {}) };
+  }
   return { npcId: candidatos[0]?.id ?? null, conocimientoId: null };
 }
 
 // ---------------------------------------------------------------------------
 // Sección 1, paso 6: decidir
 // ---------------------------------------------------------------------------
+
+/**
+ * `retirarse` sin destino ("salir de acá", y el botón): se va por la salida de la escena si hay una sola
+ * (`intencion_viajar` con ese destino); con varias, `destino_ambiguo` con los nombres; sin salidas, `sin_salidas`.
+ * Si la escena no está en el contenido, devuelve null y `retirarse` se ejecuta como antes.
+ * @returns {{ tipo: 'ejecutar', intencionId: string, parametros: { destino: string } }
+ *   | { tipo: 'reformular', motivo: string, datos: object } | null}
+ */
+export function salirDeEscena(contexto) {
+  const escenas = contexto?.escenas ?? [];
+  const actual = escenas.find((e) => e.id === contexto.escena?.id);
+  if (!Array.isArray(actual?.salidas)) return null;
+  const salidas = actual.salidas.map((id) => escenas.find((e) => e.id === id)).filter(Boolean);
+  if (salidas.length === 0) return { tipo: 'reformular', motivo: MOTIVOS.SIN_SALIDAS, datos: {} };
+  if (salidas.length > 1) return { tipo: 'reformular', motivo: MOTIVOS.DESTINO_AMBIGUO, datos: { opciones: nombresDe(salidas), ids: salidas.map((s) => s.id) } };
+  const viajar = contexto.intenciones.find((i) => i.verbo === 'viajar');
+  return { tipo: 'ejecutar', intencionId: viajar.id, parametros: { destino: salidas[0].id } };
+}
+
+/** R1c: ¿la frase trae un verbo de movimiento del catálogo escrito exacto? */
+function esOrdenDeMovimiento(texto, intenciones) {
+  const exacta = coincidirIntencion(texto, intenciones, { exacto: true });
+  return exacta !== null && INTENCIONES_MOVIMIENTO.includes(exacta.intencionId);
+}
+
+/**
+ * R1b: "hablar con X" (forma exacta o con la tolerancia de R4) donde X es una referencia del léxico a un NPC presente
+ * ("el de la harina"). Las palabras clave que trae la frase son parte de esa referencia, no un tema: se ejecuta hablar_con.
+ */
+function esHablarConReferencia(texto, coincidencia, presentes, lexico) {
+  if (coincidencia?.verbo !== 'hablar_con' || !lexico) return false;
+  const entrada = tokenizar(texto);
+  return (presentes ?? []).some((n) => {
+    const formas = (lexico.get(n.id) ?? []).filter((f) => contieneForma(entrada, f));
+    if (formas.length === 0) return false;
+    const deLaReferencia = new Set(formas.flat());
+    const claves = (n.conocimientos ?? []).flatMap((k) => (k.palabrasClave ?? []).map(normalizar)).filter((c) => c !== '' && entrada.includes(c));
+    return claves.every((c) => deLaReferencia.has(c));
+  });
+}
+
+/**
+ * ¿La frase trae una forma de `hablar_con` de dos palabras o más, con su preposición ("hablar con", "charlá con",
+ * "preguntarle a"), juntas y en orden? "hablame sobre el tratado" no: es un tema, no una orden de hablar con alguien.
+ */
+function esHablarConExplicito(texto, intenciones) {
+  const entrada = palabras(aVoseoInfinitivo(texto, intenciones));
+  return (intenciones ?? [])
+    .filter((i) => i.verbo === 'hablar_con')
+    .flatMap((i) => i.formas ?? [])
+    .some((f) => {
+      const forma = palabras(aVoseoInfinitivo(f, intenciones));
+      return forma.length >= 2 && buscarEnOrden(entrada, forma, { contiguo: true }) !== null;
+    });
+}
 
 /**
  * Decide qué hacer con una frase del jugador.
@@ -684,8 +822,24 @@ export function decidir(texto, contexto = {}) {
 
   // Preguntas: sin intención, con verbo de viaje o sobre un tema de un NPC presente, son consultas.
   if (esPregunta(texto)) {
-    const consulta = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
+    const { ambiguos: _ambiguos, ...consulta } = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
     if (!coincidencia || coincidencia.verbo === 'viajar' || consulta.conocimientoId !== null) {
+      return { tipo: 'consulta', ...consulta };
+    }
+  }
+
+  // R1: frase sin pregunta con una palabra clave de un conocimiento de un NPC presente: consulta de tema con ese NPC.
+  // Si la palabra clave es de dos o más NPC presentes, se reformula. "tratado", "hablame del tratado".
+  if (!esPregunta(texto)) {
+    const { ambiguos, ...consulta } = resolverConsulta(t, contexto.npcsPresentes, { lexico: diccionarios?.lexicoNpc });
+    if (consulta.conocimientoId !== null && !esOrdenDeMovimiento(t, contexto.intenciones) && !esHablarConReferencia(t, coincidencia, contexto.npcsPresentes, diccionarios?.lexicoNpc)) {
+      // "hablar con" explícito, sin nombrar a nadie y sin léxico de NPC: la palabra clave no identifica a quién; se pregunta.
+      const presentes = contexto.npcsPresentes ?? [];
+      const nombra = presentes.some((n) => nombraA(tokenizar(t), n, false, diccionarios?.lexicoNpc));
+      if (coincidencia?.verbo === 'hablar_con' && !nombra && esHablarConExplicito(t, contexto.intenciones)) {
+        return reformular(MOTIVOS.FALTA_NPC, { nombres: nombresDe(presentes) });
+      }
+      if (ambiguos) return reformular(MOTIVOS.NPC_AMBIGUO, { nombres: nombresDe(ambiguos) });
       return { tipo: 'consulta', ...consulta };
     }
   }
@@ -710,6 +864,13 @@ export function decidir(texto, contexto = {}) {
   const { verbo } = coincidencia;
   const parametros = {};
   const reportes = [];
+
+  // "salir de acá" (retirarse, sin destino): ver `salirDeEscena`.
+  if (verbo === 'retirarse') {
+    const salida = salirDeEscena(contexto);
+    if (salida?.tipo === 'reformular') return reformular(salida.motivo, salida.datos);
+    if (salida) return { ...salida, repetirIntencionId: coincidencia.segundaIntencionId, reportes };
+  }
 
   if (verbo === 'viajar') {
     // El destino también tiene que estar escrito bien: "viajá al nrte" no viaja.

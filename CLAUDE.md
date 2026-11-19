@@ -45,6 +45,7 @@ Un commit por bloque, en este orden:
 Cada commit tiene que dejar la suite en verde.
 
 ## Comandos
+- Dependencias: `npm install` (antes de `npm test`). Las dependencias de desarrollo (`fake-indexeddb`) hacen falta para la suite.
 - Tests: `npm test`
 - Validar contenido: `node narrador/validarContenido.js` (lo crea el primer bloque)
 

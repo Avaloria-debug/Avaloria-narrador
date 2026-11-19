@@ -2,7 +2,7 @@
 // comprender -> resolver -> efectos sobre NPC -> avanzar reloj -> disparar y cerrar eventos -> mover NPCs.
 // Devuelve resultados estructurados, sin texto: la narración es del bloque 4.
 // No modifica el estado recibido.
-import { decidir, resolverNpc, resolverObjeto, MOTIVOS } from './comprension.js';
+import { decidir, resolverNpc, resolverObjeto, salirDeEscena, responderDestino, prepararDiccionarios, MOTIVOS } from './comprension.js';
 import { resolverAccion, aplicarEfectos, objetoDisponible, entradaDeInventario, MOTIVOS_FALLO } from './resolver.js';
 import { aplicarTransicion, disposicionEfectiva } from './npcs.js';
 import { conocimientoARevelar, conocimientoPorNarrativo, puedeRevelar, revelar, MOTIVOS_NO_REVELA } from './conocimientos.js';
@@ -80,6 +80,12 @@ function decidirBoton(entrada, estado, contenido) {
   const reportes = [];
   const reformular = (motivo, datos = { nombres: [] }) => ({ tipo: 'reformular', motivo, intencionId: intencion.id, datos });
 
+  // Retirarse sin destino: el mismo camino que la frase "salir de acá".
+  if (intencion.verbo === 'retirarse') {
+    const salida = salirDeEscena(ctx);
+    if (salida?.tipo === 'reformular') return reformular(salida.motivo, salida.datos);
+    if (salida) return { ...salida, repetirIntencionId: null, reportes };
+  }
   if (intencion.verbo === 'viajar') {
     if (typeof dados.destino !== 'string') return reformular(MOTIVOS.FALTA_DESTINO);
     parametros.destino = dados.destino;
@@ -166,8 +172,9 @@ function efectosSobreNpc(estado, accion, resolucion, contenido, conValor) {
 /**
  * Consulta de tema: una pregunta a un NPC presente. No gasta tiempo ni mueve eventos o NPCs.
  * - Tema de un conocimiento del NPC que se puede revelar: lo cuenta y queda revelado (`exito`).
- * - Tema de un conocimiento ya revelado o sin sus condiciones (umbral, evento, marca): `fallo`.
- * - Sin tema, o con los conocimientos del NPC bloqueados: `no_se`.
+ * - Tema de un conocimiento ya revelado o sin la relación que pide: `fallo`.
+ * - Sin tema, con los conocimientos del NPC bloqueados, o con su evento o marca sin cumplir: `no_se`.
+ *   En ese último caso queda pendiente: se revela al preguntar con la condición cumplida.
  * - Sin NPC presente no hay a quién preguntar: sigue como una frase no entendida.
  */
 function ejecutarConsulta(estado, decision, contenido) {
@@ -197,7 +204,9 @@ function ejecutarConsulta(estado, decision, contenido) {
       consulta.efectos.push({ tipo: TIPOS_EFECTO_NPC.CONOCIMIENTO_REVELADO, npcId, conocimientoId: conocimiento.id, por: 'consulta' });
     } else {
       consulta.motivo = r.motivo;
-      if (r.motivo !== MOTIVOS_NO_REVELA.BLOQUEADO) consulta.resultado = RESULTADOS_CONSULTA.FALLO;
+      // Bloqueado, o con su evento o marca sin cumplir: `no_se`; queda pendiente y se revela al preguntar con la condición cumplida.
+      const pendiente = [MOTIVOS_NO_REVELA.BLOQUEADO, MOTIVOS_NO_REVELA.EVENTO, MOTIVOS_NO_REVELA.MARCA].includes(r.motivo);
+      if (!pendiente) consulta.resultado = RESULTADOS_CONSULTA.FALLO;
     }
   }
   return {
@@ -224,11 +233,49 @@ function ejecutarConsulta(estado, decision, contenido) {
  *   repetirIntencionId?: string|null, reportes?: object[],
  * }}
  */
-export function ejecutarTurno(estado, entrada, { contenido, rng, diccionarios = null }) {
+export function ejecutarTurno(estado, entrada, dependencias) {
+  const r = ejecutarTurnoSinPendiente(estado, entrada, dependencias);
+  if (r.tipo === TIPOS_TURNO.ERROR) return r;
+  // Pregunta de destino pendiente: solo la deja una pregunta de destino ambiguo (con ids); cualquier otro turno la borra.
+  const { opciones, ids } = r.datos ?? {};
+  const pregunta = r.tipo === TIPOS_TURNO.REFORMULAR && [MOTIVOS.DESTINO_AMBIGUO, MOTIVOS.DESTINO_REPETIDO].includes(r.motivo) && Array.isArray(ids) && Array.isArray(opciones);
+  const destinoPendiente = pregunta
+    ? { opciones: ids.map((id, i) => ({ id, nombre: opciones[i] })), turno: (estado.numeroRegistro ?? 0) + 1 }
+    : null;
+  // Motivo de la última reformulación (solo el id, nunca la frase): lo usa el registro si el turno siguiente pasa a la IA.
+  const motivoReformulacion = r.tipo === TIPOS_TURNO.REFORMULAR && typeof r.motivo === 'string' ? r.motivo : null;
+  return { ...r, estado: { ...r.estado, destinoPendiente, motivoReformulacion } };
+}
+
+/**
+ * Respuesta corta a la pregunta de destino pendiente: solo si la frase no se entendió como otra cosa.
+ * Una opción → viajar; varias o ninguna → vuelve a preguntar con las mismas opciones.
+ */
+function respuestaADestinoPendiente(estado, entrada, decision, contenido, diccionarios) {
+  const pend = estado.destinoPendiente;
+  const sinEntender = decision.tipo === 'ia' || (decision.tipo === 'reformular' && decision.motivo === MOTIVOS.NO_ENTENDIDO);
+  if (!pend || !Array.isArray(pend.opciones) || entrada?.tipo !== 'texto' || !sinEntender) return null;
+  const dic = prepararDiccionarios(diccionarios, contenido.intenciones);
+  const r = responderDestino(entrada.texto, pend.opciones, { lexico: dic?.lexicoEscena });
+  if (r.estado === 'resuelto') {
+    const viajar = contenido.intenciones.find((i) => i.verbo === 'viajar');
+    return { tipo: 'ejecutar', intencionId: viajar.id, parametros: { destino: r.destino }, repetirIntencionId: null, reportes: [] };
+  }
+  return {
+    tipo: 'reformular',
+    // Coincide con más de una opción: "No me quedó claro…"; no coincide con ninguna: la misma pregunta.
+    motivo: r.estado === 'ambiguo' ? MOTIVOS.DESTINO_REPETIDO : MOTIVOS.DESTINO_AMBIGUO,
+    intencionId: null,
+    datos: { opciones: pend.opciones.map((o) => o.nombre), ids: pend.opciones.map((o) => o.id) },
+  };
+}
+
+function ejecutarTurnoSinPendiente(estado, entrada, { contenido, rng, diccionarios = null }) {
   if (typeof rng !== 'function') throw new TypeError('ejecutarTurno necesita un rng');
 
   // 1. Comprender.
-  const decision = comprender(entrada, estado, contenido, diccionarios);
+  let decision = comprender(entrada, estado, contenido, diccionarios);
+  decision = respuestaADestinoPendiente(estado, entrada, decision, contenido, diccionarios) ?? decision;
   if (decision.tipo === 'error') return { tipo: TIPOS_TURNO.ERROR, estado, error: decision.error };
   if (decision.tipo === 'consulta') return ejecutarConsulta(estado, decision, contenido);
   // Saludo o reconocimiento ("hola", "ok"): lo responde el primer NPC presente. No gasta tiempo, no cambia nada,

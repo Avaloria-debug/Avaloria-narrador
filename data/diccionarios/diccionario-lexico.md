@@ -1,7 +1,7 @@
 ---
 tipo: diccionario-lexico
 version: 1
-entradas: 1770
+entradas: 1772
 ---
 
 ## Verbos
@@ -40,6 +40,8 @@ abordar a | intencion_hablar_con | sinonimo
 charlar un rato con | intencion_hablar_con | coloquial
 tirar charla con | intencion_hablar_con | coloquial
 darle charla a | intencion_hablar_con | coloquial
+hablame | intencion_hablar_con | coloquial
+háblame | intencion_hablar_con | coloquial
 arrimarme a hablar con | intencion_hablar_con | coloquial
 hacerle una consulta a | intencion_hablar_con | coloquial
 chamullar con | intencion_hablar_con | regional

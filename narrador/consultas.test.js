@@ -149,8 +149,10 @@ describe('consultas de tema', () => {
     const conMarca = await decir(en('escena_biblioteca_publica', elia, { marcas: ['leyo'] }), '¿qué libro fue retirado?');
     assert.deepEqual(conMarca.estado.npcs[elia].conocimientosRevelados, ['conocimiento_elia_1']);
   });
-  test('una frase que no es pregunta no es consulta, aunque nombre el tema', () => {
-    assert.notEqual(decidir('la harina está cara', ctx()).tipo, 'consulta');
+  test('R1: una frase que no es pregunta y nombra el tema de un NPC presente es consulta con ese NPC', () => {
+    const d = decidir('la harina está cara', ctx());
+    assert.equal(d.tipo, 'consulta');
+    assert.equal(d.conocimientoId, 'conocimiento_serel_1');
   });
 });
 
@@ -206,6 +208,18 @@ describe('validador: palabrasClave y no_se', () => {
       conocimiento_sarin_1: ['carta', 'semana', 'destinatario'],
       conocimiento_sendero_sin_vigilancia: ['sendero', 'colinas', 'vigilancia'],
       conocimiento_oren_1: ['roble', 'firma'],
+      conocimiento_maren_2: ['cerradura', 'cerraduras', 'llave', 'llaves'],
+      conocimiento_serel_2: ['horno', 'hornos', 'alba'],
+      conocimiento_ivor_2: ['ficha', 'fichas', 'empeno'],
+      conocimiento_naela_2: ['madrugada', 'parroquianos'],
+      conocimiento_tiren_2: ['vado', 'crecida', 'lluvias'],
+      conocimiento_elia_2: ['registro', 'paginas', 'invierno'],
+      conocimiento_brenn_2: ['molino', 'ruinas', 'bajada'],
+      conocimiento_ysolde_2: ['niebla', 'bote', 'farol'],
+      conocimiento_dario_2: ['barrera', 'relevo', 'garita'],
+      conocimiento_sarin_2: ['consigna', 'contrasena', 'santo'],
+      conocimiento_hollis_2: ['lobos', 'rebano', 'fogatas'],
+      conocimiento_oren_2: ['ofrenda', 'ofrendas', 'amanecer'],
     });
   });
   test('no_se tiene que existir con dos variantes', async () => {
@@ -215,5 +229,36 @@ describe('validador: palabrasClave y no_se', () => {
       else c.plantillas.no_se = valor;
       assert.ok(validarContenido(c).errores.some((e) => e.includes('plantillas.no_se')), JSON.stringify(valor));
     }
+  });
+});
+
+describe('conocimiento con evento como pista (motor-caso-v1-operativo.md, sección 4)', async () => {
+  const { ejecutarTurno } = await import('./turno.js');
+  const DARIO = 'dario_guardia';
+  const PISTA = 'conocimiento_dario_1';
+  const EVENTO = 'evento_disputa_aduana';
+  const ADUANA = 'escena_puente_aduana';
+  const enAduana = (eventosActivos) => {
+    const e = crearPartida({ semilla: 3 });
+    return { ...e, eventosActivos, jugador: { ...e.jugador, escenaId: ADUANA }, npcs: { ...e.npcs, [DARIO]: { ...e.npcs[DARIO], relacion: 100 } } };
+  };
+  const preguntar = (estado) => ejecutarTurno(estado, { tipo: 'texto', texto: '¿quién cobra sobornos?' }, { contenido, rng: () => 0.5 });
+
+  test('el conocimiento pide un evento y no queda excluido como pista: se puede preguntar por él', () => {
+    const k = contenido.npcs.find((n) => n.id === DARIO).conocimientos.find((c) => c.id === PISTA);
+    assert.equal(k.requiereEvento, EVENTO);
+    assert.equal(preguntar(enAduana([])).consulta.conocimientoId, PISTA);
+  });
+
+  test('con el evento inactivo responde no_se y no se revela; con el evento activo se revela', () => {
+    const sin = preguntar(enAduana([]));
+    assert.equal(sin.tipo, 'consulta');
+    assert.equal(sin.consulta.resultado, 'no_se');
+    assert.equal(sin.consulta.motivo, 'evento');
+    assert.deepEqual(sin.estado.npcs[DARIO].conocimientosRevelados, []);
+    // Queda pendiente: la misma pregunta, con el evento activo, la revela.
+    const con = preguntar({ ...sin.estado, eventosActivos: [{ id: EVENTO, escenaId: ADUANA, turnosRestantes: 6, horaFin: null }] });
+    assert.equal(con.consulta.resultado, 'exito');
+    assert.deepEqual(con.estado.npcs[DARIO].conocimientosRevelados, [PISTA]);
   });
 });

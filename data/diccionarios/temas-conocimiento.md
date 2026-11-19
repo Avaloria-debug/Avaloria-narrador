@@ -1,7 +1,7 @@
 ---
 tipo: temas-conocimiento
 version: 1
-entradas: 72
+entradas: 84
 ---
 
 ## Conocimientos
@@ -18,6 +18,18 @@ conocimiento_dario_1 | sobornos ; soborno ; coima ; aduana ; quién cobra ; guar
 conocimiento_sarin_1 | carta ; carta de la semana ; mensaje ; destinatario ; correspondencia ; Casa Aster ; mensajería ; para quién ; entrega ; misiva
 conocimiento_sendero_sin_vigilancia | sendero sin vigilancia ; sendero ; colinas ; paso sin guardias ; sendero lateral ; camino oculto ; cruce de colinas ; tormenta ; paso libre ; atajo de las colinas
 conocimiento_oren_1 | Gran Roble ; año 500 ; firma ; tratado del roble ; pacto ; qué se firmó ; acuerdo ; peregrinación ; historia del roble ; documento firmado ; detalle de la firma
+conocimiento_maren_2 | cerradura ; cerraduras ; llave ; llaves
+conocimiento_serel_2 | horno ; hornos ; alba
+conocimiento_ivor_2 | ficha ; fichas ; empeno
+conocimiento_naela_2 | madrugada ; parroquianos
+conocimiento_tiren_2 | vado ; crecida ; lluvias
+conocimiento_elia_2 | registro ; paginas ; invierno
+conocimiento_brenn_2 | molino ; ruinas ; bajada
+conocimiento_ysolde_2 | niebla ; bote ; farol
+conocimiento_dario_2 | barrera ; relevo ; garita
+conocimiento_sarin_2 | consigna ; contrasena ; santo
+conocimiento_hollis_2 | lobos ; rebano ; fogatas
+conocimiento_oren_2 | ofrenda ; ofrendas ; amanecer
 
 ## Temas generales
 

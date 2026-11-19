@@ -50,12 +50,19 @@
     <input id="entrada" type="text" autocomplete="off" placeholder="Escribí qué hacés" disabled>
     <button id="enviar" disabled>Enviar</button>
   </form>
+  <div class="fila"><button id="exportar" type="button">Exportar registros (0)</button> <span class="nota">Descarga un archivo .jsonl de esta sesión; no se envía nada por red.</span></div>
   <div class="fila">
     <label>NPC <select id="npc"></select></label>
     <label>Objeto <select id="objeto"></select></label>
     <label>Destino <select id="destino"></select></label>
   </div>
   <div id="intenciones" class="fila"></div>
+</section>
+
+<section id="panelRelacion">
+  <h2>Relación (solo prueba)</h2>
+  <div class="nota">Atajo de prueba, no es parte del juego. Fija la relación del NPC en la partida actual (de -100 a 100).</div>
+  <div id="relaciones" class="fila"></div>
 </section>
 
 <section>
@@ -70,7 +77,7 @@
   </dl>
 </section>
 
-<div id="version">v0.0.4</div>
+<div id="version">v0.0.36</div>
 
 <script type="module" src="./app.js"></script>
 </body>
