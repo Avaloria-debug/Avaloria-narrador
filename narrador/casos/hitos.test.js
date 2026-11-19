@@ -673,9 +673,12 @@ describe('hitos: anti-traba', () => {
 
 describe('hitos: esquema del documento', () => {
   // El hito de ejemplo de docs/motor-caso-v1-operativo.md, sección "Esquema de condiciones".
-  const doc = readFileSync(new URL('../../docs/motor-caso-v1-operativo.md', import.meta.url), 'utf8');
+  // Se normaliza CRLF a LF: en Windows el documento puede traer \r\n y la regex busca \n.
+  const doc = readFileSync(new URL('../../docs/motor-caso-v1-operativo.md', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
   const seccion = doc.slice(doc.indexOf('## 2b. Esquema de condiciones'), doc.indexOf('## 3. Elección de caso'));
-  const ejemplo = JSON.parse(seccion.match(/```json\n([\s\S]*?)```/)[1]);
+  const bloque = seccion.match(/```json\n([\s\S]*?)```/);
+  assert.ok(bloque, 'no se encontró el bloque json del hito de ejemplo');
+  const ejemplo = JSON.parse(bloque[1]);
 
   // Estado y mundo que cumplen todas las condiciones del ejemplo.
   const estadoQueCumple = () => caso({
