@@ -553,7 +553,9 @@ export function antiTrabaCaminoP1(estadoCaso, estadoMundo) {
     casoId: estadoCaso.casoId ?? null,
     origen: 'anti_traba:camino_p1',
   });
-  return { estadoCaso: { ...estadoCaso, tags, ultimoAvance: { hora: estadoMundo.hora } }, camino: { npcId: pista.npcId, escena } };
+  // Marca de primer contacto: la primera consulta al dueño de p1 usa un umbral reducido para su _1 (conocimientos.js).
+  const primerContactoPista = { npcId: pista.npcId, usado: false };
+  return { estadoCaso: { ...estadoCaso, tags, ultimoAvance: { hora: estadoMundo.hora }, primerContactoPista }, camino: { npcId: pista.npcId, escena } };
 }
 
 /** Todos los finales bloqueados → se habilita el desenlace neutro por abandono. */

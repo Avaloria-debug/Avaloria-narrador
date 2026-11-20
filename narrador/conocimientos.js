@@ -19,12 +19,12 @@ export const MOTIVOS_NO_REVELA = Object.freeze({
  * - `requiereMarca`: el jugador tiene la marca.
  * @returns {{ puede: boolean, motivo: string|null }}
  */
-export function puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido, { sinUmbral = false } = {}) {
+export function puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido, { sinUmbral = false, umbral = null } = {}) {
   const no = (motivo) => ({ puede: false, motivo });
   if (!conocimiento) return no(MOTIVOS_NO_REVELA.INEXISTENTE);
   if (npcEstado.bloqueadoConocimientos) return no(MOTIVOS_NO_REVELA.BLOQUEADO);
   if (npcEstado.conocimientosRevelados.includes(conocimiento.id)) return no(MOTIVOS_NO_REVELA.YA_REVELADO);
-  if (!sinUmbral && npcEstado.relacion < conocimiento.umbralRelacion) return no(MOTIVOS_NO_REVELA.UMBRAL);
+  if (!sinUmbral && npcEstado.relacion < (umbral ?? conocimiento.umbralRelacion)) return no(MOTIVOS_NO_REVELA.UMBRAL);
   if (conocimiento.requiereEvento != null) {
     const activo = (estado.eventosActivos ?? []).some((a) => a.id === conocimiento.requiereEvento);
     if (!activo && !conocimientoHabilitado(npcId, conocimiento.id, estado.eventosActivos, contenido)) {
@@ -69,4 +69,25 @@ export function conocimientoPorNarrativo(objetoDef, npcDef, npcEstado, estado, c
 export function revelar(npcEstado, conocimientoId) {
   if (npcEstado.conocimientosRevelados.includes(conocimientoId)) return npcEstado;
   return { ...npcEstado, conocimientosRevelados: [...npcEstado.conocimientosRevelados, conocimientoId] };
+}
+
+/**
+ * Umbral de relación del primer contacto por pista: el jugador llegó al dueño de p1 por la pista de camino narrada.
+ * Rige solo para el _1 de ese NPC y solo en la primera consulta con tema a ese NPC; después vuelve el umbral original.
+ */
+export const UMBRAL_PRIMER_CONTACTO_PISTA = 0;
+
+/** Umbral que rige esta consulta (o null si es el original). */
+export function umbralDeConsulta(npcDef, conocimiento, estado) {
+  const marca = estado?.caso?.primerContactoPista;
+  if (!marca || marca.usado || marca.npcId !== npcDef?.id) return null;
+  if (conocimiento?.id !== npcDef.conocimientos?.[0]?.id) return null;
+  return Math.min(UMBRAL_PRIMER_CONTACTO_PISTA, conocimiento.umbralRelacion);
+}
+
+/** Después de la primera consulta con tema al NPC de la pista, la marca queda usada. */
+export function usarPrimerContacto(estado, npcId) {
+  const marca = estado?.caso?.primerContactoPista;
+  if (!marca || marca.usado || marca.npcId !== npcId) return estado;
+  return { ...estado, caso: { ...estado.caso, primerContactoPista: { ...marca, usado: true } } };
 }

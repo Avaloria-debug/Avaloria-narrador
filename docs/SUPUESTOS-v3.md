@@ -23,3 +23,11 @@
 - SUPUESTO: no aplica si ya hay hitos alcanzados o listos, si p1 ya está en nivel 1, si el dueño de p1 no está en ninguna escena o si el jugador está en su escena. Se da una sola vez por caso.
 - SUPUESTO: el texto sale de `textos_pista_camino` del caso (`data/contenido/casos.json`, campo nuevo y opcional) con los marcadores `{npc:pN}` y `{escena:pN}` (nuevo: nombre de la escena donde está el dueño). El validador rechaza `{conocimiento:pN}` en esos textos. Sin textos, la pista queda solo como tag. El texto se agrega solo si en ese turno no hay texto de hito.
 - SUPUESTO: los dos textos propuestos son iguales en los 4 casos y esperan aprobación de Tomás. No se cambió `version` de `casos.json` (casos-v0.4).
+
+## Umbral reducido en el primer contacto por pista (0.0.41, pendiente de aprobación de Tomás)
+- La marca de primer contacto es nueva: `estadoCaso.primerContactoPista = { npcId, usado }`. La escribe la regla de camino a p1 (`antiTrabaCaminoP1`) al dar la pista. No se usa el tag `pista_conocida` con `origen: anti_traba:camino_p1` porque los efectos del h1 lo pueden sobrescribir al llegar.
+- "Llegó siguiendo la pista": la regla solo da la pista si el jugador no está en la escena del dueño de p1, y la consulta exige al NPC presente. Por eso la primera consulta con la marca sin usar ocurre después de haber ido hasta él.
+- Valor propuesto: `UMBRAL_PRIMER_CONTACTO_PISTA = 0` (`narrador/conocimientos.js`). Rige solo para el `_1` del dueño de p1 y solo en la primera consulta con tema a ese NPC, revele o no. Después vuelve el umbral del contenido. El `_2` no cambia. Bloqueo por ataque, evento y marca siguen valiendo.
+- Si la consulta revela, el motor de caso reemplaza `caso` y puede no conservar `usado: true`. No importa: el `_1` ya quedó revelado y la marca solo rige para él.
+- Solo afecta a la consulta de tema (`ejecutarConsulta`). La revelación por conversación (`conocimientoARevelar`) no cambia.
+- No hubo que reescribir ningún test existente de umbral.
