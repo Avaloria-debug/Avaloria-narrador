@@ -42,3 +42,5 @@
 P4 | clima en ext.clima (ambiente.js), no en reloj.js | campo en reloj
 P4 | sentido dominante de t00 no se usa: las líneas no traen sentido | etiquetar líneas
 P3 | avisos de gramática en estado.ext.avisos (no en estado.avisos) | estado.avisos
+P5 | despedida de voces no se usa (no hay turno de despedida en v3) | inventar disparador
+P5 | hablar_con con NPC: 50% charla, si no plantillas v3+ampliado por especificidad | siempre charla

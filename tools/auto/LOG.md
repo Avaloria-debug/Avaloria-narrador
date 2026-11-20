@@ -6,3 +6,4 @@ P1.5 | hecho | carga ampliado fusionado en memoria; validarContenido valida ampl
 P2 | hecho | seleccion.js; elegirPlantilla delega si hay variantes con c; hook ampliado en narrar
 P3 | hecho | gramatica.js: símbolos por franja/clima/tensión, género, avisos sin romper
 P4 | hecho | ambiente.js: clima por bloques, ambiente 0.25, rutina NPC, gestos
+P5 | hecho | plantillas de intención ampliadas, voces por NPC, charla
