@@ -32,6 +32,7 @@ import { minutosAbsolutos } from './reloj.js';
 import { posicionesDeNpcs } from './movimientoNpcs.js';
 import { turnoDeCaso } from './casos/narrar.js';
 import { accionesDeIntencion } from './casos/acciones.js';
+import { aplicarAmpliado } from './ampliado.js';
 
 export const TIPOS_SALIDA = Object.freeze({
   NARRACION: 'narracion',
@@ -49,6 +50,7 @@ export const ERRORES = Object.freeze({
   REGISTRO: 'registro',
   IA: 'ia',
   CASO: 'caso',
+  AMPLIADO: 'ampliado',
 });
 
 export const AVISO_VERSION_CONTENIDO = 'version_contenido';
@@ -192,6 +194,8 @@ function conValoresPorDefecto(e) {
     avisos: lista(e.avisos).filter(esObjeto).map((a) => ({ ...a })),
     // Estado del motor de caso (tags, hitos, instancia): se conserva tal cual, copiado.
     caso: esObjeto(e.caso) ? structuredClone(e.caso) : null,
+    // Estado del contenido ampliado (narrador/ampliado.js): solo si existe.
+    ...(esObjeto(e.ext) ? { ext: structuredClone(e.ext) } : {}),
     semilla: Number.isInteger(e.semilla) ? e.semilla | 0 : semillaAlAzar(),
   };
 }
@@ -520,6 +524,19 @@ export async function narrar(estado, entrada, opciones = {}) {
       else anotar(ERRORES.TEXTO_INVALIDO, 'caso');
     }
 
+    // Contenido ampliado: solo si llega `opciones.ampliado`. Un fallo deja el turno como estaba.
+    let ext = partida.ext;
+    if (esObjeto(opciones?.ampliado)) {
+      try {
+        const r = aplicarAmpliado({ amp: opciones.ampliado, contenido, antes: partida, despues: turno.estado, turno, entrada, texto, aperturas, tipo });
+        if (textoMostrable(r.texto)) texto = r.texto;
+        aperturas = r.aperturas;
+        ext = r.ext;
+      } catch (e) {
+        anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');
+      }
+    }
+
     // Registro: solo los turnos con texto libre.
     let registro = null;
     let numeroRegistro = partida.numeroRegistro;
@@ -560,6 +577,7 @@ export async function narrar(estado, entrada, opciones = {}) {
       ultimosTurnos: etiqueta ? [...partida.ultimosTurnos, etiqueta].slice(-MAX_ULTIMOS_TURNOS) : partida.ultimosTurnos,
       numeroRegistro,
       iaAgotadaDia,
+      ...(ext ? { ext } : {}),
       semilla: rng.estado(),
     };
     // Registro de turnos (narrador/registro/): solo con `opciones.registroTurnos` (un RegistroTurnos). Una línea por

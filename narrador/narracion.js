@@ -4,6 +4,7 @@
 import { resolverPlantillas } from './contenido.js';
 import { destinosDeViaje } from './comprension.js';
 import { BLOQUE_REFORMULACION, MOTIVOS, REPETIR_SEGUNDA, YA_EN_DESTINO } from './motivos.js';
+import { elegir as elegirPorEspecificidad } from './seleccion.js';
 
 export const VENTANA_APERTURAS = 5;
 export const PLACEHOLDERS = Object.freeze(['npc', 'objeto', 'lugar', 'conocimiento', 'nombres', 'opciones']);
@@ -70,8 +71,13 @@ export function anotarApertura(aperturas, apertura) {
  * - Si todas están en la ventana, usa la que se usó hace más tiempo.
  * @returns {{ texto: string, apertura: string }|null} null si ninguna plantilla se puede completar
  */
-export function elegirPlantilla(plantillas, valores, { rng, aperturas = [] } = {}) {
+export function elegirPlantilla(plantillas, valores, { rng, aperturas = [], hechos = null } = {}) {
   if (typeof rng !== 'function') throw new TypeError('elegirPlantilla necesita un rng');
+  // Variantes con condiciones (contenido ampliado): por especificidad. Solo strings: el camino de siempre, sin cambios.
+  if (Array.isArray(plantillas) && plantillas.some((p) => p && typeof p === 'object')) {
+    const elegida = elegirPorEspecificidad(plantillas, hechos ?? {}, { rng, aperturas, completar: (t) => completar(t, valores), aperturaDe });
+    return elegida ? { texto: elegida.texto, apertura: elegida.apertura } : null;
+  }
   const ventana = (aperturas ?? []).slice(-VENTANA_APERTURAS);
   const candidatas = [];
   for (const plantilla of Array.isArray(plantillas) ? plantillas : []) {

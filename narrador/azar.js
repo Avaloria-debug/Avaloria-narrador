@@ -29,3 +29,13 @@ export function crearRng(estadoInicial) {
 export function semillaAlAzar() {
   return Math.floor(Math.random() * 4294967296) | 0;
 }
+
+/**
+ * Generador derivado para un subsistema: mulberry32(hash(semillaBase + nombre)). No consume el generador principal,
+ * así un módulo nuevo no cambia la salida existente.
+ * @param {number|string} semillaBase
+ * @param {string} nombre
+ */
+export function derivar(semillaBase, nombre) {
+  return crearRng(semillaAEntero(`${semillaBase}:${nombre}`));
+}
