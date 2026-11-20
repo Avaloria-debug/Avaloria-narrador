@@ -211,7 +211,7 @@ export function armarContexto(datos) {
   }
   const tokens = estimarTokens(texto);
   if (tokens > MAX_TOKENS_CONTEXTO) throw new ErrorDeContexto(tokens);
-  return { texto, tokens, acciones };
+  return { texto, tokens, acciones, aperturasRecortadas: !conAperturas };
 }
 
 /** Oraciones de un texto: tramos que terminan en punto, signo de cierre o puntos suspensivos. */
