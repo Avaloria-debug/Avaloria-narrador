@@ -49,7 +49,20 @@ export const MOTIVOS_SALIDA = Object.freeze({
   ID: 'id',
   LARGO: 'largo',
   ORACIONES: 'oraciones',
+  FUEGO_SIN_EVENTO: 'fuego_sin_evento',
 });
+
+// Eventos de fuego y palabras que solo puede usar la IA si uno de ellos está activo en la escena.
+export const EVENTOS_DE_FUEGO = Object.freeze(['evento_incendio_puesto']);
+export const PALABRAS_DE_FUEGO = Object.freeze(['humo', 'fuego', 'incendio', 'llamas', 'quemar']);
+export const INSTRUCCION_FUEGO = 'Solo menciones humo, fuego o incendio si aparece en los eventos activos de la escena.';
+const RE_FUEGO = new RegExp(`(?<![\\p{L}\\p{N}])(${PALABRAS_DE_FUEGO.join('|')})(?![\\p{L}\\p{N}])`, 'iu');
+
+/** true si el texto menciona fuego (palabra entera) y ningún evento activo de la escena es de fuego. */
+export function fuegoSinEvento(texto, eventosIds = []) {
+  if (!RE_FUEGO.test(String(texto ?? ''))) return false;
+  return !lista(eventosIds).some((id) => EVENTOS_DE_FUEGO.includes(id));
+}
 
 // Mensaje de sistema: fijo, igual en todas las llamadas y en todas las partidas.
 export const MENSAJE_SISTEMA = [
@@ -139,12 +152,13 @@ export function datosDeContexto(estado, contenido, { frase, ultimasAcciones = []
     eventos: eventosDeEscena(estado.eventosActivos, escenaId)
       .map((a) => lista(contenido.eventos).find((e) => e.id === a.id)?.nombre)
       .filter(Boolean),
+    eventosIds: eventosDeEscena(estado.eventosActivos, escenaId).map((a) => a.id),
     evitarAperturas: lista(evitarAperturas).filter((a) => typeof a === 'string' && a !== ''),
     frase,
   };
 }
 
-function lineasDeContexto(d, acciones, conAperturas = true) {
+function lineasDeContexto(d, acciones, conAperturas = true, conFuego = true) {
   const escena = d.escena ?? {};
   const lugar = [limpio(escena.nombre), limpio(escena.ciudad)].filter(Boolean).join(', ');
   const lineas = [`Escena: ${lugar}. Estado: ${limpio(escena.estado)}.`];
@@ -173,6 +187,7 @@ function lineasDeContexto(d, acciones, conAperturas = true) {
   }
   const eventos = lista(d.eventos).map(limpio).filter(Boolean);
   lineas.push(`Está pasando: ${eventos.length > 0 ? eventos.join(', ') : 'nada fuera de lo común'}.`);
+  if (conFuego) lineas.push(INSTRUCCION_FUEGO);
   const evitar = conAperturas ? lista(d.evitarAperturas).map(limpio).filter(Boolean) : [];
   if (evitar.length > 0) lineas.push(`Variá cómo empezás: no arranques con ${evitar.map((a) => `"${a}"`).join(', ')}.`);
   const frase = String(d.frase ?? '').slice(0, MAX_CARACTERES_FRASE);
@@ -209,9 +224,15 @@ export function armarContexto(datos) {
     conAperturas = false;
     texto = lineasDeContexto(d, acciones, conAperturas).join('\n');
   }
+  // Después, la instrucción de fuego (la validación de salida la cubre igual).
+  let conFuego = true;
+  if (estimarTokens(texto) > MAX_TOKENS_CONTEXTO) {
+    conFuego = false;
+    texto = lineasDeContexto(d, acciones, conAperturas, conFuego).join('\n');
+  }
   const tokens = estimarTokens(texto);
   if (tokens > MAX_TOKENS_CONTEXTO) throw new ErrorDeContexto(tokens);
-  return { texto, tokens, acciones, aperturasRecortadas: !conAperturas };
+  return { texto, tokens, acciones, aperturasRecortadas: !conAperturas, fuegoRecortado: !conFuego };
 }
 
 /** Oraciones de un texto: tramos que terminan en punto, signo de cierre o puntos suspensivos. */
@@ -364,6 +385,9 @@ export async function pedirRespuestaIA({ groqKey, contexto, http, esperar = espe
     const crudo = cuerpo?.choices?.[0]?.message?.content;
     const validacion = validarSalida(crudo);
     const tokens = tokensDe(estimarTokens(typeof crudo === 'string' ? crudo : ''), cuerpo?.usage);
+    if (validacion.ok && fuegoSinEvento(validacion.texto, contexto?.eventosIds)) {
+      return { ok: false, error: null, motivo: MOTIVOS_IA.SALIDA_INVALIDA, detalle: MOTIVOS_SALIDA.FUEGO_SIN_EVENTO, texto: null, tokens, reintentos: intento };
+    }
     if (!validacion.ok) {
       return { ok: false, error: null, motivo: MOTIVOS_IA.SALIDA_INVALIDA, detalle: validacion.motivo, texto: null, tokens, reintentos: intento };
     }
