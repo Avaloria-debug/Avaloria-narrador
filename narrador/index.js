@@ -19,8 +19,9 @@ import { registroDeTurnoNoResuelto } from './registro/registroTurnos.js';
 // Vive solo en memoria: la frase del jugador no entra al estado de la partida.
 const lineasPendientes = new WeakMap();
 import { narrarTurno, narrarReformulacion, VENTANA_APERTURAS, anotarApertura } from './narracion.js';
-import { pedirRespuestaIA, datosDeContexto, validarSalida, SIN_IA, MOTIVOS_IA } from './ia.js';
+import { pedirRespuestaIA, datosDeContexto, armarContexto, validarSalida, aperturaIa, SIN_IA, MOTIVOS_IA } from './ia.js';
 import { registroDeTurno, ORIGENES, MAX_ULTIMOS_TURNOS } from './registro.js';
+
 import { estadoDeEscena } from './estadoEscena.js';
 import { destinosDeViaje, prepararDiccionarios } from './comprension.js';
 import { cargarDiccionarios, problemasDeDiccionarios, textoDeProblemasDeDiccionarios } from './diccionarios.js';
@@ -103,6 +104,8 @@ export function crearPartida(opciones = {}) {
     ...base,
     eventosActivos: [],
     ventanaAperturas: [],
+    ventanaAperturasIa: [],
+    diagnosticoAperturasIa: { aperturasRepetidas: 0, ultimaRepetida: null, aperturasRecortadas: 0 },
     ultimosTurnos: [],
     numeroRegistro: 0,
     iaAgotadaDia: null,
@@ -178,6 +181,11 @@ function conValoresPorDefecto(e) {
     destinoPendiente: destinoPendienteValido(e.destinoPendiente),
     motivoReformulacion: motivoReformulacionValido(e.motivoReformulacion),
     ventanaAperturas: lista(e.ventanaAperturas).filter((a) => typeof a === 'string').slice(-VENTANA_APERTURAS),
+    // Aperturas de las últimas respuestas de IA (dos palabras), con la misma ventana de 5 que las plantillas.
+    ventanaAperturasIa: lista(e.ventanaAperturasIa).filter((a) => typeof a === 'string').slice(-VENTANA_APERTURAS),
+    // Diagnóstico de aperturas de IA: cuántas respuestas repitieron una apertura reciente (y la última, sin la frase del
+    // jugador) y en cuántos pedidos la línea de aperturas a evitar se recortó por el tope del contexto.
+    diagnosticoAperturasIa: diagnosticoAperturasIaValido(e.diagnosticoAperturasIa),
     ultimosTurnos: lista(e.ultimosTurnos).filter((t) => typeof t === 'string').slice(-MAX_ULTIMOS_TURNOS),
     numeroRegistro: Number.isInteger(e.numeroRegistro) && e.numeroRegistro >= 0 ? e.numeroRegistro : 0,
     iaAgotadaDia: typeof e.iaAgotadaDia === 'string' ? e.iaAgotadaDia : null,
@@ -219,6 +227,12 @@ function reconstruir(e) {
  * (saca lo que ya no existe, agrega los NPCs nuevos) y deja un aviso en `estado.avisos`.
  * @param {string|object} json
  */
+const enteroNoNegativo = (v) => (Number.isInteger(v) && v >= 0 ? v : 0);
+function diagnosticoAperturasIaValido(d) {
+  const x = d && typeof d === 'object' ? d : {};
+  return { aperturasRepetidas: enteroNoNegativo(x.aperturasRepetidas), ultimaRepetida: typeof x.ultimaRepetida === 'string' ? x.ultimaRepetida : null, aperturasRecortadas: enteroNoNegativo(x.aperturasRecortadas) };
+}
+
 export function cargarPartida(json, opciones = {}) {
   exigirDiccionarios(opciones);
   let crudo = json;
@@ -427,6 +441,8 @@ export async function narrar(estado, entrada, opciones = {}) {
     let tipo = TIPOS_SALIDA.NARRACION;
     let origen = ORIGENES.CODIGO;
     let aperturas = ventana;
+    let ventanaIa = partida.ventanaAperturasIa;
+    let diagnosticoIa = partida.diagnosticoAperturasIa;
     let iaAgotadaDia = partida.iaAgotadaDia;
 
     if (turno.tipo === TIPOS_TURNO.IA) {
@@ -442,17 +458,26 @@ export async function narrar(estado, entrada, opciones = {}) {
         if (typeof http !== 'function') {
           anotar(ERRORES.IA, MOTIVOS_IA.ERROR_RED);
         } else {
-          const datos = datosDeContexto(partida, contenido, { frase: entrada.texto, ultimasAcciones: partida.ultimosTurnos });
-          const respuesta = await pedirRespuestaIA({
+          const recientesIa = partida.ventanaAperturasIa;
+          const datos = datosDeContexto(partida, contenido, { frase: entrada.texto, ultimasAcciones: partida.ultimosTurnos, evitarAperturas: recientesIa });
+          const pedir = () => pedirRespuestaIA({
             groqKey,
             contexto: datos,
             http,
             ...(typeof opciones?.esperar === 'function' ? { esperar: opciones.esperar } : {}),
           });
+          // Una sola llamada: las aperturas a evitar van en el mismo pedido. Si igual repite, se acepta y se anota.
+          const respuesta = await pedir();
+          let recortadas = false;
+          try { recortadas = armarContexto(datos).aperturasRecortadas; } catch { /* el contexto no entra: pedirRespuestaIA no llama */ }
+          if (recortadas) diagnosticoIa = { ...diagnosticoIa, aperturasRecortadas: diagnosticoIa.aperturasRecortadas + 1 };
           if (respuesta.ok && validarSalida(respuesta.texto).ok) {
+            const apertura = aperturaIa(respuesta.texto);
+            if (recientesIa.includes(apertura)) diagnosticoIa = { ...diagnosticoIa, aperturasRepetidas: diagnosticoIa.aperturasRepetidas + 1, ultimaRepetida: apertura };
             texto = respuesta.texto;
             tipo = TIPOS_SALIDA.DIALOGO_IA;
             origen = ORIGENES.IA;
+            ventanaIa = anotarApertura(partida.ventanaAperturasIa, aperturaIa(respuesta.texto));
           } else {
             const detalle = [respuesta.error, respuesta.motivo, respuesta.detalle].filter(Boolean).join(': ');
             anotar(ERRORES.IA, detalle);
@@ -530,6 +555,8 @@ export async function narrar(estado, entrada, opciones = {}) {
       ...turno.estado,
       ...(conCaso ? { caso: conCaso.caso, npcs: conCaso.npcs } : {}),
       ventanaAperturas: aperturas,
+      ventanaAperturasIa: ventanaIa,
+      diagnosticoAperturasIa: diagnosticoIa,
       ultimosTurnos: etiqueta ? [...partida.ultimosTurnos, etiqueta].slice(-MAX_ULTIMOS_TURNOS) : partida.ultimosTurnos,
       numeroRegistro,
       iaAgotadaDia,
