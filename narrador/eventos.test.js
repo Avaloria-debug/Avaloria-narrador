@@ -570,3 +570,33 @@ describe('eventos — por hora y con duración en turnos, tras un salto de reloj
     assert.equal(res.disparados[0].turnosRestantes, 5);
   });
 });
+
+// ---- P8: saliencia y tensión (contenido ampliado) ----
+import { ajustarTension, ajustarObjetivo, elegirPorSaliencia, puntajeEvento } from './eventos.js';
+import { crearRng as crearRngP8 } from './azar.js';
+
+test('P8: la tensión queda acotada a 0..10', () => {
+  let t = 0;
+  for (let i = 0; i < 20; i++) t = ajustarTension(t, 'atacar');
+  assert.equal(t, 10);
+  for (let i = 0; i < 30; i++) t = ajustarTension(t, 'observar');
+  assert.equal(t, 0);
+});
+
+test('P8: objetivo de tensión sube cada 10 turnos sin evento y vuelve a 3', () => {
+  assert.equal(ajustarObjetivo(3, 10, false), 4);
+  assert.equal(ajustarObjetivo(3, 9, false), 3);
+  assert.equal(ajustarObjetivo(7, 3, true), 3);
+});
+
+test('P8: la frescura evita repetir y la especificidad gana', () => {
+  const cands = [{ clave: 'a' }, { clave: 'b' }];
+  for (let s = 0; s < 20; s++) assert.equal(elegirPorSaliencia(cands, { usos: { a: 9 }, turno: 10, rng: crearRngP8(s) }).clave, 'b');
+  assert.equal(elegirPorSaliencia([{ clave: 'a' }, { clave: 'b', especificidad: 2 }], { rng: crearRngP8(1) }).clave, 'b');
+  assert.ok(puntajeEvento({ nivel: 3, objetivo: 3 }) > puntajeEvento({ nivel: 9, objetivo: 3 }));
+});
+
+test('P8: misma semilla, misma elección en el empate', () => {
+  const cands = [{ clave: 'a' }, { clave: 'b' }, { clave: 'c' }];
+  assert.equal(elegirPorSaliencia(cands, { rng: crearRngP8(5) }).clave, elegirPorSaliencia(cands, { rng: crearRngP8(5) }).clave);
+});

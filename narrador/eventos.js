@@ -191,3 +191,39 @@ export function procesarEventos(activos, datos) {
 export function eventosDeEscena(activos, escenaId) {
   return lista(activos).filter((a) => a.escenaId === escenaId);
 }
+
+// ---- P8: narración de eventos del contenido ampliado (saliencia y tensión) ----
+// Solo se usa desde narrador/ampliado.js. No cambia el disparo ni el fin de eventos de arriba.
+export const VERBOS_CONFLICTO = Object.freeze(['atacar', 'emboscar', 'presionar', 'defender', 'huir']);
+export const NIVEL_CATEGORIA = Object.freeze({ tranquilo: 1, social: 3, neutro: 3, sigilo: 5, tenso: 6, peligroso: 8, combate: 9 });
+
+/** Tensión 0..10: +2 por conflicto, -1 por turno de calma. */
+export function ajustarTension(tension, verbo) {
+  const t = Number.isFinite(tension) ? tension : 0;
+  return Math.max(0, Math.min(10, VERBOS_CONFLICTO.includes(verbo) ? t + 2 : t - 1));
+}
+
+/** Objetivo de tensión: +1 cada 10 turnos sin evento narrado; vuelve a 3 tras uno. */
+export function ajustarObjetivo(objetivo, turnosSinEvento, huboEvento) {
+  if (huboEvento) return 3;
+  const o = Number.isFinite(objetivo) ? objetivo : 3;
+  return turnosSinEvento > 0 && turnosSinEvento % 10 === 0 ? Math.min(10, o + 1) : o;
+}
+
+/** Puntaje = especificidad + min(10, turnos desde el último uso)/2 − |objetivo − nivel|/2. */
+export function puntajeEvento({ especificidad = 0, turnosDesdeUso = 10, objetivo = 3, nivel = 3 }) {
+  return especificidad + Math.min(10, turnosDesdeUso) / 2 - Math.abs(objetivo - nivel) / 2;
+}
+
+/**
+ * Entre candidatos {clave, especificidad, nivel}, el de mayor puntaje; empate con rng (derivado "eventos").
+ * @param {Array<{clave: string, especificidad?: number, nivel?: number}>} candidatos
+ * @param {{ usos: object, turno: number, objetivo: number, rng: () => number }} datos
+ */
+export function elegirPorSaliencia(candidatos, { usos = {}, turno = 0, objetivo = 3, rng }) {
+  if (!candidatos.length) return null;
+  const pts = candidatos.map((c) => ({ c, p: puntajeEvento({ especificidad: c.especificidad ?? 0, turnosDesdeUso: usos[c.clave] === undefined ? 10 : turno - usos[c.clave], objetivo, nivel: c.nivel ?? 3 }) }));
+  const max = Math.max(...pts.map((x) => x.p));
+  const mejores = pts.filter((x) => x.p === max);
+  return mejores[Math.min(mejores.length - 1, Math.floor(rng() * mejores.length))].c;
+}

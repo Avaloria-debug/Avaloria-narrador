@@ -10,6 +10,8 @@ import { npcsPresentes } from './turno.js';
 import { valoresDeAccion, aperturaDe } from './narracion.js';
 import { resolverPlantillas } from './contenido.js';
 import { elegir } from './seleccion.js';
+import { ajustarTension, ajustarObjetivo, elegirPorSaliencia, NIVEL_CATEGORIA } from './eventos.js';
+import { cumple, especificidad, normalizar } from './seleccion.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
@@ -87,6 +89,10 @@ export function extInicial(ext, semilla = 0) {
     ventanaAmbiente: Array.isArray(e.ventanaAmbiente) ? [...e.ventanaAmbiente] : [],
     avisos: Array.isArray(e.avisos) ? e.avisos.slice(-20) : [],
     hechos: hechosGuardados(e),
+    tension: Number.isFinite(e.tension) ? e.tension : 0,
+    tensionObjetivo: Number.isFinite(e.tensionObjetivo) ? e.tensionObjetivo : 3,
+    sinEvento: Number.isInteger(e.sinEvento) ? e.sinEvento : 0,
+    usosEvento: e.usosEvento && typeof e.usosEvento === 'object' ? { ...e.usosEvento } : {},
     afinidad: e.afinidad && typeof e.afinidad === 'object' ? { ...e.afinidad } : {},
     ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
   };
@@ -134,6 +140,42 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
 }
 
 /**
+ * P8: inicio de un evento nuevo en la escena del jugador (t09, t19) por saliencia, o cierre.<categoria> al expirar.
+ * Actualiza ext (usos, objetivo de tensión). Devuelve el texto o null.
+ */
+export function narrarEventos({ amp, contenido, antes, despues, ext, ctx }) {
+  const esc = despues.jugador.escenaId;
+  const clave = (a) => `${a.id}@${a.escenaId}`;
+  const previos = new Set((antes.eventosActivos ?? []).map(clave));
+  const ahora = new Set((despues.eventosActivos ?? []).map(clave));
+  const nuevos = (despues.eventosActivos ?? []).filter((a) => a.escenaId === esc && !previos.has(clave(a)));
+  const hechos = ctx.hechos();
+  const cand = [];
+  for (const a of nuevos) {
+    const def = porId(contenido.eventos, a.id);
+    for (const v of amp.eventos?.[a.id] ?? []) {
+      const n = normalizar(v);
+      if (n && cumple(n.c, hechos)) cand.push({ clave: n.t, texto: n.t, especificidad: especificidad(n), nivel: NIVEL_CATEGORIA[def?.categoria] ?? 3 });
+    }
+  }
+  let texto = null;
+  if (cand.length) {
+    const e = elegirPorSaliencia(cand, { usos: ext.usosEvento, turno: ext.turno, objetivo: ext.tensionObjetivo, rng: ctx.rng('eventos') });
+    texto = e.texto;
+    ext.usosEvento[e.clave] = ext.turno;
+  } else if (esc === antes.jugador.escenaId) {
+    const cerrado = (antes.eventosActivos ?? []).find((a) => a.escenaId === esc && !ahora.has(clave(a)));
+    const cat = cerrado && porId(contenido.eventos, cerrado.id)?.categoria;
+    const lista = cat ? amp.cierre?.[cat] : null;
+    if (lista?.length) texto = elegir(lista, hechos, { rng: ctx.rng('eventos') })?.texto ?? null;
+  }
+  const hubo = Boolean(texto) && cand.length > 0;
+  ext.sinEvento = hubo ? 0 : ext.sinEvento + 1;
+  ext.tensionObjetivo = ajustarObjetivo(ext.tensionObjetivo, ext.sinEvento, hubo);
+  return texto ? ctx.expandirTexto(texto) : null;
+}
+
+/**
  * Aplica las extensiones al turno ya narrado.
  * @returns {{ texto: string, aperturas: string[], ext: object }}
  */
@@ -141,6 +183,7 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   let ext = contabilizar(antes.ext, { antes, despues, turno, contenido });
   // P6: el recuerdo se lee ANTES de registrar el hecho de este turno.
   const hechosPrevios = ext.hechos;
+  ext.tension = ajustarTension(ext.tension, verboDe(turno, contenido));
   ext.clima = climaEn(ext.semillaBase, despues.reloj, amp.guia?.umbrales?.clima_cambia_cada_horas);
   const ctx = contexto({ amp, contenido, despues, turno, ext });
   const partes = [texto];
@@ -157,6 +200,8 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       partes[0] = frase.texto;
       aperturas = [...(aperturas ?? []).slice(0, -1), frase.apertura];
     }
+    const ev = narrarEventos({ amp, contenido, antes, despues, ext, ctx });
+    if (ev) partes.push(ev);
     const presentes = npcsPresentes(despues, contenido).map((n) => n.id);
     const amb = mensajeAmbiental({ ext, amp, hechos: ctx.hechos(), escenaId: despues.jugador.escenaId, presentes, npcTurno: ctx.npcId, rng: ctx.rng('ambiente') });
     if (amb) {
