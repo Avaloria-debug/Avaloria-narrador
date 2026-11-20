@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { leerContenido } from './cargarContenido.js';
 import { validarContenido, CONTEOS } from './contenido.js';
 import { validarCasos } from './casos/validador.js';
+import { leerArchivosAmpliado, validarAmpliado } from './contenidoAmpliado.js';
 
 export const RUTA_CASOS = fileURLToPath(new URL('../data/contenido/casos.json', import.meta.url));
 
@@ -21,6 +22,9 @@ const contenido = await leerContenido(process.argv[2]);
 const { ok, errores, avisos, conteos } = validarContenido(contenido);
 const casos = await leerCasos();
 const erroresCasos = validarCasos(casos, contenido);
+const archivosAmpliado = process.argv[2] ? [] : await leerArchivosAmpliado();
+const erroresAmpliado = validarAmpliado(archivosAmpliado, contenido);
+console.log(`ampliado: ${archivosAmpliado.length} archivos`);
 
 for (const [clave, meta] of Object.entries(CONTEOS)) {
   console.log(`${clave}: ${conteos[clave]}/${meta}`);
@@ -30,10 +34,11 @@ if (avisos.length > 0) {
   console.log(`Avisos (${avisos.length}), no bloquean:`);
   for (const a of avisos) console.log(`- ${a}`);
 }
-if (ok && erroresCasos.length === 0) {
+if (ok && erroresCasos.length === 0 && erroresAmpliado.length === 0) {
   console.log('Contenido válido.');
 } else {
-  console.error(`Contenido inválido (${errores.length + erroresCasos.length}):`);
+  console.error(`Contenido inválido (${errores.length + erroresCasos.length + erroresAmpliado.length}):`);
+  for (const e of erroresAmpliado) console.error(`- ampliado ${e}`);
   for (const e of errores) console.error(`- ${e}`);
   for (const e of erroresCasos) console.error(`- caso ${e.casoId}: ${e.regla}: ${e.detalle}`);
   process.exitCode = 1;

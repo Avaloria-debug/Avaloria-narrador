@@ -1,8 +1,7 @@
 {
- "modo": "regresion",
- "paso": null,
+ "modo": "paso",
+ "paso": "P1.5",
+ "lineas": 4323,
  "errores": [],
- "avisos": [
-  "[regresion] base fijada: 4328b652dfbd"
- ]
+ "avisos": []
 }

@@ -31,3 +31,11 @@
 - Si la consulta revela, el motor de caso reemplaza `caso` y puede no conservar `usado: true`. No importa: el `_1` ya quedó revelado y la marca solo rige para él.
 - Solo afecta a la consulta de tema (`ejecutarConsulta`). La revelación por conversación (`conocimientoARevelar`) no cambia.
 - No hubo que reescribir ningún test existente de umbral.
+
+## Auto narrador ampliado (nov 2026) — paso | decisión | alternativa
+- Arranque | rama única `claude/quirky-keller-fn77dr` (orden del usuario) | `auto/narrador-ampliado-v2-nov2026`
+- Arranque | t16: 36 ids de conocimiento renombrados `conocimiento_<npc>_ampN` (sed del usuario) | dejar duplicados
+- P1 | simulador usa botones al azar con rng propio `sim:<semilla>`; `ahora` fijo en 0 | texto libre
+- P1.5 | producción no carga ampliado: solo si se pasa `opciones.ampliado` a crearPartida/narrar | cargarlo al importar index.js
+- P1.5 | `a_aprobar` solo con cargarPendientes; `a_aprobar_canon` además con incluirCanon | canon con cargarPendientes solo
+- P1.5 | `u_niebla_voces` nunca se carga hasta aprobar | cargarlo con incluirCanon
