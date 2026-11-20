@@ -120,7 +120,7 @@ export function elegirTexto(hito, estadoCaso, usos, semilla) {
  *   estadoCaso: object, caso: object,
  *   accion?: {accionId:string, npcId?, conocimientoId?, escenaId?, ciudad?, bando?, faccion?, camino?, contexto?}|null,
  *   mundo: {hora:number, turno:number, escena:string, estadoEvento:string, npcs:object, distancia?:Function},
- *   horasAvanzadas?: number, contenido?: object, semilla?: number|string, abandonar?: boolean,
+ *   horasAvanzadas?: number, sinDesenlace?: boolean, contenido?: object, semilla?: number|string, abandonar?: boolean,
  *   persistencia?: object|null, jugadorId?: string|null, partidaId?: string|null,
  * }} p
  * @returns {Promise<{estadoCaso, npcs, hito, reparado, texto:{id,texto}|null, gancho, desenlace}>}
@@ -155,7 +155,9 @@ export async function turnoDeCaso(p) {
   let texto = null;
   let gancho = null;
   let usoTexto = null;
-  const elegido = elegirDisparo(estado, mundo);
+  // `sinDesenlace` (consultas): un hito final no se dispara; queda para un turno de acción.
+  const candidato = elegirDisparo(estado, mundo);
+  const elegido = p.sinDesenlace === true && candidato?.final ? null : candidato;
   if (elegido) {
     const r = dispararHito(elegido, estado, mundo);
     estado = r.estadoCaso;
@@ -180,7 +182,7 @@ export async function turnoDeCaso(p) {
 
   // Desenlace: al alcanzar un final o al abandonar.
   let desenlace = null;
-  if ((hito?.final && estado.finalAlcanzado) || p.abandonar === true) {
+  if (p.sinDesenlace !== true && ((hito?.final && estado.finalAlcanzado) || p.abandonar === true)) {
     desenlace = elegirDesenlace(caso, estado, mundo).desenlace;
     estado = aplicarDesenlace(desenlace, estado, mundo);
   }

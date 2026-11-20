@@ -10,7 +10,8 @@
 import { exigirContenidoValido } from './contenido.js';
 import { estadoInicial, VERSION_ESTADO } from './estado.js';
 import { crearRng, semillaAEntero, semillaAlAzar } from './azar.js';
-import { ejecutarTurno, npcsPresentes, TIPOS_TURNO } from './turno.js';
+import { ejecutarTurno, npcsPresentes, TIPOS_TURNO, RESULTADOS_CONSULTA } from './turno.js';
+import { ranuraHabilitada } from './casos/hitos.js';
 import { VERSION } from './version.js';
 import { registroDeTurnoNoResuelto } from './registro/registroTurnos.js';
 
@@ -273,9 +274,12 @@ function textoMostrable(texto) {
 async function turnoConCaso(partida, turno, opciones) {
   const estadoCaso = partida.caso;
   if (!esObjeto(estadoCaso) || typeof estadoCaso.casoId !== 'string' || estadoCaso.cerrado) return null;
-  if (turno.tipo !== TIPOS_TURNO.ACCION) return null;
+  // Consulta: solo la que revela un conocimiento entra como `preguntar_clave` (docs/auditoria-motor-caso.md, B4).
+  const esConsulta = turno.tipo === TIPOS_TURNO.CONSULTA;
+  if (esConsulta ? turno.consulta?.resultado !== RESULTADOS_CONSULTA.EXITO : turno.tipo !== TIPOS_TURNO.ACCION) return null;
   const plantilla = lista(opciones?.casos).find((c) => c?.id === estadoCaso.casoId);
   if (!plantilla) return null;
+  if (esConsulta) return turnoConCasoDeConsulta(partida, turno, plantilla, opciones);
 
   const nuevo = turno.estado;
   const posiciones = posicionesDeNpcs(nuevo.reloj, contenido);
@@ -298,6 +302,44 @@ async function turnoConCaso(partida, turno, opciones) {
       npcs,
     },
     horasAvanzadas: turno.accion.costoHoras ?? 0,
+    contenido,
+    semilla: partida.semilla,
+    persistencia: opciones?.persistenciaCasos ?? null,
+    jugadorId: opciones?.jugadorId ?? null,
+    partidaId: opciones?.partidaId ?? null,
+  });
+  const npcsNuevos = Object.fromEntries(
+    Object.entries(nuevo.npcs).map(([id, n]) => {
+      const m = r.npcs[id];
+      return [id, m ? { ...n, relacion: clampRelacion(m.relacion), bloqueadoConocimientos: m.bloqueadoConocimientos === true } : n];
+    }),
+  );
+  return { caso: { ...r.estadoCaso, contadorTurnos }, npcs: npcsNuevos, texto: r.texto?.texto ?? null };
+}
+
+/** Pregunta que reveló un conocimiento: `preguntar_clave` en el motor de caso, sin horas y sin desenlace. */
+async function turnoConCasoDeConsulta(partida, turno, plantilla, opciones) {
+  const estadoCaso = partida.caso;
+  const nuevo = turno.estado;
+  const posiciones = posicionesDeNpcs(nuevo.reloj, contenido);
+  const npcs = Object.fromEntries(
+    Object.entries(nuevo.npcs).map(([id, n]) => [id, { escena: posiciones[id] ?? null, relacion: n.relacion, bloqueadoConocimientos: n.bloqueadoConocimientos === true }]),
+  );
+  const { npcId, conocimientoId } = turno.consulta;
+  const escenaId = nuevo.jugador.escenaId;
+  const pista = lista(estadoCaso.instancia?.pistas).find((p) => p.conocimientoId === conocimientoId);
+  const contadorTurnos = (estadoCaso.contadorTurnos ?? 0) + 1;
+  const r = await turnoDeCaso({
+    estadoCaso,
+    caso: plantilla,
+    accion: {
+      accionId: 'preguntar_clave', npcId, conocimientoId, escenaId, ciudad: porId(contenido.escenas, escenaId)?.ciudad ?? null,
+      // La consulta ya pasó el umbral de revelación del conocimiento (`puedeRevelar`).
+      contexto: { superaUmbral: true, ranuraHabilitada: pista ? ranuraHabilitada(estadoCaso, pista.ranura) : false },
+    },
+    mundo: { hora: minutosAbsolutos(nuevo.reloj) / 60, turno: contadorTurnos, escena: escenaId, estadoEvento: estadoDeEscena(escenaId, nuevo.eventosActivos ?? [], contenido), npcs },
+    horasAvanzadas: 0,
+    sinDesenlace: true,
     contenido,
     semilla: partida.semilla,
     persistencia: opciones?.persistenciaCasos ?? null,
