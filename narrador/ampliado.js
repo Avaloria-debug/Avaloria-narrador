@@ -10,6 +10,7 @@ import { npcsPresentes } from './turno.js';
 import { valoresDeAccion, aperturaDe } from './narracion.js';
 import { resolverPlantillas } from './contenido.js';
 import { elegir } from './seleccion.js';
+import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
 const porId = (l, id) => (l ?? []).find((x) => x.id === id);
@@ -86,6 +87,7 @@ export function extInicial(ext, semilla = 0) {
     ventanaAmbiente: Array.isArray(e.ventanaAmbiente) ? [...e.ventanaAmbiente] : [],
     avisos: Array.isArray(e.avisos) ? e.avisos.slice(-20) : [],
     hechos: hechosGuardados(e),
+    afinidad: e.afinidad && typeof e.afinidad === 'object' ? { ...e.afinidad } : {},
     ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
   };
 }
@@ -114,11 +116,15 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
   const rng = (nombre) => derivar(`${ext.semillaBase}:${ext.turno}`, nombre);
   const npcId = npcDelTurno(turno);
   const umbrales = amp.guia?.umbrales ? { ...UMBRALES, ...amp.guia.umbrales } : UMBRALES;
-  const estado = { ...despues, ext };
+  // P7: la afinidad acumulada por valores del NPC se suma a la relación al leer las condiciones (r).
+  const npcsAjustados = Object.fromEntries(Object.entries(despues.npcs ?? {}).map(([id, n]) => [id, { ...n, relacion: n.relacion + (ext.afinidad?.[id] ?? 0) }]));
+  const estado = { ...despues, npcs: npcsAjustados, ext };
   const recuerdo = (npc) => recuerdosDe(ext.hechos ?? [], npc, despues.reloj, umbrales.recuerdo?.reciente_horas);
   const hechos = (extra = {}, npc = npcId) => {
     const { rec, ant } = recuerdo(npc);
-    return hechosDe(estado, { contenido, npcId: npc, umbrales, extra: { rec, ant, ...extra } });
+    const verbo = turno?.accion?.verbo;
+    const afin = npc && verbo ? afinidadAccion(amp, npc, verbo) : 0;
+    return hechosDe(estado, { contenido, npcId: npc, umbrales, extra: { rec, ant, ...(afin ? { afinidadAccion: afin } : {}), ...extra } });
   };
   const expandirTexto = (t, h = hechos(), npc = npcId, objetoId = turno?.accion?.parametros?.objetoId) => {
     const simbolos = npc && amp.npcsRutina?.[npc]?.gestos?.length ? { ...amp.simbolos, gesto: amp.npcsRutina[npc].gestos.map((g) => (typeof g === 'string' ? g : g.t)) } : amp.simbolos;
@@ -159,6 +165,9 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
     }
   }
   if (turno?.tipo === 'accion' && turno.accion) {
+    const npcA = turno.accion.parametros?.npcId;
+    const afin = npcA ? afinidadAccion(amp, npcA, turno.accion.verbo) : 0;
+    if (afin) ext.afinidad[npcA] = Math.round(((ext.afinidad[npcA] ?? 0) + afin) * 100) / 100;
     ext.hechos = registrarHecho(ext.hechos, { verbo: turno.accion.verbo, npc: turno.accion.parametros?.npcId, escena: antes.jugador.escenaId, reloj: despues.reloj });
   }
   return { texto: partes.filter(Boolean).join(' '), aperturas, ext };

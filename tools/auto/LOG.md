@@ -8,3 +8,4 @@ P3 | hecho | gramatica.js: símbolos por franja/clima/tensión, género, avisos 
 P4 | hecho | ambiente.js: clima por bloques, ambiente 0.25, rutina NPC, gestos
 P5 | hecho | plantillas de intención ampliadas, voces por NPC, charla
 P6 | hecho | hechos.js: memoria de verbos por NPC, recuerdo al saludar/hablar
+P7 | hecho | etiquetasVerbos.js; valores.json opcional (A APROBAR), sin valores idéntico
