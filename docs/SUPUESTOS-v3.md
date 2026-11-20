@@ -39,3 +39,6 @@
 - P1.5 | producción no carga ampliado: solo si se pasa `opciones.ampliado` a crearPartida/narrar | cargarlo al importar index.js
 - P1.5 | `a_aprobar` solo con cargarPendientes; `a_aprobar_canon` además con incluirCanon | canon con cargarPendientes solo
 - P1.5 | `u_niebla_voces` nunca se carga hasta aprobar | cargarlo con incluirCanon
+P4 | clima en ext.clima (ambiente.js), no en reloj.js | campo en reloj
+P4 | sentido dominante de t00 no se usa: las líneas no traen sentido | etiquetar líneas
+P3 | avisos de gramática en estado.ext.avisos (no en estado.avisos) | estado.avisos
