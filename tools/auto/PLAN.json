@@ -1,0 +1,455 @@
+{
+ "version": 1,
+ "rama": "auto/narrador-ampliado-v2-nov2026",
+ "simulador": {
+  "flags": [
+   "--semilla",
+   "--partidas",
+   "--turnos",
+   "--salida stdout|archivo",
+   "--sin-ampliado",
+   "--incluir-canon"
+  ],
+  "salida_stdout": "JSON {metricas:{...}, textos:[...]}"
+ },
+ "pasos": [
+  {
+   "id": "P1",
+   "nombre": "Medición base: simulador",
+   "depende": [],
+   "archivos": [
+    "tools/simular.js",
+    "tools/simular.test.js"
+   ],
+   "tests": [
+    "tools/simular.test.js"
+   ],
+   "tandas": [],
+   "cambiaConducta": false,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P1.5",
+   "nombre": "Carga de contenido ampliado",
+   "depende": [
+    "P1"
+   ],
+   "archivos": [
+    "narrador/contenidoAmpliado.js"
+   ],
+   "tests": [
+    "narrador/contenidoAmpliado.test.js"
+   ],
+   "tandas": [
+    "t00-t27 (solo carga)"
+   ],
+   "cambiaConducta": false,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P2",
+   "nombre": "Selección por especificidad",
+   "depende": [
+    "P1.5"
+   ],
+   "archivos": [
+    "narrador/seleccion.js"
+   ],
+   "tests": [
+    "narrador/seleccion.test.js"
+   ],
+   "tandas": [],
+   "cambiaConducta": false,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P3",
+   "nombre": "Gramática",
+   "depende": [
+    "P2"
+   ],
+   "archivos": [
+    "narrador/gramatica.js"
+   ],
+   "tests": [
+    "narrador/gramatica.test.js"
+   ],
+   "tandas": [
+    "t01",
+    "t15"
+   ],
+   "cambiaConducta": false,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P4",
+   "nombre": "Ambiente, clima y franja",
+   "depende": [
+    "P2",
+    "P3"
+   ],
+   "archivos": [
+    "narrador/ambiente.js"
+   ],
+   "tests": [
+    "narrador/ambiente.test.js"
+   ],
+   "tandas": [
+    "t02",
+    "t03",
+    "t13"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P5",
+   "nombre": "Intenciones y voces",
+   "depende": [
+    "P2",
+    "P3"
+   ],
+   "archivos": [],
+   "tests": [
+    "narrador/voces.test.js"
+   ],
+   "tandas": [
+    "t04",
+    "t05",
+    "t14",
+    "t17"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P6",
+   "nombre": "Memoria de hechos",
+   "depende": [
+    "P2"
+   ],
+   "archivos": [
+    "narrador/hechos.js"
+   ],
+   "tests": [
+    "narrador/hechos.test.js"
+   ],
+   "tandas": [
+    "t06",
+    "t18"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P7",
+   "nombre": "Utilidad por NPC",
+   "depende": [
+    "P6"
+   ],
+   "archivos": [
+    "narrador/etiquetasVerbos.js"
+   ],
+   "tests": [
+    "narrador/utilidad.test.js"
+   ],
+   "tandas": [],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P8",
+   "nombre": "Eventos con saliencia y tensión",
+   "depende": [
+    "P2",
+    "P6"
+   ],
+   "archivos": [],
+   "tests": [
+    "narrador/eventos.test.js"
+   ],
+   "tandas": [
+    "t09",
+    "t19"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P9",
+   "nombre": "Rumores",
+   "depende": [
+    "P6"
+   ],
+   "archivos": [
+    "narrador/rumores.js"
+   ],
+   "tests": [
+    "narrador/rumores.test.js"
+   ],
+   "tandas": [
+    "t07",
+    "t18"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P10",
+   "nombre": "Conocimientos, temas y únicos",
+   "depende": [
+    "P2",
+    "P5"
+   ],
+   "archivos": [],
+   "tests": [
+    "narrador/conocimientos.test.js"
+   ],
+   "tandas": [
+    "t12",
+    "t16"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P11",
+   "nombre": "Comprensión: stemmer y n-gramas",
+   "depende": [
+    "P1.5"
+   ],
+   "archivos": [
+    "narrador/stemmer.js",
+    "narrador/ngramas.js"
+   ],
+   "tests": [
+    "narrador/stemmer.test.js",
+    "narrador/ngramas.test.js"
+   ],
+   "tandas": [
+    "t11"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P12",
+   "nombre": "Propiedades y CI",
+   "depende": [
+    "P1"
+   ],
+   "archivos": [
+    "narrador/propiedades.test.js",
+    ".github/workflows/narrador.yml"
+   ],
+   "tests": [
+    "narrador/propiedades.test.js"
+   ],
+   "tandas": [],
+   "cambiaConducta": false,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P13",
+   "nombre": "Medición final",
+   "depende": [
+    "P2",
+    "P3",
+    "P4",
+    "P5",
+    "P6",
+    "P7",
+    "P8",
+    "P9",
+    "P10",
+    "P11",
+    "P12"
+   ],
+   "archivos": [],
+   "tests": [],
+   "tandas": [],
+   "cambiaConducta": false,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P14",
+   "nombre": "Eco del jugador",
+   "depende": [
+    "P3"
+   ],
+   "archivos": [
+    "narrador/eco.js"
+   ],
+   "tests": [
+    "narrador/eco.test.js"
+   ],
+   "tandas": [
+    "t20"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P15",
+   "nombre": "Consecuencias visibles",
+   "depende": [
+    "P4",
+    "P6"
+   ],
+   "archivos": [
+    "narrador/consecuencias.js"
+   ],
+   "tests": [
+    "narrador/consecuencias.test.js"
+   ],
+   "tandas": [
+    "t21"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P16",
+   "nombre": "Objetivos por NPC",
+   "depende": [
+    "P6",
+    "P9"
+   ],
+   "archivos": [
+    "narrador/objetivos.js"
+   ],
+   "tests": [
+    "narrador/objetivos.test.js"
+   ],
+   "tandas": [
+    "t22"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P17",
+   "nombre": "Diario automático",
+   "depende": [
+    "P6"
+   ],
+   "archivos": [
+    "narrador/diario.js"
+   ],
+   "tests": [
+    "narrador/diario.test.js"
+   ],
+   "tandas": [
+    "t23"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P18",
+   "nombre": "Apodo del jugador",
+   "depende": [
+    "P6"
+   ],
+   "archivos": [
+    "narrador/apodo.js"
+   ],
+   "tests": [
+    "narrador/apodo.test.js"
+   ],
+   "tandas": [
+    "t24"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P19",
+   "nombre": "Ritmo y silencio",
+   "depende": [
+    "P2"
+   ],
+   "archivos": [],
+   "tests": [
+    "narrador/ritmo.test.js"
+   ],
+   "tandas": [
+    "t25"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P20",
+   "nombre": "Errores amables en escena",
+   "depende": [
+    "P5",
+    "P11"
+   ],
+   "archivos": [],
+   "tests": [
+    "narrador/reformulacion.test.js"
+   ],
+   "tandas": [
+    "t26"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P21",
+   "nombre": "Calendario y festividades",
+   "depende": [
+    "P4"
+   ],
+   "archivos": [
+    "narrador/calendario.js"
+   ],
+   "tests": [
+    "narrador/calendario.test.js"
+   ],
+   "tandas": [
+    "t27"
+   ],
+   "cambiaConducta": true,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  },
+  {
+   "id": "P22",
+   "nombre": "Modo revisión de contenido",
+   "depende": [
+    "P1.5"
+   ],
+   "archivos": [
+    "tools/revisar.js"
+   ],
+   "tests": [],
+   "tandas": [],
+   "cambiaConducta": false,
+   "esfuerzo": "medio",
+   "estado": "pendiente"
+  }
+ ]
+}

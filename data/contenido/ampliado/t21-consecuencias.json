@@ -1,0 +1,343 @@
+{
+ "tanda": "t21",
+ "estado": "a_aprobar_canon",
+ "nota": "efectos pequeños y temporales (no cambian la trama). hecho = verbo que lo dispara con peso >=2. aparece = variantes al entrar en la escena; expira = al terminar duracionH.",
+ "efectos": [
+  {
+   "id": "maren_hoja_limpia",
+   "npc": "maren_archivista",
+   "escena": "escena_archivo_real",
+   "hecho": "ayudar",
+   "duracionH": 24,
+   "aparece": [
+    "Hay una hoja nueva sobre la mesa de consulta, apartada para vos.",
+    "Maren dejó un marcador de cuero entre las páginas que usás."
+   ],
+   "expira": [
+    "La hoja limpia ya tiene otro dueño."
+   ]
+  },
+  {
+   "id": "maren_acceso",
+   "npc": "maren_archivista",
+   "escena": "escena_archivo_real",
+   "hecho": "negociar",
+   "duracionH": 36,
+   "aparece": [
+    "Un copista te deja pasar sin pedir el motivo.",
+    "El registro de entrada ya tiene tu nombre escrito. Sin preguntas."
+   ],
+   "expira": [
+    "Otra vez piden motivo y nombre. Todo vuelve a su lugar."
+   ]
+  },
+  {
+   "id": "serel_pan_extra",
+   "npc": "serel_panadero",
+   "escena": "escena_mercado_circular",
+   "hecho": "ayudar",
+   "duracionH": 24,
+   "aparece": [
+    "Una hogaza chica descansa aparte, con tu nombre en un trapo.",
+    "Serel te guardó el pan del fondo, el más crocante."
+   ],
+   "expira": [
+    "El pan apartado se vendió. Era de esperarse."
+   ]
+  },
+  {
+   "id": "serel_fila_corta",
+   "npc": "serel_panadero",
+   "escena": "escena_mercado_circular",
+   "hecho": "defender",
+   "duracionH": 18,
+   "aparece": [
+    "La fila de la panadería se abre un poco al verte.",
+    "Alguien te cede el lugar sin que lo pidas."
+   ],
+   "expira": [
+    "La fila vuelve a ser fila."
+   ]
+  },
+  {
+   "id": "ivor_tasa",
+   "npc": "ivor_cambista",
+   "escena": "escena_plaza_cambistas",
+   "hecho": "negociar",
+   "duracionH": 24,
+   "aparece": [
+    "En la mesa de Ivor, una tasa distinta está anotada con tu inicial.",
+    "Ivor mueve un montoncito de monedas hacia tu lado antes de que hables."
+   ],
+   "expira": [
+    "La tasa de siempre vuelve a la pizarra."
+   ]
+  },
+  {
+   "id": "ivor_cuidado",
+   "npc": "ivor_cambista",
+   "escena": "escena_plaza_cambistas",
+   "hecho": "presionar",
+   "duracionH": 24,
+   "aparece": [
+    "Dos guardias privados custodian la mesa de Ivor, ahora.",
+    "Ivor guarda las monedas grandes cuando te ve venir."
+   ],
+   "expira": [
+    "Los guardias privados se van. La confianza, no tanto."
+   ]
+  },
+  {
+   "id": "naela_mesa",
+   "npc": "naela_tabernera",
+   "escena": "escena_taberna_lareth",
+   "hecho": "ayudar",
+   "duracionH": 24,
+   "aparece": [
+    "Hay una mesa pegada a la pared con un cartel de «reservada».",
+    "Naela mantiene libre el rincón de la lámpara. Para vos."
+   ],
+   "expira": [
+    "La mesa reservada ya la ocupan unos arrieros."
+   ]
+  },
+  {
+   "id": "naela_vigilia",
+   "npc": "naela_tabernera",
+   "escena": "escena_taberna_lareth",
+   "hecho": "atacar",
+   "duracionH": 30,
+   "aparece": [
+    "Un garrote nuevo cuelga detrás de la barra.",
+    "Naela deja un banquillo cerca de la puerta, con un tipo grande encima."
+   ],
+   "expira": [
+    "El garrote vuelve a su sitio. El banquillo, no."
+   ]
+  },
+  {
+   "id": "tiren_mapa",
+   "npc": "tiren_docente",
+   "escena": "escena_aula_cartografia",
+   "hecho": "ayudar",
+   "duracionH": 24,
+   "aparece": [
+    "En el pizarrón hay un trazo nuevo que lleva tu nombre.",
+    "Tiren dejó un mapa chico sobre el atril, esperando que lo veas."
+   ],
+   "expira": [
+    "El trazo se borró con la clase de la tarde."
+   ]
+  },
+  {
+   "id": "tiren_alumnos",
+   "npc": "tiren_docente",
+   "escena": "escena_aula_cartografia",
+   "hecho": "defender",
+   "duracionH": 18,
+   "aparece": [
+    "Los alumnos te miran con interés y cuchichean.",
+    "Alguien pregunta por vos entre mapa y mapa."
+   ],
+   "expira": [
+    "Los alumnos vuelven a su lección."
+   ]
+  },
+  {
+   "id": "elia_reserva",
+   "npc": "elia_bibliotecaria",
+   "escena": "escena_biblioteca_publica",
+   "hecho": "ayudar",
+   "duracionH": 30,
+   "aparece": [
+    "Un tomo está apartado con una cinta roja. Lleva tu nombre en la ficha.",
+    "Elia deja la mesa del rincón sin ocupar."
+   ],
+   "expira": [
+    "La cinta roja ya no está. El tomo volvió a su estante."
+   ]
+  },
+  {
+   "id": "elia_susurro",
+   "npc": "elia_bibliotecaria",
+   "escena": "escena_biblioteca_publica",
+   "hecho": "presionar",
+   "duracionH": 24,
+   "aparece": [
+    "Elia vigila cada paso tuyo con la mirada.",
+    "Los libros del fondo están con candado, hoy."
+   ],
+   "expira": [
+    "Se abre el candado. Elia respira."
+   ]
+  },
+  {
+   "id": "brenn_compania",
+   "npc": "brenn_arriero",
+   "escena": "escena_camino_norte",
+   "hecho": "ayudar",
+   "duracionH": 24,
+   "aparece": [
+    "Una mula con la carga a medias espera, con sitio para tus cosas.",
+    "Brenn deja un hueco en la fila de la caravana."
+   ],
+   "expira": [
+    "La caravana ya se fue."
+   ]
+  },
+  {
+   "id": "brenn_aviso",
+   "npc": "brenn_arriero",
+   "escena": "escena_camino_norte",
+   "hecho": "negociar",
+   "duracionH": 30,
+   "aparece": [
+    "Una marca de tiza en una piedra: el tramo de adelante está limpio.",
+    "Brenn dejó una señal del lado seguro del camino."
+   ],
+   "expira": [
+    "La lluvia borra la marca."
+   ]
+  },
+  {
+   "id": "ysolde_orilla",
+   "npc": "ysolde_pescadora",
+   "escena": "escena_lago_espejos",
+   "hecho": "ayudar",
+   "duracionH": 24,
+   "aparece": [
+    "Hay una piedra plana en la orilla, arreglada para que te sientes.",
+    "Ysolde dejó una red seca doblada a tu alcance."
+   ],
+   "expira": [
+    "La piedra plana quedó bajo el agua."
+   ]
+  },
+  {
+   "id": "ysolde_silencio",
+   "npc": "ysolde_pescadora",
+   "escena": "escena_lago_espejos",
+   "hecho": "defender",
+   "duracionH": 18,
+   "aparece": [
+    "El lago está más callado que de costumbre. Ysolde te mira de lado.",
+    "Ysolde tararea muy bajo mientras trabaja."
+   ],
+   "expira": [
+    "Vuelve el ruido de siempre en la orilla."
+   ]
+  },
+  {
+   "id": "dario_paso",
+   "npc": "dario_guardia",
+   "escena": "escena_puente_aduana",
+   "hecho": "ayudar",
+   "duracionH": 24,
+   "aparece": [
+    "La barrera se levanta apenas te ven llegar.",
+    "Darío te hace una seña breve: pasá."
+   ],
+   "expira": [
+    "La barrera vuelve a ser barrera."
+   ]
+  },
+  {
+   "id": "dario_revision",
+   "npc": "dario_guardia",
+   "escena": "escena_puente_aduana",
+   "hecho": "presionar",
+   "duracionH": 24,
+   "aparece": [
+    "Cada papel tuyo pasa por tres manos antes de volver a las tuyas.",
+    "Darío anota algo en su libreta cada vez que te mira."
+   ],
+   "expira": [
+    "La libreta se cierra por hoy."
+   ]
+  },
+  {
+   "id": "sarin_atajo",
+   "npc": "sarin_mensajera",
+   "escena": "escena_camino_este",
+   "hecho": "ayudar",
+   "duracionH": 24,
+   "aparece": [
+    "Una marca discreta señala un atajo por el costado.",
+    "Sarin deja una cinta atada a una rama para vos."
+   ],
+   "expira": [
+    "La cinta ya no está."
+   ]
+  },
+  {
+   "id": "sarin_distancia",
+   "npc": "sarin_mensajera",
+   "escena": "escena_camino_este",
+   "hecho": "emboscar",
+   "duracionH": 30,
+   "aparece": [
+    "Nadie se detiene a hablar con vos. Sarin cambia de camino al verte.",
+    "Las cartas cruzan el camino lejos de donde estás."
+   ],
+   "expira": [
+    "Los mensajeros vuelven a pasar por donde siempre."
+   ]
+  },
+  {
+   "id": "hollis_queso",
+   "npc": "hollis_pastor",
+   "escena": "escena_cruce_colinas",
+   "hecho": "ayudar",
+   "duracionH": 24,
+   "aparece": [
+    "Un trozo de queso envuelto en tela, apoyado en una piedra.",
+    "El rebaño se aparta para dejarte pasar."
+   ],
+   "expira": [
+    "El queso ya no está. Alguien tuvo hambre."
+   ]
+  },
+  {
+   "id": "hollis_perro",
+   "npc": "hollis_pastor",
+   "escena": "escena_cruce_colinas",
+   "hecho": "defender",
+   "duracionH": 24,
+   "aparece": [
+    "El perro pastor te sigue unos pasos, curioso.",
+    "Hollis silba bajo y el perro se te acerca sin ladrar."
+   ],
+   "expira": [
+    "El perro vuelve con el rebaño."
+   ]
+  },
+  {
+   "id": "oren_marca",
+   "npc": "oren_peregrino",
+   "escena": "escena_camino_este",
+   "hecho": "ayudar",
+   "duracionH": 30,
+   "aparece": [
+    "Una cinta atada al camino, a la altura de la mano.",
+    "Oren dejó una pequeña piedra apilada en el cruce."
+   ],
+   "expira": [
+    "El viento se llevó la cinta."
+   ]
+  },
+  {
+   "id": "oren_calma",
+   "npc": "oren_peregrino",
+   "escena": "escena_camino_este",
+   "hecho": "defender",
+   "duracionH": 18,
+   "aparece": [
+    "El camino parece más corto hoy. Oren camina a tu lado un trecho.",
+    "Oren te acompaña en silencio, sin pedir nada."
+   ],
+   "expira": [
+    "Oren sigue su rumbo."
+   ]
+  }
+ ]
+}

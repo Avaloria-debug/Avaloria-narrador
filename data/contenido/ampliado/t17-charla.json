@@ -1,0 +1,793 @@
+{
+ "tanda": "t17",
+ "estado": "a_aprobar",
+ "nota": "charla.<npc>.l = líneas de charla casual (hablar_con sin conocimiento ni tema). Misma estructura {c,t} que t05. Voces por npc según t00.",
+ "charla": {
+  "maren_archivista": {
+   "l": [
+    {
+     "c": {
+      "f": "manana"
+     },
+     "t": "«La mañana es mejor para copiar. La luz no engaña», comenta Maren sin mirarte."
+    },
+    {
+     "c": {
+      "f": "tarde"
+     },
+     "t": "«A esta hora la tinta se seca más rápido», dice Maren, y sopla una página."
+    },
+    {
+     "c": {
+      "f": "noche"
+     },
+     "t": "«Se cierra el depósito. Consta que usted aún está aquí», dice Maren."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«La humedad es el enemigo del papel», dice Maren, y mueve un volumen lejos de la ventana."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Hoy hay una hoja en blanco para usted», dice Maren. Es su manera de ofrecerte confianza."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«Hable rápido. El Archivo no pierde el tiempo», dice Maren."
+    },
+    {
+     "t": "«Un buen copista no deja huella propia», dice Maren. «Yo lo logré hace veinte años.»"
+    },
+    {
+     "t": "Maren corrige una línea con un trazo mínimo. «Un error por página. Siempre uno», murmura."
+    },
+    {
+     "t": "«Hay quienes vienen por la historia. Otros, por la excusa de venir», dice Maren."
+    },
+    {
+     "t": "«No juzgo lo que se consulta. Solo lo registro», dice Maren."
+    },
+    {
+     "t": "Maren afila una pluma. «El papel dura más que quienes lo escriben. Por eso lo cuido.»"
+    },
+    {
+     "t": "«El silencio es el mejor archivista», dice Maren, y deja de hablar."
+    },
+    {
+     "t": "«Antes éramos catorce copistas. Hoy somos seis», comenta Maren, sin dramatismo."
+    },
+    {
+     "t": "«Una frase mal copiada puede cambiar una guerra», dice Maren. «Aunque nadie lo crea.»"
+    },
+    {
+     "t": "Maren cuenta hojas con la punta del dedo. «Faltan cuatro. Siempre faltan cuatro.»"
+    },
+    {
+     "t": "«Aquí no hay secretos. Hay documentos que nadie pidió todavía», dice Maren."
+    }
+   ]
+  },
+  "serel_panadero": {
+   "l": [
+    {
+     "c": {
+      "f": "madrugada"
+     },
+     "t": "«A esta hora ya llevo dos hornadas», dice Serel, con harina hasta los codos."
+    },
+    {
+     "c": {
+      "f": "manana"
+     },
+     "t": "«El pan caliente no espera», gruñe Serel, y te pone uno en la mano."
+    },
+    {
+     "c": {
+      "f": "tarde"
+     },
+     "t": "«Lo que no vendí, lo regalo a la noche. No sirve guardarlo», dice Serel."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«Con lluvia, la gente compra más pan. Nadie sabe por qué», dice Serel."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Tomá, el del fondo, el más crocante. Es para vos», dice Serel."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«Si vas a comprar, comprá. Si no, dejá pasar a otros», dice Serel."
+    },
+    {
+     "t": "«Quince años amasando y todavía me despierta el miedo de que no suba», dice Serel."
+    },
+    {
+     "t": "«Un buen pan se escucha. Cuando lo partís, tiene que cantar», dice Serel."
+    },
+    {
+     "t": "Serel golpea la masa con las dos manos. «La paciencia es harina, agua y tiempo.»"
+    },
+    {
+     "t": "«Mi madre amasaba mejor. Nunca se lo dije», confiesa Serel."
+    },
+    {
+     "t": "«Cada barrio tiene su gusto. Acá, el de corteza gruesa», dice Serel."
+    },
+    {
+     "t": "«El que roba pan tiene hambre, y el hambre no se castiga», dice Serel, aunque no sonríe."
+    },
+    {
+     "t": "Serel se limpia las manos en el delantal. «Mi horno es viejo, pero es honesto.»"
+    },
+    {
+     "t": "«A la gente le gusta lo que conoce. Por eso hago lo mismo todos los días», dice Serel."
+    },
+    {
+     "t": "«Se vende más pan cuando hay malas noticias», comenta Serel, sin ganas."
+    }
+   ]
+  },
+  "ivor_cambista": {
+   "l": [
+    {
+     "c": {
+      "f": "manana"
+     },
+     "t": "«La mañana es para los cambios grandes. La tarde, para los pequeños», dice Ivor."
+    },
+    {
+     "c": {
+      "f": "noche"
+     },
+     "t": "«A esta hora, ya no hay tasas. Hay favores», dice Ivor."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«Con lluvia, el comercio se frena y la usura sube», dice Ivor, impasible."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Para usted, el cambio es sin comisión. Por esta vez», dice Ivor."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«No presto a quienes me miran así», dice Ivor, y cierra el cajón."
+    },
+    {
+     "t": "«Una moneda es una promesa en metal», dice Ivor, haciéndola girar."
+    },
+    {
+     "t": "«Todos creen que el dinero cambia a las personas. Solo las muestra», dice Ivor."
+    },
+    {
+     "t": "Ivor cuenta sin mirar. «El oído se aprende. Las monedas falsas suenan a vacío.»"
+    },
+    {
+     "t": "«Aster es una casa antigua. Antigua y paciente», dice Ivor."
+    },
+    {
+     "t": "«La confianza es el único activo que no se puede pesar», dice Ivor."
+    },
+    {
+     "t": "Ivor ordena las pilas por tamaño. «El orden es la mitad del negocio.»"
+    },
+    {
+     "t": "«A los jóvenes les pido garantía; a los viejos, memoria», dice Ivor."
+    },
+    {
+     "t": "«No es avaricia. Es aritmética», dice Ivor, con una media sonrisa."
+    },
+    {
+     "t": "«Hay un tipo de silencio que vale más que una firma», dice Ivor."
+    },
+    {
+     "t": "Ivor muerde una moneda apenas. «Esta pasa. Esta otra, no.»"
+    }
+   ]
+  },
+  "naela_tabernera": {
+   "l": [
+    {
+     "c": {
+      "f": "tarde"
+     },
+     "t": "«A esta hora llegan los primeros sedientos. Los honestos», dice Naela."
+    },
+    {
+     "c": {
+      "f": "noche"
+     },
+     "t": "«De noche se habla más y se paga menos. Aprendí a cobrar antes», dice Naela."
+    },
+    {
+     "c": {
+      "f": "madrugada"
+     },
+     "t": "«Los que quedan a esta hora tienen algo que olvidar», dice Naela, secando un vaso."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«Con lluvia no cabe ni un alfiler», dice Naela. «Y nadie se queja.»"
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Sentate. La primera es de la casa», dice Naela, y te sirve."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«En mi barra, los problemas se pagan al contado», dice Naela."
+    },
+    {
+     "t": "«Una buena cerveza y una mala noticia: la combinación perfecta», dice Naela."
+    },
+    {
+     "t": "«El que cuenta su vida en la taberna ya olvidó cómo callarse», dice Naela."
+    },
+    {
+     "t": "Naela golpea la barra con la palma. «Acá no se pelea sin pagar el daño.»"
+    },
+    {
+     "t": "«Los marineros, los arrieros, los soldados. Todos hablan igual cuando beben», dice Naela."
+    },
+    {
+     "t": "«Lareth no duerme. Yo tampoco», comenta Naela, sin quejarse."
+    },
+    {
+     "t": "«Un taburete roto me cuesta más que diez cervezas», dice Naela."
+    },
+    {
+     "t": "«Los que mejor pagan son los que menos hablan», dice Naela."
+    },
+    {
+     "t": "Naela mira la puerta cada vez que se abre. «Costumbre. Mala.»"
+    },
+    {
+     "t": "«Mi taberna es vieja. Tiene más historias que clientes», dice Naela."
+    }
+   ]
+  },
+  "tiren_docente": {
+   "l": [
+    {
+     "c": {
+      "f": "manana"
+     },
+     "t": "«¡Buen día! Hoy tocamos escala y proporción», dice Tiren, con ánimo."
+    },
+    {
+     "c": {
+      "f": "tarde"
+     },
+     "t": "«La tarde es ideal para ver cómo cambian las sombras sobre el mapa», dice Tiren."
+    },
+    {
+     "c": {
+      "cl": "despejado"
+     },
+     "t": "«Con este cielo se ve hasta la curva del horizonte», dice Tiren, entusiasmado."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«¡Ideal para estudiar la cuenca de un río en vivo!», dice Tiren, mirando por la ventana."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Vení, te muestro algo que no muestro a todos», dice Tiren, sacando un rollo."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«No es el mejor momento para una lección», dice Tiren, con cortesía fría."
+    },
+    {
+     "t": "«Un mapa es una opinión muy bien dibujada», dice Tiren, y se ríe."
+    },
+    {
+     "t": "«Los mejores cartógrafos caminaron lo que dibujaron», dice Tiren."
+    },
+    {
+     "t": "Tiren señala un punto del mapa. «Acá nadie fue. Dicen que no hay nada. Me encanta.»"
+    },
+    {
+     "t": "«La escala es un acto de humildad. Todo cabe, pero nada cabe entero», dice Tiren."
+    },
+    {
+     "t": "«Los alumnos preguntan qué sirve esto. Les digo: para no perderse», dice Tiren."
+    },
+    {
+     "t": "«Un buen mapa deja dudas honestas», dice Tiren."
+    },
+    {
+     "t": "Tiren mancha de tinta su manga. «Tercera esta semana. No tiene remedio.»"
+    },
+    {
+     "t": "«El norte es una convención. Pero qué convención hermosa», dice Tiren."
+    },
+    {
+     "t": "«Hay cartas que valen más por lo que omiten», dice Tiren, bajando la voz."
+    }
+   ]
+  },
+  "elia_bibliotecaria": {
+   "l": [
+    {
+     "c": {
+      "f": "manana"
+     },
+     "t": "«La luz de la mañana es amable con los libros», susurra Elia."
+    },
+    {
+     "c": {
+      "f": "tarde"
+     },
+     "t": "«Después del mediodía vienen los estudiantes. Y el ruido», susurra Elia."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«Hoy vienen más lectores. La lluvia hace buena compañía», susurra Elia."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Te guardé un libro que creo que te va a gustar», susurra Elia."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«Silencio, por favor», susurra Elia, aunque no hablaste."
+    },
+    {
+     "t": "«Un libro bien leído se nota en el lomo», susurra Elia."
+    },
+    {
+     "t": "«Cada lector deja un olor en las páginas. Yo los distingo», susurra Elia."
+    },
+    {
+     "t": "Elia acomoda un tomo y lo acaricia. «Las ediciones antiguas piden tacto.»"
+    },
+    {
+     "t": "«Prestar un libro es confiar. Perderlo es traicionar», susurra Elia."
+    },
+    {
+     "t": "«Hay libros que esperan años a su lector», susurra Elia."
+    },
+    {
+     "t": "«Algunos vienen a leer. Otros, a no estar solos», susurra Elia."
+    },
+    {
+     "t": "«El catálogo es una promesa, no una verdad», susurra Elia, con una sonrisa."
+    },
+    {
+     "t": "Elia sopla el polvo de una repisa. «Se acumula sin que nadie lo vea.»"
+    },
+    {
+     "t": "«La mejor lectura es la que no se termina», susurra Elia."
+    },
+    {
+     "t": "«Un lector nuevo es una fiesta pequeña», susurra Elia, y mira alrededor."
+    }
+   ]
+  },
+  "brenn_arriero": {
+   "l": [
+    {
+     "c": {
+      "f": "madrugada"
+     },
+     "t": "«Salimos antes del alba. Las mulas rinden mejor con frío», dice Brenn."
+    },
+    {
+     "c": {
+      "f": "tarde"
+     },
+     "t": "«Esta hora es mala para caminar. Mejor comer algo», dice Brenn."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«Barro hasta las rodillas. Y las mulas sufren más que yo», dice Brenn."
+    },
+    {
+     "c": {
+      "cl": "despejado"
+     },
+     "t": "«Hoy sí. Buen camino, buen día», dice Brenn, con una sonrisa ancha."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Si necesitás compañía hasta el cruce, avisá», ofrece Brenn."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«El camino es largo y mi paciencia, corta», gruñe Brenn."
+    },
+    {
+     "t": "«Una mula buena vale más que un caballo caro», dice Brenn."
+    },
+    {
+     "t": "«El que apura al arriero, llega tarde», dice Brenn, riendo."
+    },
+    {
+     "t": "Brenn le rasca el cuello a una mula. «Esta me conoce mejor que mi propia madre.»"
+    },
+    {
+     "t": "«He visto el norte cubierto de nieve y el sur seco como hueso», dice Brenn."
+    },
+    {
+     "t": "«En el camino, cada piedra tiene dueño», dice Brenn, misterioso."
+    },
+    {
+     "t": "«Nunca me perdí. Me confundí un par de veces», dice Brenn."
+    },
+    {
+     "t": "Brenn revisa un cincho. «Lo que se rompe en el camino, se rompe a lo grande.»"
+    },
+    {
+     "t": "«No hay mejor café que el que se hace con nieve derretida», dice Brenn."
+    },
+    {
+     "t": "«El arriero cuenta pasos, no leguas», dice Brenn."
+    }
+   ]
+  },
+  "ysolde_pescadora": {
+   "l": [
+    {
+     "c": {
+      "f": "madrugada"
+     },
+     "t": "«El lago a esta hora es otro. No hay que mirarlo; hay que escucharlo», dice Ysolde."
+    },
+    {
+     "c": {
+      "f": "manana"
+     },
+     "t": "«Los peces suben cuando sube el sol. Después se esconden», dice Ysolde."
+    },
+    {
+     "c": {
+      "f": "noche"
+     },
+     "t": "«De noche el lago habla bajo. Hay que callarse para entenderlo», dice Ysolde."
+    },
+    {
+     "c": {
+      "cl": "niebla"
+     },
+     "t": "«Con niebla no se pesca. Se espera», dice Ysolde."
+    },
+    {
+     "c": {
+      "cl": "despejado"
+     },
+     "t": "«Un día claro es mal día de pesca. El pez te ve», dice Ysolde."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Sentate. No hables, pero sentate», dice Ysolde, y te cede un lugar."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«Estás espantando a los peces», dice Ysolde, sin mirarte."
+    },
+    {
+     "t": "«La paciencia no es una virtud. Es una herramienta», dice Ysolde."
+    },
+    {
+     "t": "Ysolde repasa un nudo con los dedos. «Mi padre me los enseñó uno por uno.»"
+    },
+    {
+     "t": "«El lago no miente. Tarda en decir la verdad, pero no miente», dice Ysolde."
+    },
+    {
+     "t": "«Un pescador que habla mucho vuelve con poco», dice Ysolde."
+    },
+    {
+     "t": "«Todos los lagos tienen un fondo. El mío tiene dos», dice Ysolde, enigmática."
+    },
+    {
+     "t": "Ysolde mira el agua un largo rato. «Hoy está de buen humor.»"
+    },
+    {
+     "t": "«Nunca pesco más de lo que como. Y el lago lo sabe», dice Ysolde."
+    }
+   ]
+  },
+  "dario_guardia": {
+   "l": [
+    {
+     "c": {
+      "f": "manana"
+     },
+     "t": "«Mañana tranquila en el puente. Sospechosamente tranquila», dice Darío."
+    },
+    {
+     "c": {
+      "f": "noche"
+     },
+     "t": "«De noche solo pasan los que no quieren ser vistos», dice Darío."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«Con lluvia, el puente resbala. Y los papeles se mojan», dice Darío."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«A usted lo dejo pasar con una sonrisa. Con papel, claro», dice Darío."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«Revisaré todo lo que lleva. Cada cosa», dice Darío, con calma peligrosa."
+    },
+    {
+     "t": "«Un sello bien puesto vale más que un arma», dice Darío."
+    },
+    {
+     "t": "«La aduana no se cierra. Se descansa por turnos», dice Darío."
+    },
+    {
+     "t": "Darío revisa un papel a contraluz. «Siempre hay quien intenta.»"
+    },
+    {
+     "t": "«Hace cuatro años que no tomo vacaciones. No me quejo. Me lo recuerdo», dice Darío."
+    },
+    {
+     "t": "«Un guardia sin sospecha es un guardia sin trabajo», dice Darío."
+    },
+    {
+     "t": "«Mi madre quería que fuera panadero. Tenía razón», dice Darío, con humor seco."
+    },
+    {
+     "t": "Darío afloja el cinto. «Seis horas de pie. Mi premio es el silencio.»"
+    },
+    {
+     "t": "«Quien paga el peaje con prisa, esconde algo. O tiene hambre», dice Darío."
+    },
+    {
+     "t": "«Los extranjeros preguntan siempre lo mismo: cuánto falta», dice Darío."
+    }
+   ]
+  },
+  "sarin_mensajera": {
+   "l": [
+    {
+     "c": {
+      "f": "madrugada"
+     },
+     "t": "«Salgo con el primer gallo. A la hora cuarta ya estoy lejos», dice Sarin."
+    },
+    {
+     "c": {
+      "f": "tarde"
+     },
+     "t": "«Esta hora es la peor: calor y entregas», dice Sarin, sin parar."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«Con lluvia entrego envuelta en cuero. Pero llego», dice Sarin."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Si necesitás enviar algo, avisame. Para vos, sin recargo», dice Sarin."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«No tengo tiempo», dice Sarin, y ya está caminando."
+    },
+    {
+     "t": "«Una carta tarda lo que tarda. Yo no hago milagros, hago caminos», dice Sarin."
+    },
+    {
+     "t": "Sarin ajusta una correa. «El peso mal repartido arruina el día.»"
+    },
+    {
+     "t": "«El secreto del mensajero: nunca preguntes qué dice», dice Sarin."
+    },
+    {
+     "t": "«Corro por orgullo. Y por la paga», dice Sarin, sonriendo rápido."
+    },
+    {
+     "t": "«Conozco tres atajos que no figuran en ningún mapa», dice Sarin, y no dice cuáles."
+    },
+    {
+     "t": "«Los sellos tienen su carácter. El lacre rojo es apuro; el verde, paciencia», dice Sarin."
+    },
+    {
+     "t": "«Hay cartas que pesan más que su papel», dice Sarin, con cierta pena."
+    },
+    {
+     "t": "Sarin se sacude el polvo de las botas. «Mañana, otra vez.»"
+    },
+    {
+     "t": "«Nunca se pierde una carta. Se atrasa», dice Sarin."
+    }
+   ]
+  },
+  "hollis_pastor": {
+   "l": [
+    {
+     "c": {
+      "f": "madrugada"
+     },
+     "t": "«El rebaño despierta antes que yo. Siempre», dice Hollis, bostezando."
+    },
+    {
+     "c": {
+      "f": "manana"
+     },
+     "t": "«Los corderos se dan cuenta de todo. Hasta de mi humor», dice Hollis."
+    },
+    {
+     "c": {
+      "f": "tarde"
+     },
+     "t": "«A esta hora, sombra y silencio. Lo mejor del día», dice Hollis."
+    },
+    {
+     "c": {
+      "f": "noche"
+     },
+     "t": "«Cuento las estrellas y las ovejas. Siempre sobran estrellas», dice Hollis."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«Con lluvia, las ovejas se amontonan. Son listas para eso», dice Hollis."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Tomá, probá este queso. Lo hace mi hermana», dice Hollis, ofreciéndolo."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«No te acerques tanto al rebaño. Se ponen nerviosas», dice Hollis, con firmeza."
+    },
+    {
+     "t": "«Una oveja sola siempre termina con las demás», dice Hollis."
+    },
+    {
+     "t": "Hollis apoya la barbilla en el cayado. «Se aprende mucho mirando sin hablar.»"
+    },
+    {
+     "t": "«El perro sabe más que yo del rebaño. Yo solo hago de jefe», dice Hollis."
+    },
+    {
+     "t": "«Hay noches en las colinas que no se olvidan», dice Hollis, sin explicar."
+    },
+    {
+     "t": "«No hay vida más lenta ni más completa», dice Hollis, con una sonrisa."
+    },
+    {
+     "t": "Hollis silba bajo. A lo lejos, una oveja responde."
+    },
+    {
+     "t": "«La lana huele a lo que comió la oveja. Yo la reconozco con los ojos cerrados», dice Hollis."
+    }
+   ]
+  },
+  "oren_peregrino": {
+   "l": [
+    {
+     "c": {
+      "f": "madrugada"
+     },
+     "t": "«Camino mejor cuando el mundo aún no despertó», dice Oren."
+    },
+    {
+     "c": {
+      "f": "tarde"
+     },
+     "t": "«Esta hora pide una sombra y un trago de agua», dice Oren."
+    },
+    {
+     "c": {
+      "f": "noche"
+     },
+     "t": "«De noche el camino se acorta y el pensamiento se alarga», dice Oren."
+    },
+    {
+     "c": {
+      "cl": "lluvia"
+     },
+     "t": "«La lluvia también bendice. Pero hay que dejarla», dice Oren."
+    },
+    {
+     "c": {
+      "r": "buena"
+     },
+     "t": "«Si querés, acompañame un trecho. Se camina mejor entre dos», dice Oren."
+    },
+    {
+     "c": {
+      "r": "mala"
+     },
+     "t": "«No te guardo rencor. Solo prefiero caminar solo», dice Oren."
+    },
+    {
+     "t": "«El Roble no pide nada. Por eso se lo da todo», dice Oren."
+    },
+    {
+     "t": "«Cada pie descalzo cuenta una historia distinta», dice Oren."
+    },
+    {
+     "t": "Oren toca su bastón. «Tiene más leguas que yo.»"
+    },
+    {
+     "t": "«No busco respuestas. Busco el camino que me las enseñe», dice Oren."
+    },
+    {
+     "t": "«Un peregrino es alguien que aprendió a perder sin quejarse», dice Oren."
+    },
+    {
+     "t": "«El silencio es una forma de oración», dice Oren."
+    },
+    {
+     "t": "«Los años pasan de una forma distinta en el camino», dice Oren."
+    },
+    {
+     "t": "Oren sonríe con calma. «Aquí estoy, y es suficiente.»"
+    }
+   ]
+  }
+ }
+}

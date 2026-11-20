@@ -1,0 +1,648 @@
+{
+ "tanda": "t15",
+ "estado": "a_aprobar",
+ "nota": "Suma a t01: claves repetidas = más variantes; claves nuevas = símbolos nuevos.",
+ "simbolos": {
+  "luz.madrugada": [
+   "el cielo pasa del negro al azul sin que nadie lo note",
+   "una línea de luz se asoma por encima de los techos",
+   "la oscuridad se afloja de a poco",
+   "todavía no hay sombras: no hay sol que las haga"
+  ],
+  "luz.manana": [
+   "la luz de la mañana es nueva y limpia",
+   "los techos se encienden uno por uno",
+   "el sol alarga las sombras hacia el oeste",
+   "la luz calienta las piedras despacio"
+  ],
+  "luz.tarde": [
+   "el sol está en lo alto y pega de lleno",
+   "la luz de la tarde se vuelve espesa",
+   "las sombras se acortan debajo de los pies",
+   "el calor se acumula en las paredes"
+  ],
+  "luz.noche": [
+   "las lámparas dibujan círculos de luz en la oscuridad",
+   "se apagan las últimas ventanas",
+   "las sombras parecen moverse solas",
+   "la luna pone un brillo plano sobre las cosas"
+  ],
+  "luz.lluvia": [
+   "el cielo gris derrama una luz triste",
+   "las gotas brillan en el aire al pasar por una lámpara",
+   "toda la ciudad parece pintada de acuarela"
+  ],
+  "luz.niebla": [
+   "la luz llega difusa, sin dirección",
+   "el sol es una mancha blanca detrás de la bruma",
+   "las sombras se pierden en la niebla"
+  ],
+  "luz.nublado": [
+   "el cielo es una tapa pesada",
+   "no hay sombras, no hay brillos",
+   "la luz es pareja, sin nada que la quiebre"
+  ],
+  "sonido.madrugada": [
+   "canta un gallo lejano",
+   "se oyen carros que empiezan a rodar",
+   "alguien carraspea desde una ventana",
+   "el rumor de un río llega desde lejos"
+  ],
+  "sonido.manana": [
+   "los postigos se abren con ruido de madera",
+   "se oyen ruedas sobre el empedrado",
+   "alguien ríe en una esquina",
+   "el trote de un caballo se acerca y se aleja"
+  ],
+  "sonido.tarde": [
+   "el ruido se espesa y se vuelve un solo murmullo",
+   "una campana suena en algún lado",
+   "se oyen martillazos y voces",
+   "los carros chirrían al girar"
+  ],
+  "sonido.noche": [
+   "los pasos suenan solos sobre la piedra",
+   "el viento mueve algo que cuelga",
+   "se oye un portazo lejano",
+   "a lo lejos, una canción desafinada"
+  ],
+  "sonido.lluvia": [
+   "la lluvia golpea los techos con insistencia",
+   "se oye el chapoteo de alguien que corre",
+   "el agua canta en las canaletas"
+  ],
+  "sonido.niebla": [
+   "los pasos suenan raros, sin dirección",
+   "las voces llegan sin cuerpo",
+   "alguien tose y no sabés dónde"
+  ],
+  "sonido.nublado": [
+   "se oye un trueno que no termina de llegar",
+   "el viento silba entre las callejas",
+   "las banderas golpean contra el mástil"
+  ],
+  "olor.madrugada": [
+   "huele a humedad y a leña apagada",
+   "el aire trae olor a pasto mojado",
+   "huele a horno recién encendido"
+  ],
+  "olor.manana": [
+   "huele a pan, a café quemado y a establo",
+   "el aire trae olor a ropa recién lavada",
+   "huele a leña húmeda"
+  ],
+  "olor.tarde": [
+   "huele a sudor, a polvo y a fruta madura",
+   "llega un olor a guiso desde alguna ventana",
+   "el aire huele a cuero y a hierro"
+  ],
+  "olor.noche": [
+   "huele a cera y a humo viejo",
+   "el aire fresco trae olor a tierra",
+   "huele a cerveza derramada, lejos"
+  ],
+  "olor.lluvia": [
+   "huele a piedra mojada y a barro",
+   "el aire huele a metal frío",
+   "el olor de la lluvia sube del suelo"
+  ],
+  "olor.niebla": [
+   "huele a humedad profunda, casi a río",
+   "el aire trae un olor a hojas podridas",
+   "huele a lana mojada"
+  ],
+  "olor.nublado": [
+   "huele a tormenta lejana",
+   "el aire huele a tierra recién removida",
+   "huele a hierba cortada"
+  ],
+  "aire.madrugada": [
+   "el frío te punza las orejas",
+   "el aliento se te vuelve vapor"
+  ],
+  "aire.manana": [
+   "el aire está limpio",
+   "hay un frío que pronto se va"
+  ],
+  "aire.tarde": [
+   "el calor aprieta",
+   "el aire está quieto y seco"
+  ],
+  "aire.noche": [
+   "el viento viene frío del norte",
+   "la noche se pone helada de a poco"
+  ],
+  "aire.lluvia": [
+   "la humedad te pesa en los hombros",
+   "el frío mojado se te mete en las botas"
+  ],
+  "aire.niebla": [
+   "la humedad se te pega a la cara",
+   "el aire es espeso, casi masticable"
+  ],
+  "aire.nublado": [
+   "hay un viento pesado, de lluvia",
+   "el aire está cargado de algo que no llega"
+  ],
+  "cielo.madrugada": [
+   "el cielo se aclara por el este",
+   "las estrellas se van apagando una a una"
+  ],
+  "cielo.manana": [
+   "el cielo se ve alto y pálido",
+   "pasan unas nubes finas, a toda prisa"
+  ],
+  "cielo.tarde": [
+   "el sol está alto y duro",
+   "las nubes se amontonan sobre el horizonte"
+  ],
+  "cielo.noche": [
+   "las estrellas están muy claras",
+   "una luna creciente cuelga sobre los techos"
+  ],
+  "cielo.lluvia": [
+   "el cielo está cerrado de punta a punta",
+   "una nube negra tapa todo el horizonte"
+  ],
+  "cielo.niebla": [
+   "el cielo desapareció",
+   "arriba, blanco; abajo, blanco"
+  ],
+  "cielo.nublado": [
+   "las nubes se mueven despacio, pesadas",
+   "el cielo es una sábana gris"
+  ],
+  "apertura": [
+   "Te acomodás y seguís.",
+   "Sin más vueltas, vas.",
+   "Lo hacés con calma.",
+   "Te decidís de golpe.",
+   "Tomás aire.",
+   "Esperás un segundo y arrancás.",
+   "Te asegurás de que nadie te mira.",
+   "Hacés lo que tenés que hacer.",
+   "No es el momento de dudar.",
+   "Das el primer paso.",
+   "Arrancás sin pensarlo mucho.",
+   "Medís la situación y actuás.",
+   "Te concentrás.",
+   "Es ahora o nunca."
+  ],
+  "apertura.noche": [
+   "Con la noche encima, avanzás.",
+   "A oscuras, te guiás por el oído.",
+   "Entre sombras, no dudás."
+  ],
+  "apertura.lluvia": [
+   "Bajo la lluvia, no te quedás parado.",
+   "El agua te empuja a decidir."
+  ],
+  "apertura.niebla": [
+   "En la niebla, cada paso es una apuesta.",
+   "Con poca vista, confiás en el pulso."
+  ],
+  "apertura.madrugada": [
+   "Antes de que despierte el lugar, vas.",
+   "Con el frío de la madrugada, te movés rápido."
+  ],
+  "apertura.tenso": [
+   "Con el pulso acelerado, vas.",
+   "Algo no está bien, pero seguís."
+  ],
+  "conector": [
+   "más tarde",
+   "al cabo de un rato",
+   "sin que nadie lo note",
+   "en ese momento",
+   "poco después",
+   "al final",
+   "como si nada"
+  ],
+  "cierre": [
+   "Y el momento pasa.",
+   "Nadie te dice nada.",
+   "Todo vuelve a su lugar.",
+   "Seguís, como si nada.",
+   "Una cosa menos.",
+   "El tiempo sigue.",
+   "Nada más por ahora.",
+   "El lugar te devuelve su ruido de siempre.",
+   "Quedás con la cabeza dando vueltas.",
+   "Es lo que hay."
+  ],
+  "cierre.noche": [
+   "La noche sigue, indiferente.",
+   "La oscuridad lo cubre todo otra vez."
+  ],
+  "cierre.lluvia": [
+   "Afuera sigue lloviendo.",
+   "El agua no para."
+  ],
+  "cierre.niebla": [
+   "La niebla se cierra detrás de vos."
+  ],
+  "cierre.tenso": [
+   "El aire sigue cargado.",
+   "Nadie respira del todo tranquilo."
+  ],
+  "gesto": [
+   "tuerce la boca",
+   "se encoge de hombros apenas",
+   "mira el suelo",
+   "se pasa una mano por la cara",
+   "se cruza de piernas",
+   "juega con algo entre los dedos",
+   "frunce los labios",
+   "se rasca una oreja",
+   "te mira con ojos cansados",
+   "carraspea",
+   "se muerde el labio",
+   "se endereza",
+   "mueve la cabeza de lado a lado",
+   "se humedece los labios",
+   "se sienta más derecho",
+   "cambia el peso de un pie al otro",
+   "mira por encima de tu hombro",
+   "se ríe por lo bajo",
+   "da un golpecito en la mesa",
+   "levanta la mano a medias"
+  ],
+  "gesto.tenso": [
+   "traga saliva",
+   "se tapa la boca un segundo",
+   "mira una puerta y después otra",
+   "aprieta algo en el bolsillo",
+   "retrocede medio paso"
+  ],
+  "gesto.amable": [
+   "se ilumina",
+   "te sirve sin que pidas",
+   "se hace a un lado para dejarte pasar",
+   "te guiña un ojo",
+   "abre las manos"
+  ],
+  "gesto.frio": [
+   "gira el cuerpo hacia otro lado",
+   "te mira sin ver",
+   "no levanta la vista",
+   "contesta con un gruñido"
+  ],
+  "mirada": [
+   "te mira de reojo",
+   "te sostiene la mirada un segundo",
+   "te recorre con los ojos",
+   "te escruta",
+   "te examina con calma"
+  ],
+  "mirada.tenso": [
+   "no te quita los ojos de encima",
+   "te mira como si esperara un error"
+  ],
+  "mirada.amable": [
+   "te mira con simpatía",
+   "te mira como a un conocido"
+  ],
+  "pausa": [
+   "pasa un instante largo",
+   "se hace una pausa incómoda",
+   "nadie habla",
+   "el silencio se estira"
+  ],
+  "pausa.tenso": [
+   "el silencio se vuelve filoso",
+   "nadie se atreve a hablar primero"
+  ],
+  "gente.manana": [
+   "la ciudad va despertando",
+   "se cruzan los primeros saludos",
+   "pasa un aguatero con su carga"
+  ],
+  "gente.tarde": [
+   "hay un trajín constante",
+   "la gente se empuja sin pedir perdón",
+   "grupos conversan en las puertas"
+  ],
+  "gente.noche": [
+   "se ven siluetas que se apuran",
+   "una pareja camina abrazada",
+   "algún sereno cruza con su lámpara"
+  ],
+  "gente.madrugada": [
+   "los primeros trabajadores salen de sus casas",
+   "solo se ven carros y sombras"
+  ],
+  "gente.lluvia": [
+   "todos caminan con prisa y la cabeza gacha",
+   "los puestos cierran sus lonas"
+  ],
+  "suelo.ciudad": [
+   "las baldosas están pulidas por los pasos",
+   "el empedrado tiene charcos de ayer",
+   "hay estiércol y paja entre las piedras"
+  ],
+  "suelo.camino": [
+   "el camino está marcado por surcos antiguos",
+   "las piedras sueltas ruedan bajo tus botas",
+   "el polvo se levanta a cada paso"
+  ],
+  "suelo.lluvia": [
+   "los charcos se unen en un solo barro",
+   "cada paso hace un ruido blando"
+  ],
+  "animal.camino": [
+   "un conejo cruza y desaparece",
+   "una bandada de pájaros se levanta de un campo",
+   "un lagarto toma sol sobre una piedra",
+   "un caballo suelto pasta a lo lejos",
+   "un perro de granja ladra sin ganas"
+  ],
+  "animal.camino.noche": [
+   "un murciélago cruza sobre tu cabeza",
+   "los grillos callan cuando pasás y vuelven después"
+  ],
+  "animal.ciudad": [
+   "una rata se escabulle bajo una puerta",
+   "un gallo canta en un patio ajeno",
+   "un burro espera atado a un poste",
+   "una cabra mordisquea un cartel"
+  ],
+  "cansancio": [
+   "los hombros te piden descanso",
+   "tenés las piernas de plomo",
+   "bostezás sin querer",
+   "el sueño te da vueltas"
+  ],
+  "hambre": [
+   "tenés la boca seca y el estómago vacío",
+   "el hambre te distrae",
+   "pensás en pan, en cualquier pan"
+  ],
+  "tension.alta": [
+   "algo flota en el aire",
+   "la gente habla por lo bajo",
+   "hay miradas que se cruzan y se apartan",
+   "se oyen pasos apurados"
+  ],
+  "tension.baja": [
+   "el día transcurre sin sobresaltos",
+   "todos hacen lo suyo",
+   "la rutina manda"
+  ],
+  "moneda": [
+   "unas pocas monedas",
+   "unos cobres sueltos",
+   "un puñado de plata menuda",
+   "un poco de plata"
+  ],
+  "tiempo.corto": [
+   "un instante",
+   "unos minutos",
+   "lo que dura una pausa"
+  ],
+  "tiempo.largo": [
+   "buena parte del día",
+   "varias horas",
+   "una jornada entera"
+  ],
+  "sentido.vista": [
+   "la vista se pierde",
+   "los colores se ven apagados",
+   "ves el detalle más pequeño",
+   "cada cosa tiene su sombra"
+  ],
+  "sentido.oido": [
+   "los sonidos se mezclan",
+   "oís cada paso",
+   "una voz se separa del resto",
+   "el rumor de fondo no cede"
+  ],
+  "sentido.olfato": [
+   "el olor te llega antes que la imagen",
+   "un aroma te lleva a otro lugar",
+   "el aire está cargado de olores"
+  ],
+  "sentido.tacto": [
+   "la piedra está fría bajo los dedos",
+   "el aire te roza la cara",
+   "la ropa se te pega a la piel",
+   "la madera está áspera"
+  ],
+  "tiempo.dia": [
+   "hoy",
+   "esta mañana",
+   "esta tarde",
+   "esta noche",
+   "a esta hora"
+  ],
+  "lugar.cerca": [
+   "a pocos pasos",
+   "a la vuelta",
+   "ahí nomás",
+   "a una cuadra"
+  ],
+  "lugar.lejos": [
+   "a lo lejos",
+   "al otro lado",
+   "en el extremo",
+   "más allá"
+  ],
+  "voz.baja": [
+   "en voz baja",
+   "casi en un susurro",
+   "bajando el tono",
+   "sin levantar la voz"
+  ],
+  "voz.alta": [
+   "a los gritos",
+   "en voz alta",
+   "levantando la voz",
+   "con voz firme"
+  ],
+  "voz.cansada": [
+   "con voz gastada",
+   "arrastrando las palabras",
+   "con un suspiro"
+  ],
+  "emocion.nervios": [
+   "con los nervios de punta",
+   "con un nudo en el estómago",
+   "con el corazón acelerado"
+  ],
+  "emocion.calma": [
+   "con calma",
+   "sin apuro",
+   "con paso tranquilo",
+   "respirando hondo"
+  ],
+  "emocion.sospecha": [
+   "con recelo",
+   "midiendo cada palabra",
+   "con la guardia alta"
+  ],
+  "peso.mano": [
+   "pesa más de lo que parece",
+   "es liviano y firme",
+   "tiene un peso justo",
+   "se siente frío en la mano"
+  ],
+  "color.tierra": [
+   "rojizo como la tierra seca",
+   "gris ceniza",
+   "pardo y gastado",
+   "amarillento"
+  ],
+  "color.agua": [
+   "verde oscuro",
+   "gris plata",
+   "azul profundo",
+   "turbio"
+  ],
+  "edad.cosa": [
+   "gastado por los años",
+   "con marcas de uso",
+   "viejo pero bien cuidado",
+   "reparado más de una vez"
+  ],
+  "ruido.pasos": [
+   "los pasos resuenan en el pasillo",
+   "alguien camina arrastrando los pies",
+   "unos pasos firmes se acercan",
+   "unos pasos livianos se alejan"
+  ],
+  "ruido.puerta": [
+   "una puerta chirría",
+   "un portón se cierra",
+   "alguien golpea una puerta",
+   "el pestillo cae con un clic"
+  ],
+  "multitud.densa": [
+   "hay gente hasta donde alcanza la vista",
+   "cuesta moverse sin chocar",
+   "los hombros se rozan"
+  ],
+  "multitud.rala": [
+   "quedan pocos a la vista",
+   "cada tanto pasa alguien",
+   "casi no hay nadie"
+  ],
+  "clima.frase.lluvia": [
+   "Llueve sin ganas.",
+   "La lluvia no afloja.",
+   "Hay un agua fina que lo moja todo.",
+   "Cae un chaparrón corto."
+  ],
+  "clima.frase.niebla": [
+   "La niebla lo cubre todo.",
+   "Se levanta una bruma densa.",
+   "La niebla va y viene."
+  ],
+  "clima.frase.nublado": [
+   "El cielo está gris.",
+   "Nubes bajas, sin viento.",
+   "Se arma tormenta lejos."
+  ],
+  "clima.frase.despejado": [
+   "El cielo está limpio.",
+   "No hay una sola nube.",
+   "El día es claro."
+  ],
+  "rutina.corta": [
+   "sigue con lo suyo",
+   "vuelve a su tarea",
+   "retoma lo que hacía",
+   "se pierde entre la gente"
+  ],
+  "dialogo.cierre.amable": [
+   "Vuelve cuando quieras.",
+   "Te espero por acá.",
+   "Cuidate en el camino.",
+   "Que te vaya bien."
+  ],
+  "dialogo.cierre.seco": [
+   "Eso es todo.",
+   "Ya está.",
+   "No hay más.",
+   "Basta por hoy."
+  ],
+  "dialogo.cierre.tenso": [
+   "No digas que me viste.",
+   "Mejor que no te vean conmigo.",
+   "Esto queda entre nosotros."
+  ],
+  "olor": [
+   "huele a humedad y a leña apagada",
+   "el aire trae olor a pasto mojado",
+   "huele a horno recién encendido",
+   "huele a pan, a café quemado y a establo",
+   "el aire trae olor a ropa recién lavada",
+   "huele a leña húmeda",
+   "huele a sudor, a polvo y a fruta madura",
+   "llega un olor a guiso desde alguna ventana",
+   "el aire huele a cuero y a hierro",
+   "huele a cera y a humo viejo",
+   "el aire fresco trae olor a tierra",
+   "huele a cerveza derramada, lejos",
+   "huele a piedra mojada y a barro",
+   "el aire huele a metal frío",
+   "el olor de la lluvia sube del suelo",
+   "huele a humedad profunda, casi a río",
+   "el aire trae un olor a hojas podridas",
+   "huele a lana mojada",
+   "huele a tormenta lejana",
+   "el aire huele a tierra recién removida",
+   "huele a hierba cortada"
+  ],
+  "sonido": [
+   "canta un gallo lejano",
+   "se oyen carros que empiezan a rodar",
+   "alguien carraspea desde una ventana",
+   "el rumor de un río llega desde lejos",
+   "los postigos se abren con ruido de madera",
+   "se oyen ruedas sobre el empedrado",
+   "alguien ríe en una esquina",
+   "el trote de un caballo se acerca y se aleja",
+   "el ruido se espesa y se vuelve un solo murmullo",
+   "una campana suena en algún lado",
+   "se oyen martillazos y voces",
+   "los carros chirrían al girar",
+   "los pasos suenan solos sobre la piedra",
+   "el viento mueve algo que cuelga",
+   "se oye un portazo lejano",
+   "a lo lejos, una canción desafinada",
+   "la lluvia golpea los techos con insistencia",
+   "se oye el chapoteo de alguien que corre",
+   "el agua canta en las canaletas",
+   "los pasos suenan raros, sin dirección",
+   "las voces llegan sin cuerpo",
+   "alguien tose y no sabés dónde",
+   "se oye un trueno que no termina de llegar",
+   "el viento silba entre las callejas",
+   "las banderas golpean contra el mástil"
+  ],
+  "aire": [
+   "el frío te punza las orejas",
+   "el aliento se te vuelve vapor",
+   "el aire está limpio",
+   "hay un frío que pronto se va",
+   "el calor aprieta",
+   "el aire está quieto y seco",
+   "el viento viene frío del norte",
+   "la noche se pone helada de a poco",
+   "la humedad te pesa en los hombros",
+   "el frío mojado se te mete en las botas",
+   "la humedad se te pega a la cara",
+   "el aire es espeso, casi masticable",
+   "hay un viento pesado, de lluvia",
+   "el aire está cargado de algo que no llega"
+  ],
+  "tension": [
+   "algo flota en el aire",
+   "la gente habla por lo bajo",
+   "hay miradas que se cruzan y se apartan",
+   "se oyen pasos apurados",
+   "el día transcurre sin sobresaltos",
+   "todos hacen lo suyo",
+   "la rutina manda"
+  ]
+ }
+}

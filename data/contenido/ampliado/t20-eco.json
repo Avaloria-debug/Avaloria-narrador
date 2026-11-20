@@ -1,0 +1,91 @@
+{
+ "tanda": "t20",
+ "estado": "a_aprobar",
+ "nota": "{eco} = palabra libre del jugador ya filtrada (P14). Una variante por intención se elige solo si hay eco válido; si no, se usa la plantilla normal. Placeholder nuevo a soportar: {eco}.",
+ "eco": {
+  "intencion_hablar_con": [
+   "Repetís «{eco}» y {npc} levanta la vista, como si esa palabra pesara.",
+   "{npc} se queda un momento con «{eco}» en la boca antes de contestar.",
+   "«{eco}», repite {npc}, despacio. «Eso no se dice a la ligera.»",
+   "Decir «{eco}» cambia algo en el rostro de {npc}.",
+   "{npc} asiente cuando mencionás «{eco}». Parece haberlo esperado."
+  ],
+  "intencion_observar": [
+   "Mientras mirás, «{eco}» te da vueltas en la cabeza y todo parece encajar un poco distinto.",
+   "Tu atención se pega a «{eco}» y el lugar te lo devuelve en detalles.",
+   "Buscando «{eco}», encontrás otras cosas que no buscabas.",
+   "«{eco}»: la palabra te hace mirar dos veces donde antes mirabas una.",
+   "Con «{eco}» en mente, hasta lo común se ve sospechoso."
+  ],
+  "intencion_examinar": [
+   "Estudiás {objeto} pensando en «{eco}». Algo no se separa de eso.",
+   "«{eco}», pensás, y {objeto} parece responder con alguna marca.",
+   "Con «{eco}» en la cabeza, {objeto} te dice más de lo que dijo antes.",
+   "Si «{eco}» es cierto, {objeto} tendría que mostrarlo. Mirás de nuevo.",
+   "{objeto} y «{eco}» no tienen relación evidente. Todavía."
+  ],
+  "intencion_explorar": [
+   "Recorrés {lugar} con «{eco}» como brújula.",
+   "«{eco}» te lleva por un rincón de {lugar} que no habías pisado.",
+   "{lugar} parece distinto si lo recorrés pensando en «{eco}».",
+   "Caminás sin rumbo y «{eco}» te acompaña, como una canción pegajosa.",
+   "Buscar «{eco}» en {lugar} no da nada. Pero ordena tus pasos."
+  ],
+  "intencion_ayudar": [
+   "«{eco}», dijiste, y {npc} sabe que hablás en serio.",
+   "Tu oferta de «{eco}» llega justo cuando {npc} la necesitaba.",
+   "{npc} te escucha decir «{eco}» y baja un poco la guardia.",
+   "Con «{eco}» alcanza. {npc} acepta tu mano.",
+   "«{eco}» no es mucho, pero {npc} lo toma sin discutir."
+  ],
+  "intencion_negociar": [
+   "Tu «{eco}» cae sobre la mesa y {npc} lo mide con la mirada.",
+   "«{eco}», proponés. {npc} hace cuentas en silencio.",
+   "{npc} se queda pensando en «{eco}». Es buena señal, o no.",
+   "Plantear «{eco}» cambia el tono. {npc} se inclina hacia adelante.",
+   "«{eco}» suena razonable. {npc} aún no lo dice."
+  ],
+  "intencion_presionar": [
+   "«{eco}», insistís. {npc} aprieta la mandíbula.",
+   "Cada vez que repetís «{eco}», {npc} se encoge un poco.",
+   "{npc} esquiva «{eco}», pero no logra esquivarte a vos.",
+   "«{eco}» queda flotando entre los dos, incómodo.",
+   "Con «{eco}» le cerrás una salida a {npc}. Se nota."
+  ],
+  "intencion_calmar": [
+   "«{eco}», decís en voz baja, y el aire se afloja.",
+   "La palabra «{eco}» baja la temperatura del momento.",
+   "{npc} se aferra a «{eco}» como a un tablón en el agua.",
+   "Con «{eco}» ganás unos segundos de calma.",
+   "«{eco}» no resuelve nada, pero aquieta."
+  ],
+  "intencion_comprar": [
+   "Mencionás «{eco}» y el vendedor cambia de actitud.",
+   "«{eco}», pedís, y el regateo empieza de otra manera.",
+   "Con «{eco}» en la boca, el precio sube o baja, según quién escuche.",
+   "El mercader repite «{eco}» como si estuviera tasándolo.",
+   "«{eco}» no está a la venta, pero alguien sabe dónde conseguirlo."
+  ],
+  "intencion_leer": [
+   "Entre líneas, «{eco}» se te aparece como una anotación al margen.",
+   "Leés con «{eco}» en mente y un párrafo cobra sentido.",
+   "Una frase se parece a «{eco}». Probablemente sea casualidad.",
+   "«{eco}» no figura en el texto. Pero lo rodea.",
+   "Releés porque «{eco}» te dice que te perdiste algo."
+  ],
+  "intencion_trabajar": [
+   "Mientras trabajás, «{eco}» te marca el ritmo.",
+   "«{eco}» se te mete en las manos y el trabajo sale mejor.",
+   "Cada tanto, «{eco}» te saca una sonrisa, y seguís.",
+   "El trabajo y «{eco}» se mezclan en tu cabeza hasta que son lo mismo.",
+   "Con «{eco}» de fondo, la tarea pasa más rápido."
+  ],
+  "intencion_descansar": [
+   "Descansás con «{eco}» dando vueltas, como un sueño que no termina de empezar.",
+   "«{eco}» te acompaña hasta que el cuerpo se afloja.",
+   "Antes de dormirte, «{eco}» aparece una vez más.",
+   "Cerrás los ojos y «{eco}» sigue ahí, esperando su turno.",
+   "El descanso se llena de «{eco}» sin que lo busques."
+  ]
+ }
+}

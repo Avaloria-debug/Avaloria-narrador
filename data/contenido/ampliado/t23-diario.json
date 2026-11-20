@@ -1,0 +1,109 @@
+{
+ "tanda": "t23",
+ "estado": "a_aprobar",
+ "nota": "entradas por tipo de hecho y por categoría de evento (clave \"categorias\"); plantillas {npc} {lugar}. cierre se usa al final de cada día; fusion para entradas comprimidas.",
+ "entradas": {
+  "presionar": [
+   "Apretaste a {npc} en {lugar}.",
+   "En {lugar}, {npc} cedió ante vos, a regañadientes.",
+   "Forzaste una respuesta de {npc} en {lugar}."
+  ],
+  "atacar": [
+   "Hubo golpes en {lugar}, con {npc} de por medio.",
+   "Lastimaste a {npc} en {lugar}.",
+   "Una pelea en {lugar} dejó marcas en {npc}."
+  ],
+  "ayudar": [
+   "Le diste una mano a {npc} en {lugar}.",
+   "{npc} aceptó tu ayuda en {lugar}.",
+   "En {lugar}, resolviste algo para {npc}."
+  ],
+  "negociar": [
+   "Cerraste un trato con {npc} en {lugar}.",
+   "Regateaste con {npc} en {lugar} y saliste a mano.",
+   "En {lugar}, {npc} y vos acordaron algo."
+  ],
+  "emboscar": [
+   "Le tendiste una trampa a {npc} en {lugar}.",
+   "Sorprendiste a {npc} en {lugar}.",
+   "En {lugar}, {npc} no vio venir lo tuyo."
+  ],
+  "defender": [
+   "Frenaste un golpe contra {npc} en {lugar}.",
+   "Te interpusiste por {npc} en {lugar}.",
+   "{npc} te debe una en {lugar}."
+  ]
+ },
+ "otras": {
+  "viaje": [
+   "Caminaste hasta {lugar}.",
+   "Un trecho largo te llevó a {lugar}.",
+   "Llegaste a {lugar} con el polvo del camino."
+  ],
+  "conocimiento": [
+   "Supiste algo de {npc}: quedó anotado.",
+   "{npc} te confió un dato que no era para todos.",
+   "Algo que dijo {npc} te sigue dando vueltas."
+  ],
+  "rumor": [
+   "Oíste hablar de ti, en voz baja.",
+   "Una versión tuya circula en {lugar}.",
+   "Alguien repitió un rumor que te nombra."
+  ],
+  "vacio": [
+   "Hoy no hubo nada digno de anotar.",
+   "Un día en blanco, sin marcas.",
+   "El diario espera, sin tinta."
+  ],
+  "cierre": [
+   "Y así terminó el día.",
+   "La noche cerró el capítulo.",
+   "Mañana será otro día.",
+   "Se apagan las lámparas.",
+   "Quedan cosas por hacer.",
+   "Lo escrito, escrito está."
+  ],
+  "fusion": [
+   "Los días anteriores se mezclan en un solo recuerdo.",
+   "Lo viejo se vuelve borroso, pero queda.",
+   "Hay entradas que el tiempo comprimió."
+  ]
+ },
+ "categorias": {
+  "tranquilo": [
+   "Un día sin sobresaltos en {lugar}.",
+   "Algo agradable pasó en {lugar}.",
+   "El ambiente en {lugar} estuvo sereno."
+  ],
+  "social": [
+   "Se habló mucho en {lugar}.",
+   "Hubo gente y charla en {lugar}.",
+   "En {lugar} se juntó la gente."
+  ],
+  "tenso": [
+   "Se sintió tirantez en {lugar}.",
+   "En {lugar}, el aire estaba cargado.",
+   "Algo no cerraba en {lugar}."
+  ],
+  "peligroso": [
+   "El peligro rondó {lugar}.",
+   "Hubo alarma en {lugar}.",
+   "Pasaron cosas feas cerca de {lugar}."
+  ],
+  "sigilo": [
+   "Una oportunidad silenciosa se abrió en {lugar}.",
+   "En {lugar} había un hueco que pocos notaron.",
+   "Algo se movió sin ser visto en {lugar}."
+  ],
+  "combate": [
+   "Se oyeron armas en {lugar}.",
+   "Hubo sangre en {lugar}.",
+   "Una pelea de verdad estalló cerca de {lugar}."
+  ],
+  "neutro": [
+   "Pasó algo menor en {lugar}.",
+   "Un detalle curioso en {lugar}.",
+   "El día en {lugar} tuvo su asunto."
+  ]
+ }
+}

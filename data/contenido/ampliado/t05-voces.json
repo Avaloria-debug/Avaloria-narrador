@@ -1,0 +1,295 @@
+{
+  "tanda": "t05",
+  "estado": "a_aprobar",
+  "nota": "saludo/despedida/no_se/revelar por npc. Reemplazan a las genéricas cuando el npc coincide.",
+  "voces": {
+    "maren_archivista": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "Maren levanta la vista. «Consta que volviste. Bien.»" },
+        { "c": { "r": "buena" }, "t": "«Llegás a tiempo», dice Maren, y te hace lugar en la mesa." },
+        { "c": { "r": "neutra" }, "t": "«Buen día. Nombre y motivo de la consulta», dice Maren." },
+        { "c": { "r": "neutra" }, "t": "Maren termina la línea que copia antes de mirarte." },
+        { "c": { "r": "mala" }, "t": "«Otra vez usted», dice Maren, sin levantar la pluma." },
+        { "c": { "r": "mala" }, "t": "Maren cierra el registro cuando te ve llegar." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«Volvé cuando quieras. Pero en horario», dice Maren." },
+        { "t": "Maren asiente y vuelve a sus copias." },
+        { "c": { "r": "mala" }, "t": "«Que conste que se fue», murmura Maren." }
+      ],
+      "no_se": [
+        "«No consta en ningún registro», dice Maren.",
+        "Maren niega. «Eso no está archivado. Y lo que no está archivado, no existe.»",
+        "«No es asunto del Archivo», dice Maren, seca."
+      ],
+      "revelar": [
+        "Maren baja la voz, algo raro en ella: {conocimiento}.",
+        "«Consta, aunque pocos lo saben», dice Maren: {conocimiento}."
+      ]
+    },
+    "serel_panadero": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "«¡Ahí está! Te guardé uno», dice Serel, y te tira un pan." },
+        { "c": { "r": "buena" }, "t": "Serel te saluda con la mano llena de harina." },
+        { "c": { "r": "neutra" }, "t": "«A esta hora ya queda poco», dice Serel. «¿Qué buscás?»" },
+        { "c": { "r": "neutra" }, "t": "Serel te mira sin dejar de amasar." },
+        { "c": { "r": "mala" }, "t": "«No fío», dice Serel antes de que abras la boca." },
+        { "c": { "r": "mala" }, "t": "Serel tapa el pan con un trapo cuando te ve." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«Mañana hay de nuez. Vení temprano», dice Serel." },
+        { "t": "Serel te despide con un gesto y atiende al siguiente." },
+        { "c": { "r": "mala" }, "t": "Serel ni te mira irte." }
+      ],
+      "no_se": [
+        "«Yo hago pan, no averiguaciones», dice Serel.",
+        "Serel se encoge de hombros. «De eso no sé nada.»",
+        "«Preguntale a otro. A esta hora tengo el horno lleno.»"
+      ],
+      "revelar": [
+        "Serel mira a los costados y se acerca: {conocimiento}.",
+        "«No lo digas por ahí», dice Serel: {conocimiento}."
+      ]
+    },
+    "ivor_cambista": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "«Un buen cliente», dice Ivor, y te ofrece asiento." },
+        { "c": { "r": "buena" }, "t": "Ivor sonríe, esta vez con los ojos también." },
+        { "c": { "r": "neutra" }, "t": "«¿Cambio o préstamo?», pregunta Ivor sin preámbulos." },
+        { "c": { "r": "neutra" }, "t": "Ivor te mira como quien pesa una moneda." },
+        { "c": { "r": "mala" }, "t": "«Si viene a pedir, la respuesta es no», dice Ivor." },
+        { "c": { "r": "mala" }, "t": "Ivor cierra la caja antes de saludarte." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«La Casa Aster recuerda a sus amigos», dice Ivor." },
+        { "t": "Ivor anota algo en su libro mientras te vas." },
+        { "c": { "r": "mala" }, "t": "«Todo tiene precio. Hasta irse», dice Ivor." }
+      ],
+      "no_se": [
+        "«Eso no tiene precio porque no lo sé», dice Ivor.",
+        "Ivor sonríe. «Si lo supiera, se lo cobraría.»",
+        "«No es información que circule por esta mesa.»"
+      ],
+      "revelar": [
+        "Ivor junta las yemas de los dedos: {conocimiento}. «Considérelo una inversión.»",
+        "«Entre nosotros», dice Ivor: {conocimiento}."
+      ]
+    },
+    "naela_tabernera": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "«¡Mirá quién vino!», dice Naela, y ya te está sirviendo." },
+        { "c": { "r": "buena" }, "t": "Naela te guiña un ojo desde la barra." },
+        { "c": { "r": "neutra" }, "t": "«¿Vas a pedir algo?», pregunta Naela." },
+        { "c": { "r": "neutra" }, "t": "Naela te pone un vaso delante sin preguntar." },
+        { "c": { "r": "mala" }, "t": "«Pagás antes», dice Naela, con la mano extendida." },
+        { "c": { "r": "mala" }, "t": "Naela te sigue con los ojos desde que entrás." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«No te pierdas», dice Naela. «Acá siempre hay lugar.»" },
+        { "t": "Naela levanta el trapo como despedida." },
+        { "c": { "r": "mala" }, "t": "«Por fin», murmura Naela." }
+      ],
+      "no_se": [
+        "«De eso no se habla en mi barra», dice Naela.",
+        "Naela ríe. «Escucho mucho, pero eso no.»",
+        "«¿Vas a pedir algo o seguís preguntando?»"
+      ],
+      "revelar": [
+        "Naela se apoya en la barra y baja la voz: {conocimiento}.",
+        "«Lo escuché anoche», dice Naela, secando un vaso: {conocimiento}."
+      ]
+    },
+    "tiren_docente": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "«¡Justo! Mirá esto», dice Tiren, y te arrastra hasta un mapa." },
+        { "c": { "r": "buena" }, "t": "Tiren te saluda con las manos blancas de tiza." },
+        { "c": { "r": "neutra" }, "t": "«¿Venís por la clase?», pregunta Tiren." },
+        { "c": { "r": "neutra" }, "t": "Tiren termina de trazar una línea antes de saludarte." },
+        { "c": { "r": "mala" }, "t": "Tiren enrolla el mapa que estaba mirando cuando te ve." },
+        { "c": { "r": "mala" }, "t": "«Estoy ocupado», dice Tiren, sin mirarte." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«Volvé y te muestro la costa del sur», dice Tiren." },
+        { "t": "Tiren ya está otra vez inclinado sobre un mapa." },
+        { "c": { "r": "mala" }, "t": "Tiren no contesta tu saludo." }
+      ],
+      "no_se": [
+        "«Eso no está en ningún mapa que conozca», dice Tiren.",
+        "Tiren se rasca la cabeza. «Mirá… no. No sé.»",
+        "«Si no se puede dibujar, no es lo mío.»"
+      ],
+      "revelar": [
+        "Tiren te muestra un trazo en el mapa: {conocimiento}.",
+        "«Mirá esto, pero no lo copies», dice Tiren: {conocimiento}."
+      ]
+    },
+    "elia_bibliotecaria": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "Elia te sonríe y te señala una mesa libre." },
+        { "c": { "r": "buena" }, "t": "«Te guardé algo», susurra Elia." },
+        { "c": { "r": "neutra" }, "t": "«En voz baja, por favor», dice Elia antes de que hables." },
+        { "c": { "r": "neutra" }, "t": "Elia te mira por encima de un libro." },
+        { "c": { "r": "mala" }, "t": "Elia te pide que dejes tus cosas en la entrada." },
+        { "c": { "r": "mala" }, "t": "Elia no te quita los ojos de encima." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«Los martes llegan libros nuevos», susurra Elia." },
+        { "t": "Elia te despide con un gesto mínimo." },
+        { "c": { "r": "mala" }, "t": "Elia revisa la mesa donde estuviste." }
+      ],
+      "no_se": [
+        "«No tengo registro de eso», susurra Elia.",
+        "Elia niega con la cabeza. Ni una palabra.",
+        "«Eso no se presta ni se consulta acá.»"
+      ],
+      "revelar": [
+        "Elia se inclina y susurra: {conocimiento}.",
+        "«No te lo dije yo», murmura Elia: {conocimiento}."
+      ]
+    },
+    "brenn_arriero": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "«¡Compañero de camino!», dice Brenn, y te palmea fuerte." },
+        { "c": { "r": "buena" }, "t": "Brenn te pasa la cantimplora antes de saludar." },
+        { "c": { "r": "neutra" }, "t": "«¿Para dónde vas? Eso queda a dos jornadas», dice Brenn." },
+        { "c": { "r": "neutra" }, "t": "Brenn te saluda con el sombrero, sin frenar a las mulas." },
+        { "c": { "r": "mala" }, "t": "Brenn pone la carreta entre vos y él." },
+        { "c": { "r": "mala" }, "t": "«Seguí tu camino», dice Brenn." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«Que el camino te sea corto», dice Brenn." },
+        { "t": "Brenn chasquea la lengua y las mulas arrancan." },
+        { "c": { "r": "mala" }, "t": "Brenn escupe al costado cuando te vas." }
+      ],
+      "no_se": [
+        "«De eso no sé. Yo sé de caminos y de mulas.»",
+        "Brenn se ríe. «Preguntale a alguien que lea.»",
+        "«Ni idea. Y eso que anduve mucho.»"
+      ],
+      "revelar": [
+        "Brenn mira el camino y habla bajo: {conocimiento}.",
+        "«Esto no se lo digo a cualquiera», dice Brenn: {conocimiento}."
+      ]
+    },
+    "ysolde_pescadora": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "Ysolde te hace lugar en la piedra, sin palabras." },
+        { "c": { "r": "buena" }, "t": "«Hoy el lago está tranquilo», dice Ysolde. Es su forma de saludar." },
+        { "c": { "r": "neutra" }, "t": "Ysolde asiente. Nada más." },
+        { "c": { "r": "neutra" }, "t": "Ysolde levanta la vista de la red un segundo." },
+        { "c": { "r": "mala" }, "t": "Ysolde se va al bote cuando te acercás." },
+        { "c": { "r": "mala" }, "t": "Ysolde no contesta. Sigue con la red." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«El lago avisa. Escuchalo», dice Ysolde." },
+        { "t": "Ysolde ya está mirando el agua otra vez." },
+        { "c": { "r": "mala" }, "t": "Ysolde ni levanta la vista." }
+      ],
+      "no_se": [
+        "Ysolde niega con la cabeza.",
+        "«No sé», dice Ysolde. Y no agrega nada.",
+        "Ysolde mira el lago. No contesta."
+      ],
+      "revelar": [
+        "Ysolde mira la isla un largo rato: {conocimiento}.",
+        "«Una vez», dice Ysolde: {conocimiento}."
+      ]
+    },
+    "dario_guardia": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "«Ah, sos vos», dice Darío, y afloja los hombros." },
+        { "c": { "r": "buena" }, "t": "Darío levanta la barrera a medias, como saludo." },
+        { "c": { "r": "neutra" }, "t": "«Documentos», dice Darío, con la mano extendida." },
+        { "c": { "r": "neutra" }, "t": "Darío te mira los zapatos y después la cara." },
+        { "c": { "r": "mala" }, "t": "Darío apoya la mano en la empuñadura al verte." },
+        { "c": { "r": "mala" }, "t": "«Vos otra vez», dice Darío. «Revisión completa.»" }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«Andá tranquilo. Yo no te vi», dice Darío." },
+        { "t": "Darío baja la barrera detrás tuyo." },
+        { "c": { "r": "mala" }, "t": "Darío anota tu nombre en la tablilla." }
+      ],
+      "no_se": [
+        "«Eso no es asunto de la aduana», dice Darío.",
+        "Darío se encoge de hombros. «Yo cuido un puente.»",
+        "«No sé, y si supiera no podría decir.»"
+      ],
+      "revelar": [
+        "Darío mira hacia la caseta y habla rápido: {conocimiento}.",
+        "«Esto no salió de mí», dice Darío: {conocimiento}."
+      ]
+    },
+    "sarin_mensajera": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "«¡Vos! ¿Qué noticias hay?», dice Sarin, frenando por fin." },
+        { "c": { "r": "buena" }, "t": "Sarin te saluda de lejos y apura el paso hacia vos." },
+        { "c": { "r": "neutra" }, "t": "«No me puedo quedar», dice Sarin, pero se queda un momento." },
+        { "c": { "r": "neutra" }, "t": "Sarin te saluda sin dejar de caminar." },
+        { "c": { "r": "mala" }, "t": "Sarin aprieta la bolsa de cartas al verte." },
+        { "c": { "r": "mala" }, "t": "Sarin cruza al otro lado del camino." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«Si necesitás mandar algo, buscame», dice Sarin." },
+        { "t": "Sarin ya se fue antes de que termines." },
+        { "c": { "r": "mala" }, "t": "Sarin se aleja casi corriendo." }
+      ],
+      "no_se": [
+        "«No leo lo que llevo», dice Sarin. «Bueno, casi nunca.»",
+        "Sarin niega rápido. «No sé nada de eso.»",
+        "«Preguntame mañana. Hoy no tengo tiempo.»"
+      ],
+      "revelar": [
+        "Sarin se acerca y habla rápido: {conocimiento}.",
+        "«No debería contarte esto», dice Sarin: {conocimiento}."
+      ]
+    },
+    "hollis_pastor": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "«Sentate, que va a cambiar el tiempo», dice Hollis." },
+        { "c": { "r": "buena" }, "t": "Hollis te ofrece un pedazo de queso sin decir nada." },
+        { "c": { "r": "neutra" }, "t": "Hollis te mira y después mira el cielo." },
+        { "c": { "r": "neutra" }, "t": "«Buenas», dice Hollis, apoyado en el cayado." },
+        { "c": { "r": "mala" }, "t": "Hollis silba y el perro se pone entre vos y el rebaño." },
+        { "c": { "r": "mala" }, "t": "Hollis te mira con desconfianza de campo." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«Abrigate. Esta noche refresca», dice Hollis." },
+        { "t": "Hollis vuelve a mirar sus ovejas." },
+        { "c": { "r": "mala" }, "t": "Hollis espera a que estés lejos para moverse." }
+      ],
+      "no_se": [
+        "«De eso no sé. Del cielo, algo», dice Hollis.",
+        "Hollis masca un pasto. «No, no.»",
+        "«Las ovejas no hablan de esas cosas.»"
+      ],
+      "revelar": [
+        "Hollis señala con el cayado hacia las colinas: {conocimiento}.",
+        "«Mi padre me lo mostró», dice Hollis: {conocimiento}."
+      ]
+    },
+    "oren_peregrino": {
+      "saludo": [
+        { "c": { "r": "buena" }, "t": "«El Roble te trajo de vuelta», dice Oren, sonriendo." },
+        { "c": { "r": "buena" }, "t": "Oren te hace un lugar a la sombra." },
+        { "c": { "r": "neutra" }, "t": "«¿Hacia dónde caminás?», pregunta Oren." },
+        { "c": { "r": "neutra" }, "t": "Oren te saluda con las manos juntas." },
+        { "c": { "r": "mala" }, "t": "Oren te mira con una calma que incomoda." },
+        { "c": { "r": "mala" }, "t": "«El Roble ya lo vio», dice Oren, y no agrega nada." }
+      ],
+      "despedida": [
+        { "c": { "r": "buena" }, "t": "«Que el camino te enseñe algo», dice Oren." },
+        { "t": "Oren cierra los ojos y sigue en lo suyo." },
+        { "c": { "r": "mala" }, "t": "Oren te sigue con la mirada, sin juzgar en voz alta." }
+      ],
+      "no_se": [
+        "«Esa respuesta no es mía», dice Oren.",
+        "Oren sonríe. «¿Y vos qué creés?»",
+        "«Algunas cosas solo las sabe el Roble.»"
+      ],
+      "revelar": [
+        "Oren habla despacio, como recitando: {conocimiento}.",
+        "«Lo leí una vez y no lo olvidé», dice Oren: {conocimiento}."
+      ]
+    }
+  }
+}

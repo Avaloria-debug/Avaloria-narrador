@@ -1,0 +1,176 @@
+{
+  "tanda": "t03",
+  "estado": "a_aprobar",
+  "nota": "rutina: se muestra si el npc está presente y el jugador no interactúa con él. gestos: reemplazan a #gesto# cuando hay {npc}.",
+  "npcs": {
+    "maren_archivista": {
+      "rutina": [
+        { "c": { "f": "manana" }, "t": "Maren revisa la lista de copias del día con el dedo." },
+        { "c": { "f": "manana" }, "t": "Maren corrige a un copista sin levantar la voz." },
+        { "c": { "f": "manana" }, "t": "Maren abre un depósito con tres llaves distintas." },
+        { "c": { "f": "tarde" }, "t": "Maren compara dos copias de un mismo tratado a contraluz." },
+        { "c": { "f": "tarde" }, "t": "Maren anota algo en un registro y lo firma." },
+        { "c": { "f": "tarde" }, "t": "Maren cierra los postigos uno por uno, en orden." },
+        { "c": { "f": ["noche", "madrugada"] }, "t": "Maren sale última y prueba cada cerradura dos veces." },
+        { "c": { "f": ["noche", "madrugada"] }, "t": "Maren trabaja sola a la luz del patio, mientras dura." },
+        { "c": { "cl": "lluvia" }, "t": "Maren tapa los atriles más cercanos al patio." }
+      ],
+      "gestos": ["se ajusta los anteojos", "alinea los papeles de la mesa", "mira la fecha antes que el texto", "junta las manos detrás de la espalda", "pasa el dedo por el borde de una hoja", "te corrige un nombre sin pensar", "suspira por algo mal archivado", "busca una pluma que tiene en la oreja"]
+    },
+    "serel_panadero": {
+      "rutina": [
+        { "c": { "f": "madrugada" }, "t": "Serel amasa con los brazos llenos de harina." },
+        { "c": { "f": "madrugada" }, "t": "Serel enciende el horno y se queda mirando el fuego." },
+        { "c": { "f": "manana" }, "t": "Serel saca una tanda de pan y la acomoda en canastos." },
+        { "c": { "f": "manana" }, "t": "Serel cobra sin mirar las monedas: las cuenta por el peso." },
+        { "c": { "f": "manana" }, "t": "Serel le grita el precio del día a la fila." },
+        { "c": { "f": "tarde" }, "t": "Serel vende lo que quedó a mitad de precio." },
+        { "c": { "f": "tarde" }, "t": "Serel cuenta bolsas de harina y frunce el ceño." },
+        { "c": { "f": "noche" }, "t": "Serel limpia el horno, cansado, con la vista perdida." },
+        { "c": { "ts": "alta" }, "t": "Serel cubre el pan con un trapo y no deja de mirar la calle." }
+      ],
+      "gestos": ["se sacude la harina del delantal", "se seca la frente con el antebrazo", "golpea un pan para ver si está hueco", "mira el horno de reojo", "bosteza sin disimular", "te ofrece una miga para probar", "cuenta algo con los dedos", "se rasca la nuca con harina"]
+    },
+    "ivor_cambista": {
+      "rutina": [
+        { "c": { "f": "manana" }, "t": "Ivor abre su caja de hierro y revisa el contenido sin apuro." },
+        { "c": { "f": "manana" }, "t": "Ivor pesa una moneda y la devuelve sin decir nada." },
+        { "c": { "f": "manana" }, "t": "Ivor recibe a un cliente con una sonrisa que no le llega a los ojos." },
+        { "c": { "f": "tarde" }, "t": "Ivor anota una deuda en un libro de tapas negras." },
+        { "c": { "f": "tarde" }, "t": "Ivor le habla al oído a un empleado de la Casa Aster." },
+        { "c": { "f": "tarde" }, "t": "Ivor rechaza un préstamo con un gesto mínimo." },
+        { "c": { "f": ["noche", "madrugada"] }, "t": "Ivor guarda la caja y se va con dos guardias." },
+        { "c": { "f": ["noche", "madrugada"] }, "t": "Ivor revisa cuentas a la luz de una lámpara, solo." },
+        { "c": { "ts": "alta" }, "t": "Ivor cierra la caja y apoya las dos manos encima." }
+      ],
+      "gestos": ["hace girar una moneda entre los dedos", "anota algo sin dejar de mirarte", "sonríe con la boca cerrada", "se limpia las uñas con un cortaplumas", "golpea el libro de deudas con un dedo", "inclina la cabeza, calculando", "acomoda la balanza un milímetro", "junta las yemas de los dedos"]
+    },
+    "naela_tabernera": {
+      "rutina": [
+        { "c": { "f": "tarde" }, "t": "Naela prueba la cerveza nueva y hace una mueca." },
+        { "c": { "f": "tarde" }, "t": "Naela limpia vasos con un trapo que ya estaba sucio." },
+        { "c": { "f": "noche" }, "t": "Naela sirve tres jarras a la vez sin derramar una gota." },
+        { "c": { "f": "noche" }, "t": "Naela separa a dos borrachos con una mirada." },
+        { "c": { "f": "noche" }, "t": "Naela escucha una conversación ajena mientras seca la barra." },
+        { "c": { "f": "noche" }, "t": "Naela anota en una tabla quién debe qué." },
+        { "c": { "f": "madrugada" }, "t": "Naela echa al último cliente con amabilidad y firmeza." },
+        { "c": { "f": "madrugada" }, "t": "Naela cuenta la recaudación con una vela casi consumida." },
+        { "c": { "f": "manana" }, "t": "Naela duerme. La taberna está cerrada." },
+        { "c": { "ts": "alta" }, "t": "Naela tiene un garrote a mano, debajo de la barra." }
+      ],
+      "gestos": ["se apoya en la barra con los dos codos", "te sirve antes de que pidas", "pone los ojos en blanco", "se ríe fuerte y corto", "seca la barra frente a vos", "mira por encima de tu hombro", "se tira el trapo al hombro", "golpea la barra para llamar la atención"]
+    },
+    "tiren_docente": {
+      "rutina": [
+        { "c": { "f": "manana" }, "t": "Tiren dibuja una costa en el pizarrón mientras habla." },
+        { "c": { "f": "manana" }, "t": "Tiren corrige la escala de un alumno y le muestra por qué." },
+        { "c": { "f": "manana" }, "t": "Tiren desenrolla un mapa viejo con cuidado de reliquia." },
+        { "c": { "f": "tarde" }, "t": "Tiren mide una distancia con el compás tres veces." },
+        { "c": { "f": "tarde" }, "t": "Tiren discute con un colega sobre la ubicación de un río." },
+        { "c": { "f": "tarde" }, "t": "Tiren clava un alfiler rojo en el mapa de la pared." },
+        { "c": { "f": ["noche", "madrugada"] }, "t": "Tiren se quedó dibujando solo, con una vela." },
+        { "c": { "f": ["noche", "madrugada"] }, "t": "Tiren enrolla mapas y los ata con cordel." },
+        { "c": { "cl": "lluvia" }, "t": "Tiren mueve los mapas lejos de la ventana, apurado." }
+      ],
+      "gestos": ["se limpia la tiza de las manos en el pantalón", "señala un punto del mapa", "dibuja en el aire con el dedo", "se olvida de lo que iba a decir", "se entusiasma y habla más rápido", "busca un mapa entre otros diez", "mide algo con dos dedos", "se pasa la mano por el pelo y lo deja blanco de tiza"]
+    },
+    "elia_bibliotecaria": {
+      "rutina": [
+        { "c": { "f": "manana" }, "t": "Elia anota préstamos en un registro con letra diminuta." },
+        { "c": { "f": "manana" }, "t": "Elia devuelve libros a su estante sin mirar el número." },
+        { "c": { "f": "manana" }, "t": "Elia hace callar a un estudiante con un solo dedo." },
+        { "c": { "f": "tarde" }, "t": "Elia restaura una tapa despegada con cola y paciencia." },
+        { "c": { "f": "tarde" }, "t": "Elia recorre las mesas y endereza sillas." },
+        { "c": { "f": "tarde" }, "t": "Elia revisa un estante y nota un hueco. Lo anota." },
+        { "c": { "f": ["noche", "madrugada"] }, "t": "Elia cierra la biblioteca y apaga la última lámpara." },
+        { "c": { "f": ["noche", "madrugada"] }, "t": "Elia lee sola en la oficina de préstamos." },
+        { "c": { "ts": "alta" }, "t": "Elia guarda el registro de préstamos bajo llave." }
+      ],
+      "gestos": ["se lleva un dedo a los labios", "habla tan bajo que tenés que acercarte", "pasa las páginas con la punta de los dedos", "te mira por encima del libro", "acomoda el lomo de un libro", "anota algo sin que lo veas", "frunce la nariz por el polvo", "cierra un libro con suavidad"]
+    },
+    "brenn_arriero": {
+      "rutina": [
+        { "c": { "f": "madrugada" }, "t": "Brenn engancha las mulas a oscuras, de memoria." },
+        { "c": { "f": "manana" }, "t": "Brenn revisa las ruedas de la carreta una por una." },
+        { "c": { "f": "manana" }, "t": "Brenn ajusta las cinchas de la carga y escupe a un costado." },
+        { "c": { "f": "tarde" }, "t": "Brenn camina al lado de las mulas, hablándoles bajo." },
+        { "c": { "f": "tarde" }, "t": "Brenn comparte agua con otro viajero sin preguntar." },
+        { "c": { "f": "tarde" }, "t": "Brenn mira el cielo y calcula cuánto falta." },
+        { "c": { "f": "noche" }, "t": "Brenn arma un fuego al costado del camino." },
+        { "c": { "f": "noche" }, "t": "Brenn duerme sentado, con una mano sobre la carga." },
+        { "c": { "cl": "lluvia" }, "t": "Brenn tapa la carga con lonas y maldice al cielo." }
+      ],
+      "gestos": ["se acomoda el sombrero", "palmea a una mula", "escupe al costado", "se ríe con toda la cara", "te ofrece la cantimplora", "mira el camino, no a vos", "se rasca la barba de varios días", "cuenta jornadas con los dedos"]
+    },
+    "ysolde_pescadora": {
+      "rutina": [
+        { "c": { "f": "madrugada" }, "t": "Ysolde empuja su bote al agua sin hacer ruido." },
+        { "c": { "f": "madrugada" }, "t": "Ysolde mira el lago un largo rato antes de remar." },
+        { "c": { "f": "manana" }, "t": "Ysolde recoge las redes y separa lo que sirve." },
+        { "c": { "f": "manana" }, "t": "Ysolde limpia pescados en una piedra plana." },
+        { "c": { "f": "tarde" }, "t": "Ysolde remienda redes sentada en la orilla." },
+        { "c": { "f": "tarde" }, "t": "Ysolde mira la isla y después aparta la vista." },
+        { "c": { "f": "noche" }, "t": "Ysolde ata el bote y enciende un fuego chico." },
+        { "c": { "f": "noche" }, "t": "Ysolde escucha el lago con la cabeza inclinada." },
+        { "c": { "cl": "niebla" }, "t": "Ysolde no sale con niebla. Espera sentada junto al bote." }
+      ],
+      "gestos": ["mira el agua antes de contestar", "se seca las manos en la falda", "contesta con una sola palabra", "huele el viento", "señala con la barbilla", "anuda una red sin mirar", "se queda callada mucho rato", "mira las aves, no a vos"]
+    },
+    "dario_guardia": {
+      "rutina": [
+        { "c": { "f": "madrugada" }, "t": "Darío bosteza en la caseta y se pellizca para no dormirse." },
+        { "c": { "f": "manana" }, "t": "Darío revisa documentos con el ceño fruncido." },
+        { "c": { "f": "manana" }, "t": "Darío levanta la barrera para un carro y la baja enseguida." },
+        { "c": { "f": "manana" }, "t": "Darío sella un salvoconducto con un golpe seco." },
+        { "c": { "f": "tarde" }, "t": "Darío discute un peaje con cara de haberlo discutido mil veces." },
+        { "c": { "f": "tarde" }, "t": "Darío revisa un baúl con desgano y lo cierra." },
+        { "c": { "f": "noche" }, "t": "Darío hace la ronda del puente con una lámpara." },
+        { "c": { "f": "noche" }, "t": "Darío mira hacia la otra orilla un largo rato." },
+        { "c": { "ts": "alta" }, "t": "Darío tiene la mano apoyada en la empuñadura." }
+      ],
+      "gestos": ["extiende la mano pidiendo papeles", "golpea la barrera con los nudillos", "te mira los zapatos y después la cara", "resopla", "anota algo en una tablilla", "se ajusta el cinturón", "mira de reojo a la caseta", "repite tu nombre en voz baja"]
+    },
+    "sarin_mensajera": {
+      "rutina": [
+        { "c": { "f": "madrugada" }, "t": "Sarin ya está en camino, con la bolsa de cartas cruzada." },
+        { "c": { "f": "manana" }, "t": "Sarin pasa casi corriendo y saluda sin frenar." },
+        { "c": { "f": "manana" }, "t": "Sarin revisa el sello de una carta y la guarda." },
+        { "c": { "f": "tarde" }, "t": "Sarin se sienta un minuto a sacarse una piedra del zapato." },
+        { "c": { "f": "tarde" }, "t": "Sarin come un pedazo de pan mientras camina." },
+        { "c": { "f": "tarde" }, "t": "Sarin le pregunta a un viajero de dónde viene." },
+        { "c": { "f": "noche" }, "t": "Sarin duerme junto al camino, abrazada a la bolsa." },
+        { "c": { "f": "noche" }, "t": "Sarin camina de noche con una lámpara pequeña." },
+        { "c": { "cl": "lluvia" }, "t": "Sarin tapa la bolsa de cartas con su propia capa." }
+      ],
+      "gestos": ["mira el camino como si se le escapara", "se ajusta la correa de la bolsa", "habla rápido y se corta", "te pregunta algo antes de contestar", "da saltitos para no enfriarse", "toca el sello de una carta", "sonríe con curiosidad", "mira el sol para calcular la hora"]
+    },
+    "hollis_pastor": {
+      "rutina": [
+        { "c": { "f": "madrugada" }, "t": "Hollis cuenta las ovejas en voz baja, una por una." },
+        { "c": { "f": "manana" }, "t": "Hollis arrea el rebaño con silbidos cortos." },
+        { "c": { "f": "manana" }, "t": "Hollis le revisa una pata a una oveja que cojea." },
+        { "c": { "f": "tarde" }, "t": "Hollis se sienta en una piedra y mira el cielo." },
+        { "c": { "f": "tarde" }, "t": "Hollis talla un palo con un cuchillo pequeño." },
+        { "c": { "f": "tarde" }, "t": "Hollis comparte queso con un perro que lo sigue." },
+        { "c": { "f": "noche" }, "t": "Hollis encierra el rebaño contra una pirca." },
+        { "c": { "f": "noche" }, "t": "Hollis duerme envuelto en una manta, con el cayado al lado." },
+        { "c": { "cl": "nublado" }, "t": "Hollis mira las nubes y mueve el rebaño hacia el reparo." }
+      ],
+      "gestos": ["mira el cielo antes de contestar", "se apoya en el cayado", "silba a una oveja", "habla despacio, sin apuro", "huele el aire", "se ríe con los ojos", "masca una brizna de pasto", "te señala una nube"]
+    },
+    "oren_peregrino": {
+      "rutina": [
+        { "c": { "f": "madrugada" }, "t": "Oren reza en voz baja mirando hacia el este." },
+        { "c": { "f": "manana" }, "t": "Oren ata una cinta a un arbusto del cruce." },
+        { "c": { "f": "manana" }, "t": "Oren camina unos pasos por el sendero y vuelve." },
+        { "c": { "f": "tarde" }, "t": "Oren se sienta a la sombra y lee un cuaderno gastado." },
+        { "c": { "f": "tarde" }, "t": "Oren le habla a un viajero sobre el Gran Roble." },
+        { "c": { "f": "tarde" }, "t": "Oren comparte su agua con quien pase." },
+        { "c": { "f": "noche" }, "t": "Oren mira las estrellas como si las contara." },
+        { "c": { "f": "noche" }, "t": "Oren duerme al raso, sin miedo aparente." },
+        { "c": { "cl": "lluvia" }, "t": "Oren sigue sentado bajo la lluvia, sin moverse." }
+      ],
+      "gestos": ["sonríe con calma", "toca la medalla que lleva al cuello", "te contesta con una pregunta", "mira hacia el este", "junta las manos", "asiente como si ya supiera", "cierra los ojos un momento", "apoya la mano en el cayado"]
+    }
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "tanda": "t01",
+  "estado": "a_aprobar",
+  "nota": "Fragmentos en minúscula y sin punto final: se insertan dentro de una frase. #apertura# y #cierre# son frases completas.",
+  "simbolos": {
+    "luz.madrugada": ["todavía no aclara", "el cielo apenas se separa del suelo", "queda una franja gris en el horizonte", "la oscuridad empieza a ceder por el este"],
+    "luz.manana": ["la luz entra de costado", "el sol todavía está bajo", "la mañana ilumina sin calentar", "la luz es limpia y blanca"],
+    "luz.tarde": ["el sol cae de lleno", "la luz se vuelve amarilla", "las sombras se alargan despacio", "el calor se queda en las piedras"],
+    "luz.noche": ["la noche ya cerró", "solo se ve lo que tocan las lámparas", "las sombras se juntan en los rincones", "la oscuridad borra los bordes de todo"],
+    "luz.lluvia": ["la lluvia apaga los colores", "todo brilla de mojado", "el agua corre por las piedras"],
+    "luz.niebla": ["la niebla se come las distancias", "a veinte pasos ya no se distingue nada", "las formas aparecen de golpe y se van"],
+    "luz.nublado": ["el cielo está tapado y parejo", "la luz es gris y sin sombra", "las nubes pasan bajas"],
+    "luz.noche.lluvia": ["las lámparas tiemblan en los charcos", "la lluvia suena más de lo que se ve"],
+    "luz.noche.niebla": ["la niebla hace halos alrededor de cada luz", "no se ve ni el suelo que pisás"],
+    "luz.noche.despejado": ["hay estrellas de sobra", "la luna deja ver los contornos"],
+
+    "sonido.madrugada": ["no se oye casi nada", "cantan los primeros pájaros", "algún perro ladra lejos", "se oye tu propia respiración"],
+    "sonido.manana": ["se oyen voces que empiezan el día", "golpean puertas y postigos", "pasan carros sobre la piedra"],
+    "sonido.tarde": ["el ruido llega de todas partes", "alguien discute a lo lejos", "las conversaciones se pisan unas con otras"],
+    "sonido.noche": ["los ruidos se vuelven pocos y claros", "una puerta se cierra en algún lado", "se oyen pasos que no ves"],
+    "sonido.lluvia": ["la lluvia tamborilea en los techos", "el agua gotea de los aleros"],
+    "sonido.niebla": ["los sonidos llegan amortiguados", "una voz suena cerca y no sabés de dónde"],
+    "sonido.nublado": ["el viento empuja algo suelto", "el aire está quieto y pesado"],
+
+    "olor.madrugada": ["huele a rocío", "el aire está frío y limpio"],
+    "olor.manana": ["huele a pan y a leña", "llega olor a establo"],
+    "olor.tarde": ["huele a polvo caliente", "el aire trae olor a comida"],
+    "olor.noche": ["huele a humo de chimenea", "el aire se enfría y huele a piedra"],
+    "olor.lluvia": ["huele a tierra mojada", "la lluvia levanta olor a barro"],
+    "olor.niebla": ["el aire huele a agua estancada", "la humedad se te mete en la ropa"],
+    "olor.nublado": ["huele a que va a llover", "el aire trae olor a hojas"],
+
+    "aire.madrugada": ["hace frío", "el frío te entra por las manos"],
+    "aire.manana": ["el aire está fresco", "corre una brisa suave"],
+    "aire.tarde": ["hace calor", "el aire está espeso"],
+    "aire.noche": ["refresca", "el viento se vuelve frío"],
+    "aire.lluvia": ["la ropa se te pega al cuerpo", "las gotas te corren por la nuca"],
+    "aire.niebla": ["la humedad lo moja todo sin llover"],
+    "aire.nublado": ["el aire no se mueve"],
+
+    "cielo.madrugada": ["el cielo es azul oscuro", "quedan pocas estrellas"],
+    "cielo.manana": ["el cielo está alto y claro", "unas nubes finas cruzan el cielo"],
+    "cielo.tarde": ["el cielo se pone pálido de calor", "las nubes se arman hacia el oeste"],
+    "cielo.noche": ["el cielo es negro", "la luna asoma entre nubes"],
+    "cielo.lluvia": ["el cielo es una sola nube gris"],
+    "cielo.niebla": ["no hay cielo, solo blanco"],
+    "cielo.nublado": ["las nubes tapan el sol"],
+
+    "apertura": ["Te tomás un momento.", "Sin apurarte, actuás.", "Respirás hondo.", "Decidís no esperar más.", "Mirás alrededor antes de moverte.", "Lo pensás una vez y seguís.", "Te acomodás la ropa y vas.", "Das un paso adelante.", "Te acercás.", "No lo pensás demasiado."],
+    "apertura.noche": ["En la penumbra, te movés despacio.", "Con poca luz, medís cada paso."],
+    "apertura.lluvia": ["Con la lluvia encima, te apurás.", "Te sacudís el agua de la cara."],
+    "apertura.niebla": ["Entre la niebla, avanzás con cuidado."],
+    "apertura.madrugada": ["Todavía con sueño, te ponés en marcha."],
+
+    "conector": ["mientras tanto", "al rato", "después de un momento", "sin decir nada", "casi enseguida", "un poco después", "en silencio"],
+
+    "cierre": ["Nadie más parece notarlo.", "El momento pasa.", "Todo sigue como antes.", "Te queda una sensación rara.", "Por ahora, alcanza.", "Lo anotás en la memoria.", "El lugar vuelve a su ritmo.", "Algo cambió, aunque poco."],
+    "cierre.noche": ["La noche se lo traga todo.", "Afuera, la oscuridad sigue."],
+    "cierre.lluvia": ["La lluvia sigue, indiferente."],
+    "cierre.niebla": ["La niebla vuelve a cerrarse."],
+
+    "gesto": ["se rasca la barba", "cruza los brazos", "mira hacia otro lado", "se seca las manos en la ropa", "levanta una ceja", "suspira", "baja la vista", "se encoge de hombros", "frunce el ceño", "sonríe apenas", "se acomoda el pelo", "golpea los dedos contra la mesa", "te mira de arriba abajo", "asiente despacio", "aprieta los labios", "se toca el cuello", "da un paso atrás", "se inclina hacia vos", "tarda en contestar", "se limpia la nariz con la manga"],
+    "gesto.tenso": ["se pone rígido", "no te saca los ojos de encima", "aprieta los puños", "mira hacia la salida", "la mandíbula se le marca"],
+    "gesto.amable": ["te hace un lugar", "se le afloja la cara", "te palmea el hombro", "se ríe bajo", "te ofrece algo con la mano"],
+    "gesto.frio": ["contesta sin mirarte", "sigue con lo suyo", "hace como que no te oyó", "te da la espalda un instante"],
+
+    "mirada": ["te mira", "te observa un momento", "te estudia", "te mide con los ojos", "te echa un vistazo"],
+    "mirada.tenso": ["te clava la mirada", "no deja de mirarte las manos"],
+    "mirada.amable": ["te mira con calma", "te recibe con la mirada"],
+
+    "pausa": ["hay un silencio corto", "nadie dice nada por un momento", "el aire se queda quieto", "pasa un instante"],
+    "pausa.tenso": ["el silencio pesa", "alguien contiene la respiración"],
+
+    "gente.manana": ["la gente empieza a salir", "pasan los primeros vecinos", "alguien barre su puerta"],
+    "gente.tarde": ["hay gente por todos lados", "la gente va y viene sin mirarte", "un grupo conversa en voz alta"],
+    "gente.noche": ["quedan pocos a la vista", "alguien vuelve tarde a su casa", "un borracho canta solo"],
+    "gente.madrugada": ["no hay nadie despierto", "solo andan los que trabajan temprano"],
+    "gente.lluvia": ["la gente se amontona bajo los aleros", "todos caminan con la cabeza gacha"],
+
+    "suelo.ciudad": ["las piedras están gastadas", "el empedrado es desparejo", "hay paja y barro entre las piedras"],
+    "suelo.camino": ["la tierra está apisonada por las ruedas", "hay huellas de cascos", "el camino se abre entre pastos altos"],
+    "suelo.lluvia": ["el barro te frena el paso", "los charcos ocupan el camino"],
+
+    "animal.camino": ["un halcón gira alto", "unas ovejas pastan a lo lejos", "un zorro cruza y desaparece", "las cigarras no paran", "un cuervo te sigue un rato"],
+    "animal.camino.noche": ["un búho llama dos veces", "se oyen grillos por todas partes"],
+    "animal.ciudad": ["un gato duerme en una ventana", "unas palomas pelean por migas", "un perro flaco te sigue un tramo"],
+
+    "cansancio": ["te pesan las piernas", "sentís los pies", "te duele la espalda", "el cansancio te alcanza"],
+    "hambre": ["te ruge el estómago", "sentís el hambre", "no comiste hace rato"],
+
+    "tension.alta": ["algo no está bien", "el aire está cargado", "todos parecen esperar algo", "nadie habla más de lo necesario"],
+    "tension.baja": ["todo parece tranquilo", "nadie tiene apuro", "el día sigue su curso"],
+
+    "moneda": ["unas monedas", "un par de cobres", "lo justo", "algo de plata"],
+    "tiempo.corto": ["un rato", "unos minutos", "lo que tarda en enfriarse una sopa"],
+    "tiempo.largo": ["horas", "media jornada", "más de lo que pensabas"]
+  }
+}

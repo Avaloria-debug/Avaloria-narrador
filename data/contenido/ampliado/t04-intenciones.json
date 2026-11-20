@@ -1,0 +1,429 @@
+{
+  "tanda": "t04",
+  "estado": "a_aprobar",
+  "nota": "Se suman a plantillas.<intencion>.<resultado> del v3. Placeholders iguales a los del v3 para cada intención.",
+  "plantillas": {
+    "intencion_hablar_con": {
+      "exito": [
+        { "c": { "r": "buena" }, "t": "{npc} te recibe como a alguien conocido y se pone a hablar." },
+        { "c": { "r": "buena" }, "t": "A {npc} se le ilumina la cara al verte. Charlan un rato." },
+        { "c": { "r": "mala" }, "t": "{npc} te escucha, aunque se nota que no le gusta." },
+        { "c": { "ts": "alta" }, "t": "{npc} habla bajo y rápido, mirando alrededor." },
+        { "c": { "f": "noche" }, "t": "En la penumbra, {npc} te escucha con atención." },
+        { "c": { "f": "madrugada" }, "t": "{npc} contesta con voz de sueño, pero contesta." },
+        { "c": { "cl": "lluvia" }, "t": "Bajo el alero, {npc} y vos hablan con la lluvia de fondo." },
+        { "c": { "rep": "3+" }, "t": "{npc} ya te espera. Retoman la charla donde la dejaron." }
+      ],
+      "fallo": [
+        { "c": { "r": "mala" }, "t": "{npc} te ve venir y se da vuelta." },
+        { "c": { "r": "mala" }, "t": "«Ahora no», dice {npc}, y no te mira." },
+        { "c": { "ts": "alta" }, "t": "{npc} tiene otras cosas en la cabeza. No te escucha." },
+        { "c": { "rep": "3+" }, "t": "{npc} suspira. Ya hablaron demasiado por hoy." },
+        { "c": { "f": "madrugada" }, "t": "{npc} está demasiado dormido para seguirte." }
+      ],
+      "neutro": [
+        { "c": { "r": "neutra" }, "t": "{npc} te contesta con amabilidad, sin más." },
+        { "c": { "f": "tarde" }, "t": "Entre el ruido, {npc} te contesta a medias." }
+      ]
+    },
+    "intencion_examinar": {
+      "exito": [
+        { "c": { "f": "noche" }, "t": "Acercás {objeto} a la luz. Ahora ves los detalles." },
+        { "c": { "cl": "lluvia" }, "t": "Protegés {objeto} de la lluvia y lo revisás bien." },
+        { "c": { "ts": "alta" }, "t": "A pesar de los nervios, revisás {objeto} con cuidado." },
+        { "c": { "rep": "3+" }, "t": "Lo revisás otra vez. Ahora notás algo que se te había escapado." },
+        { "t": "Das vuelta {objeto} entre las manos. Cada marca cuenta algo." }
+      ],
+      "fallo": [
+        { "c": { "f": "noche" }, "t": "No hay luz suficiente para ver {objeto} con claridad." },
+        { "c": { "cl": "niebla" }, "t": "Con esta humedad y esta luz, no sacás nada en limpio." },
+        { "c": { "ts": "alta" }, "t": "No tenés tiempo de mirar bien. Algo te distrae." },
+        { "c": { "rep": "3+" }, "t": "Ya lo miraste de todos lados. No hay nada más." }
+      ],
+      "neutro": [
+        { "c": { "f": "manana" }, "t": "Con la luz de la mañana, {objeto} se ve tal como es." },
+        { "t": "Mirás {objeto}. Nada que no supieras." }
+      ]
+    },
+    "intencion_usar": {
+      "exito": [
+        { "c": { "ts": "alta" }, "t": "Usás {objeto} rápido, sin pensarlo dos veces. Funciona." },
+        { "c": { "f": "noche" }, "t": "A tientas, usás {objeto}. Sale bien." },
+        { "c": { "cl": "lluvia" }, "t": "Con las manos mojadas, igual lográs usar {objeto}." },
+        { "c": { "rep": "3+" }, "t": "Ya le agarraste la mano a {objeto}. Sale solo." },
+        { "t": "Usás {objeto} con cuidado. Hace lo que tiene que hacer." }
+      ],
+      "fallo": [
+        { "c": { "ts": "alta" }, "t": "Te tiemblan las manos y {objeto} se te resbala." },
+        { "c": { "f": "noche" }, "t": "En la oscuridad, no encontrás cómo usar {objeto}." },
+        { "c": { "cl": "lluvia" }, "t": "La lluvia lo complica todo. {objeto} no responde." },
+        { "t": "Intentás usar {objeto}, pero no es el momento." }
+      ],
+      "neutro": [
+        { "t": "Usás {objeto}. No pasa gran cosa." }
+      ]
+    },
+    "intencion_explorar": {
+      "exito": [
+        { "c": { "f": "manana" }, "t": "Recorrés {lugar} con la luz de la mañana. Encontrás rincones que no conocías." },
+        { "c": { "f": "noche" }, "t": "Recorrés {lugar} de noche. Todo parece distinto." },
+        { "c": { "vis": "1" }, "t": "Es la primera vez que recorrés {lugar}. Tomás nota de todo." },
+        { "c": { "vis": "3+" }, "t": "Ya conocés {lugar}, pero esta vez mirás con otros ojos." },
+        { "c": { "cl": "lluvia" }, "t": "Bajo la lluvia, recorrés {lugar} casi solo." },
+        { "c": { "cat": "camino" }, "t": "Te salís del camino un trecho. #animal.camino#." },
+        { "c": { "cat": "ciudad" }, "t": "Te metés por los pasillos de {lugar}. #gente#." }
+      ],
+      "fallo": [
+        { "c": { "cl": "niebla" }, "t": "Con esta niebla no ves nada de {lugar}. Volvés sobre tus pasos." },
+        { "c": { "f": "noche" }, "t": "Está muy oscuro para recorrer {lugar}." },
+        { "c": { "ts": "alta" }, "t": "No es momento de pasear. Te sentís observado." },
+        { "c": { "rep": "3+" }, "t": "Ya recorriste {lugar} de punta a punta. No queda nada nuevo." }
+      ],
+      "neutro": [
+        { "t": "Recorrés {lugar}. #luz#." },
+        { "t": "Das una vuelta por {lugar}. #sonido#." }
+      ]
+    },
+    "intencion_descansar": {
+      "exito": [
+        { "c": { "f": "noche" }, "t": "Dormís en {lugar}. El cuerpo lo agradece." },
+        { "c": { "f": "madrugada" }, "t": "Cerrás los ojos hasta que aclara. Te despertás mejor." },
+        { "c": { "f": "tarde" }, "t": "Te sentás a la sombra en {lugar} y dejás que pase el calor." },
+        { "c": { "cl": "lluvia" }, "t": "Te refugiás en {lugar}. La lluvia de fondo te ayuda a dormir." },
+        { "c": { "cat": "camino" }, "t": "Te tirás al costado del camino. #cielo#." },
+        { "t": "Descansás en {lugar}. #cansancio# menos que antes." }
+      ],
+      "fallo": [
+        { "c": { "ts": "alta" }, "t": "No podés cerrar los ojos. Cada ruido te despierta." },
+        { "c": { "cl": "lluvia" }, "t": "La lluvia te encuentra en todos lados. No descansás nada." },
+        { "c": { "f": "tarde" }, "t": "El ruido de {lugar} no te deja descansar." },
+        { "c": { "cat": "ciudad", "f": "noche" }, "t": "Un guardia te despierta: acá no se duerme." }
+      ],
+      "neutro": [
+        { "t": "Te quedás quieto un rato en {lugar}. Algo descansás." }
+      ]
+    },
+    "intencion_observar": {
+      "exito": [
+        { "c": { "f": "tarde" }, "t": "Te quedás mirando a la gente. Ves quién habla con quién." },
+        { "c": { "f": "noche" }, "t": "En la oscuridad, ves sin ser visto." },
+        { "c": { "ts": "alta" }, "t": "Mirás con atención. Notás quién está nervioso." },
+        { "c": { "cl": "niebla" }, "t": "La niebla te tapa, pero también te esconde. Observás tranquilo." },
+        { "c": { "cat": "camino" }, "t": "Mirás el camino en las dos direcciones. Ves quién viene." },
+        { "t": "Observás sin apuro. Los detalles empiezan a aparecer." }
+      ],
+      "fallo": [
+        { "c": { "cl": "niebla" }, "t": "La niebla no deja ver más allá de unos pasos." },
+        { "c": { "f": "noche" }, "t": "Está muy oscuro. Ves sombras, nada más." },
+        { "c": { "f": "tarde", "cat": "ciudad" }, "t": "Hay tanta gente que no podés seguir a nadie." },
+        { "c": { "rep": "3+" }, "t": "Mirás y mirás. Ya no hay nada nuevo que ver." }
+      ],
+      "neutro": [
+        { "t": "Mirás alrededor. #gente#." },
+        { "t": "Observás un rato. #tension#." }
+      ]
+    },
+    "intencion_trabajar": {
+      "exito": [
+        { "c": { "f": "manana" }, "t": "Trabajás toda la mañana en {lugar}. Te pagan lo justo." },
+        { "c": { "f": "tarde" }, "t": "Trabajás bajo el calor en {lugar}. Terminás empapado, pero cobrás." },
+        { "c": { "f": "noche" }, "t": "Te toca el turno de noche en {lugar}. Pagan un poco más." },
+        { "c": { "rep": "3+" }, "t": "Ya te conocen en {lugar}. Te dan trabajo sin preguntar." },
+        { "c": { "cl": "lluvia" }, "t": "Trabajás bajo techo mientras llueve. No está mal." },
+        { "t": "Trabajás unas horas en {lugar}. Ganás #moneda#." }
+      ],
+      "fallo": [
+        { "c": { "f": "madrugada" }, "t": "A esta hora no hay trabajo en {lugar}." },
+        { "c": { "ts": "alta" }, "t": "Nadie contrata a un desconocido con las cosas así." },
+        { "c": { "cl": "lluvia" }, "t": "Con esta lluvia se suspende todo trabajo afuera." },
+        { "t": "Preguntás por trabajo en {lugar}. Hoy no hay nada." }
+      ],
+      "neutro": [
+        { "t": "Hacés algunas changas en {lugar}. Poca paga." }
+      ]
+    },
+    "intencion_comprar": {
+      "exito": [
+        { "c": { "f": "manana" }, "t": "Comprás {objeto} recién llegado. Está en buen estado." },
+        { "c": { "f": "tarde" }, "t": "Al final del día, te dejan {objeto} más barato." },
+        { "c": { "r": "buena" }, "t": "Te venden {objeto} con descuento de amigo." },
+        { "c": { "ts": "alta" }, "t": "Comprás {objeto} rápido, sin regatear. No es día para eso." },
+        { "t": "Pagás y te llevás {objeto}. Trato hecho." }
+      ],
+      "fallo": [
+        { "c": { "f": ["noche", "madrugada"] }, "t": "Está todo cerrado. No hay a quién comprarle {objeto}." },
+        { "c": { "r": "mala" }, "t": "Te piden el doble por {objeto}. No vale la pena." },
+        { "c": { "ts": "alta" }, "t": "El vendedor desconfía y no te vende {objeto}." },
+        { "t": "No te alcanza para {objeto}." }
+      ],
+      "neutro": [
+        { "t": "Preguntás el precio de {objeto}. Lo pensás." }
+      ]
+    },
+    "intencion_leer": {
+      "exito": [
+        { "c": { "f": "manana" }, "t": "Leés con buena luz en {lugar}. Entendés más de lo que esperabas." },
+        { "c": { "f": "noche" }, "t": "Leés a la luz de una vela en {lugar}. Se te cansan los ojos, pero vale la pena." },
+        { "c": { "cl": "lluvia" }, "t": "Con la lluvia afuera, leer en {lugar} es lo mejor que podés hacer." },
+        { "c": { "rep": "3+" }, "t": "Seguís leyendo. Las ideas empiezan a encajar." },
+        { "t": "Leés en {lugar} un buen rato. Te quedan cosas dando vueltas." }
+      ],
+      "fallo": [
+        { "c": { "f": "noche" }, "t": "No hay luz para leer en {lugar}." },
+        { "c": { "ts": "alta" }, "t": "No te podés concentrar. Releés la misma línea tres veces." },
+        { "c": { "f": "tarde" }, "t": "Hay demasiado ruido en {lugar} para leer." },
+        { "t": "Las palabras no te dicen nada hoy." }
+      ],
+      "neutro": [
+        { "t": "Hojeás algo en {lugar}. Nada importante." }
+      ]
+    },
+    "intencion_ayudar": {
+      "exito": [
+        { "c": { "r": "mala" }, "t": "{npc} no esperaba tu ayuda. Te mira distinto." },
+        { "c": { "r": "buena" }, "t": "{npc} acepta tu ayuda como algo natural entre amigos." },
+        { "c": { "ts": "alta" }, "t": "En medio del lío, ayudás a {npc}. No lo va a olvidar." },
+        { "c": { "cl": "lluvia" }, "t": "Ayudás a {npc} a proteger sus cosas de la lluvia." },
+        { "c": { "f": "madrugada" }, "t": "Ayudás a {npc} temprano, cuando nadie más lo haría." },
+        { "c": { "rep": "3+" }, "t": "{npc} ya cuenta con vos. Trabajan sin hablar." }
+      ],
+      "fallo": [
+        { "c": { "r": "mala" }, "t": "{npc} rechaza tu ayuda. «No necesito nada de vos.»" },
+        { "c": { "ts": "alta" }, "t": "Querés ayudar a {npc}, pero solo estorbás." },
+        { "t": "{npc} prefiere hacerlo solo." }
+      ],
+      "neutro": [
+        { "t": "Le das una mano a {npc}. Asiente, nada más." }
+      ]
+    },
+    "intencion_negociar": {
+      "exito": [
+        { "c": { "r": "buena" }, "t": "{npc} cede rápido. Hay confianza." },
+        { "c": { "r": "mala" }, "t": "Después de mucho tira y afloje, {npc} acepta. De mala gana." },
+        { "c": { "ts": "alta" }, "t": "{npc} acepta tu oferta. Quiere terminar con esto." },
+        { "c": { "f": "tarde" }, "t": "Al final del día, {npc} está más dispuesto a ceder." },
+        { "c": { "npc": "ivor_cambista" }, "t": "Ivor calcula, sonríe y acepta. Algo le conviene." },
+        { "c": { "npc": "serel_panadero" }, "t": "Serel suspira y te hace el precio. «Por esta vez.»" }
+      ],
+      "fallo": [
+        { "c": { "r": "mala" }, "t": "{npc} ni siquiera escucha tu oferta." },
+        { "c": { "rep": "3+" }, "t": "{npc} se cansa de regatear y se cierra." },
+        { "c": { "npc": "ivor_cambista" }, "t": "Ivor niega con un dedo. «Todo tiene precio. Ese no.»" },
+        { "c": { "npc": "dario_guardia" }, "t": "Darío no negocia. «Las reglas son las reglas.»" }
+      ],
+      "neutro": [
+        { "t": "{npc} lo va a pensar." }
+      ]
+    },
+    "intencion_presionar": {
+      "exito": [
+        { "c": { "r": "buena" }, "t": "{npc} cede, sorprendido de que lo presiones vos." },
+        { "c": { "ts": "alta" }, "t": "Con todo tenso, {npc} no se anima a negarse." },
+        { "c": { "f": "noche" }, "t": "De noche y sin testigos, {npc} cede rápido." },
+        { "c": { "rec": "atacar" }, "t": "{npc} se acuerda de lo que pasó. Cede sin discutir." }
+      ],
+      "fallo": [
+        { "c": { "r": "mala" }, "t": "{npc} te sostiene la mirada. No te tiene miedo." },
+        { "c": { "f": "tarde", "cat": "ciudad" }, "t": "Hay demasiada gente mirando. {npc} no cede." },
+        { "c": { "rep": "3+" }, "t": "{npc} ya se acostumbró a tus amenazas." },
+        { "c": { "npc": "dario_guardia" }, "t": "Darío apoya la mano en la empuñadura. «Probá de nuevo.»" }
+      ],
+      "neutro": [
+        { "c": { "ts": "baja" }, "t": "{npc} toma la presión como una broma." }
+      ]
+    },
+    "intencion_retirarse": {
+      "exito": [
+        { "c": { "ts": "alta" }, "t": "Te alejás despacio, sin dar la espalda. Nadie te sigue." },
+        { "c": { "f": "noche" }, "t": "Te perdés en la oscuridad sin llamar la atención." },
+        { "c": { "cl": "niebla" }, "t": "La niebla te traga en dos pasos." },
+        { "t": "Das un paso atrás, después otro. Ya estás afuera." }
+      ],
+      "fallo": [
+        { "c": { "ts": "alta" }, "t": "Intentás irte, pero te cortan el paso." },
+        { "c": { "f": "tarde", "cat": "ciudad" }, "t": "La gente no te deja pasar. Quedás atrapado." },
+        { "t": "Te quedás donde estás. No encontrás cómo salir." }
+      ],
+      "neutro": [
+        { "t": "Te corrés a un costado." }
+      ]
+    },
+    "intencion_huir": {
+      "exito": [
+        { "c": { "f": "noche" }, "t": "Corrés en la oscuridad. Los pasos detrás tuyo se pierden." },
+        { "c": { "cl": "niebla" }, "t": "Corrés hacia la niebla. Desaparecés." },
+        { "c": { "cl": "lluvia" }, "t": "Corrés bajo la lluvia. El ruido del agua tapa el tuyo." },
+        { "c": { "cat": "ciudad" }, "t": "Te metés por un callejón y salís por otro." },
+        { "c": { "cat": "camino" }, "t": "Saltás una pirca y corrés por el campo hasta perder el aliento." }
+      ],
+      "fallo": [
+        { "c": { "cl": "lluvia" }, "t": "Resbalás en el barro. Te alcanzan." },
+        { "c": { "cat": "camino" }, "t": "En campo abierto no hay dónde esconderse." },
+        { "c": { "f": "tarde", "cat": "ciudad" }, "t": "Chocás con la gente. Perdés segundos que no tenés." }
+      ],
+      "neutro": [
+        { "t": "Corrés unos metros y te frenás a mirar atrás." }
+      ]
+    },
+    "intencion_atacar": {
+      "exito": [
+        { "c": { "ts": "alta" }, "t": "Golpeás primero. {npc} no lo vio venir." },
+        { "c": { "f": "noche" }, "t": "En la oscuridad, tu golpe encuentra a {npc}." },
+        { "c": { "r": "buena" }, "t": "Atacás a {npc}. Su cara de sorpresa duele más que el golpe." },
+        { "c": { "cl": "lluvia" }, "t": "{npc} resbala en el barro y tu golpe llega." }
+      ],
+      "fallo": [
+        { "c": { "cl": "lluvia" }, "t": "Resbalás al atacar. {npc} se aparta." },
+        { "c": { "f": "noche" }, "t": "No ves bien. Tu golpe corta el aire." },
+        { "c": { "npc": "dario_guardia" }, "t": "Darío es más rápido de lo que parece. Te desvía el golpe." },
+        { "c": { "rep": "3+" }, "t": "Estás cansado. Los golpes ya no tienen fuerza." }
+      ],
+      "neutro": [
+        { "t": "Amagás contra {npc}. Retrocede." }
+      ]
+    },
+    "intencion_emboscar": {
+      "exito": [
+        { "c": { "f": "noche" }, "t": "Esperás en la sombra. {npc} pasa a tu lado sin verte." },
+        { "c": { "cl": "niebla" }, "t": "La niebla te esconde. {npc} no te ve hasta que es tarde." },
+        { "c": { "cat": "camino" }, "t": "Te agachás detrás de unas rocas. {npc} llega justo donde querías." }
+      ],
+      "fallo": [
+        { "c": { "f": ["manana", "tarde"] }, "t": "A plena luz, {npc} te ve escondido." },
+        { "c": { "cat": "ciudad", "f": "tarde" }, "t": "Hay demasiados testigos. {npc} se da cuenta." },
+        { "c": { "r": "mala" }, "t": "{npc} ya desconfiaba. Te estaba esperando." }
+      ],
+      "neutro": [
+        { "t": "Esperás escondido. {npc} no aparece por donde pensabas." }
+      ]
+    },
+    "intencion_calmar": {
+      "exito": [
+        { "c": { "ts": "alta" }, "t": "Hablás despacio. La gente empieza a bajar la voz." },
+        { "c": { "f": "noche" }, "t": "Tu voz tranquila apaga los ánimos de la noche." },
+        { "c": { "esc": "escena_taberna_lareth" }, "t": "Pedís una ronda para todos. La taberna se calma." },
+        { "t": "Levantás las manos y decís lo justo. Funciona." }
+      ],
+      "fallo": [
+        { "c": { "ts": "alta" }, "t": "Nadie te escucha. Están demasiado enojados." },
+        { "c": { "esc": "escena_taberna_lareth" }, "t": "Entre los gritos de la taberna, tu voz se pierde." },
+        { "t": "Querés calmar las cosas y las empeorás." }
+      ],
+      "neutro": [
+        { "c": { "ts": "baja" }, "t": "Pedís calma. Nadie estaba alterado." }
+      ]
+    },
+    "intencion_ocultarse": {
+      "exito": [
+        { "c": { "f": "noche" }, "t": "Te pegás a una pared oscura. Sos parte de la sombra." },
+        { "c": { "cl": "niebla" }, "t": "La niebla hace el trabajo por vos." },
+        { "c": { "f": "tarde", "cat": "ciudad" }, "t": "Te mezclás con la gente. Nadie te distingue." },
+        { "c": { "cat": "camino" }, "t": "Te tirás entre los pastos altos. Solo se mueve el viento." }
+      ],
+      "fallo": [
+        { "c": { "f": ["manana", "tarde"], "cat": "camino" }, "t": "En campo abierto, a plena luz, no hay dónde esconderse." },
+        { "c": { "esc": "escena_biblioteca_publica" }, "t": "En el silencio de la biblioteca, cualquier movimiento se oye." },
+        { "t": "Te escondés mal. Se te ve un pie." }
+      ],
+      "neutro": [
+        { "t": "Te quedás quieto en un rincón." }
+      ]
+    },
+    "intencion_avanzar_cautela": {
+      "exito": [
+        { "c": { "f": "noche" }, "t": "Avanzás palpando el suelo. Llegás sin un ruido." },
+        { "c": { "cl": "niebla" }, "t": "Avanzás despacio por la niebla. Cada paso, seguro." },
+        { "c": { "cl": "lluvia" }, "t": "La lluvia tapa tus pasos. Avanzás tranquilo por {lugar}." },
+        { "t": "Avanzás con cuidado por {lugar}. Nada te sorprende." }
+      ],
+      "fallo": [
+        { "c": { "f": "noche" }, "t": "Pisás algo que cruje. Te quedás congelado." },
+        { "c": { "cl": "lluvia" }, "t": "El barro te traiciona: chapoteás." },
+        { "t": "Vas tan lento que perdés el momento." }
+      ],
+      "neutro": [
+        { "t": "Avanzás unos pasos por {lugar}, atento." }
+      ]
+    },
+    "intencion_distraer": {
+      "exito": [
+        { "c": { "f": "tarde", "cat": "ciudad" }, "t": "Tirás algo al piso. Todos miran para otro lado." },
+        { "c": { "f": "noche" }, "t": "Un ruido en la oscuridad y todos giran la cabeza." },
+        { "c": { "esc": "escena_taberna_lareth" }, "t": "Empezás una discusión falsa. La taberna entera mira." },
+        { "c": { "esc": "escena_mercado_circular" }, "t": "Volteás un cajón de fruta. El mercado se distrae." }
+      ],
+      "fallo": [
+        { "c": { "ts": "alta" }, "t": "Nadie se distrae. Están todos atentos." },
+        { "c": { "rep": "3+" }, "t": "El truco ya no funciona. Te conocen." },
+        { "t": "Tu distracción no le importa a nadie." }
+      ],
+      "neutro": [
+        { "t": "Hacés ruido. Alguien mira un segundo." }
+      ]
+    },
+    "intencion_abortar": {
+      "exito": [
+        { "c": { "ts": "alta" }, "t": "Lo pensás mejor y frenás. A tiempo." },
+        { "t": "Te detenés. No vale la pena." },
+        { "t": "Dejás todo como estaba. Nadie notó nada." }
+      ],
+      "fallo": [
+        { "c": { "ts": "alta" }, "t": "Querés parar, pero ya es tarde." },
+        { "t": "No hay vuelta atrás. Ya empezó." }
+      ],
+      "neutro": [
+        { "t": "Te quedás quieto. El momento pasa." }
+      ]
+    },
+    "intencion_defender": {
+      "exito": [
+        { "c": { "r": "buena" }, "t": "Te ponés delante de {npc} sin dudar." },
+        { "c": { "r": "mala" }, "t": "Defendés a {npc}, aunque no te quiera. Lo nota." },
+        { "c": { "ts": "alta" }, "t": "Te parás entre {npc} y el peligro. El golpe no llega." },
+        { "c": { "f": "noche" }, "t": "En la oscuridad, cubrís a {npc} con tu cuerpo." }
+      ],
+      "fallo": [
+        { "c": { "cl": "lluvia" }, "t": "Resbalás al intentar cubrir a {npc}." },
+        { "c": { "rep": "3+" }, "t": "Estás agotado de defender. No llegás a tiempo." },
+        { "t": "Llegás tarde para cubrir a {npc}." }
+      ],
+      "neutro": [
+        { "t": "Te quedás cerca de {npc}, por si acaso." }
+      ]
+    },
+    "intencion_rendirse": {
+      "exito": [
+        { "c": { "r": "buena" }, "t": "Te rendís. {npc} baja la guardia, aliviado." },
+        { "c": { "npc": "dario_guardia" }, "t": "Levantás las manos. Darío asiente: «Así me gusta.»" },
+        { "t": "Bajás las manos. {npc} acepta tu rendición." }
+      ],
+      "fallo": [
+        { "c": { "r": "mala" }, "t": "{npc} no te cree. Sigue en guardia." },
+        { "c": { "rec": "emboscar" }, "t": "{npc} se acuerda de la emboscada. No confía en tu rendición." },
+        { "t": "{npc} no acepta. Quiere más." }
+      ],
+      "neutro": [
+        { "t": "Te rendís. {npc} no sabe qué hacer con eso." }
+      ]
+    },
+    "intencion_viajar": {
+      "exito": [
+        { "c": { "f": "madrugada" }, "t": "Salís de madrugada hacia {lugar}. Llegás con el cuerpo frío." },
+        { "c": { "f": "manana" }, "t": "Partís con la luz de la mañana hacia {lugar}." },
+        { "c": { "f": "tarde" }, "t": "Salís con el sol alto. Llegás a {lugar} con polvo hasta las cejas." },
+        { "c": { "f": "noche" }, "t": "Viajás de noche hacia {lugar}. Cada ruido te pone alerta." },
+        { "c": { "cl": "lluvia" }, "t": "Viajás a {lugar} bajo la lluvia. Llegás empapado." },
+        { "c": { "cl": "niebla" }, "t": "Viajás a {lugar} entre la niebla, siguiendo el camino a ciegas." },
+        { "c": { "ts": "alta" }, "t": "Partís hacia {lugar} sin mirar atrás." }
+      ],
+      "fallo": [
+        { "c": { "cl": "lluvia" }, "t": "El camino a {lugar} está intransitable con esta lluvia." },
+        { "c": { "f": "noche" }, "t": "Es muy tarde para salir hacia {lugar}." },
+        { "t": "Algo te frena. Hoy no vas a {lugar}." }
+      ],
+      "neutro": [
+        { "t": "Ponés rumbo a {lugar}." }
+      ]
+    }
+  }
+}

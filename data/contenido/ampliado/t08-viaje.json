@@ -1,0 +1,122 @@
+{
+  "tanda": "t08",
+  "estado": "a_aprobar",
+  "nota": "durante: se narra al viajar por un camino (1 línea por tramo largo). llegada: al llegar a una ciudad o lugar. encuentros: menores, sin consecuencia mecánica, prob. baja.",
+  "durante": {
+    "escena_camino_norte": [
+      { "c": { "f": "madrugada" }, "t": "Caminás por el norte con el frío pegado a los huesos." },
+      { "c": { "f": "manana" }, "t": "El camino del norte se abre entre campos de trigo." },
+      { "c": { "f": "manana" }, "t": "Pasás un mojón tras otro. Ardenhall queda atrás." },
+      { "c": { "f": "tarde" }, "t": "El sol te pega de lleno. No hay sombra en leguas." },
+      { "c": { "f": "tarde" }, "t": "Una caravana te pasa y te deja comiendo polvo." },
+      { "c": { "f": "noche" }, "t": "Dormís al costado del camino, con un ojo abierto." },
+      { "c": { "f": "noche" }, "t": "De noche, el camino del norte parece no terminar." },
+      { "c": { "cl": "lluvia" }, "t": "El barro del norte te llega a los tobillos." },
+      { "c": { "cl": "niebla" }, "t": "Seguís los surcos de las carretas para no perderte en la niebla." },
+      { "c": { "cl": "nublado" }, "t": "El cielo gris aplasta el paisaje. Caminás sin pensar." },
+      { "t": "Treinta y seis horas de camino. #cansancio#." },
+      { "t": "Campos, mojones y polvo. El norte es largo y llano." }
+    ],
+    "escena_camino_este": [
+      { "c": { "f": "madrugada" }, "t": "Las ranas te acompañan las primeras horas del este." },
+      { "c": { "f": "manana" }, "t": "Pasás entre huertas. Te ofrecen agua de una acequia." },
+      { "c": { "f": "manana" }, "t": "El arroyo corre a tu lado. Lo seguís sin darte cuenta." },
+      { "c": { "f": "tarde" }, "t": "Las cigarras te taladran la cabeza toda la tarde." },
+      { "c": { "f": "tarde" }, "t": "Comprás fruta a un campesino al costado del camino." },
+      { "c": { "f": "noche" }, "t": "Dormís cerca de un molino. Cruje toda la noche." },
+      { "c": { "f": "noche" }, "t": "Los grillos callan de golpe. Después siguen." },
+      { "c": { "cl": "lluvia" }, "t": "El arroyo desborda y te obliga a dar un rodeo." },
+      { "c": { "cl": "niebla" }, "t": "La niebla sube de las acequias. Caminás con el agua a los pies." },
+      { "c": { "cl": "nublado" }, "t": "El viento mueve las huertas. Huele a lluvia." },
+      { "t": "Cuarenta y cuatro horas entre Lareth y Halenor. #sonido#." },
+      { "t": "Huertas, molinos y agua corriendo. El este nunca calla." }
+    ],
+    "escena_camino_sur": [
+      { "c": { "f": "madrugada" }, "t": "Caminás al sur entre ovejas dormidas." },
+      { "c": { "f": "manana" }, "t": "El olor a lavanda te sigue toda la mañana." },
+      { "c": { "f": "manana" }, "t": "Un rebaño te corta el paso. Esperás." },
+      { "c": { "f": "tarde" }, "t": "Te parás en un pozo a sacar agua fresca." },
+      { "c": { "f": "tarde" }, "t": "Ruinas de una muralla vieja asoman entre el pasto." },
+      { "c": { "f": "noche" }, "t": "El sur de noche es inmenso y vacío." },
+      { "c": { "f": "noche" }, "t": "Ves el fuego de unos pastores, muy lejos." },
+      { "c": { "cl": "lluvia" }, "t": "Huele a lana mojada y barro. El sur se vuelve eterno." },
+      { "c": { "cl": "niebla" }, "t": "Las ovejas aparecen en la niebla como piedras que caminan." },
+      { "c": { "cl": "nublado" }, "t": "Las nubes bajas hacen que todo parezca igual." },
+      { "t": "Cincuenta y dos horas. El camino más largo. #cansancio#." },
+      { "t": "Pastos y pircas hasta el horizonte. #olor#." }
+    ]
+  },
+  "llegada": {
+    "Ardenhall": [
+      { "c": { "f": "madrugada" }, "t": "Llegás a Ardenhall con las puertas recién abiertas." },
+      { "c": { "f": "manana" }, "t": "Ardenhall te recibe con olor a pan y ruido de mercado." },
+      { "c": { "f": "tarde" }, "t": "Entrás a Ardenhall en plena hora de comercio. La ciudad hierve." },
+      { "c": { "f": "noche" }, "t": "Ardenhall está oscura. Solo el Archivo se recorta contra el cielo." },
+      { "c": { "cl": "lluvia" }, "t": "Llegás a Ardenhall bajo la lluvia. Las calles son ríos." },
+      { "t": "Las torres de Ardenhall crecen a medida que te acercás." }
+    ],
+    "Lareth": [
+      { "c": { "f": "madrugada" }, "t": "Lareth duerme. Solo la taberna tiene luz." },
+      { "c": { "f": "manana" }, "t": "En Lareth ya suenan las monedas de los cambistas." },
+      { "c": { "f": "tarde" }, "t": "Lareth es un ruido de números y cerveza." },
+      { "c": { "f": "noche" }, "t": "Llegás a Lareth y lo primero que oís es la campana de la taberna." },
+      { "c": { "cl": "lluvia" }, "t": "Lareth bajo la lluvia: toldos, charcos y monedas mojadas." },
+      { "t": "Lareth huele a dinero y a cerveza barata." }
+    ],
+    "Halenor": [
+      { "c": { "f": "madrugada" }, "t": "Halenor está en silencio, como siempre a esta hora." },
+      { "c": { "f": "manana" }, "t": "Halenor te recibe con estudiantes que corren con mapas bajo el brazo." },
+      { "c": { "f": "tarde" }, "t": "En Halenor hasta las discusiones de la calle parecen clases." },
+      { "c": { "f": "noche" }, "t": "En Halenor quedan velas encendidas en muchas ventanas. Alguien estudia." },
+      { "c": { "cl": "lluvia" }, "t": "Halenor bajo la lluvia: todos adentro, leyendo." },
+      { "t": "Halenor parece una ciudad hecha para pensar." }
+    ],
+    "escena_lago_espejos": [
+      { "c": { "f": "manana" }, "t": "Llegás al lago y por un momento no sabés dónde está el cielo." },
+      { "c": { "f": "noche" }, "t": "Llegás al lago de noche. Dos lunas te esperan." },
+      { "c": { "cl": "niebla" }, "t": "Llegás al lago y no hay lago: solo niebla." },
+      { "t": "El lago aparece entre los árboles, quieto como un vidrio." }
+    ],
+    "escena_puente_aduana": [
+      { "c": { "f": "manana" }, "t": "Llegás al puente y ya hay fila. Te ponés atrás." },
+      { "c": { "f": "noche" }, "t": "Llegás al puente. La barrera está baja hasta mañana." },
+      { "c": { "ts": "alta" }, "t": "En el puente hay más guardias que de costumbre." },
+      { "t": "El río suena antes de que veas el puente." }
+    ],
+    "escena_cruce_colinas": [
+      { "c": { "f": "manana" }, "t": "Llegás al cruce. Tres caminos y un viento que no para." },
+      { "c": { "f": "noche" }, "t": "Llegás al cruce en plena oscuridad. No hay luces en ninguna dirección." },
+      { "c": { "cl": "niebla" }, "t": "El cruce aparece entre la niebla. Las tres direcciones se ven iguales." },
+      { "t": "Las colinas se abren y aparece el cruce." }
+    ],
+    "intraciudad": [
+      { "c": { "f": "tarde" }, "t": "Cruzás la ciudad esquivando gente y carros." },
+      { "c": { "f": "noche" }, "t": "Cruzás calles vacías hasta {lugar}." },
+      { "c": { "cl": "lluvia" }, "t": "Corrés bajo los aleros hasta {lugar}." },
+      { "t": "Unas calles más y llegás a {lugar}." },
+      { "t": "Caminás un rato por la ciudad hasta {lugar}." }
+    ]
+  },
+  "encuentros": [
+    { "c": { "cat": "camino", "f": "manana" }, "t": "Un viajero te pregunta cuánto falta. Le decís. Sigue." },
+    { "c": { "cat": "camino", "f": "manana" }, "t": "Te cruzás con una familia que se muda. Llevan todo en un carro." },
+    { "c": { "cat": "camino", "f": "tarde" }, "t": "Un chico vende agua al costado del camino. Muy cara." },
+    { "c": { "cat": "camino", "f": "tarde" }, "t": "Ves una carreta volcada. Ya no hay nadie. Solo la carga desparramada." },
+    { "c": { "cat": "camino", "f": "tarde" }, "t": "Dos monjes caminan en silencio. Te saludan con la cabeza." },
+    { "c": { "cat": "camino", "f": "noche" }, "t": "Un fuego al costado del camino. Te invitan a calentarte." },
+    { "c": { "cat": "camino", "f": "noche" }, "t": "Unos ojos brillan entre los pastos. Después ya no." },
+    { "c": { "cat": "camino", "cl": "lluvia" }, "t": "Te refugiás bajo un árbol con otro viajero. No hablan." },
+    { "c": { "cat": "camino" }, "t": "Encontrás una herradura en el camino. Dicen que trae suerte." },
+    { "c": { "cat": "camino" }, "t": "Un mojón tiene grabado un nombre y una fecha. Nadie sabe de quién." },
+    { "c": { "cat": "camino" }, "t": "Un perro sin dueño te sigue un trecho y después se va." },
+    { "c": { "cat": "camino" }, "t": "Pasás una cruz de madera al costado del camino. Tiene flores frescas." },
+    { "c": { "cat": "camino" }, "t": "Un buhonero te ofrece botones, hilo y noticias viejas." },
+    { "c": { "cat": "camino", "f": "madrugada" }, "t": "Un jinete pasa al galope en la oscuridad. Ni te ve." },
+    { "c": { "cat": "camino", "cl": "niebla" }, "t": "Una voz en la niebla pregunta por el camino. No ves a nadie." },
+    { "c": { "cat": "ciudad" }, "t": "Un pregonero anuncia algo que no llegás a entender." },
+    { "c": { "cat": "ciudad" }, "t": "Una mujer te confunde con otra persona y se disculpa." },
+    { "c": { "cat": "ciudad", "f": "noche" }, "t": "Un borracho te desea buenas noches con mucho cariño." },
+    { "c": { "cat": "ciudad", "f": "manana" }, "t": "Unos chicos juegan a la guerra con palos en una esquina." },
+    { "c": { "cat": "ciudad", "f": "tarde" }, "t": "Un músico toca por monedas. Toca mal, pero con ganas." }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+ "tanda": "t25",
+ "estado": "a_aprobar",
+ "nota": "corto.<intencion> = variantes breves (ritmo corto / ts alta). gesto = respuesta solo de gesto, con símbolos de t15 (prob 0.1 con ts alta).",
+ "corto": {
+  "intencion_hablar_con": [
+   "{npc} te mira. No contesta.",
+   "«No», dice {npc}.",
+   "{npc} asiente apenas.",
+   "{npc} se encoge de hombros y sigue.",
+   "Un silencio. Nada más."
+  ],
+  "intencion_observar": [
+   "Nada se mueve.",
+   "Quieto, mirás. Nada.",
+   "Todo igual.",
+   "Un instante, y se va.",
+   "No hay más que ver."
+  ],
+  "intencion_examinar": [
+   "{objeto}. Nada nuevo.",
+   "Lo mirás. No cambia.",
+   "{objeto} no responde.",
+   "Otra vez lo mismo.",
+   "Sin novedad."
+  ],
+  "intencion_explorar": [
+   "Seguís. Nada.",
+   "Un rincón más.",
+   "Otro paso. Otro más.",
+   "No hay camino nuevo.",
+   "Nada llama tu atención."
+  ],
+  "intencion_ayudar": [
+   "{npc} acepta con un gesto.",
+   "«Gracias», dice {npc}, entre dientes.",
+   "Un cabeceo de {npc}. Alcanza.",
+   "{npc} no dice nada, pero toma tu mano.",
+   "Lo hacés. Se nota."
+  ],
+  "intencion_negociar": [
+   "«No», dice {npc}.",
+   "«Veremos», dice {npc}.",
+   "{npc} guarda silencio. Cuenta.",
+   "Una pausa larga. Después, un cabeceo.",
+   "{npc} deja pasar el momento."
+  ],
+  "intencion_presionar": [
+   "{npc} traga saliva.",
+   "Un silencio duro.",
+   "{npc} desvía la vista.",
+   "«Basta», murmura {npc}.",
+   "Nadie respira."
+  ],
+  "intencion_calmar": [
+   "El aire se afloja.",
+   "{npc} respira hondo.",
+   "Un silencio blando.",
+   "Todo baja un tono.",
+   "Por ahora, calma."
+  ],
+  "intencion_comprar": [
+   "Una moneda. Un asentimiento.",
+   "El vendedor no dice nada. Entrega.",
+   "Trato hecho, sin palabras.",
+   "Pago y retiro.",
+   "Un gesto cierra el asunto."
+  ],
+  "intencion_leer": [
+   "Leés. Pasás página.",
+   "Nada que subrayar.",
+   "El texto no cede.",
+   "Una línea, otra, y nada.",
+   "Cerrás el libro."
+  ],
+  "intencion_huir": [
+   "Corrés.",
+   "Sin mirar atrás.",
+   "Pasos, pasos, más pasos.",
+   "Solo respiración.",
+   "El camino pasa rápido."
+  ],
+  "intencion_ocultarse": [
+   "Silencio. Quietud.",
+   "Sombra y respiración.",
+   "Nadie te ve.",
+   "Contenés el aliento.",
+   "El tiempo se estira."
+  ]
+ },
+ "gesto": [
+  "{npc} no dice nada. Se limita a #gesto.tenso#.",
+  "Por toda respuesta, {npc} #gesto.tenso#.",
+  "{npc} #gesto#, y el silencio hace el resto.",
+  "No hay palabras. {npc} #gesto#.",
+  "{npc} #mirada.tenso# y calla.",
+  "Un silencio. {npc} #gesto.frio#.",
+  "{npc} #gesto.tenso# y se da vuelta.",
+  "La respuesta es un gesto: {npc} #gesto#.",
+  "{npc} #mirada# y no contesta.",
+  "#pausa.tenso#. {npc} #gesto.tenso#.",
+  "Nadie habla. {npc} #gesto.frio#.",
+  "{npc} te escucha. #pausa.tenso#.",
+  "Callás. {npc} calla. #pausa#.",
+  "{npc} #gesto# y vuelve a lo suyo.",
+  "{npc} #mirada.tenso#. No dice nada.",
+  "Por respuesta, un gesto de {npc}: #gesto.tenso#.",
+  "#pausa#. {npc} #gesto#.",
+  "{npc} #gesto.frio# sin decir palabra.",
+  "{npc} no responde. #mirada.tenso#.",
+  "Ni una palabra. {npc} #gesto.tenso#."
+ ]
+}

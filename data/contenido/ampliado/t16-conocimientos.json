@@ -1,0 +1,261 @@
+{
+  "tanda": "t16",
+  "estado": "a_aprobar_canon",
+  "nota": "CANON PROPUESTO: cada conocimiento es información nueva del mundo. Ninguno se activa sin tu aprobación. Se suman a npc.conocimientos del v3 (id nuevo, mismo formato) con revelar[] y pista[] (pista = lo que dice el npc si falta relación). temas = respuestas por tema de consulta cuando no hay conocimiento que coincida.",
+  "conocimientos": {
+    "maren_archivista": [
+      { "id": "conocimiento_maren_2", "contenido": "Qué copista cometió un error en una copia del tratado y por qué no se corrigió", "umbralRelacion": 45, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["error", "copista", "copia", "tratado"],
+        "revelar": ["«Una copia tiene un error. Consta que se dejó así por orden de alguien», dice Maren, y no dice de quién.", "Maren baja los ojos: «Un copista se equivocó y nadie se atrevió a corregirlo. Hay cosas que el Archivo prefiere no admitir.»"],
+        "pista": ["«Los errores se corrigen en privado», dice Maren. «Y a usted aún no lo conozco.»"] },
+      { "id": "conocimiento_maren_3", "contenido": "Quién consultó el depósito norte fuera de horario la semana pasada", "umbralRelacion": 50, "requiereEvento": "evento_alerta_archivo", "requiereMarca": null, "palabrasClave": ["deposito", "norte", "horario", "consulta"],
+        "revelar": ["«Alguien con llave propia entró de noche al depósito norte. Consta en el registro del sereno», dice Maren.", "Maren abre un registro y señala una línea: «Esa noche, el depósito norte se abrió dos veces.»"],
+        "pista": ["«El registro del sereno no se muestra», dice Maren, seca."] },
+      { "id": "conocimiento_maren_4", "contenido": "Por qué el Archivo exige tres copias y dónde se guarda la tercera", "umbralRelacion": 35, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["tres", "copias", "tercera", "guardar"],
+        "revelar": ["«La primera se consulta, la segunda se presta, la tercera se esconde», dice Maren. «Y no diré dónde.»", "Maren casi sonríe: «Tres copias. Si dos se pierden, la tercera lo recuerda todo.»"],
+        "pista": ["«Es una regla del Archivo desde antes de mí», dice Maren, y no agrega nada."] }
+    ],
+    "serel_panadero": [
+      { "id": "conocimiento_serel_2", "contenido": "Qué panadero de Lareth copia sus recetas", "umbralRelacion": 35, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["panadero", "lareth", "receta", "copia"],
+        "revelar": ["«Hay uno en Lareth que vende mi pan de nuez con otro nombre», dice Serel, apretando la masa.", "Serel baja la voz: «Probé su pan. Es el mío, mal hecho.»"],
+        "pista": ["«De eso no hablo con cualquiera», gruñe Serel."] },
+      { "id": "conocimiento_serel_3", "contenido": "Por qué sube el precio del pan cuando llueve en el norte", "umbralRelacion": 30, "requiereEvento": "evento_precio_pan_sube", "requiereMarca": null, "palabrasClave": ["precio", "pan", "lluvia", "norte", "harina"],
+        "revelar": ["«Si llueve en el norte, la harina no llega. Los molinos se atascan», explica Serel.", "Serel cuenta con los dedos: «Lluvia, camino, carreta, precio. Siempre igual.»"],
+        "pista": ["«El pan sube cuando sube, y punto», dice Serel, cansado."] },
+      { "id": "conocimiento_serel_4", "contenido": "Quién entra al mercado antes del alba por la puerta trasera", "umbralRelacion": 45, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["alba", "puerta", "trasera", "madrugada", "mercado"],
+        "revelar": ["«Antes del alba entra alguien por atrás. Yo ya estoy amasando y lo veo», dice Serel.", "Serel mira a los costados: «Siempre el mismo carro, siempre sin farol.»"],
+        "pista": ["«Yo amaso y callo», dice Serel."] }
+    ],
+    "ivor_cambista": [
+      { "id": "conocimiento_ivor_2", "contenido": "Qué mercader pidió un préstamo que no piensa devolver", "umbralRelacion": 55, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["mercader", "prestamo", "devolver", "deuda"],
+        "revelar": ["«Hay un mercader que firmó sabiendo que no pagaría. Lo sé por cómo firmó», dice Ivor.", "Ivor sonríe sin alegría: «Un préstamo sin intención de pago se huele. Este huele fuerte.»"],
+        "pista": ["«Los clientes de Aster son confidenciales», dice Ivor."] },
+      { "id": "conocimiento_ivor_3", "contenido": "Cuánto vale realmente la moneda nueva", "umbralRelacion": 40, "requiereEvento": "evento_moneda_nueva", "requiereMarca": null, "palabrasClave": ["moneda", "nueva", "valor", "cambio"],
+        "revelar": ["«La moneda nueva tiene menos plata de la que dice. Yo la acepto, pero la descuento», dice Ivor.", "Ivor hace sonar una moneda: «Escuchá. Suena a medias. Eso es todo lo que hace falta saber.»"],
+        "pista": ["«El valor de una moneda es lo que alguien paga por ella», dice Ivor, evasivo."] },
+      { "id": "conocimiento_ivor_4", "contenido": "Qué casa menor compite con Aster en Halenor", "umbralRelacion": 45, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["casa", "halenor", "competencia", "aster"],
+        "revelar": ["«En Halenor hay una casa pequeña que presta barato para ganar clientes. No va a durar», dice Ivor.", "Ivor junta los dedos: «Compiten con intereses bajos. Es un error de principiante.»"],
+        "pista": ["«Hablar de la competencia es regalar ventaja», dice Ivor."] }
+    ],
+    "naela_tabernera": [
+      { "id": "conocimiento_naela_2", "contenido": "Qué arriero debe una cuenta larga y por qué nadie se la cobra", "umbralRelacion": 30, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["arriero", "cuenta", "deuda", "taberna"],
+        "revelar": ["«Un arriero debe tres meses. Nadie le cobra porque sabe demasiado de todos», dice Naela.", "Naela se ríe seco: «Le fío porque me conviene que siga hablando.»"],
+        "pista": ["«Si hablo de cuentas ajenas, me quedo sin clientes», dice Naela."] },
+      { "id": "conocimiento_naela_3", "contenido": "Qué guardia bebe de más y qué dijo ayer", "umbralRelacion": 40, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["guardia", "bebe", "dijo", "ayer"],
+        "revelar": ["«Un guardia se pasó de rondas anoche y habló de más. Mencionó una puerta del Archivo», dice Naela.", "Naela seca un vaso: «Cuando beben, hablan. Y yo escucho, aunque no quiera.»"],
+        "pista": ["«Lo que se dice en mi barra, se queda en mi barra», dice Naela."] },
+      { "id": "conocimiento_naela_4", "contenido": "Quién paga siempre con monedas viejas", "umbralRelacion": 35, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["monedas", "viejas", "paga", "antiguas"],
+        "revelar": ["«Un cliente paga con monedas de hace décadas. Alguien las guarda y no sabe cuánto valen», dice Naela.", "Naela te muestra una: «Mirá este sello. Nadie lo usa desde antes de la guerra.»"],
+        "pista": ["«Una moneda es una moneda», dice Naela, y la guarda."] }
+    ],
+    "tiren_docente": [
+      { "id": "conocimiento_tiren_2", "contenido": "Qué río está mal dibujado en todos los mapas oficiales", "umbralRelacion": 35, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["rio", "mapa", "error", "oficial"],
+        "revelar": ["«Hay un río que todos los mapas oficiales dibujan torcido. Alguien copió el error y se heredó», dice Tiren, entusiasmado.", "Tiren traza una línea en el aire: «Va por acá, no por allá. Lo comprobé caminando.»"],
+        "pista": ["«Es una cuestión técnica, ya te la explicaré», dice Tiren, y se pierde en otra cosa."] },
+      { "id": "conocimiento_tiren_3", "contenido": "Quién le pidió copiar un mapa de las colinas sin firmar", "umbralRelacion": 50, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["mapa", "colinas", "copiar", "firma"],
+        "revelar": ["«Me pidieron copiar un mapa de las colinas y no querían firmar el encargo. Pagaron el doble», dice Tiren, incómodo.", "Tiren baja la tiza: «Hice la copia. Ahora me arrepiento un poco.»"],
+        "pista": ["«Un cartógrafo no habla de sus encargos», dice Tiren, nervioso."] },
+      { "id": "conocimiento_tiren_4", "contenido": "Qué alumno dibuja mejor que el docente y por qué no lo dice", "umbralRelacion": 25, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["alumno", "dibuja", "mejor", "talento"],
+        "revelar": ["«Hay un alumno que dibuja mejor que yo. No se lo digo para no asustarlo», confiesa Tiren, riendo.", "Tiren se rasca la cabeza: «Tiene pulso. Yo, entusiasmo. Se complementan.»"],
+        "pista": ["«Todos mis alumnos son buenos», dice Tiren, esquivando."] }
+    ],
+    "elia_bibliotecaria": [
+      { "id": "conocimiento_elia_2", "contenido": "Qué libro lleva años sin ser devuelto", "umbralRelacion": 40, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["libro", "devolver", "prestado", "anos"],
+        "revelar": ["«Un tratado de rutas lleva siete años prestado. Quien lo tiene no responde cartas», susurra Elia.", "Elia abre el registro y señala un renglón sin fecha de regreso."],
+        "pista": ["«Los préstamos son confidenciales», susurra Elia."] },
+      { "id": "conocimiento_elia_3", "contenido": "Quién consulta siempre el mismo atlas a escondidas", "umbralRelacion": 45, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["atlas", "consulta", "escondidas", "lector"],
+        "revelar": ["«Un lector viene cada semana a mirar el mismo atlas y fingir que lee otra cosa», susurra Elia.", "Elia mira la mesa del fondo: «Siempre esa. Siempre la misma página.»"],
+        "pista": ["«No comento los hábitos de los lectores», susurra Elia."] },
+      { "id": "conocimiento_elia_4", "contenido": "Qué estante nuevo no figura en el catálogo", "umbralRelacion": 55, "requiereEvento": null, "requiereMarca": "leyo", "palabrasClave": ["estante", "catalogo", "nuevo", "oculto"],
+        "revelar": ["«Hay un estante que no está en el catálogo. Solo lo conocen quienes saben preguntar», susurra Elia.", "Elia te guía al fondo y baja la voz hasta casi desaparecer."],
+        "pista": ["«Si no está en el catálogo, no existe», susurra Elia, casi sonriendo."] }
+    ],
+    "brenn_arriero": [
+      { "id": "conocimiento_brenn_2", "contenido": "Qué tramo del camino del norte se inunda primero", "umbralRelacion": 25, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["tramo", "inunda", "norte", "agua", "barro"],
+        "revelar": ["«El tercer mojón se inunda primero. Si ves agua ahí, volvé», dice Brenn.", "Brenn señala con el látigo: «Después del puente chico, la zanja se llena en una hora de lluvia.»"],
+        "pista": ["«Eso lo sabe el que anda el camino», dice Brenn, guiñando un ojo."] },
+      { "id": "conocimiento_brenn_3", "contenido": "Quién cobra peaje falso en el camino del sur", "umbralRelacion": 40, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["peaje", "falso", "sur", "cobra"],
+        "revelar": ["«En el sur hay uno que se pone una banda de guardia y cobra a los que no saben», dice Brenn, escupiendo.", "Brenn aprieta el látigo: «Lo vi dos veces. A la tercera, lo corro.»"],
+        "pista": ["«Los peajes se pagan en la aduana y en ningún otro lado», dice Brenn."] },
+      { "id": "conocimiento_brenn_4", "contenido": "Dónde se compran mulas baratas sin preguntas", "umbralRelacion": 45, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["mulas", "baratas", "comprar", "feria"],
+        "revelar": ["«En una granja al este del cruce venden mulas sin papeles. Baratas, pero con historia», dice Brenn.", "Brenn se ríe: «Yo compré una ahí. Es la mejor que tuve, y no la reclama nadie.»"],
+        "pista": ["«Mulas hay en cualquier feria», dice Brenn, vago."] }
+    ],
+    "ysolde_pescadora": [
+      { "id": "conocimiento_ysolde_2", "contenido": "Cuándo es mejor pescar y por qué evita el atardecer", "umbralRelacion": 30, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["pescar", "atardecer", "hora", "mejor"],
+        "revelar": ["«Pesco antes del alba. Al atardecer el lago se calma tanto que los peces se esconden», dice Ysolde.", "Ysolde mira el agua: «Cuando el espejo es perfecto, no hay nada que sacar.»"],
+        "pista": ["«Pesco cuando pesco», dice Ysolde."] },
+      { "id": "conocimiento_ysolde_3", "contenido": "Qué aves llegan antes y qué anuncian", "umbralRelacion": 35, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["aves", "llegan", "migratorias", "anuncian"],
+        "revelar": ["«Primero llegan las garzas. Después las demás. Si las garzas se atrasan, el invierno fue duro», dice Ysolde.", "Ysolde señala el cielo: «Cuando vuelan bajas, hay tormenta. Cuando suben, calma.»"],
+        "pista": ["«Las aves no avisan. Uno aprende a mirarlas», dice Ysolde."] },
+      { "id": "conocimiento_ysolde_4", "contenido": "Quién robó redes en la orilla", "umbralRelacion": 45, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["redes", "robo", "orilla", "ladron"],
+        "revelar": ["«Me llevaron dos redes buenas. Vi huellas de botas con clavos, de las que usan los carreteros», dice Ysolde.", "Ysolde arruga la frente: «No fue un pescador. Fue alguien que necesitaba cuerda, no pescado.»"],
+        "pista": ["«Lo que me falta, me falta», dice Ysolde, cerrada."] }
+    ],
+    "dario_guardia": [
+      { "id": "conocimiento_dario_2", "contenido": "Qué carros pasan sin revisión y quién lo ordena", "umbralRelacion": 55, "requiereEvento": "evento_disputa_aduana", "requiereMarca": null, "palabrasClave": ["carros", "revision", "orden", "libre"],
+        "revelar": ["«Hay carros que pasan sin revisión. La orden viene de arriba y nadie la firma», dice Darío, mirando la caseta.", "Darío baja la voz: «Tres carros por semana. Siempre el mismo cochero.»"],
+        "pista": ["«Mi trabajo es revisar. No preguntar por qué no», dice Darío."] },
+      { "id": "conocimiento_dario_3", "contenido": "A qué hora cambia la guardia de verdad", "umbralRelacion": 50, "requiereEvento": "evento_cambio_guardia_aduana", "requiereMarca": null, "palabrasClave": ["guardia", "cambio", "hora", "relevo"],
+        "revelar": ["«El cambio oficial es a la hora cuarta. El real, siempre media hora tarde», dice Darío, bajo.", "Darío chasquea la lengua: «Treinta minutos en que nadie vigila bien. Yo no te lo dije.»"],
+        "pista": ["«Los horarios de guardia no se comparten», dice Darío."] },
+      { "id": "conocimiento_dario_4", "contenido": "Qué documento falsificado circula más", "umbralRelacion": 45, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["documento", "falso", "salvoconducto", "sello"],
+        "revelar": ["«Los salvoconductos falsos son los más comunes. El sello se nota en la esquina inferior», dice Darío.", "Darío te muestra un papel: «Si el sello está torcido, es falso. Siempre lo tuercen igual.»"],
+        "pista": ["«Un papel es un papel», dice Darío."] }
+    ],
+    "sarin_mensajera": [
+      { "id": "conocimiento_sarin_2", "contenido": "Qué casa no recibe cartas desde hace meses", "umbralRelacion": 30, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["casa", "cartas", "meses", "silencio"],
+        "revelar": ["«Una casa de Halenor no recibe cartas desde hace meses. Antes recibía una por semana», dice Sarin, rápido.", "Sarin se muerde el labio: «Algo pasó. No sé qué. Pero algo.»"],
+        "pista": ["«No hablo de a quién le llevo cosas», dice Sarin, y sigue caminando."] },
+      { "id": "conocimiento_sarin_3", "contenido": "Qué sello es falso y cómo lo reconoce", "umbralRelacion": 40, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["sello", "falso", "reconocer", "carta"],
+        "revelar": ["«El sello falso tiene la cera demasiado lisa. El verdadero siempre tiene una burbuja», dice Sarin.", "Sarin te muestra una carta: «Mirá esta. Burbuja arriba. Es auténtica.»"],
+        "pista": ["«Cada sello tiene su secreto», dice Sarin, apurada."] },
+      { "id": "conocimiento_sarin_4", "contenido": "Quién paga por saber de quién son las cartas", "umbralRelacion": 50, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["paga", "cartas", "informacion", "remitente"],
+        "revelar": ["«Alguien me ofreció plata por decirle el remitente de ciertas cartas. Dije que no. Dos veces», dice Sarin, nerviosa.", "Sarin mira a los costados: «Desde entonces, siento que me siguen.»"],
+        "pista": ["«No quiero hablar de eso», dice Sarin, y acelera."] }
+    ],
+    "hollis_pastor": [
+      { "id": "conocimiento_hollis_2", "contenido": "Qué ovejas se pierden siempre y adónde van", "umbralRelacion": 25, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["ovejas", "perdidas", "adonde", "rebaño"],
+        "revelar": ["«Las manchadas se pierden siempre hacia el este. Hay un pasto dulce que las llama», dice Hollis.", "Hollis ríe bajito: «Las encuentro después. Siempre en el mismo lugar.»"],
+        "pista": ["«Las ovejas van adonde van», dice Hollis."] },
+      { "id": "conocimiento_hollis_3", "contenido": "Qué cambio de tiempo se viene según el cielo", "umbralRelacion": 20, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["tiempo", "cielo", "lluvia", "cambio", "clima"],
+        "revelar": ["«Esas nubes altas y finas dicen que en dos días llueve. Yo juntaría el rebaño», dice Hollis.", "Hollis huele el aire: «Viento del sur con olor a tierra. Tormenta antes de la noche.»"],
+        "pista": ["«El cielo habla, pero hay que saber escuchar», dice Hollis."] },
+      { "id": "conocimiento_hollis_4", "contenido": "Dónde acampan los que evitan la aduana", "umbralRelacion": 45, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["acampan", "evitan", "aduana", "escondite"],
+        "revelar": ["«Detrás de la pirca grande, en el pliegue de la colina, acampa gente que no quiere pasar por la aduana», dice Hollis.", "Hollis se encoge de hombros: «Los dejo en paz. Ellos me dejan en paz. Es un trato viejo.»"],
+        "pista": ["«Cada uno con su camino», dice Hollis, vago."] }
+    ],
+    "oren_peregrino": [
+      { "id": "conocimiento_oren_2", "contenido": "Qué hizo el firmante más joven bajo el Roble", "umbralRelacion": 35, "requiereEvento": null, "requiereMarca": "leyo", "palabrasClave": ["firmante", "joven", "roble", "firma"],
+        "revelar": ["«El más joven de los firmantes tembló al firmar. Lo anotó un cronista, y esa nota casi se pierde», dice Oren.", "Oren sonríe: «Dicen que firmó con la izquierda. Nadie sabe por qué.»"],
+        "pista": ["«Esa historia se cuenta en el Roble, no en el camino», dice Oren."] },
+      { "id": "conocimiento_oren_3", "contenido": "Cuántos peregrinos pasan al año y por qué cada vez son menos", "umbralRelacion": 25, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["peregrinos", "ano", "menos", "camino"],
+        "revelar": ["«Cada año pasan menos peregrinos. Los caminos son inseguros y la fe es cara», dice Oren, sereno.", "Oren cuenta con los dedos: «Antes eran cientos. Ahora, decenas.»"],
+        "pista": ["«Los números no cuentan al peregrino», dice Oren."] },
+      { "id": "conocimiento_oren_4", "contenido": "Qué sendero usan los peregrinos para evitar el cruce", "umbralRelacion": 40, "requiereEvento": null, "requiereMarca": null, "palabrasClave": ["sendero", "peregrinos", "evitar", "cruce"],
+        "revelar": ["«Hay un sendero por detrás de la colina grande. Los peregrinos lo usan cuando hay bandas en el cruce», dice Oren.", "Oren dibuja con el dedo en el aire: «Se sube por la pirca vieja y se baja por el arroyo.»"],
+        "pista": ["«El Roble guía a quien lo merece», dice Oren."] }
+    ]
+  },
+  "temas": {
+    "maren_archivista": {
+      "dinero": "«El Archivo no maneja dinero. Maneja constancias», dice Maren.",
+      "guerra": "«Consta que la Guerra de las Dos Coronas dejó cuarenta volúmenes de tratados. No todos se salvaron», dice Maren.",
+      "camino": "«Los mapas de caminos están en la sección sur. Pregunte a Tiren, que los copia mal», dice Maren, seca.",
+      "tiempo": "«El clima no es asunto del Archivo, salvo cuando moja los papeles», dice Maren.",
+      "gente": "«Conozco a la gente por lo que consulta. Es lo más sincero que hacen», dice Maren.",
+      "trabajo": "«Copiar es un oficio de paciencia. Y de poco reconocimiento», dice Maren.",
+      "ciudad": "«Ardenhall es una ciudad de papeles. Hasta los cimientos están registrados», dice Maren.",
+      "rumor": "«El Archivo no repite rumores. Los verifica y los archiva si resisten», dice Maren."
+    },
+    "serel_panadero": {
+      "dinero": "«El pan da lo justo. Si no subo el precio, pierdo; si lo subo, me odian», dice Serel.",
+      "guerra": "«De guerras sé poco. En guerra también hace falta pan, eso sí», dice Serel.",
+      "camino": "«Mi harina viene por el norte. Si el camino falla, yo fallo», dice Serel.",
+      "tiempo": "«Con lluvia, la masa sube mal. Con calor, se pasa. Nunca está bien», dice Serel.",
+      "gente": "«La gente compra pan todos los días. Una cara que falta, se nota», dice Serel.",
+      "trabajo": "«Me levanto antes del alba. Vos descansás cuando yo trabajo», dice Serel, guiñando.",
+      "ciudad": "«Ardenhall come bien cuando el mercado anda. Y anda, casi siempre», dice Serel.",
+      "rumor": "«En el horno escucho de todo. Pero hablo poco», dice Serel."
+    },
+    "ivor_cambista": {
+      "dinero": "«Todo tiene precio. Lo difícil es saber cuál», dice Ivor.",
+      "guerra": "«Las guerras son malos negocios, salvo para quien presta», dice Ivor, con frialdad.",
+      "camino": "«Un camino seguro es un camino barato. Uno inseguro, un camino caro», dice Ivor.",
+      "tiempo": "«El clima afecta el comercio, y el comercio afecta mis tasas», dice Ivor.",
+      "gente": "«La gente se divide entre los que deben y los que cobran. Raramente al revés», dice Ivor.",
+      "trabajo": "«Mi trabajo es confiar sin creer. Es agotador», dice Ivor.",
+      "ciudad": "«Lareth es el único lugar donde el dinero se siente cómodo», dice Ivor.",
+      "rumor": "«Un rumor mueve más monedas que una orden. Por eso los compro», dice Ivor."
+    },
+    "naela_tabernera": {
+      "dinero": "«Cobro por adelantado. Aprendí a golpes», dice Naela.",
+      "guerra": "«Acá vienen veteranos. Hablan de guerra solo cuando están muy borrachos», dice Naela.",
+      "camino": "«Los arrieros me cuentan cómo están los caminos. Mejor que cualquier mapa», dice Naela.",
+      "tiempo": "«Con lluvia, vendo el doble. Y limpio el triple», dice Naela.",
+      "gente": "«En la taberna, la gente se muestra como es. Se nota rápido», dice Naela.",
+      "trabajo": "«Trabajo de noche, duermo de día. Mi vida es lo contrario de la tuya», dice Naela.",
+      "ciudad": "«Lareth es ruidosa. Yo la quiero así», dice Naela.",
+      "rumor": "«Rumores, tengo. Pero se pagan con una ronda», dice Naela."
+    },
+    "tiren_docente": {
+      "dinero": "«Un cartógrafo gana poco, pero un mapa bien hecho vale más que oro», dice Tiren.",
+      "guerra": "«Las guerras cambian fronteras. Para mí, son un fastidio: hay que redibujar todo», dice Tiren.",
+      "camino": "«Los caminos son lo más interesante que existe. ¡Mirá este!», dice Tiren, y saca un mapa.",
+      "tiempo": "«El clima cambia el terreno. Un mapa es una foto de un instante», dice Tiren.",
+      "gente": "«Mis alumnos aprenden mejor viajando que sentados. Pero cuesta convencerlos», dice Tiren.",
+      "trabajo": "«Enseñar es repetir hasta que alguien entienda. Y a veces, ese alguien soy yo», dice Tiren.",
+      "ciudad": "«Halenor es la ciudad del saber. Pero el saber también tiene sus rencillas», dice Tiren.",
+      "rumor": "«Los rumores académicos son feroces. Casi siempre sobre quién copió a quién», dice Tiren."
+    },
+    "elia_bibliotecaria": {
+      "dinero": "«La biblioteca es pública, pero mantenerla cuesta. Se nota en los techos», susurra Elia.",
+      "guerra": "«Las guerras queman bibliotecas. Por eso las protegemos con tanto celo», susurra Elia.",
+      "camino": "«Los libros de caminos son los más consultados y los menos devueltos», susurra Elia.",
+      "tiempo": "«La humedad es el enemigo. Por eso abrimos las ventanas en cuanto sale el sol», susurra Elia.",
+      "gente": "«Conozco a mis lectores por lo que piden. A veces, son más honestos que sus amigos», susurra Elia.",
+      "trabajo": "«Mi trabajo es que nada se pierda. Y que nadie haga ruido», susurra Elia.",
+      "ciudad": "«Halenor respira por los libros. Y yo los guardo», susurra Elia.",
+      "rumor": "«Los rumores no entran a la biblioteca. Los dejo en la puerta», susurra Elia."
+    },
+    "brenn_arriero": {
+      "dinero": "«Cobro por jornada y por carga. Y por no hacer preguntas», dice Brenn.",
+      "guerra": "«En guerra, el que sabe caminos vale oro. Yo los conozco todos», dice Brenn.",
+      "camino": "«El camino es mi casa. Lo conozco mejor que a mi familia», dice Brenn, riendo.",
+      "tiempo": "«Lluvia, barro, carga atascada. El clima me cuesta más que la gente», dice Brenn.",
+      "gente": "«En el camino todos se muestran. El que comparte agua, es bueno», dice Brenn.",
+      "trabajo": "«Arrear es paciencia. Las mulas son más listas que la mayoría de la gente», dice Brenn.",
+      "ciudad": "«Las ciudades están bien para descansar. Pero yo vivo afuera», dice Brenn.",
+      "rumor": "«En el camino se oye de todo. Mitad verdad, mitad cuento», dice Brenn."
+    },
+    "ysolde_pescadora": {
+      "dinero": "«Vendo lo que pesco. Lo demás, el lago me lo da», dice Ysolde.",
+      "guerra": "«Acá no llegó. Si llega, el lago no cambia», dice Ysolde.",
+      "camino": "«No camino mucho. Mi camino es el agua», dice Ysolde.",
+      "tiempo": "«El tiempo se lee en el agua. Siempre avisa», dice Ysolde.",
+      "gente": "«La gente viene al lago a callarse. Me gusta cuando lo logran», dice Ysolde.",
+      "trabajo": "«Pescar es esperar. Esperar es lo único que sé hacer», dice Ysolde.",
+      "ciudad": "«Las ciudades son ruido. Yo prefiero el espejo», dice Ysolde.",
+      "rumor": "«Los rumores llegan al lago tarde y gastados», dice Ysolde."
+    },
+    "dario_guardia": {
+      "dinero": "«Mi sueldo es chico y los sobornos son grandes. Esa es mi tentación diaria», dice Darío.",
+      "guerra": "«En guerra, la aduana es lo primero que se cierra. Y lo último en pagar», dice Darío.",
+      "camino": "«Todo camino pasa por mi puente o intenta no pasar. Los segundos son los que me preocupan», dice Darío.",
+      "tiempo": "«Con lluvia, el puente es peligroso. Con sol, aburrido. Nunca es bueno», dice Darío.",
+      "gente": "«La gente miente en la aduana por costumbre. Ya no me ofende», dice Darío.",
+      "trabajo": "«Revisar, sellar, anotar, repetir. Un día sin sorpresas es un día bueno», dice Darío.",
+      "ciudad": "«Yo no vivo en ninguna ciudad. Vivo en el puente», dice Darío.",
+      "rumor": "«En la aduana se oyen cosas. Algunas, mejor no saberlas», dice Darío."
+    },
+    "sarin_mensajera": {
+      "dinero": "«Me pagan por entrega, no por tiempo. Corro más para ganar más», dice Sarin.",
+      "guerra": "«En guerra, los mensajeros son blanco. Yo prefiero la paz», dice Sarin.",
+      "camino": "«Conozco cada atajo de los tres caminos. Pero no los cuento», dice Sarin, rápida.",
+      "tiempo": "«Con lluvia, las cartas se mojan y yo me enojo. No sé qué es peor», dice Sarin.",
+      "gente": "«Conozco a la gente por lo que recibe. Es una forma de conocer, no la mejor», dice Sarin.",
+      "trabajo": "«Caminar, entregar, caminar. No pido otra cosa», dice Sarin.",
+      "ciudad": "«Las ciudades son paradas. Mi casa es el camino», dice Sarin.",
+      "rumor": "«Los rumores viajan conmigo, pero no los abro. Nunca», dice Sarin."
+    },
+    "hollis_pastor": {
+      "dinero": "«Con las ovejas se vive. Con la lana se vive mejor», dice Hollis.",
+      "guerra": "«A las ovejas no les importa la guerra. A mí, un poco más», dice Hollis.",
+      "camino": "«Mis ovejas abren sus propios caminos. Yo las sigo», dice Hollis.",
+      "tiempo": "«Siempre sé el tiempo del mañana. Es mi mejor oficio», dice Hollis.",
+      "gente": "«La gente pasa y me saluda. Casi nadie se queda», dice Hollis.",
+      "trabajo": "«Pastorear es mirar. Mirar es lo que mejor hago», dice Hollis.",
+      "ciudad": "«Voy a la ciudad dos veces al año. Siempre me dura demasiado», dice Hollis.",
+      "rumor": "«Los rumores llegan con los vientos. Yo los dejo pasar», dice Hollis."
+    },
+    "oren_peregrino": {
+      "dinero": "«El peregrino no lleva más que lo justo. El resto estorba», dice Oren.",
+      "guerra": "«El Roble vio firmar la paz. También vio romperse», dice Oren.",
+      "camino": "«Cada camino enseña algo. El más largo, lo más importante», dice Oren.",
+      "tiempo": "«El tiempo es el mejor maestro. Y el más lento», dice Oren.",
+      "gente": "«Quien camina sin prisa ve a la gente de verdad», dice Oren.",
+      "trabajo": "«Mi trabajo es caminar y recordar», dice Oren, con calma.",
+      "ciudad": "«Las ciudades están hechas para quedarse. Yo, para pasar», dice Oren.",
+      "rumor": "«Los rumores cambian de forma al caminar. Son como las aguas», dice Oren."
+    }
+  }
+}

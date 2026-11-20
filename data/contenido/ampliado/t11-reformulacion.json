@@ -1,0 +1,27 @@
+{
+  "tanda": "t11",
+  "estado": "a_aprobar",
+  "nota": "Se suman a plantillas.reformulacion del v3. Claves nuevas (verbo_desconocido, nombre_desconocido, objeto_desconocido, destino_invalido, cerrado) requieren soporte en comprension.js.",
+  "plantillas": {
+    "reformulacion": {
+      "no_entendido": ["No te sigo. ¿Qué querés hacer?", "Eso no me quedó claro. Probá con otras palabras.", "¿Podés decirlo más simple?", "No sé bien qué querés. ¿Hablar, mirar, ir a algún lado?"],
+      "intencion_ambigua": ["Puede ser más de una cosa. ¿Cuál querés?", "No sé si querés hacer una cosa u otra. Decime una.", "Elegí una sola acción y la hacemos."],
+      "sin_npcs": ["No hay nadie a la vista.", "Estás solo acá.", "No ves a nadie con quien hacer eso."],
+      "falta_npc": ["¿A quién?", "¿Con quién, exactamente?"],
+      "npc_ambiguo": ["Hay más de uno. ¿Cuál: {nombres}?"],
+      "npc_ausente": ["No está por acá.", "No lo ves en este lugar.", "Esa persona no está acá ahora."],
+      "sin_objetos": ["No tenés con qué.", "No hay nada a mano para eso."],
+      "falta_objeto": ["¿Con qué?", "¿Qué objeto?"],
+      "objeto_ambiguo": ["Tenés varios. ¿Cuál: {nombres}?"],
+      "falta_destino": ["¿Hacia dónde?", "¿A qué lugar?"],
+      "destino_ambiguo": ["Hay más de un lugar así. ¿Cuál: {nombres}?"],
+      "repetir_segunda": ["Hice lo primero. ¿Qué era lo otro?", "Una cosa por vez. ¿Qué seguía?"],
+      "ya_en_destino": ["Ya estás en {lugar}.", "No hace falta ir: estás en {lugar}."],
+      "verbo_desconocido": ["No sé cómo hacer eso acá. ¿Querés hablar, mirar, usar algo o ir a otro lado?", "Eso no se puede hacer así. Probá con otra acción.", "No entiendo qué acción es esa."],
+      "nombre_desconocido": ["No conozco a nadie con ese nombre.", "Ese nombre no te suena de ningún lado.", "No sabés quién es."],
+      "objeto_desconocido": ["No tenés nada parecido a eso.", "Eso no está ni acá ni en tu bolsa.", "No encontrás eso."],
+      "destino_invalido": ["Ese lugar no está en tus caminos.", "No sabés llegar ahí. ¿Querés ir a otro lado?", "No conocés ese lugar."],
+      "cerrado": ["{lugar} está cerrado a esta hora.", "Ahora no se puede entrar a {lugar}. Volvé más tarde."]
+    }
+  }
+}

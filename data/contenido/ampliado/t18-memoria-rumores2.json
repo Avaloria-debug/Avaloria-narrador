@@ -1,0 +1,395 @@
+{
+ "tanda": "t18",
+ "estado": "a_aprobar",
+ "nota": "memoria2.<npc>.<verbo> = [reciente, lejano] extra; se suma a t06. rumores2 y reaccion_npc2 suman a t07.",
+ "memoria": {
+  "maren_archivista": {
+   "presionar": [
+    "«Anotado: la presión de ayer. Que no conste dos veces», dice Maren.",
+    "Maren aún conserva la nota de cuando la presionaste."
+   ],
+   "atacar": [
+    "Maren evita acercarse a menos de una mesa de vos.",
+    "«Hay un registro con su nombre y una mala fecha», dice Maren."
+   ],
+   "ayudar": [
+    "«Gracias por lo de ayer. Consta», dice Maren, con un asentimiento.",
+    "Maren te guarda un lugar en la mesa por aquella ayuda."
+   ],
+   "negociar": [
+    "«Si es otro trato, hágalo por escrito», dice Maren.",
+    "«Recuerdo nuestro acuerdo. Lo copié dos veces», dice Maren."
+   ],
+   "emboscar": [
+    "Maren cierra con llave el depósito apenas te ve.",
+    "«Aquella emboscada también figura en los registros», dice Maren, fría."
+   ],
+   "defender": [
+    "«Su defensa fue oportuna. Lo asenté», dice Maren.",
+    "Maren sonríe apenas: «Usted defendió el Archivo. No se olvida.»"
+   ]
+  },
+  "serel_panadero": {
+   "presionar": [
+    "Serel aprieta la masa con rabia al verte.",
+    "«Todavía me debés una disculpa por aquello», gruñe Serel."
+   ],
+   "atacar": [
+    "Serel esconde el rodillo tras la espalda cuando te acercás.",
+    "«No me olvido de la pelea», dice Serel, bajo."
+   ],
+   "ayudar": [
+    "Serel te pone un pan extra sin preguntar. Lo de ayer cuenta.",
+    "«Aquella vez me diste una mano. Aquí tenés pan», dice Serel."
+   ],
+   "negociar": [
+    "«Si es regateo, el precio no baja», dice Serel.",
+    "«Nuestro trato fue justo. Lo repetiría», dice Serel."
+   ],
+   "emboscar": [
+    "Serel te mira como a alguien que le debe una hornada.",
+    "«Me asustaste en el callejón. No lo olvido», dice Serel."
+   ],
+   "defender": [
+    "«Me defendiste ayer. Eso vale un pan entero», dice Serel.",
+    "Serel recuerda tu defensa: «Siempre con el pan caliente, para vos.»"
+   ]
+  },
+  "ivor_cambista": {
+   "presionar": [
+    "Ivor sube la tasa un punto al verte. Lo tiene presente.",
+    "«Lo de la presión no figura como cortesía», dice Ivor."
+   ],
+   "atacar": [
+    "Ivor llama a un guardia con un gesto apenas visible.",
+    "«Mi memoria para las deudas es perfecta. Para las agresiones, también», dice Ivor."
+   ],
+   "ayudar": [
+    "«Una ayuda reciente reduce la tasa. Medio punto», dice Ivor.",
+    "Ivor recuerda el favor y te aplica una tasa generosa."
+   ],
+   "negociar": [
+    "«Si es un nuevo trato, empecemos por el anterior», dice Ivor.",
+    "«Aquel acuerdo salió bien para ambos. Raro», dice Ivor."
+   ],
+   "emboscar": [
+    "Ivor revisa dos veces cada moneda que le das.",
+    "«No se olvida una emboscada. Se la pone a precio», dice Ivor."
+   ],
+   "defender": [
+    "«Me defendió ante un cliente. Se lo descuento», dice Ivor.",
+    "Ivor te guarda un descuento por una defensa antigua."
+   ]
+  },
+  "naela_tabernera": {
+   "presionar": [
+    "Naela te sirve sin mirarte. Aún está enojada.",
+    "«Aquella presión te sale cara en mi barra», dice Naela."
+   ],
+   "atacar": [
+    "Naela deja el garrote visible sobre la barra.",
+    "«No olvido las peleas. Rompiste dos sillas», dice Naela."
+   ],
+   "ayudar": [
+    "«Ayer me ayudaste. Hoy invita la casa», dice Naela.",
+    "Naela recuerda tu ayuda: «Siempre tenés un lugar en mi barra.»"
+   ],
+   "negociar": [
+    "«Nada de trucos como el otro día», dice Naela, con sonrisa.",
+    "«Nuestro trato fue bueno. Repetimos», dice Naela."
+   ],
+   "emboscar": [
+    "Naela vigila la puerta mientras te atiende.",
+    "«La emboscada de aquella noche no se perdona», dice Naela."
+   ],
+   "defender": [
+    "«Me defendiste hace poco. Sentate», dice Naela.",
+    "Naela asiente al verte. Recuerda quién la defendió."
+   ]
+  },
+  "tiren_docente": {
+   "presionar": [
+    "Tiren evita mirarte. Se siente incómodo.",
+    "«Aquel momento tenso me hizo perder el hilo de la clase», dice Tiren."
+   ],
+   "atacar": [
+    "Tiren se oculta detrás de un mapa grande.",
+    "«No quiero otra pelea en mi aula», dice Tiren, muy serio."
+   ],
+   "ayudar": [
+    "«¡Gracias por lo de ayer! ¡Mis alumnos no hablan de otra cosa!», dice Tiren.",
+    "Tiren dibuja un pequeño mapa de agradecimiento para vos."
+   ],
+   "negociar": [
+    "«¡Otro trato! Ojalá sea tan bueno como el anterior», dice Tiren.",
+    "Tiren sonríe: «Nuestro acuerdo todavía sigue en pie.»"
+   ],
+   "emboscar": [
+    "Tiren revisa que no haya nadie detrás de las estanterías.",
+    "«Aquella emboscada me quitó el sueño», dice Tiren."
+   ],
+   "defender": [
+    "«Me defendiste. No lo olvido», dice Tiren, algo emocionado.",
+    "Tiren te ofrece su mejor silla. Recuerda tu defensa."
+   ]
+  },
+  "elia_bibliotecaria": {
+   "presionar": [
+    "Elia susurra con frialdad: «Hay lectores que presionan. Usted lo hizo.»",
+    "«No olvido cómo trató a mis lectores», susurra Elia."
+   ],
+   "atacar": [
+    "Elia llama discretamente al guardia de la entrada.",
+    "«La biblioteca recuerda la violencia», susurra Elia."
+   ],
+   "ayudar": [
+    "«Gracias por ayudarme ayer», susurra Elia.",
+    "Elia te guarda un libro en reserva. Recuerda tu ayuda."
+   ],
+   "negociar": [
+    "«Si es trato de préstamos, hablemos con calma», susurra Elia.",
+    "«Nuestro acuerdo sobre aquel libro fue limpio», susurra Elia."
+   ],
+   "emboscar": [
+    "Elia se coloca detrás del mostrador al verte.",
+    "«Una emboscada en la biblioteca. Imperdonable», susurra Elia."
+   ],
+   "defender": [
+    "«Defendiste la biblioteca. Gracias», susurra Elia.",
+    "Elia te sonríe: «Hay quienes defienden libros. Raros. Valiosos.»"
+   ]
+  },
+  "brenn_arriero": {
+   "presionar": [
+    "Brenn aprieta el látigo. Todavía está enojado.",
+    "«Me apretaste una vez. En el camino se sabe», dice Brenn."
+   ],
+   "atacar": [
+    "Brenn se mantiene a distancia de vos.",
+    "«Tengo una mula que todavía te recuerda», dice Brenn, serio."
+   ],
+   "ayudar": [
+    "«Ayer me salvaste de una buena. Te invito a un trago», dice Brenn.",
+    "Brenn te saluda con calidez: recuerda tu ayuda."
+   ],
+   "negociar": [
+    "«Trato es trato, pero ya me engañaste una vez», dice Brenn.",
+    "«Nuestro trato fue justo. Lo repetimos», dice Brenn."
+   ],
+   "emboscar": [
+    "Brenn mira los costados del camino con desconfianza.",
+    "«Una emboscada es lo peor que le pasa a un arriero», dice Brenn."
+   ],
+   "defender": [
+    "«Me defendiste ayer. No lo olvido», dice Brenn.",
+    "Brenn palmea tu hombro: «Los que defienden, tienen mi respeto.»"
+   ]
+  },
+  "ysolde_pescadora": {
+   "presionar": [
+    "Ysolde no responde. Se limita a mirar el agua.",
+    "«El lago recuerda lo que hacés», dice Ysolde, sin mirarte."
+   ],
+   "atacar": [
+    "Ysolde recoge su red y se aleja unos pasos.",
+    "«No sos bienvenido en mi orilla», dice Ysolde."
+   ],
+   "ayudar": [
+    "Ysolde te hace un lugar junto a ella sin decir nada.",
+    "«Aquella ayuda no se me olvida», dice Ysolde, y comparte su pescado."
+   ],
+   "negociar": [
+    "«Los tratos son como las redes: se tensan o se rompen», dice Ysolde.",
+    "«Nuestro trato fue como una buena pesca. Escaso, pero limpio», dice Ysolde."
+   ],
+   "emboscar": [
+    "Ysolde vigila las sombras del bote.",
+    "«Una emboscada en el lago. No se olvida», dice Ysolde."
+   ],
+   "defender": [
+    "«Me defendiste cuando nadie lo hizo», dice Ysolde, suave.",
+    "Ysolde te ofrece lo mejor del día. Recuerda tu defensa."
+   ]
+  },
+  "dario_guardia": {
+   "presionar": [
+    "Darío revisa tu documentación dos veces, despacio.",
+    "«Lo de la presión consta en mi libreta», dice Darío."
+   ],
+   "atacar": [
+    "Darío apoya la mano en la empuñadura apenas te ve.",
+    "«Un ataque a un guardia no se olvida», dice Darío, seco."
+   ],
+   "ayudar": [
+    "«Gracias por la ayuda de ayer. Pase», dice Darío, asintiendo.",
+    "Darío te deja pasar sin revisión. Recuerda tu ayuda."
+   ],
+   "negociar": [
+    "«Si es un trato, que sea dentro de la ley», dice Darío.",
+    "«Nuestro acuerdo cumplió lo pactado. Raro», dice Darío."
+   ],
+   "emboscar": [
+    "Darío cierra la barrera antes de que llegues.",
+    "«Una emboscada en mi puesto. Imperdonable», dice Darío."
+   ],
+   "defender": [
+    "«Defendió la aduana ayer. Lo anoté», dice Darío.",
+    "Darío saluda con un golpe de puño al pecho. Recuerda tu defensa."
+   ]
+  },
+  "sarin_mensajera": {
+   "presionar": [
+    "Sarin acelera el paso al verte.",
+    "«No me gustó cómo me apretaste», dice Sarin, sin parar."
+   ],
+   "atacar": [
+    "Sarin cambia de acera para evitarte.",
+    "«Aquel golpe todavía me duele», dice Sarin, a distancia."
+   ],
+   "ayudar": [
+    "«Gracias por ayer. Si necesitás algo, avisame», dice Sarin.",
+    "Sarin se detiene un segundo para saludarte. Recuerda tu ayuda."
+   ],
+   "negociar": [
+    "«Si es trato, rápido. Tengo entregas», dice Sarin.",
+    "«Nuestro trato fue limpio. Lo tengo presente», dice Sarin."
+   ],
+   "emboscar": [
+    "Sarin mira atrás una y otra vez mientras habla.",
+    "«Una emboscada marca. Todavía me pesa», dice Sarin."
+   ],
+   "defender": [
+    "«Me defendiste. No pensé que alguien lo haría», dice Sarin.",
+    "Sarin te regala un atajo. Recuerda tu defensa."
+   ]
+  },
+  "hollis_pastor": {
+   "presionar": [
+    "Hollis mantiene el rebaño lejos de vos.",
+    "«Las ovejas recuerdan tu presión. Y yo también», dice Hollis."
+   ],
+   "atacar": [
+    "Hollis sujeta el cayado con más fuerza.",
+    "«Aún tiemblan las ovejas por aquella pelea», dice Hollis."
+   ],
+   "ayudar": [
+    "«Tu ayuda de ayer salvó una oveja», dice Hollis, agradecido.",
+    "Hollis te ofrece un trago de leche. Recuerda tu ayuda."
+   ],
+   "negociar": [
+    "«Los tratos con pastores son lentos pero buenos», dice Hollis.",
+    "«Nuestro trato sigue en pie. Las ovejas cumplieron», dice Hollis."
+   ],
+   "emboscar": [
+    "Hollis silba y el perro se coloca entre vos y el rebaño.",
+    "«Una emboscada en las colinas asusta a cualquiera», dice Hollis."
+   ],
+   "defender": [
+    "«Me defendiste ayer. Siempre tendrás pasto», dice Hollis.",
+    "Hollis te sonríe con calidez. Recuerda tu defensa."
+   ]
+  },
+  "oren_peregrino": {
+   "presionar": [
+    "Oren camina sin mirarte, pero no se aleja.",
+    "«Lo que se hace con presión vuelve en otra forma», dice Oren."
+   ],
+   "atacar": [
+    "Oren baja la mirada y murmura una oración breve.",
+    "«La violencia deja un surco en el camino», dice Oren."
+   ],
+   "ayudar": [
+    "«Tu ayuda es el mejor equipaje», dice Oren, con calma.",
+    "Oren inclina la cabeza en gratitud. Recuerda tu ayuda."
+   ],
+   "negociar": [
+    "«Si es un trato, que sea justo para ambos», dice Oren.",
+    "«Nuestro acuerdo fue honesto. El Roble lo vio», dice Oren."
+   ],
+   "emboscar": [
+    "Oren aprieta su bastón al verte.",
+    "«Una emboscada rompe más que huesos», dice Oren."
+   ],
+   "defender": [
+    "«Me defendiste. Que el camino te sea leve», dice Oren.",
+    "Oren posa la mano en tu hombro. Recuerda tu defensa."
+   ]
+  }
+ },
+ "rumores": {
+  "presionar": {
+   "fuerte": [
+    "Se habla en {lugar} de cómo {npc} terminó cediendo. Y de quién lo empujó.",
+    "A {npc} le tiembla la voz desde lo de {lugar}. La gente ata cabos."
+   ],
+   "difuso": [
+    "Algo le pasó a {npc} y no quiere hablar.",
+    "Se murmura que a {npc} lo hicieron ceder. No se sabe cómo."
+   ]
+  },
+  "atacar": {
+   "fuerte": [
+    "Hay sangre seca en {lugar}. Todos saben de quién.",
+    "A {npc} lo vieron salir de {lugar} con la cara marcada."
+   ],
+   "difuso": [
+    "Dicen que hubo golpes. Los testigos no coinciden.",
+    "Corre la voz de una pelea. Nadie recuerda dónde."
+   ]
+  },
+  "ayudar": {
+   "fuerte": [
+    "Se cuenta que en {lugar} alguien salvó el día de {npc}.",
+    "{npc} habla bien de un viajero que lo ayudó en {lugar}."
+   ],
+   "difuso": [
+    "Dicen que anda por ahí alguien que ayuda sin cobrar.",
+    "Se murmura de un buen samaritano. Nadie lo vio."
+   ]
+  },
+  "negociar": {
+   "fuerte": [
+    "Se supo que {npc} cerró un trato en {lugar}. Los términos, no.",
+    "En {lugar} dicen que {npc} salió ganando. O perdiendo, según quién cuente."
+   ],
+   "difuso": [
+    "Hubo un acuerdo. Parece que alguien lo cerró bien.",
+    "Se habla de un trato discreto. Sin nombres."
+   ]
+  },
+  "emboscar": {
+   "fuerte": [
+    "Una emboscada en {lugar}. {npc} apenas escapó.",
+    "En {lugar} montaron una trampa para {npc}. Y funcionó."
+   ],
+   "difuso": [
+    "Se cuenta de una trampa en el camino. Sin detalles.",
+    "Dicen que alguien cayó en una emboscada. Quizás {npc}."
+   ]
+  },
+  "defender": {
+   "fuerte": [
+    "Dicen que alguien defendió a {npc} en {lugar} a pura espada.",
+    "En {lugar} se habla del que paró el golpe por {npc}."
+   ],
+   "difuso": [
+    "Se habla de un defensor anónimo.",
+    "Alguien se interpuso entre dos bandos. Eso dicen."
+   ]
+  }
+ },
+ "reaccion_npc": {
+  "buena": [
+   "{npc} te advierte, con tacto, de lo que corre sobre vos.",
+   "{npc} te cuenta lo que se dice, y añade que no le cree a todo."
+  ],
+  "neutra": [
+   "{npc} te mira con la expresión de quien sabe un poco más de lo que dice.",
+   "{npc} deja caer un comentario sobre lo que se murmura."
+  ],
+  "mala": [
+   "{npc} te mira con lo que oyó escrito en la frente.",
+   "{npc} no disimula lo que piensa de los rumores sobre vos."
+  ]
+ }
+}

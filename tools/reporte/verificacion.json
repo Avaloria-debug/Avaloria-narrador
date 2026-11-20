@@ -1,0 +1,20 @@
+{
+ "modo": "contenido",
+ "paso": null,
+ "lineas": 4323,
+ "errores": [
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_maren_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_serel_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_ivor_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_naela_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_tiren_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_elia_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_brenn_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_ysolde_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_dario_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_sarin_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_hollis_2",
+  "[dup] t16-conocimientos.json: id de conocimiento repetido conocimiento_oren_2"
+ ],
+ "avisos": []
+}

@@ -1,0 +1,86 @@
+{
+ "tanda": "t24",
+ "estado": "a_aprobar",
+ "nota": "tabla verbo→apodos (1 activo, histéresis ≥2 puntos); base 'el Forastero' hasta relación ≥ neutra con ese NPC. usos = saludos con {apodo}.",
+ "base": "el Forastero",
+ "tabla": {
+  "presionar": [
+   "el Terco",
+   "el Insistente",
+   "el Duro",
+   "el de las Preguntas"
+  ],
+  "atacar": [
+   "el Violento",
+   "el de la Mano Pesada",
+   "el Brusco",
+   "el del Filo"
+  ],
+  "ayudar": [
+   "el Servicial",
+   "el de la Mano Abierta",
+   "el Buen Vecino",
+   "el Bienvenido"
+  ],
+  "negociar": [
+   "el Regateador",
+   "el de las Cuentas",
+   "el Tratante",
+   "el de la Palabra"
+  ],
+  "emboscar": [
+   "el Sombra",
+   "el Silencioso",
+   "el que Llega Tarde",
+   "el Escurridizo"
+  ],
+  "defender": [
+   "el Escudo",
+   "el Firme",
+   "el que se Planta",
+   "el Guardián"
+  ]
+ },
+ "usos": [
+  "«Ah, {apodo}. Pasá», dice {npc}.",
+  "{npc} te saluda con un «{apodo}» entre dientes.",
+  "«Miren quién viene: {apodo}», dice {npc}.",
+  "{npc} te llama {apodo} y no parece una burla.",
+  "«Qué hacés por acá, {apodo}», dice {npc}.",
+  "«{apodo}», dice {npc}, y asiente.",
+  "{npc} baja la voz: «Dicen por ahí que sos {apodo}.»",
+  "«Te llaman {apodo} en {lugar}. Ya lo sabías», dice {npc}.",
+  "«No te creía {apodo}, pero ahora sí», admite {npc}.",
+  "{npc} te dedica un «{apodo}» con un gesto de cabeza.",
+  "{npc} te presenta como {apodo} a quien pregunta.",
+  "«{apodo}, ¿en qué andás?», pregunta {npc}.",
+  "«Me alegra verte, {apodo}», dice {npc}, sin sarcasmo.",
+  "«{apodo}», murmura {npc} cuando te ve entrar.",
+  "«Con ese apodo vas a llegar lejos, {apodo}», dice {npc}.",
+  "{npc} sonríe: «Ese nombre te sienta, {apodo}.»",
+  "«En {lugar} ya no hace falta que digas quién sos, {apodo}», comenta {npc}.",
+  "{npc} te mira de arriba abajo: «{apodo}. Sí, ahora entiendo.»",
+  "«Me cuentan que sos {apodo}. Te creo», dice {npc}.",
+  "«{apodo}. No te olvido», dice {npc}, seco.",
+  "{npc} evita decir {apodo}, pero se le nota en la cara.",
+  "«{apodo}», dice {npc}, con cierto recelo.",
+  "«Ah, sí. {apodo}», dice {npc}, sin entusiasmo.",
+  "«El famoso {apodo}», dice {npc}, con ironía.",
+  "«Ya sabía que eras {apodo}», dice {npc}, entre dientes.",
+  "{npc} te llama {apodo} y se queda esperando tu reacción.",
+  "«No hagas ruido, {apodo}», dice {npc}.",
+  "«Si sos {apodo}, entonces te creo», dice {npc}.",
+  "«Escuché hablar de {apodo}. ¿Sos vos?», pregunta {npc}.",
+  "«Cuidá ese apodo, {apodo}. Pesa», dice {npc}.",
+  "{npc} lo dice despacio: «{apodo}».",
+  "«Eh, {apodo}», dice {npc}, con una media sonrisa.",
+  "«{apodo}, tengo una novedad», dice {npc}.",
+  "«¿Qué se cuenta, {apodo}?», dice {npc}.",
+  "«Mirá, {apodo}, no quiero líos», dice {npc}.",
+  "{npc} baja la mirada: «{apodo}.»",
+  "«{apodo} en mi puerta. Curioso», dice {npc}.",
+  "«A {apodo} lo atiendo primero», dice {npc}.",
+  "«Con vos, {apodo}, no hace falta presentarse», dice {npc}.",
+  "«Qué bueno verte, {apodo}», dice {npc}."
+ ]
+}

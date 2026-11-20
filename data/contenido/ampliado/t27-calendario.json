@@ -1,0 +1,251 @@
+{
+ "tanda": "t27",
+ "estado": "a_aprobar_canon",
+ "nota": "estacion.<s>.<escena> = línea ambiente corta. festividades: CANON PROPUESTO; fechas (día del año) las define el autor. ciudad 'cruce' = cruce_colinas.",
+ "estaciones": {
+  "primavera": {
+   "escena_mercado_circular": [
+    "Brotes en las ventanas y olor a tierra tibia."
+   ],
+   "escena_archivo_real": [
+    "Los techos gotean el último hielo."
+   ],
+   "escena_plaza_cambistas": [
+    "Los puestos sacan flores y la gente, el abrigo."
+   ],
+   "escena_taberna_lareth": [
+    "La luz entra por más ventanas."
+   ],
+   "escena_biblioteca_publica": [
+    "Los gorriones alborotan los aleros."
+   ],
+   "escena_aula_cartografia": [
+    "Se abren los postigos y se ventila la casa."
+   ],
+   "escena_camino_norte": [
+    "El camino huele a pasto nuevo."
+   ],
+   "escena_camino_este": [
+    "Hay barro fresco y flores por los bordes."
+   ],
+   "escena_camino_sur": [
+    "Los arroyos suenan fuerte con el deshielo."
+   ],
+   "escena_lago_espejos": [
+    "El lago despierta con ondas pequeñas."
+   ],
+   "escena_puente_aduana": [
+    "El puente tiene musgo recién verde."
+   ],
+   "escena_cruce_colinas": [
+    "Las colinas se llenan de corderos."
+   ]
+  },
+  "verano": {
+   "escena_mercado_circular": [
+    "El calor rebota en las piedras."
+   ],
+   "escena_archivo_real": [
+    "Hay sombra por todos lados, y nadie la quiere perder."
+   ],
+   "escena_plaza_cambistas": [
+    "Los puestos duermen la siesta a la sombra."
+   ],
+   "escena_taberna_lareth": [
+    "La taberna abre las puertas para que corra el aire."
+   ],
+   "escena_biblioteca_publica": [
+    "Los estudiantes leen en el patio, descalzos."
+   ],
+   "escena_aula_cartografia": [
+    "Las ventanas abiertas dejan entrar chicharras."
+   ],
+   "escena_camino_norte": [
+    "El camino es polvo y calor."
+   ],
+   "escena_camino_este": [
+    "Un camino seco y dorado por el sol."
+   ],
+   "escena_camino_sur": [
+    "El polvo del sur se pega a la ropa."
+   ],
+   "escena_lago_espejos": [
+    "El lago brilla tanto que cuesta mirarlo."
+   ],
+   "escena_puente_aduana": [
+    "El puente arde bajo el sol."
+   ],
+   "escena_cruce_colinas": [
+    "Las colinas amarillean."
+   ]
+  },
+  "otono": {
+   "escena_mercado_circular": [
+    "Hojas secas barren el suelo con el viento."
+   ],
+   "escena_archivo_real": [
+    "El aire huele a papel y a leña."
+   ],
+   "escena_plaza_cambistas": [
+    "Las manzanas llegan en cajones."
+   ],
+   "escena_taberna_lareth": [
+    "Las noches empiezan temprano, y la taberna se llena."
+   ],
+   "escena_biblioteca_publica": [
+    "Los estudiantes se abrigan sin ganas."
+   ],
+   "escena_aula_cartografia": [
+    "Los mapas se arrugan con la humedad."
+   ],
+   "escena_camino_norte": [
+    "Las hojas cubren el camino."
+   ],
+   "escena_camino_este": [
+    "Un viento frío trae olor a humo."
+   ],
+   "escena_camino_sur": [
+    "Un día gris y calmo en el sur."
+   ],
+   "escena_lago_espejos": [
+    "El lago refleja un cielo más bajo."
+   ],
+   "escena_puente_aduana": [
+    "El puente huele a lluvia cercana."
+   ],
+   "escena_cruce_colinas": [
+    "Las colinas se ponen de color ladrillo."
+   ]
+  },
+  "invierno": {
+   "escena_mercado_circular": [
+    "El frío se mete por las rendijas."
+   ],
+   "escena_archivo_real": [
+    "Las lámparas se encienden temprano."
+   ],
+   "escena_plaza_cambistas": [
+    "Los puestos arman toldos más gruesos."
+   ],
+   "escena_taberna_lareth": [
+    "Una estufa roja calienta la taberna."
+   ],
+   "escena_biblioteca_publica": [
+    "Los lectores se amontonan junto al fuego."
+   ],
+   "escena_aula_cartografia": [
+    "El aula huele a lana mojada."
+   ],
+   "escena_camino_norte": [
+    "El camino se endurece con la helada."
+   ],
+   "escena_camino_este": [
+    "Una capa de escarcha cubre las piedras."
+   ],
+   "escena_camino_sur": [
+    "Un camino pelado y gris."
+   ],
+   "escena_lago_espejos": [
+    "El lago humea al amanecer."
+   ],
+   "escena_puente_aduana": [
+    "El puente cruje de frío."
+   ],
+   "escena_cruce_colinas": [
+    "Las colinas amanecen blancas."
+   ]
+  }
+ },
+ "festividades": {
+  "cosecha_ardenhall": {
+   "ciudad": "Ardenhall",
+   "estacion": "otono",
+   "dias": 3,
+   "lineas": [
+    "Cuelgan manojos de trigo y de maíz en cada puesto.",
+    "Alguien reparte pan nuevo con una canción.",
+    "Los vecinos cuentan los cajones que trajo el año.",
+    "Serel hornea más de lo que puede vender y regala la diferencia.",
+    "Hay una mesa larga en la plaza, con sitio para todos.",
+    "Los niños llevan coronas de espigas.",
+    "Un anciano agradece la cosecha en voz alta.",
+    "Por la noche, hay brasas y música."
+   ]
+  },
+  "fiesta_cambistas": {
+   "ciudad": "Lareth",
+   "estacion": "verano",
+   "dias": 2,
+   "lineas": [
+    "Los cambistas barren sus mesas y sacan manteles.",
+    "Por un día, las tasas se apuestan y no se cobran.",
+    "Ivor reparte monedas de caramelo a los niños.",
+    "Una orquesta toca junto a la fuente.",
+    "Se brinda por un buen año de números.",
+    "Las deudas chicas se perdonan, las grandes se recuerdan.",
+    "Naela vende más que en una semana.",
+    "Los juegos de azar son del pueblo, hoy."
+   ]
+  },
+  "lectura_halenor": {
+   "ciudad": "Halenor",
+   "estacion": "primavera",
+   "dias": 2,
+   "lineas": [
+    "Los lectores se turnan en el atril del patio.",
+    "Elia reparte marcadores con una sonrisa tímida.",
+    "Los alumnos de Tiren dibujan un mapa gigante en el suelo.",
+    "Una voz lee en voz alta y cae el silencio.",
+    "Se intercambian libros en los bancos.",
+    "Cada tanto alguien aplaude un párrafo.",
+    "Se discute una nota al margen con pasión.",
+    "Al caer la tarde, todos callan para escuchar el final."
+   ]
+  },
+  "vigilia_roble": {
+   "ciudad": "cruce",
+   "estacion": "otono",
+   "dias": 1,
+   "lineas": [
+    "Los peregrinos llegan de a uno al Roble.",
+    "Se encienden velas en el hueco de las raíces.",
+    "Oren cuenta, en voz baja, la historia de los firmantes.",
+    "Alguien deja una cinta atada al tronco.",
+    "Se oye un coro lejano, casi un murmullo.",
+    "Se pasa un cuenco de agua de mano en mano.",
+    "Nadie habla mucho. Todos escuchan.",
+    "El amanecer encuentra a todos de pie."
+   ]
+  },
+  "mercado_invierno": {
+   "ciudad": "Ardenhall",
+   "estacion": "invierno",
+   "dias": 2,
+   "lineas": [
+    "Los puestos venden castañas calientes y mantas.",
+    "Maren compra un tintero nuevo y finge que no.",
+    "Se prenden braseros entre los toldos.",
+    "Los niños soplan vapor y se ríen.",
+    "Los pregoneros anuncian ofertas con la nariz roja.",
+    "Un vendedor jura que su abrigo vale por tres.",
+    "Los vecinos regatean con guantes.",
+    "Al caer la noche, la plaza huele a humo y canela."
+   ]
+  },
+  "cruce_de_caravanas": {
+   "ciudad": "cruce",
+   "estacion": "primavera",
+   "dias": 2,
+   "lineas": [
+    "Las caravanas llegan a la vez y se apretujan.",
+    "Brenn dirige a gritos el acomodo de las mulas.",
+    "Las ofertas se cruzan de lado a lado.",
+    "Un músico ambulante improvisa una melodía.",
+    "Hay cuentos nuevos, rumores nuevos, rostros nuevos.",
+    "Alguien reparte queso de Hollis.",
+    "Se cambian noticias por comida.",
+    "Cuando se van, el camino queda sembrado de paja."
+   ]
+  }
+ }
+}

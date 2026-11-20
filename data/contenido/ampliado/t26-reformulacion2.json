@@ -1,0 +1,91 @@
+{
+ "tanda": "t26",
+ "estado": "a_aprobar",
+ "nota": "reformulación en la voz del NPC presente (P20). Máx. 2 seguidas; la 3ª sugiere opciones válidas por código.",
+ "reformulacion": {
+  "maren_archivista": [
+   "«No consta que eso sea una consulta», dice Maren. «Reformule.»",
+   "Maren levanta una ceja: «El Archivo exige claridad.»",
+   "«Repita, y esta vez, con verbo», dice Maren.",
+   "«No es registrable así», dice Maren, sin alzar la voz.",
+   "«Una frase, un propósito. Por favor», dice Maren."
+  ],
+  "serel_panadero": [
+   "«No te entendí. Hablá claro, que tengo la masa en las manos», dice Serel.",
+   "«¿Qué querés? ¿Pan o conversación?», dice Serel.",
+   "Serel frunce el ceño. «Más despacio, que no sé leer labios.»",
+   "«Decime qué querés hacer, y listo», gruñe Serel.",
+   "«Ni idea de qué decís», dice Serel, sincero."
+  ],
+  "ivor_cambista": [
+   "«No he comprendido la operación», dice Ivor. «Especifique.»",
+   "Ivor cruza los dedos: «Los términos, por favor.»",
+   "«Sin claridad no hay trato», dice Ivor.",
+   "«Reformule con precisión. El tiempo es dinero», dice Ivor.",
+   "«No cierro lo que no entiendo», dice Ivor."
+  ],
+  "naela_tabernera": [
+   "«Hablá en cristiano, que acá no hay tiempo», dice Naela.",
+   "Naela deja el vaso: «Repetilo, pero de frente.»",
+   "«¿Qué querés exactamente?», dice Naela.",
+   "«No te sigo. Decime qué querés hacer», dice Naela, seca.",
+   "«Más claro, lo mío no son los acertijos», dice Naela."
+  ],
+  "tiren_docente": [
+   "«¡Interesante! Pero no te sigo. ¿Podés decirlo con otras palabras?», dice Tiren.",
+   "Tiren se rasca la cabeza: «Una pista más, por favor.»",
+   "«Hmm, no capto. Dibujámelo con palabras», dice Tiren.",
+   "«¿Querés decir…? No, no, repetí», dice Tiren, divertido.",
+   "«A ver, de nuevo, que quiero entenderte», dice Tiren."
+  ],
+  "elia_bibliotecaria": [
+   "«No entendí», susurra Elia. «Más claro, por favor.»",
+   "Elia inclina la cabeza: «¿Podés repetirlo en voz baja?»",
+   "«Dímelo de otra manera», susurra Elia.",
+   "«Disculpá, no capto», susurra Elia.",
+   "«Reformulá, sin apuro», susurra Elia."
+  ],
+  "brenn_arriero": [
+   "«No te pillo, compañero. Decilo otra vez», dice Brenn.",
+   "Brenn escupe a un lado: «Más claro, que se me enfrían las mulas.»",
+   "«¿Qué querés hacer? Decí», dice Brenn.",
+   "«Eso no lo entiendo ni yo, ni las mulas», dice Brenn.",
+   "«Hablá derecho, que acá se pierde el tiempo», dice Brenn."
+  ],
+  "ysolde_pescadora": [
+   "«No entendí lo que querés», dice Ysolde, sin mirarte.",
+   "Ysolde ladea la cabeza: «Otra vez. Despacio.»",
+   "«Callate un momento y volvé a decirlo», dice Ysolde.",
+   "«El agua habla más claro que vos», dice Ysolde, sin rencor.",
+   "«No te capto», dice Ysolde, y tira la caña."
+  ],
+  "dario_guardia": [
+   "«Su solicitud no es clara. Reformule», dice Darío.",
+   "Darío anota algo: «No pude registrar lo que dijo.»",
+   "«Una frase breve y precisa, por favor», dice Darío.",
+   "«No comprendo. Repita», dice Darío, sin emoción.",
+   "«En la aduana se habla claro», dice Darío."
+  ],
+  "sarin_mensajera": [
+   "«No entendí. Otra vez, rápido», dice Sarin.",
+   "Sarin frena un segundo: «Más claro, que tengo prisa.»",
+   "«No te pillé. Decime qué querés», dice Sarin.",
+   "«Menos vueltas, que se enfría la entrega», dice Sarin.",
+   "«¿Eh? Repetí, pero corto», dice Sarin."
+  ],
+  "hollis_pastor": [
+   "«No te entendí, forastero. Hablá lento», dice Hollis.",
+   "Hollis se apoya en el cayado: «Decilo de nuevo, sin apuro.»",
+   "«Las ovejas entienden mejor que yo hoy», dice Hollis, riendo.",
+   "«Repetilo, que el viento se llevó la mitad», dice Hollis.",
+   "«No sé qué querés decir», dice Hollis, tranquilo."
+  ],
+  "oren_peregrino": [
+   "«No he comprendido. Habla otra vez, con calma», dice Oren.",
+   "Oren sonríe sin burla: «Dímelo de otra forma.»",
+   "«El camino enseña a escuchar. Todavía no te entendí», dice Oren.",
+   "«Repite, amigo. Hay tiempo», dice Oren.",
+   "«Despacio. No hay prisa en el camino», dice Oren."
+  ]
+ }
+}

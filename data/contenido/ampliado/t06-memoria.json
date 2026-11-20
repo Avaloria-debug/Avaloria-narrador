@@ -1,0 +1,111 @@
+{
+  "tanda": "t06",
+  "estado": "a_aprobar",
+  "nota": "memoria.<npc>.<verbo> = [reciente, lejano]. Se usa al saludar o hablar si el npc recuerda ese verbo (ant: reciente ≤48 h). genericas cubre npcs sin línea propia.",
+  "genericas": {
+    "presionar": ["{npc} te mira con recelo. Todavía se acuerda de cómo lo presionaste.", "{npc} no olvidó que lo presionaste aquella vez."],
+    "atacar": ["{npc} retrocede apenas te ve. El golpe está fresco.", "{npc} tiene una cicatriz que vos le hiciste. No lo olvida."],
+    "ayudar": ["{npc} te sonríe. Lo de hace poco todavía cuenta.", "{npc} se acuerda de que una vez lo ayudaste."],
+    "negociar": ["{npc} se prepara para regatear. Ya te conoce.", "{npc} recuerda el trato que hicieron."],
+    "emboscar": ["{npc} se tensa. No te perdona la emboscada.", "{npc} nunca te da la espalda desde aquella vez."],
+    "defender": ["{npc} te agradece con la mirada. Fue hace poco.", "{npc} no olvida que lo defendiste."]
+  },
+  "memoria": {
+    "maren_archivista": {
+      "presionar": ["«Consta que me presionó ayer. No se repetirá», dice Maren.", "Maren te trata con una corrección helada. Lo tiene anotado."],
+      "atacar": ["Maren llama al sereno apenas te ve.", "«Su nombre figura en un registro que preferiría no tener», dice Maren."],
+      "ayudar": ["«Su ayuda de ayer quedó registrada. Gracias», dice Maren.", "Maren te atiende primero. Recuerda lo que hiciste."],
+      "negociar": ["«Supongo que viene a negociar otra vez», dice Maren.", "Maren cita de memoria las condiciones de su último acuerdo."],
+      "emboscar": ["Maren no deja que te acerques a menos de tres pasos.", "Maren cierra cada depósito cuando pasás cerca."],
+      "defender": ["«No olvido lo de ayer», dice Maren, y es casi cálida.", "Maren te deja pasar a un patio que no muestra a nadie."]
+    },
+    "serel_panadero": {
+      "presionar": ["Serel te atiende sin levantar la vista. Sigue molesto.", "Serel te cobra el precio exacto, ni una miga de más."],
+      "atacar": ["Serel agarra el palo del horno cuando te ve.", "«Vos no comprás acá», dice Serel."],
+      "ayudar": ["«¡El que me dio una mano!», dice Serel, y te regala un pan.", "Serel te guarda siempre el pan más dorado."],
+      "negociar": ["«Ya sé, ya sé, querés descuento», dice Serel, riendo.", "Serel te hace el precio de siempre sin que lo pidas."],
+      "emboscar": ["Serel no te pierde de vista mientras atiende.", "Serel cierra el puesto cuando te acercás."],
+      "defender": ["Serel te abraza con los brazos llenos de harina.", "«Lo que hiciste por mí no se paga con pan, pero tomá», dice Serel."]
+    },
+    "ivor_cambista": {
+      "presionar": ["«La presión de ayer tiene un costo. Ya lo verá», dice Ivor.", "Ivor te sube la tasa sin explicaciones."],
+      "atacar": ["Los guardias de Ivor se adelantan apenas te ven.", "«La Casa Aster lleva cuentas de todo. También de eso», dice Ivor."],
+      "ayudar": ["«Un favor reciente vale oro», dice Ivor. «Lo tendré en cuenta.»", "Ivor te trata como a un socio menor. Es mucho, viniendo de él."],
+      "negociar": ["«Volvemos a la mesa», dice Ivor, satisfecho.", "Ivor recuerda tu último trato cifra por cifra."],
+      "emboscar": ["Ivor no se mueve de detrás de sus guardias.", "«Hay cosas que no se perdonan con dinero», dice Ivor."],
+      "defender": ["Ivor te inclina la cabeza. «Una deuda de honor. Las pago.»", "Ivor te ofrece condiciones que no le da a nadie."]
+    },
+    "naela_tabernera": {
+      "presionar": ["Naela te sirve con fuerza, derramando un poco. Adrede.", "«Acá no presionás a nadie», dice Naela, mirándote fijo."],
+      "atacar": ["Naela tiene el garrote en la mano antes de que entres.", "«Afuera», dice Naela. No es un pedido."],
+      "ayudar": ["«Esta va por la casa», dice Naela. «Por lo de anoche.»", "Naela te tiene siempre una silla libre."],
+      "negociar": ["«¿Otra vez a regatear la cerveza?», dice Naela, riendo.", "Naela te cobra lo de siempre sin discutir."],
+      "emboscar": ["Naela le hace una seña a dos clientes grandes.", "Naela no te sirve. Ni te mira."],
+      "defender": ["Naela te sirve lo mejor de la casa. «Ayer me salvaste.»", "Naela cuenta a quien quiera oír lo que hiciste por ella."]
+    },
+    "tiren_docente": {
+      "presionar": ["Tiren tartamudea cuando te ve. Sigue nervioso.", "Tiren enrolla los mapas cuando entrás."],
+      "atacar": ["Tiren sale del aula por la otra puerta.", "Tiren llama a un colega para no quedarse solo con vos."],
+      "ayudar": ["«¡Gracias a vos terminé el mapa!», dice Tiren.", "Tiren te muestra mapas que no enseña en clase."],
+      "negociar": ["«¿Querés otra copia? Ya sé cómo es esto», dice Tiren.", "Tiren te hace precio de alumno."],
+      "emboscar": ["Tiren se queda pegado al pizarrón, lejos de vos.", "Tiren no te deja ver ningún mapa."],
+      "defender": ["Tiren te muestra un mapa que nadie vio. «Te lo debo.»", "Tiren te nombra en clase como ejemplo de algo."]
+    },
+    "elia_bibliotecaria": {
+      "presionar": ["Elia te mira con un silencio más duro que cualquier palabra.", "Elia te pide identificación cada vez que entrás."],
+      "atacar": ["Elia no te deja pasar de la puerta.", "Tu nombre está en la lista de prohibidos de Elia."],
+      "ayudar": ["Elia te susurra un gracias y te presta un libro restringido.", "Elia te avisa cuando llegan libros que te pueden interesar."],
+      "negociar": ["«¿Otra vez con condiciones?», susurra Elia.", "Elia te deja un préstamo más largo, como acordaron."],
+      "emboscar": ["Elia toca una campanilla apenas entrás.", "Elia no deja que te acerques a los estantes."],
+      "defender": ["Elia te aprieta la mano un segundo. No dice nada.", "Elia te guarda la mejor mesa todos los días."]
+    },
+    "brenn_arriero": {
+      "presionar": ["Brenn te mira de costado. No le gustó lo de ayer.", "Brenn no te ofrece lugar en la carreta."],
+      "atacar": ["Brenn agarra el látigo y lo deja ver.", "«Por este camino no vas a pasar conmigo», dice Brenn."],
+      "ayudar": ["«¡El que me sacó la carreta del barro!», dice Brenn.", "Brenn te lleva gratis cada vez que coinciden."],
+      "negociar": ["«Ya sé lo que vas a ofrecer», dice Brenn, riendo.", "Brenn te cobra lo mismo que la otra vez."],
+      "emboscar": ["Brenn cambia de camino cuando te ve.", "Brenn tiene la mano en el hacha desde que te ve."],
+      "defender": ["Brenn te abraza y te levanta del suelo.", "«Te debo la vida, compañero», dice Brenn cada vez."]
+    },
+    "ysolde_pescadora": {
+      "presionar": ["Ysolde se aleja con el bote apenas te ve.", "Ysolde no te dirige la palabra."],
+      "atacar": ["Ysolde agarra el remo como un arma.", "Ysolde ya no pesca cuando estás en la orilla."],
+      "ayudar": ["Ysolde te da un pescado sin decir nada.", "Ysolde te deja sentarte en su piedra."],
+      "negociar": ["Ysolde te muestra el precio con los dedos. Igual que antes.", "Ysolde te vende sin regatear."],
+      "emboscar": ["Ysolde rema hacia el medio del lago al verte.", "Ysolde se va de la orilla cuando llegás."],
+      "defender": ["Ysolde te mira mucho rato. Después asiente.", "Ysolde te enseña dónde se pesca mejor."]
+    },
+    "dario_guardia": {
+      "presionar": ["Darío te revisa todo, dos veces.", "Darío anota tu nombre antes de que hables."],
+      "atacar": ["Darío llama refuerzos apenas te ve.", "Tu nombre está tachado en la lista de paso libre."],
+      "ayudar": ["Darío levanta la barrera sin pedir papeles.", "«Pasá, pasá», dice Darío, sin revisar."],
+      "negociar": ["«¿Otra vez con eso?», dice Darío, cansado.", "Darío te cobra el peaje que acordaron."],
+      "emboscar": ["Darío tiene la espada desenvainada cuando llegás.", "Darío te prohíbe cruzar."],
+      "defender": ["Darío te estrecha la mano. «Te debo una.»", "Darío te deja pasar de noche, aunque esté cerrado."]
+    },
+    "sarin_mensajera": {
+      "presionar": ["Sarin aprieta la bolsa y acelera el paso.", "Sarin cambia de camino cuando te ve venir."],
+      "atacar": ["Sarin sale corriendo apenas te ve.", "Sarin avisa a la Casa Aster de dónde andás."],
+      "ayudar": ["«¡Vos! Te traje noticias», dice Sarin.", "Sarin te lleva cartas sin cobrar."],
+      "negociar": ["«¿Cuánto esta vez?», pregunta Sarin, riendo.", "Sarin te cobra lo que acordaron, ni más ni menos."],
+      "emboscar": ["Sarin viaja acompañada desde aquella vez.", "Sarin no se acerca a menos de veinte pasos."],
+      "defender": ["Sarin te abraza rápido y sigue corriendo.", "Sarin te cuenta cosas que no le cuenta a nadie."]
+    },
+    "hollis_pastor": {
+      "presionar": ["Hollis te mira con calma y no contesta.", "Hollis lleva el rebaño lejos de vos."],
+      "atacar": ["El perro de Hollis te gruñe apenas te ve.", "Hollis te apunta con el cayado."],
+      "ayudar": ["«Las ovejas se acuerdan de vos», dice Hollis.", "Hollis te comparte su fuego cada noche."],
+      "negociar": ["«Ya sé, ya sé», dice Hollis, y sonríe.", "Hollis te vende queso al precio de siempre."],
+      "emboscar": ["Hollis no duerme cuando estás cerca.", "Hollis te pide que te vayas de sus pastos."],
+      "defender": ["Hollis te da una manta. «Para el frío. Y por lo otro.»", "Hollis te muestra el cielo como a un hijo."]
+    },
+    "oren_peregrino": {
+      "presionar": ["«El Roble vio tu prisa», dice Oren, sin rencor.", "Oren te responde con preguntas más difíciles."],
+      "atacar": ["Oren no se mueve. Te mira con tristeza.", "«El Roble no olvida la violencia», dice Oren."],
+      "ayudar": ["«Tu bondad de ayer sigue acá», dice Oren.", "Oren te bendice cada vez que pasás."],
+      "negociar": ["«¿Otra vez intercambio? Bien», dice Oren.", "Oren cumple lo pactado sin que lo pidas."],
+      "emboscar": ["Oren te perdona en voz alta. Eso incomoda más.", "Oren reza por vos cuando te ve."],
+      "defender": ["Oren te regala una cinta del Roble.", "«Te protegiste a vos al protegerme», dice Oren."]
+    }
+  }
+}

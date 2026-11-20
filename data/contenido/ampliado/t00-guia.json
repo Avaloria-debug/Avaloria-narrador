@@ -1,0 +1,106 @@
+{
+  "tanda": "t00",
+  "estado": "a_aprobar",
+  "formato": {
+    "claves": {
+      "c": "condiciones (todas deben cumplirse). Sin c = genérica de respaldo",
+      "t": "texto",
+      "l": "lista de entradas {c,t}",
+      "u": "true = única por partida"
+    },
+    "condiciones": {
+      "f": "franja: madrugada | manana | tarde | noche",
+      "cl": "clima: despejado | nublado | lluvia | niebla",
+      "r": "relación con el npc: mala | neutra | buena",
+      "ts": "tensión: baja | alta",
+      "rec": "verbo que el npc recuerda del jugador: presionar | atacar | ayudar | negociar | emboscar | defender",
+      "ant": "antigüedad del recuerdo: reciente | lejano",
+      "esc": "id de escena",
+      "npc": "id de npc",
+      "vis": "visitas a la escena: 1 | 2 | 3+",
+      "rep": "veces seguidas del mismo verbo: 3+",
+      "cat": "categoría de escena: ciudad | camino | otro",
+      "fz": "fuerza de rumor: fuerte | difuso"
+    },
+    "listas": "Valor en lista = cualquiera de ellos. Ej: {\"f\":[\"tarde\",\"noche\"]}",
+    "simbolos": "#a.b# busca de más específico a menos: a.b.<franja>.<clima> → a.b.<franja> → a.b.<clima> → a.b. Símbolo sin resolver se borra y se registra aviso.",
+    "placeholders": "{npc} {objeto} {lugar} {conocimiento} {nombres} como en v3. {npc.el} {objeto.el} {objeto.un} usan datos.genero.",
+    "fusion": "Se cargan todos los t*.json de esta carpeta sobre contenido-v3.json. Nunca reemplazan una clave del v3: suman entradas."
+  },
+  "umbrales": {
+    "franjas": { "madrugada": [0, 6], "manana": [6, 12], "tarde": [12, 19], "noche": [19, 24] },
+    "relacion": { "mala": [-100, -20], "neutra": [-19, 39], "buena": [40, 100] },
+    "tension": { "baja": [0, 5], "alta": [6, 10] },
+    "recuerdo": { "reciente_horas": 48 },
+    "climas": ["despejado", "nublado", "lluvia", "niebla"],
+    "clima_cambia_cada_horas": 6
+  },
+  "estilo": [
+    "Segunda persona, presente, voseo rioplatense moderado (tenés, mirás, querés).",
+    "Narrador sobrio: imagen concreta antes que adjetivo. Nada florido.",
+    "Máximo 25 palabras por línea; ambiente máximo 18.",
+    "Una idea por línea. Sin explicar lo que el jugador ya sabe.",
+    "No nombrar estadísticas, números de relación ni mecánicas.",
+    "No decidir por el jugador lo que siente.",
+    "Diálogo de NPC entre comillas angulares « ».",
+    "Sin magia explícita ni criaturas fantásticas en escena: el mundo de Avaloria es terrenal en esta región.",
+    "Palabras a evitar: mágico, épico, misterioso, increíble, de repente, sin duda."
+  ],
+  "voces": {
+    "maren_archivista": { "rasgos": "precisa, formal, cita fechas y copias", "muletilla": "Consta que…", "evita": "hablar de sí misma" },
+    "serel_panadero": { "rasgos": "práctico, cansado, habla de precios y horas", "muletilla": "A esta hora…", "evita": "los proveedores, salvo con confianza" },
+    "ivor_cambista": { "rasgos": "cortés y frío, todo es intercambio", "muletilla": "Todo tiene precio.", "evita": "nombrar deudores" },
+    "naela_tabernera": { "rasgos": "rápida, irónica, ve todo desde la barra", "muletilla": "¿Vas a pedir algo?", "evita": "meterse en peleas ajenas" },
+    "tiren_docente": { "rasgos": "didáctico, entusiasta con mapas, se va por las ramas", "muletilla": "Mirá esto…", "evita": "la aduana" },
+    "elia_bibliotecaria": { "rasgos": "habla bajo, exige silencio, memoria exacta de préstamos", "muletilla": "En voz baja, por favor.", "evita": "decir quién pidió qué" },
+    "brenn_arriero": { "rasgos": "rudo, generoso, mide todo en jornadas", "muletilla": "Eso queda a dos jornadas.", "evita": "los atajos que conoce" },
+    "ysolde_pescadora": { "rasgos": "parca, observadora, habla del agua y de las aves", "muletilla": "El lago avisa.", "evita": "la isla" },
+    "dario_guardia": { "rasgos": "reglamentario, desconfiado, cansado del puesto", "muletilla": "Documentos.", "evita": "a sus compañeros" },
+    "sarin_mensajera": { "rasgos": "apurada, curiosa, siempre de paso", "muletilla": "No me puedo quedar.", "evita": "el contenido de las cartas" },
+    "hollis_pastor": { "rasgos": "lento, sabio de campo, habla del cielo", "muletilla": "Va a cambiar el tiempo.", "evita": "los senderos de las colinas" },
+    "oren_peregrino": { "rasgos": "sereno, cita al Gran Roble, pregunta más de lo que responde", "muletilla": "El Roble ya lo vio.", "evita": "lo que leyó" }
+  },
+  "genero": {
+    "npcs": {
+      "maren_archivista": "f", "serel_panadero": "m", "ivor_cambista": "m", "naela_tabernera": "f",
+      "tiren_docente": "m", "elia_bibliotecaria": "f", "brenn_arriero": "m", "ysolde_pescadora": "f",
+      "dario_guardia": "m", "sarin_mensajera": "f", "hollis_pastor": "m", "oren_peregrino": "m"
+    },
+    "objetos": {
+      "objeto_espada_rota": ["la", "una"], "objeto_daga": ["la", "una"], "objeto_lanza": ["la", "una"],
+      "objeto_hacha_leniador": ["el", "un"], "objeto_garrote": ["el", "un"], "objeto_cuchillo_cocina": ["el", "un"],
+      "objeto_arco_corto": ["el", "un"], "objeto_cayado_peregrino": ["el", "un"], "objeto_antorcha": ["la", "una"],
+      "objeto_cuerda": ["la", "una"], "objeto_ganzua": ["la", "una"], "objeto_martillo_herrero": ["el", "un"],
+      "objeto_linterna_aceite": ["la", "una"], "objeto_brujula": ["la", "una"], "objeto_tiza_cartografo": ["la", "una"],
+      "objeto_pala": ["la", "una"], "objeto_pan_duro": ["el", "un"], "objeto_pan_fresco": ["el", "un"],
+      "objeto_vino_barato": ["el", "un"], "objeto_vino_casa": ["el", "un"], "objeto_pocion_curacion": ["la", "una"],
+      "objeto_agua_manantial": ["el", "un"], "objeto_queso_curado": ["el", "un"], "objeto_carne_seca": ["la", "una"],
+      "objeto_hierbas_medicinales": ["las", "unas"], "objeto_sopa_caliente": ["la", "una"], "objeto_te_hierbas": ["el", "un"],
+      "objeto_dulce_higo": ["el", "un"], "objeto_sello_archivo": ["el", "un"], "objeto_pliego_precios": ["el", "un"],
+      "objeto_recibo_deuda": ["el", "un"], "objeto_lista_huespedes": ["la", "una"], "objeto_cuaderno_mapas": ["el", "un"],
+      "objeto_libro_retirado": ["el", "un"], "objeto_carta_sellada": ["la", "una"], "objeto_salvoconducto": ["el", "un"],
+      "objeto_mapa_colinas": ["el", "un"], "objeto_medalla_roble": ["la", "una"], "objeto_mapa_posada": ["el", "un"],
+      "objeto_cuaderno_pesca": ["el", "un"]
+    }
+  },
+  "escenas": {
+    "escena_mercado_circular": { "sentido": "sonido" },
+    "escena_archivo_real": { "sentido": "tacto" },
+    "escena_plaza_cambistas": { "sentido": "sonido" },
+    "escena_taberna_lareth": { "sentido": "olfato" },
+    "escena_biblioteca_publica": { "sentido": "olfato" },
+    "escena_aula_cartografia": { "sentido": "vista" },
+    "escena_camino_norte": { "sentido": "vista" },
+    "escena_camino_este": { "sentido": "sonido" },
+    "escena_camino_sur": { "sentido": "olfato" },
+    "escena_lago_espejos": { "sentido": "vista" },
+    "escena_puente_aduana": { "sentido": "sonido" },
+    "escena_cruce_colinas": { "sentido": "tacto" }
+  },
+  "horarios": {
+    "escena_taberna_lareth": { "abierta": ["tarde", "noche", "madrugada"] },
+    "escena_archivo_real": { "abierta": ["manana", "tarde"] },
+    "escena_biblioteca_publica": { "abierta": ["manana", "tarde"] },
+    "escena_aula_cartografia": { "abierta": ["manana", "tarde"] }
+  }
+}

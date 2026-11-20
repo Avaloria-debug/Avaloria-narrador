@@ -1,0 +1,317 @@
+{
+ "tanda": "t19",
+ "estado": "a_aprobar",
+ "nota": "Suma a t09: 2 variantes de inicio por evento (70 eventos) + cierres extra por categoría.",
+ "eventos": {
+  "evento_mercado_aglomeracion": [
+   "Los puestos se tocan entre sí y los vendedores gritan precios sin respirar.",
+   "Una ola de gente te arrastra dos puestos más allá de donde ibas."
+  ],
+  "evento_festividad_plaza": [
+   "Un tamborilero marca el paso y la plaza entera empieza a zapatear.",
+   "Alguien reparte vino aguado y todos fingen que no lo notan."
+  ],
+  "evento_lluvia_suave": [
+   "La llovizna no moja, pero impregna: la ropa pesa sin haberse mojado.",
+   "Los toldos gotean en hilos finos y la gente camina entre ellos con cuidado."
+  ],
+  "evento_lectura_publica": [
+   "Una voz grave lee con pausas largas. Nadie tose.",
+   "El lector se equivoca en un nombre y alguien lo corrige desde el fondo, con cariño."
+  ],
+  "evento_feria_libros": [
+   "Un vendedor jura que cada tomo perteneció a un noble. Nadie le cree, todos compran.",
+   "Los estudiantes regatean por un atlas con las tapas flojas."
+  ],
+  "evento_pastores_ovejas": [
+   "Un perro pastor corre de punta a punta y el rebaño cambia de forma como agua.",
+   "El balido es tan fuerte que cuesta oírse a un palmo."
+  ],
+  "evento_caravana_descansa": [
+   "Las mulas comen de morrales colgados y los arrieros cuentan monedas en voz baja.",
+   "Alguien afina un instrumento de cuerda junto al fuego."
+  ],
+  "evento_clase_cartografia": [
+   "Un alumno discute con Tiren una frontera y lo hace con razón.",
+   "Se oye el rasgueo de las plumas sobre los mapas, todas a la vez."
+  ],
+  "evento_rumor_plaza": [
+   "Dos mujeres comparan versiones del mismo rumor y no coinciden en nada, salvo en el final.",
+   "Un chico repite lo que oyó, con mucho más color del que tenía."
+  ],
+  "evento_noble_de_paso": [
+   "El séquito levanta polvo y los comerciantes se apuran a limpiar sus puestos.",
+   "Un lacayo avisa a gritos que se despeje el paso. Nadie lo mira."
+  ],
+  "evento_feria_intercambio": [
+   "Cambian un sombrero por una olla, una olla por queso, queso por una promesa.",
+   "Un anciano cambia recuerdos por pan, y nadie sabe si bromea."
+  ],
+  "evento_vecinos_conversando": [
+   "Hablan de un techo, de una boda, de un primo que no escribe.",
+   "Una puerta se abre, alguien asoma, y la charla cambia de lugar."
+  ],
+  "evento_anuncio_archivo": [
+   "El pregonero lee el edicto con voz de quien no lo escribió.",
+   "Una copia del anuncio queda clavada en el poste y el viento la agita."
+  ],
+  "evento_comida_compartida": [
+   "Un cuenco pasa de mano en mano y vuelve casi vacío, pero contento.",
+   "Alguien trae pan de más. Esa noche, nadie lo reclama."
+  ],
+  "evento_pelea_palabras": [
+   "Los insultos suben de tono y alguien cierra su puesto para no oír.",
+   "Uno de los dos se ríe en medio de la pelea y se queda sin enojo."
+  ],
+  "evento_carta_viajero": [
+   "Un viajero lee su carta con los labios, sin sonido, y se la guarda en el pecho.",
+   "La carta llega con tres sellos distintos y la tinta corrida."
+  ],
+  "evento_deuda_impaga": [
+   "El deudor evita mirar a quien le cobra. Todos lo notan.",
+   "Se oye un número, una cifra, y después un silencio que pesa más."
+  ],
+  "evento_disputa_aduana": [
+   "Un funcionario golpea un papel con el dedo como si fuera culpa del papel.",
+   "Dos carros esperan en fila y ninguno sabe por qué."
+  ],
+  "evento_robo_reportado": [
+   "Alguien repite la lista de lo robado como si recitara una oración.",
+   "Un grupo revisa sus bolsillos a la vez, sin decir nada."
+  ],
+  "evento_cierre_puerta": [
+   "Las bisagras gimen y el pestillo cae. Afuera quedan los que no llegaron.",
+   "Un guardia gira la llave y se la guarda lejos del cinto."
+  ],
+  "evento_mercader_sospechoso": [
+   "Sonríe demasiado. Y cada vez que sonríe, cuenta los carros.",
+   "Su mercadería es buena, pero su historia no encaja."
+  ],
+  "evento_revision_equipaje": [
+   "Un guardia saca todo, mira cada cosa, y la vuelve a meter peor.",
+   "Una bolsa cae y de ella ruedan tres manzanas y nada más."
+  ],
+  "evento_tension_cruce": [
+   "Dos grupos cruzan sin mirarse, con las manos libres.",
+   "El camino se siente más angosto que ayer."
+  ],
+  "evento_discusion_libro": [
+   "Dos lectores sostienen el mismo tomo, cada uno por una punta.",
+   "Una nota al margen provoca una discusión de tres siglos."
+  ],
+  "evento_incendio_puesto": [
+   "El humo sube negro y huele a tela quemada y aceite.",
+   "Una cadena de cubos pasa de mano en mano, silenciosa y rápida."
+  ],
+  "evento_pelea_taberna": [
+   "Vuela una silla, después un vaso, después una opinión.",
+   "El tabernero se agacha detrás de la barra, sin sorpresa."
+  ],
+  "evento_patrulla_busqueda": [
+   "Las lámparas de la patrulla barren las calles de una a una.",
+   "Alguien cierra su ventana justo cuando pasa la luz."
+  ],
+  "evento_cierre_taberna": [
+   "Los últimos clientes salen entre bromas y empujones.",
+   "Naela apaga las lámparas una por una, y la calle queda a oscuras."
+  ],
+  "evento_perro_rabioso": [
+   "Un perro baba y camina de lado. La gente se aparta sin correr.",
+   "Alguien grita que se cierren las puertas y las puertas se cierran."
+  ],
+  "evento_derrumbe_camino": [
+   "El camino termina en una montaña de tierra y piedra que antes no estaba.",
+   "Se oye el rumor lejano de más rocas que aún no terminaron de caer."
+  ],
+  "evento_ladrones_sur": [
+   "Hay huellas recientes al costado del camino y cenizas todavía tibias.",
+   "Un carro vuelca sin dueño. Faltan las mulas."
+  ],
+  "evento_ladrones_este": [
+   "Un pañuelo atado a un árbol: la señal de alguien que vigila.",
+   "Dos siluetas aparecen en la cima de la colina y desaparecen."
+  ],
+  "evento_crecida_rio": [
+   "El río, ancho y marrón, arrastra ramas, tablas y un zapato.",
+   "El agua se oye antes de verse."
+  ],
+  "evento_bote_volcado": [
+   "Un bote boca abajo flota despacio y de él cuelga una cuerda.",
+   "Alguien grita desde la orilla y señala un remo a la deriva."
+  ],
+  "evento_caballo_desbocado": [
+   "Un caballo galopa sin jinete, con los estribos golpeando.",
+   "La gente se pega a las paredes y el caballo pasa como una ráfaga."
+  ],
+  "evento_alerta_archivo": [
+   "La campana del Archivo suena tres veces seguidas. Nadie recuerda la última vez.",
+   "Los copistas salen en fila con sus papeles pegados al pecho."
+  ],
+  "evento_bandas_colinas": [
+   "Un silbido corto se repite de colina en colina. Es una señal.",
+   "Los pastores vuelven temprano con el rebaño."
+  ],
+  "evento_bandas_norte": [
+   "El humo de una fogata aparece donde no debería haber nadie.",
+   "Las huellas de botas con clavos cruzan el camino en diagonal."
+  ],
+  "evento_guardia_distraido": [
+   "El guardia bosteza y mira al cielo, no a la puerta.",
+   "Un dado rueda en la caseta. Alguien apuesta."
+  ],
+  "evento_ventana_sin_vigilar": [
+   "Una ventana entreabierta se mece sin que nadie la cierre.",
+   "La luz del cuarto se apaga y la calle queda sola."
+  ],
+  "evento_noche_sin_luna": [
+   "No hay luna. Las lámparas parecen más pequeñas.",
+   "Las sombras son más espesas y los pasos suenan solos."
+  ],
+  "evento_puestos_cerrados": [
+   "Los puestos cerrados parecen cajas de madera. Nadie las cuida.",
+   "Un gato duerme sobre un mostrador vacío."
+  ],
+  "evento_pasillo_vacio": [
+   "Los pasos se oyen demasiado. Alguien podría estar escuchando.",
+   "Una puerta al fondo deja pasar una línea de luz."
+  ],
+  "evento_cambio_guardia_aduana": [
+   "Dos guardias se cruzan sin saludar y por un instante la caseta queda vacía.",
+   "El relevo llega tarde y el anterior ya se fue."
+  ],
+  "evento_pastores_dormidos": [
+   "Un pastor ronca junto al fuego y su perro levanta una oreja, no más.",
+   "El rebaño duerme apretado; el silencio es grande."
+  ],
+  "evento_niebla_lago": [
+   "La niebla cubre el lago y los sonidos llegan desde ningún lado.",
+   "Un bote pasa como una idea, sin ruido."
+  ],
+  "evento_emboscada_sur": [
+   "Un ruido de ramas y una silueta que sale de la zanja.",
+   "El camino se cierra delante y detrás al mismo tiempo."
+  ],
+  "evento_emboscada_este": [
+   "Una piedra rueda desde lo alto y alguien grita una orden.",
+   "Hay un instante de calma antes de que salgan."
+  ],
+  "evento_emboscada_norte": [
+   "Unos arbustos se agitan sin viento.",
+   "Un silbido corto, y de pronto el camino está lleno de gente."
+  ],
+  "evento_emboscada_lago": [
+   "La orilla parece vacía hasta que no lo está.",
+   "Un remo golpea el agua y alguien salta a la arena."
+  ],
+  "evento_pelea_armada_plaza": [
+   "Las espadas salen de las vainas con un sonido que nadie olvida.",
+   "La plaza se vacía en segundos. Quedan los charcos y los gritos."
+  ],
+  "evento_pelea_armada_mercado": [
+   "Un mostrador vuela por los aires y la fruta rueda por el suelo.",
+   "Entre los puestos, el filo de una hoja brilla un segundo."
+  ],
+  "evento_asalto_archivo": [
+   "La puerta cede con un golpe sordo y entran con antorchas.",
+   "Un estante cae y miles de hojas vuelan como pájaros."
+  ],
+  "evento_duelo_puente": [
+   "Dos figuras, un puente, un círculo de testigos que no respiran.",
+   "El primer golpe resuena como una campana en el agua."
+  ],
+  "evento_ataque_lobos": [
+   "Aúllan lejos, más cerca, demasiado cerca.",
+   "Unos ojos brillan en el borde del claro, y luego más."
+  ],
+  "evento_pelea_biblioteca": [
+   "Un libro pesado hace de arma y de escudo.",
+   "Elia pide silencio a gritos, y por primera vez nadie la oye."
+  ],
+  "evento_batalla_aula": [
+   "Los bancos se vuelcan y los mapas se rompen bajo los pies.",
+   "Los alumnos se refugian bajo las mesas sin soltar sus plumas."
+  ],
+  "evento_asalto_taberna": [
+   "La puerta estalla y entran tres con la cara cubierta.",
+   "Un barril rueda por el salón y se oyen gritos entre el humo."
+  ],
+  "evento_guardias_persiguen": [
+   "Se oyen botas, voces y el tintineo de las armas. Se acercan.",
+   "Una puerta se cierra detrás de vos justo a tiempo."
+  ],
+  "evento_huida_colinas": [
+   "Corrés cuesta abajo y las piedras se aflojan a tu paso.",
+   "Detrás se oyen gritos que se alejan, o quizás no."
+  ],
+  "evento_lucha_caseta": [
+   "La caseta tiembla con cada golpe.",
+   "Un candil cae y rueda por el suelo, y el fuego sigue su camino."
+  ],
+  "evento_pelea_pescadores": [
+   "Una red vuela sobre dos hombres y los une como a peces.",
+   "Los remos son garrotes. El lago, un mal testigo."
+  ],
+  "evento_tormenta_verano": [
+   "El trueno llega antes de lo esperado y las ventanas vibran.",
+   "Cae un agua gruesa que huele a tierra y a polvo."
+  ],
+  "evento_mensajero_llega": [
+   "Llega un mensajero cubierto de polvo, con la lengua pegada al paladar.",
+   "Un caballo agotado se detiene en seco y su jinete se baja con las piernas flojas."
+  ],
+  "evento_precio_pan_sube": [
+   "Un cartel con una cifra nueva aparece en la panadería. La fila no se acorta.",
+   "Alguien murmura que mañana subirá otra vez."
+  ],
+  "evento_cosecha_abundante": [
+   "Los carros llegan tan cargados que crujen. Hay fruta en el suelo.",
+   "Los precios caen, y con ellos, algunas caras largas."
+  ],
+  "evento_moneda_nueva": [
+   "Una moneda pasa de mano en mano y todos la miran de cerca.",
+   "Un comerciante la muerde. Otro la pesa. Un tercero se niega."
+  ],
+  "evento_luna_llena": [
+   "La luna llena pone un blanco duro sobre las piedras.",
+   "Hasta los perros se callan bajo tanta luz."
+  ],
+  "evento_libro_nuevo": [
+   "Un libro recién encuadernado huele a cuero fresco y a tinta.",
+   "Los lectores forman fila para ojear una página."
+  ],
+  "evento_peregrinos_roble": [
+   "Un grupo de peregrinos pasa descalzo, en silencio.",
+   "Alguien deja una cinta atada al Roble y sigue su camino."
+  ]
+ },
+ "cierre": {
+  "tranquilo": [
+   "Los últimos curiosos se van y el lugar respira.",
+   "Algo queda en el aire, como una música que ya no suena."
+  ],
+  "social": [
+   "Cada uno vuelve a su puesto y la conversación se disuelve.",
+   "Se acaba el tema, pero la gente lo guarda para después."
+  ],
+  "tenso": [
+   "La tensión se afloja de a poco, como una cuerda que alguien suelta.",
+   "Nadie dice nada, pero todos entienden que no terminó del todo."
+  ],
+  "peligroso": [
+   "Pasa el peligro y llegan los comentarios.",
+   "Se levanta el polvo, y con él, la gente."
+  ],
+  "sigilo": [
+   "La oportunidad se cierra y el lugar vuelve a estar atento.",
+   "El momento se acaba sin avisar."
+  ],
+  "combate": [
+   "Cesa el ruido y se oye la respiración de los que quedan.",
+   "Los que pueden, se van; los que no, se quedan."
+  ],
+  "neutro": [
+   "El día sigue como si nada hubiera pasado.",
+   "Se apaga el asunto y nadie lo recuerda."
+  ]
+ }
+}

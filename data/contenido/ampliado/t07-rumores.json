@@ -1,0 +1,57 @@
+{
+  "tanda": "t07",
+  "estado": "a_aprobar",
+  "nota": "rumores.<verbo>.<fuerza>. {lugar} = escena del hecho, {npc} = víctima o beneficiado. Las ciudades suman un remate local. Los mensajeros tienen voz propia.",
+  "rumores": {
+    "presionar": {
+      "fuerte": ["Dicen que en {lugar} alguien apretó a {npc} hasta hacerlo ceder.", "Se comenta que presionaron a {npc} en {lugar}. Y que fuiste vos.", "Ya se sabe: {npc} cedió en {lugar} porque alguien lo apretó."],
+      "difuso": ["Algo pasó con {npc}, dicen. Algo feo.", "Hay quien dice que a {npc} lo apretaron. No se sabe quién.", "Corre un rumor sobre {npc}. Nadie lo cuenta igual."]
+    },
+    "atacar": {
+      "fuerte": ["Atacaron a {npc} en {lugar}. Todos lo saben.", "En {lugar} hubo sangre. {npc} todavía tiene las marcas.", "Dicen que alguien golpeó a {npc} en {lugar}, a la vista de todos."],
+      "difuso": ["Hubo una pelea en algún lado. Dicen que con {npc}.", "Se habla de un ataque. Los detalles cambian según quién cuente.", "Alguien salió lastimado. Algunos dicen que {npc}."]
+    },
+    "ayudar": {
+      "fuerte": ["Dicen que alguien ayudó a {npc} en {lugar} sin pedir nada.", "En {lugar} se habla bien de vos. {npc} lo cuenta.", "{npc} anda diciendo que le diste una mano."],
+      "difuso": ["Se habla de un forastero que ayuda a la gente.", "Dicen que alguien anda haciendo favores por los caminos.", "Hay quien habla bien de un viajero. No sabe el nombre."]
+    },
+    "negociar": {
+      "fuerte": ["Se dice que cerraste un buen trato con {npc} en {lugar}.", "{npc} cuenta que regateaste como un mercader viejo.", "En {lugar} dicen que sabés negociar."],
+      "difuso": ["Alguien hizo un buen negocio, dicen.", "Se habla de un trato raro. Nadie sabe bien de qué.", "Dicen que un forastero sabe sacar precio."]
+    },
+    "emboscar": {
+      "fuerte": ["Emboscaron a {npc} en {lugar}. Dicen que fue planeado.", "Todos saben de la emboscada a {npc}. Hay nombres.", "En {lugar} esperaron a {npc} escondidos. Eso se dice."],
+      "difuso": ["Hubo una emboscada en algún camino. Nadie vio a nadie.", "Dicen que hay alguien que ataca desde las sombras.", "Corre que asaltaron a alguien. Puede ser {npc}."]
+    },
+    "defender": {
+      "fuerte": ["Dicen que defendiste a {npc} en {lugar}. Con el cuerpo.", "{npc} cuenta a quien quiera oír que lo salvaste.", "En {lugar} hablan de cómo cubriste a {npc}."],
+      "difuso": ["Se habla de alguien que defendió a un desconocido.", "Dicen que hubo un acto de valor. Nadie se pone de acuerdo en los detalles.", "Alguien se puso en medio de una pelea, dicen."]
+    }
+  },
+  "remate_ciudad": {
+    "Ardenhall": ["En Ardenhall, hasta eso queda escrito.", "El Archivo seguro ya lo tiene en alguna copia.", "En el mercado no se habla de otra cosa."],
+    "Lareth": ["En Lareth, eso ya tiene precio.", "En la taberna lo cuentan cada noche, cada vez más grande.", "Los cambistas apuestan sobre cómo sigue."],
+    "Halenor": ["En Halenor lo discuten como si fuera una tesis.", "En la biblioteca lo comentan en voz baja.", "Alguien ya lo dibujó en un mapa, con flechas."]
+  },
+  "mensajeros": {
+    "sarin_mensajera": [
+      "«¿Te enteraste?», dice Sarin, y te cuenta lo de {npc} en {lugar}.",
+      "Sarin baja la voz: «En {lugar} todos hablan de lo de {npc}.»",
+      "«Lo llevo en la cabeza, no en las cartas», dice Sarin: lo de {npc}.",
+      "Sarin se ríe: «Ya llegó a tres ciudades lo de {npc}.»",
+      "«No sé si es cierto», dice Sarin, «pero en {lugar} lo juran.»"
+    ],
+    "brenn_arriero": [
+      "«Por los caminos se dice que lo de {npc} fue cosa tuya», dice Brenn.",
+      "Brenn escupe: «En {lugar} no se habla de otra cosa que de {npc}.»",
+      "«Los arrieros cuentan mucho», dice Brenn. «Y de vos, más.»",
+      "Brenn te mira: «Lo de {npc}. ¿Es cierto?»",
+      "«Eso viajó más rápido que mis mulas», dice Brenn."
+    ]
+  },
+  "reaccion_npc": {
+    "buena": ["{npc} te dice que escuchó cosas, pero que no cree todo.", "{npc} te cuenta lo que se dice de vos, por si te sirve."],
+    "neutra": ["{npc} te mira como si ya hubiera oído algo.", "{npc} menciona, al pasar, lo que se comenta."],
+    "mala": ["{npc} te mira con lo que escuchó escrito en la cara.", "«Ya sé lo que hiciste», dice {npc}. No necesita más."]
+  }
+}

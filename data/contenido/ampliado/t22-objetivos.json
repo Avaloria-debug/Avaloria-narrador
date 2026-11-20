@@ -1,0 +1,451 @@
+{
+ "tanda": "t22",
+ "estado": "a_aprobar_canon",
+ "nota": "1 objetivo por NPC, 3 pasos que avanzan solos (prob por tick de avanzaCadaH). afinidad = verbos del jugador que aceleran(+1)/frenan(-1). charla/rumor se usan según el paso actual.",
+ "objetivos": {
+  "maren_archivista": {
+   "id": "obj_maren_tercera_copia",
+   "meta": "asegurar la tercera copia del tratado",
+   "afinidad": {
+    "ayudar": 1,
+    "presionar": -1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Maren revisa dos veces el candado del depósito antes de hablar.",
+      "«Hay un asunto de copias que me quita el sueño», dice Maren, sin explicar."
+     ],
+     "rumor": "Dicen que Maren revisa el depósito a deshoras."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Maren anota algo en un papel suelto y lo guarda en la manga.",
+      "«Cuanto menos sepa, mejor para usted», dice Maren."
+     ],
+     "rumor": "Alguien vio a Maren mover cajas por la noche."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Maren parece más liviana. Casi sonríe.",
+      "«Ya está dispuesta», dice Maren, y no aclara qué."
+     ],
+     "rumor": "Se murmura que el Archivo guarda más de lo que muestra."
+    }
+   ]
+  },
+  "serel_panadero": {
+   "id": "obj_serel_receta",
+   "meta": "probar que el panadero de Lareth le copia la receta",
+   "afinidad": {
+    "ayudar": 1,
+    "negociar": 1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Serel huele cada pan del vecino con cara de pocos amigos.",
+      "«Algo huele raro en el pan de Lareth», gruñe Serel."
+     ],
+     "rumor": "Dicen que Serel anda comparando panes."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Serel guarda un pan ajeno bajo el mostrador, como prueba.",
+      "«Tengo una muestra. Ahora falta lo otro», dice Serel."
+     ],
+     "rumor": "Se comenta que Serel reunió pruebas contra un colega."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Serel está de buen humor. Algo salió a su favor.",
+      "«Ya no se va a burlar de mí», dice Serel, y se ríe."
+     ],
+     "rumor": "Un panadero de Lareth anda callado, dicen."
+    }
+   ]
+  },
+  "ivor_cambista": {
+   "id": "obj_ivor_deudor",
+   "meta": "cobrar al mercader que no piensa pagar",
+   "afinidad": {
+    "presionar": 1,
+    "negociar": 1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Ivor repasa una libreta con una cifra subrayada.",
+      "«Una cuenta vencida es un insulto», dice Ivor."
+     ],
+     "rumor": "Dicen que Ivor tiene un deudor en la mira."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Ivor envió una carta con lacre rojo. No lo oculta.",
+      "«He hecho mi parte. Ahora le toca a él», dice Ivor."
+     ],
+     "rumor": "Se oye que Aster mandó un aviso formal a un mercader."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Ivor tiene una expresión satisfecha, apenas visible.",
+      "«Algunas cuentas se cierran solas», dice Ivor."
+     ],
+     "rumor": "Un mercader se fue de Lareth sin despedirse, dicen."
+    }
+   ]
+  },
+  "naela_tabernera": {
+   "id": "obj_naela_arriero",
+   "meta": "cobrarle al arriero sin perder lo que él sabe",
+   "afinidad": {
+    "negociar": 1,
+    "ayudar": 1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Naela ve entrar al arriero y se pone a secar un vaso con exceso de cuidado.",
+      "«Ese tiene mucho que contar. Y mucho que pagar», dice Naela."
+     ],
+     "rumor": "Dicen que Naela le anda negando fiado a un arriero."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Naela ofrece un trato al arriero: una ronda por una noticia.",
+      "«Un trueque mejor que el dinero», dice Naela."
+     ],
+     "rumor": "Se comenta que el arriero canta menos que antes."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Naela cierra la libreta de deudas con un golpe seco.",
+      "«Quedamos a mano», dice Naela, y sirve una ronda gratis."
+     ],
+     "rumor": "Naela borró una deuda grande, cuentan."
+    }
+   ]
+  },
+  "tiren_docente": {
+   "id": "obj_tiren_rio",
+   "meta": "demostrar que un río está mal dibujado en los mapas oficiales",
+   "afinidad": {
+    "ayudar": 1,
+    "observar": 1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Tiren dibuja una línea nueva con la tiza, y la borra, y la dibuja otra vez.",
+      "«El río no va por ahí. Lo juro», dice Tiren."
+     ],
+     "rumor": "Dicen que Tiren se pasa las noches con mapas."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Tiren guarda un mapa propio bajo el pizarrón.",
+      "«Ya tengo las mediciones. Falta convencer a alguien», dice Tiren."
+     ],
+     "rumor": "Se cuenta que Tiren midió un río a pie."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Tiren sonríe de oreja a oreja y no puede quedarse quieto.",
+      "«Lo aceptaron. Van a corregirlo en la próxima edición», dice Tiren."
+     ],
+     "rumor": "Un mapa oficial va a cambiar, dicen en Halenor."
+    }
+   ]
+  },
+  "elia_bibliotecaria": {
+   "id": "obj_elia_estante",
+   "meta": "mantener oculto el estante que no figura en el catálogo",
+   "afinidad": {
+    "ayudar": 1,
+    "presionar": -1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Elia pasa un trapo por el mismo estante dos veces, sin necesidad.",
+      "«Todo en su lugar», susurra Elia, nerviosa."
+     ],
+     "rumor": "Dicen que Elia no deja a nadie solo en el fondo."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Elia cambió la cerradura de una puerta pequeña.",
+      "«Hay lugares que se cuidan solos», susurra Elia."
+     ],
+     "rumor": "Se murmura que hay una llave nueva en la biblioteca."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Elia parece aliviada, como quien dejó una carga.",
+      "«Está a salvo», susurra Elia, sin más."
+     ],
+     "rumor": "Se habla de un estante que ya no está donde estaba."
+    }
+   ]
+  },
+  "brenn_arriero": {
+   "id": "obj_brenn_mulas",
+   "meta": "conseguir una buena mula en la granja del este sin llamar la atención",
+   "afinidad": {
+    "negociar": 1,
+    "ayudar": 1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Brenn palmea una mula y la mira con ojo clínico.",
+      "«Una de estas sería mejor que lo que tengo», dice Brenn."
+     ],
+     "rumor": "Dicen que Brenn anda midiendo mulas ajenas."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Brenn cuenta monedas con disimulo.",
+      "«Me falta poco. Casi nada», dice Brenn."
+     ],
+     "rumor": "Se oye que Brenn juntó plata para algo."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Brenn tiene una mula nueva y la trata con orgullo.",
+      "«Esta es la mejor que tuve», dice Brenn."
+     ],
+     "rumor": "Brenn estrenó mula, aunque nadie sabe de dónde."
+    }
+   ]
+  },
+  "ysolde_pescadora": {
+   "id": "obj_ysolde_redes",
+   "meta": "descubrir quién le robó las redes",
+   "afinidad": {
+    "ayudar": 1,
+    "observar": 1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Ysolde recorre la orilla mirando el suelo.",
+      "«Huellas con clavos. De carretero», murmura Ysolde."
+     ],
+     "rumor": "Dicen que Ysolde sigue una pista en la orilla."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Ysolde anota algo en un trozo de corteza.",
+      "«Ya sé por dónde pasó», dice Ysolde."
+     ],
+     "rumor": "Se comenta que Ysolde sabe quién se llevó las redes."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Ysolde tiene una red nueva, tejida de manera idéntica a la perdida.",
+      "«Ya no importa», dice Ysolde, con calma."
+     ],
+     "rumor": "Ysolde recuperó lo suyo, o algo parecido, cuentan."
+    }
+   ]
+  },
+  "dario_guardia": {
+   "id": "obj_dario_carros",
+   "meta": "saber quién ordena que ciertos carros pasen sin revisión",
+   "afinidad": {
+    "observar": 1,
+    "presionar": -1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Darío anota números de carros en su libreta sin parecer interesado.",
+      "«Hay una regularidad que no me gusta», dice Darío."
+     ],
+     "rumor": "Dicen que Darío lleva cuenta de ciertos carros."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Darío se queda un rato más después del relevo, mirando la ruta.",
+      "«Si alguien me pregunta, no vi nada», dice Darío."
+     ],
+     "rumor": "Se murmura que Darío sospecha de una orden."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Darío evita tu mirada. Algo decidió.",
+      "«Hay cosas que es mejor no seguir», dice Darío."
+     ],
+     "rumor": "Se comenta que Darío dejó de anotar los carros."
+    }
+   ]
+  },
+  "sarin_mensajera": {
+   "id": "obj_sarin_espia",
+   "meta": "saber quién le pregunta por los remitentes",
+   "afinidad": {
+    "ayudar": 1,
+    "presionar": -1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Sarin mira hacia atrás cada pocos pasos.",
+      "«Alguien anda preguntando por mí», dice Sarin, rápido."
+     ],
+     "rumor": "Dicen que Sarin se siente seguida."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Sarin cambió de ruta tres veces hoy.",
+      "«Ya tengo una idea de quién es», dice Sarin."
+     ],
+     "rumor": "Se oye que Sarin mide cada atajo antes de usarlo."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Sarin camina más tranquila, aunque no baja la guardia.",
+      "«Ya sé quién fue. Ahora sé a qué atenerme», dice Sarin."
+     ],
+     "rumor": "Sarin dejó de cambiar de ruta, cuentan."
+    }
+   ]
+  },
+  "hollis_pastor": {
+   "id": "obj_hollis_campamento",
+   "meta": "mantener el trato tácito con el campamento tras la pirca",
+   "afinidad": {
+    "ayudar": 1,
+    "observar": -1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Hollis mira hacia la pirca y vuelve a mirar al rebaño.",
+      "«Hay vecinos que prefieren que no se hable de ellos», dice Hollis."
+     ],
+     "rumor": "Dicen que Hollis cuida un secreto en las colinas."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Hollis deja un queso detrás de la pirca y vuelve sin él.",
+      "«Cada uno con lo suyo», dice Hollis."
+     ],
+     "rumor": "Se comenta que Hollis comparte pan con desconocidos."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Hollis parece más liviano, como si hubiera cerrado un trato.",
+      "«Se mudaron. Mejor así», dice Hollis."
+     ],
+     "rumor": "El campamento tras la pirca ya no está, dicen."
+    }
+   ]
+  },
+  "oren_peregrino": {
+   "id": "obj_oren_nota",
+   "meta": "hallar la nota del cronista sobre el firmante joven",
+   "afinidad": {
+    "ayudar": 1,
+    "leer": 1
+   },
+   "pasos": [
+    {
+     "avanzaCadaH": 24,
+     "prob": 0.5,
+     "charla": [
+      "Oren recorre el camino con la mirada fija en el suelo, como buscando algo.",
+      "«Hay una nota que debería existir», dice Oren."
+     ],
+     "rumor": "Dicen que Oren busca un papel antiguo."
+    },
+    {
+     "avanzaCadaH": 36,
+     "prob": 0.4,
+     "charla": [
+      "Oren tiene una pista y la guarda con cuidado.",
+      "«Un cronista la escribió. Falta saber dónde quedó», dice Oren."
+     ],
+     "rumor": "Se murmura que Oren sigue el rastro de un cronista."
+    },
+    {
+     "avanzaCadaH": 48,
+     "prob": 0.3,
+     "charla": [
+      "Oren sonríe con calma. Algo encontró.",
+      "«La nota existe. Y dice más de lo que se cuenta», dice Oren."
+     ],
+     "rumor": "Oren habría hallado un texto del año 500, cuentan."
+    }
+   ]
+  }
+ }
+}
