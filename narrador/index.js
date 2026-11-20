@@ -19,8 +19,9 @@ import { registroDeTurnoNoResuelto } from './registro/registroTurnos.js';
 // Vive solo en memoria: la frase del jugador no entra al estado de la partida.
 const lineasPendientes = new WeakMap();
 import { narrarTurno, narrarReformulacion, VENTANA_APERTURAS, anotarApertura } from './narracion.js';
-import { pedirRespuestaIA, datosDeContexto, validarSalida, SIN_IA, MOTIVOS_IA } from './ia.js';
+import { pedirRespuestaIA, datosDeContexto, validarSalida, aperturaIa, SIN_IA, MOTIVOS_IA } from './ia.js';
 import { registroDeTurno, ORIGENES, MAX_ULTIMOS_TURNOS } from './registro.js';
+
 import { estadoDeEscena } from './estadoEscena.js';
 import { destinosDeViaje, prepararDiccionarios } from './comprension.js';
 import { cargarDiccionarios, problemasDeDiccionarios, textoDeProblemasDeDiccionarios } from './diccionarios.js';
@@ -103,6 +104,7 @@ export function crearPartida(opciones = {}) {
     ...base,
     eventosActivos: [],
     ventanaAperturas: [],
+    ventanaAperturasIa: [],
     ultimosTurnos: [],
     numeroRegistro: 0,
     iaAgotadaDia: null,
@@ -178,6 +180,8 @@ function conValoresPorDefecto(e) {
     destinoPendiente: destinoPendienteValido(e.destinoPendiente),
     motivoReformulacion: motivoReformulacionValido(e.motivoReformulacion),
     ventanaAperturas: lista(e.ventanaAperturas).filter((a) => typeof a === 'string').slice(-VENTANA_APERTURAS),
+    // Aperturas de las últimas respuestas de IA (dos palabras), con la misma ventana de 5 que las plantillas.
+    ventanaAperturasIa: lista(e.ventanaAperturasIa).filter((a) => typeof a === 'string').slice(-VENTANA_APERTURAS),
     ultimosTurnos: lista(e.ultimosTurnos).filter((t) => typeof t === 'string').slice(-MAX_ULTIMOS_TURNOS),
     numeroRegistro: Number.isInteger(e.numeroRegistro) && e.numeroRegistro >= 0 ? e.numeroRegistro : 0,
     iaAgotadaDia: typeof e.iaAgotadaDia === 'string' ? e.iaAgotadaDia : null,
@@ -427,6 +431,7 @@ export async function narrar(estado, entrada, opciones = {}) {
     let tipo = TIPOS_SALIDA.NARRACION;
     let origen = ORIGENES.CODIGO;
     let aperturas = ventana;
+    let ventanaIa = partida.ventanaAperturasIa;
     let iaAgotadaDia = partida.iaAgotadaDia;
 
     if (turno.tipo === TIPOS_TURNO.IA) {
@@ -442,17 +447,26 @@ export async function narrar(estado, entrada, opciones = {}) {
         if (typeof http !== 'function') {
           anotar(ERRORES.IA, MOTIVOS_IA.ERROR_RED);
         } else {
-          const datos = datosDeContexto(partida, contenido, { frase: entrada.texto, ultimasAcciones: partida.ultimosTurnos });
-          const respuesta = await pedirRespuestaIA({
+          const recientesIa = partida.ventanaAperturasIa;
+          const datos = datosDeContexto(partida, contenido, { frase: entrada.texto, ultimasAcciones: partida.ultimosTurnos, evitarAperturas: recientesIa });
+          const pedir = () => pedirRespuestaIA({
             groqKey,
             contexto: datos,
             http,
             ...(typeof opciones?.esperar === 'function' ? { esperar: opciones.esperar } : {}),
           });
-          if (respuesta.ok && validarSalida(respuesta.texto).ok) {
+          let respuesta = await pedir();
+          const valida = (r) => r.ok && validarSalida(r.texto).ok;
+          // Si repite una apertura reciente, se pide una vez más; la segunda se usa solo si es válida y no repite.
+          if (valida(respuesta) && recientesIa.includes(aperturaIa(respuesta.texto))) {
+            const otra = await pedir();
+            if (valida(otra) && !recientesIa.includes(aperturaIa(otra.texto))) respuesta = otra;
+          }
+          if (valida(respuesta)) {
             texto = respuesta.texto;
             tipo = TIPOS_SALIDA.DIALOGO_IA;
             origen = ORIGENES.IA;
+            ventanaIa = anotarApertura(partida.ventanaAperturasIa, aperturaIa(respuesta.texto));
           } else {
             const detalle = [respuesta.error, respuesta.motivo, respuesta.detalle].filter(Boolean).join(': ');
             anotar(ERRORES.IA, detalle);
@@ -530,6 +544,7 @@ export async function narrar(estado, entrada, opciones = {}) {
       ...turno.estado,
       ...(conCaso ? { caso: conCaso.caso, npcs: conCaso.npcs } : {}),
       ventanaAperturas: aperturas,
+      ventanaAperturasIa: ventanaIa,
       ultimosTurnos: etiqueta ? [...partida.ultimosTurnos, etiqueta].slice(-MAX_ULTIMOS_TURNOS) : partida.ultimosTurnos,
       numeroRegistro,
       iaAgotadaDia,
