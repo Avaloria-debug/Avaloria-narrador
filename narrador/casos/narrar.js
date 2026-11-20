@@ -90,6 +90,23 @@ export function aplicarAccion(estadoCaso, accion, mundo, caso) {
  * Reemplaza `{npc:pN}` por el nombre del dueño, `{conocimiento:pN}` por el contenido del conocimiento y
  * `{escena:pN}` por el nombre de la escena donde está el dueño (necesita `mundo`).
  */
+/**
+ * Conocimientos que un texto de hito narra con `{conocimiento:pN}`: quedan revelados para las consultas siguientes,
+ * así la respuesta de una consulta no contradice lo que el jugador acaba de leer.
+ * @returns {{ npcId: string, conocimientoId: string }[]}
+ */
+export function conocimientosNarrados(texto, estadoCaso) {
+  const pistas = estadoCaso.instancia?.pistas ?? [];
+  const vistos = [];
+  for (const [, ranura] of String(texto).matchAll(/\{conocimiento:(p\d+)\}/g)) {
+    const pista = pistas.find((p) => p.ranura === ranura);
+    if (pista?.npcId && pista.conocimientoId && !vistos.some((v) => v.conocimientoId === pista.conocimientoId)) {
+      vistos.push({ npcId: pista.npcId, conocimientoId: pista.conocimientoId });
+    }
+  }
+  return vistos;
+}
+
 export function completarMarcadores(texto, estadoCaso, contenido, mundo = null) {
   const pistas = estadoCaso.instancia?.pistas ?? [];
   return String(texto).replace(/\{(npc|conocimiento|escena):(p\d+)\}/g, (todo, clase, ranura) => {
@@ -135,7 +152,7 @@ export function elegirTexto(hito, estadoCaso, usos, semilla) {
 export async function turnoDeCaso(p) {
   const { caso, contenido = null, semilla = 0, persistencia = null, jugadorId = null, partidaId = null } = p;
   const horasAvanzadas = p.horasAvanzadas ?? 0;
-  const vacio = { hito: null, reparado: null, texto: null, gancho: null, desenlace: null };
+  const vacio = { hito: null, reparado: null, texto: null, gancho: null, desenlace: null, revelados: [] };
   if (p.estadoCaso?.cerrado) return { estadoCaso: p.estadoCaso, npcs: p.mundo.npcs, ...vacio };
 
   // 1. Acción → tags.
@@ -165,6 +182,7 @@ export async function turnoDeCaso(p) {
   let texto = null;
   let gancho = null;
   let usoTexto = null;
+  let revelados = [];
   // `sinDesenlace` (consultas): un hito final no se dispara; queda para un turno de acción.
   const candidato = elegirDisparo(estado, mundo);
   const elegido = p.sinDesenlace === true && candidato?.final ? null : candidato;
@@ -181,6 +199,7 @@ export async function turnoDeCaso(p) {
     const t = elegirTexto(elegido, estado, usos, semilla);
     if (t) {
       texto = { id: t.id, texto: completarMarcadores(t.texto, estado, contenido) };
+      revelados = conocimientosNarrados(t.texto, estado);
       estado = { ...estado, textosUsados: [...(estado.textosUsados ?? []), t.id] };
       usoTexto = t.id;
     }
@@ -213,5 +232,5 @@ export async function turnoDeCaso(p) {
     });
   }
 
-  return { estadoCaso: estado, npcs: mundo.npcs, hito, reparado, texto, gancho, desenlace, pistaCamino };
+  return { estadoCaso: estado, npcs: mundo.npcs, hito, reparado, texto, gancho, desenlace, pistaCamino, revelados };
 }

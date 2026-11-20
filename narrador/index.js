@@ -26,6 +26,7 @@ import { estadoDeEscena } from './estadoEscena.js';
 import { destinosDeViaje, prepararDiccionarios } from './comprension.js';
 import { cargarDiccionarios, problemasDeDiccionarios, textoDeProblemasDeDiccionarios } from './diccionarios.js';
 import { npcInicial, clampRelacion, clampDisposicion } from './npcs.js';
+import { revelar } from './conocimientos.js';
 import { esHora } from './reloj.js';
 import { MOTIVOS, CLAVES_REFORMULACION } from './motivos.js';
 import { minutosAbsolutos } from './reloj.js';
@@ -325,15 +326,22 @@ async function turnoConCaso(partida, turno, opciones) {
   const npcsNuevos = Object.fromEntries(
     Object.entries(nuevo.npcs).map(([id, n]) => {
       const m = r.npcs[id];
-      return [id, m ? { ...n, relacion: clampRelacion(m.relacion), bloqueadoConocimientos: m.bloqueadoConocimientos === true } : n];
+      const conCambios = m ? { ...n, relacion: clampRelacion(m.relacion), bloqueadoConocimientos: m.bloqueadoConocimientos === true } : n;
+      return [id, conRevelados(conCambios, id, r.revelados)];
     }),
   );
   return { caso: { ...r.estadoCaso, contadorTurnos }, npcs: npcsNuevos, texto: r.texto?.texto ?? null };
 }
 
+/** El texto del hito narró estos conocimientos: quedan revelados (no se contradice en la consulta siguiente). */
+function conRevelados(npc, npcId, revelados) {
+  return lista(revelados).filter((x) => x.npcId === npcId).reduce((n, x) => revelar(n, x.conocimientoId), npc);
+}
+
 /** Pregunta que reveló un conocimiento: `preguntar_clave` en el motor de caso, sin horas y sin desenlace. */
 async function turnoConCasoDeConsulta(partida, turno, plantilla, opciones) {
-  const estadoCaso = partida.caso;
+  // El turno pudo marcar el primer contacto como usado: se parte del caso que deja el turno.
+  const estadoCaso = esObjeto(turno.estado?.caso) ? turno.estado.caso : partida.caso;
   const nuevo = turno.estado;
   const posiciones = posicionesDeNpcs(nuevo.reloj, contenido);
   const npcs = Object.fromEntries(
@@ -363,7 +371,8 @@ async function turnoConCasoDeConsulta(partida, turno, plantilla, opciones) {
   const npcsNuevos = Object.fromEntries(
     Object.entries(nuevo.npcs).map(([id, n]) => {
       const m = r.npcs[id];
-      return [id, m ? { ...n, relacion: clampRelacion(m.relacion), bloqueadoConocimientos: m.bloqueadoConocimientos === true } : n];
+      const conCambios = m ? { ...n, relacion: clampRelacion(m.relacion), bloqueadoConocimientos: m.bloqueadoConocimientos === true } : n;
+      return [id, conRevelados(conCambios, id, r.revelados)];
     }),
   );
   return { caso: { ...r.estadoCaso, contadorTurnos }, npcs: npcsNuevos, texto: r.texto?.texto ?? null };
