@@ -6,7 +6,8 @@
 //   tags, contadorHitos, hitoPrevio: { id, hora, escena, contador },
 //   hitosAlcanzados: [id], hitosListos: [id], listosDesde: { id: hora }, hitosBloqueados: [id],
 //   entregasMovidas: { id: escena }, reparados: [npcId], progresoReparacion: { npcId: [escena] }, umbralesBajados: [id], reparacionHabilitada: [id],
-//   sinListosDesde: turno, ultimoAvance: { hora }, turnoUltimoDisparo, finalAlcanzado, abandonoHabilitado
+//   sinListosDesde: turno, ultimoAvance: { hora }, turnoUltimoDisparo, finalAlcanzado, abandonoHabilitado,
+//   caminoP1Desde: turno (anti-traba de camino a p1)
 // }
 // estadoMundo: {
 //   caso,                // plantilla del caso activo (hitos)
@@ -34,6 +35,7 @@ import { aplicarDecaimientoPorHitos, aplicarReparacion, TAGS_REPARABLES } from '
 
 export const TURNOS_SIN_LISTOS = 8;
 export const HORAS_SIN_AVANCE = 24;
+export const TURNOS_SIN_AVANCE_CAMINO = 8;
 export const HORAS_GANCHO = 12;
 export const NIVEL_VISTA = 1;
 export const NIVEL_ENTENDIDA = 2;
@@ -523,6 +525,35 @@ export function antiTrabaSinAvance(estadoCaso, estadoMundo) {
     origen: 'anti_traba:sin_avance',
   });
   return { ...estadoCaso, tags, ultimoAvance: { hora: estadoMundo.hora } };
+}
+
+/**
+ * 8 turnos sin avance antes del primer hito → pista_conocida nivel 1 de la ranura p1 y el camino a su dueño
+ * ({ npcId, escena }) para narrarlo. No aplica si ya hay hitos alcanzados o listos, si p1 ya está en nivel 1,
+ * si el dueño no está en ninguna escena o si el jugador ya está en la escena del dueño.
+ * @returns {{ estadoCaso: object, camino: { npcId: string, escena: string }|null }}
+ */
+export function antiTrabaCaminoP1(estadoCaso, estadoMundo) {
+  const sin = { estadoCaso, camino: null };
+  const pista = pistaDe(estadoCaso, 'p1');
+  if (!pista || (estadoCaso.hitosAlcanzados ?? []).length > 0 || (estadoCaso.hitosListos ?? []).length > 0) return sin;
+  if (nivelDePista(estadoCaso, 'p1') >= NIVEL_VISTA) return sin;
+  const turno = estadoMundo.turno ?? 0;
+  const desde = estadoCaso.caminoP1Desde;
+  if (desde === null || desde === undefined) return { estadoCaso: { ...estadoCaso, caminoP1Desde: turno }, camino: null };
+  if (turno - desde < TURNOS_SIN_AVANCE_CAMINO) return sin;
+  const escena = escenaDeNpc(estadoMundo, pista.npcId);
+  if (!escena || escena === estadoMundo.escena) return sin;
+  const tags = escribirTag(estadoCaso.tags ?? [], {
+    tipo: 'pista_conocida',
+    objetivo: pista.conocimientoId,
+    nivel: NIVEL_VISTA,
+    hora: estadoMundo.hora,
+    hito: estadoCaso.contadorHitos ?? 0,
+    casoId: estadoCaso.casoId ?? null,
+    origen: 'anti_traba:camino_p1',
+  });
+  return { estadoCaso: { ...estadoCaso, tags, ultimoAvance: { hora: estadoMundo.hora } }, camino: { npcId: pista.npcId, escena } };
 }
 
 /** Todos los finales bloqueados → se habilita el desenlace neutro por abandono. */

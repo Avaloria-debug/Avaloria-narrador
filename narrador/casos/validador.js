@@ -238,6 +238,17 @@ export function validarCaso(caso, contenido, opciones = {}) {
     }
   }
 
+  // Textos de pista de camino a p1 (opcionales): id único y solo {npc:pN} o {escena:pN}; nunca el conocimiento.
+  const idsCamino = new Set();
+  for (const t of lista(caso?.textos_pista_camino)) {
+    if (typeof t?.id !== 'string' || idsCamino.has(t.id)) error(REGLAS.TEXTO_DUPLICADO, `textos_pista_camino: ${t?.id}`);
+    idsCamino.add(t?.id);
+    for (const [, dentro] of String(t?.texto ?? '').matchAll(/\{([^}]*)\}/g)) {
+      const m = dentro.match(/^(npc|escena):(p\d+)$/);
+      if (!m || !ranuras.has(m[2])) error(REGLAS.MARCADOR, `${t.id}: {${dentro}}`);
+    }
+  }
+
   // Instancias, escenas de entrega y finales.
   let firmas = [];
   try {
