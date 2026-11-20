@@ -10,6 +10,7 @@ import { npcsPresentes } from './turno.js';
 import { valoresDeAccion, aperturaDe } from './narracion.js';
 import { resolverPlantillas } from './contenido.js';
 import { elegir } from './seleccion.js';
+import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
 const porId = (l, id) => (l ?? []).find((x) => x.id === id);
 
@@ -84,6 +85,8 @@ export function extInicial(ext, semilla = 0) {
     clima: typeof e.clima === 'string' ? e.clima : 'despejado',
     ventanaAmbiente: Array.isArray(e.ventanaAmbiente) ? [...e.ventanaAmbiente] : [],
     avisos: Array.isArray(e.avisos) ? e.avisos.slice(-20) : [],
+    hechos: hechosGuardados(e),
+    ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
   };
 }
 
@@ -112,12 +115,16 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
   const npcId = npcDelTurno(turno);
   const umbrales = amp.guia?.umbrales ? { ...UMBRALES, ...amp.guia.umbrales } : UMBRALES;
   const estado = { ...despues, ext };
-  const hechos = (extra = {}, npc = npcId) => hechosDe(estado, { contenido, npcId: npc, umbrales, extra });
+  const recuerdo = (npc) => recuerdosDe(ext.hechos ?? [], npc, despues.reloj, umbrales.recuerdo?.reciente_horas);
+  const hechos = (extra = {}, npc = npcId) => {
+    const { rec, ant } = recuerdo(npc);
+    return hechosDe(estado, { contenido, npcId: npc, umbrales, extra: { rec, ant, ...extra } });
+  };
   const expandirTexto = (t, h = hechos(), npc = npcId, objetoId = turno?.accion?.parametros?.objetoId) => {
     const simbolos = npc && amp.npcsRutina?.[npc]?.gestos?.length ? { ...amp.simbolos, gesto: amp.npcsRutina[npc].gestos.map((g) => (typeof g === 'string' ? g : g.t)) } : amp.simbolos;
     return aplicarGenero(expandir(t, simbolos, { rng: rng('gramatica'), hechos: h, avisos: ext.avisos }), { npcId: npc, objetoId, genero: amp.guia?.genero });
   };
-  return { rng, npcId, hechos, expandirTexto, estado };
+  return { rng, npcId, hechos, expandirTexto, estado, recuerdo };
 }
 
 /**
@@ -126,10 +133,19 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
  */
 export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, aperturas, tipo }) {
   let ext = contabilizar(antes.ext, { antes, despues, turno, contenido });
+  // P6: el recuerdo se lee ANTES de registrar el hecho de este turno.
+  const hechosPrevios = ext.hechos;
   ext.clima = climaEn(ext.semillaBase, despues.reloj, amp.guia?.umbrales?.clima_cambia_cada_horas);
   const ctx = contexto({ amp, contenido, despues, turno, ext });
   const partes = [texto];
   if (tipo === 'narracion') {
+    // P6: memoria al saludar o hablar con un NPC que recuerda algo (una vez cada 6 turnos por NPC).
+    const npcMem = turno?.tipo === 'saludo' ? turno.npcId : turno?.accion?.verbo === 'hablar_con' ? turno.accion.parametros?.npcId : null;
+    if (npcMem && !(ext.turno - (ext.ultimoRecuerdo[npcMem] ?? -99) < 6)) {
+      const linea = lineaDeMemoria(amp, npcMem, recuerdosDe(hechosPrevios, npcMem, despues.reloj, amp.guia?.umbrales?.recuerdo?.reciente_horas), ctx.rng('memoria'));
+      const t = linea && completarAmp(ctx.expandirTexto(linea), { npc: porId(contenido.npcs, npcMem)?.nombre });
+      if (t) { partes.push(t); ext.ultimoRecuerdo[npcMem] = ext.turno; }
+    }
     const frase = fraseAmpliada({ amp, contenido, turno, ctx, aperturas });
     if (frase) {
       partes[0] = frase.texto;
@@ -141,6 +157,9 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       ext = amb.ext;
       partes.push(ctx.expandirTexto(amb.texto));
     }
+  }
+  if (turno?.tipo === 'accion' && turno.accion) {
+    ext.hechos = registrarHecho(ext.hechos, { verbo: turno.accion.verbo, npc: turno.accion.parametros?.npcId, escena: antes.jugador.escenaId, reloj: despues.reloj });
   }
   return { texto: partes.filter(Boolean).join(' '), aperturas, ext };
 }
