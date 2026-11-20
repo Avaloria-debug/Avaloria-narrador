@@ -5,7 +5,7 @@
 import { decidir, resolverNpc, resolverObjeto, salirDeEscena, responderDestino, prepararDiccionarios, MOTIVOS } from './comprension.js';
 import { resolverAccion, aplicarEfectos, objetoDisponible, entradaDeInventario, MOTIVOS_FALLO } from './resolver.js';
 import { aplicarTransicion, disposicionEfectiva } from './npcs.js';
-import { conocimientoARevelar, conocimientoPorNarrativo, puedeRevelar, revelar, MOTIVOS_NO_REVELA } from './conocimientos.js';
+import { conocimientoARevelar, conocimientoPorNarrativo, puedeRevelar, revelar, umbralDeConsulta, usarPrimerContacto, MOTIVOS_NO_REVELA } from './conocimientos.js';
 import { procesarEventos } from './eventos.js';
 import { estadoDeEscena } from './estadoEscena.js';
 import { avanzar } from './reloj.js';
@@ -196,8 +196,10 @@ function ejecutarConsulta(estado, decision, contenido) {
   const conocimiento = porId(npcDef.conocimientos, decision.conocimientoId) ?? null;
   const consulta = { npcId, conocimientoId: conocimiento?.id ?? null, resultado: RESULTADOS_CONSULTA.NO_SE, efectos: [] };
   let npc = npcEstado;
+  let base = estado;
   if (conocimiento) {
-    const r = puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido);
+    const r = puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido, { umbral: umbralDeConsulta(npcDef, conocimiento, estado) });
+    base = usarPrimerContacto(estado, npcId);
     if (r.puede) {
       npc = revelar(npcEstado, conocimiento.id);
       consulta.resultado = RESULTADOS_CONSULTA.EXITO;
@@ -211,7 +213,7 @@ function ejecutarConsulta(estado, decision, contenido) {
   }
   return {
     tipo: TIPOS_TURNO.CONSULTA,
-    estado: { ...estado, reformulacionPendiente: false, npcs: { ...estado.npcs, [npcId]: npc } },
+    estado: { ...base, reformulacionPendiente: false, npcs: { ...estado.npcs, [npcId]: npc } },
     intencionId: null,
     consulta,
   };
