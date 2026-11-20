@@ -17,7 +17,7 @@ import { tagsDeAccion, OBJETIVOS, OPS } from './acciones.js';
 import { aplicarDecaimientoPorHoras } from './decaimiento.js';
 import {
   actualizarListos, elegirDisparo, dispararHito, ganchoFueraDeEscena, resolver, reiniciarProgresoReparacion,
-  antiTrabaSinListos, antiTrabaRencorGrave, antiTrabaSinAvance, antiTrabaFinalesBloqueados,
+  antiTrabaSinListos, antiTrabaRencorGrave, antiTrabaSinAvance, antiTrabaFinalesBloqueados, antiTrabaCaminoP1,
 } from './hitos.js';
 import { elegirDesenlace, aplicarDesenlace } from './desenlaces.js';
 
@@ -86,14 +86,21 @@ export function aplicarAccion(estadoCaso, accion, mundo, caso) {
   return { estadoCaso: nuevo, npcs, traicionados };
 }
 
-/** Reemplaza `{npc:pN}` por el nombre del dueño y `{conocimiento:pN}` por el contenido del conocimiento. */
-export function completarMarcadores(texto, estadoCaso, contenido) {
+/**
+ * Reemplaza `{npc:pN}` por el nombre del dueño, `{conocimiento:pN}` por el contenido del conocimiento y
+ * `{escena:pN}` por el nombre de la escena donde está el dueño (necesita `mundo`).
+ */
+export function completarMarcadores(texto, estadoCaso, contenido, mundo = null) {
   const pistas = estadoCaso.instancia?.pistas ?? [];
-  return String(texto).replace(/\{(npc|conocimiento):(p\d+)\}/g, (todo, clase, ranura) => {
+  return String(texto).replace(/\{(npc|conocimiento|escena):(p\d+)\}/g, (todo, clase, ranura) => {
     const pista = pistas.find((p) => p.ranura === ranura);
     const npc = (contenido?.npcs ?? []).find((n) => n.id === pista?.npcId);
     if (!pista || !npc) return todo;
     if (clase === 'npc') return npc.nombre ?? todo;
+    if (clase === 'escena') {
+      const escenaId = mundo?.npcs?.[pista.npcId]?.escena ?? null;
+      return (contenido?.escenas ?? []).find((e) => e.id === escenaId)?.nombre ?? todo;
+    }
     return (npc.conocimientos ?? []).find((k) => k.id === pista.conocimientoId)?.contenido ?? todo;
   });
 }
@@ -123,7 +130,7 @@ export function elegirTexto(hito, estadoCaso, usos, semilla) {
  *   horasAvanzadas?: number, sinDesenlace?: boolean, contenido?: object, semilla?: number|string, abandonar?: boolean,
  *   persistencia?: object|null, jugadorId?: string|null, partidaId?: string|null,
  * }} p
- * @returns {Promise<{estadoCaso, npcs, hito, reparado, texto:{id,texto}|null, gancho, desenlace}>}
+ * @returns {Promise<{estadoCaso, npcs, hito, reparado, texto:{id,texto}|null, gancho, desenlace, pistaCamino}>}
  */
 export async function turnoDeCaso(p) {
   const { caso, contenido = null, semilla = 0, persistencia = null, jugadorId = null, partidaId = null } = p;
@@ -144,6 +151,9 @@ export async function turnoDeCaso(p) {
   estado = antiTrabaSinAvance(estado, mundo);
   estado = antiTrabaRencorGrave(estado, mundo);
   estado = actualizarListos(estado, mundo);
+  const caminoP1 = antiTrabaCaminoP1(estado, mundo);
+  estado = caminoP1.estadoCaso;
+  if (caminoP1.camino) estado = actualizarListos(estado, mundo);
   const antes = estado;
   estado = antiTrabaSinListos(estado, mundo);
   if (estado !== antes) estado = actualizarListos(estado, mundo);
@@ -180,6 +190,14 @@ export async function turnoDeCaso(p) {
     gancho = g.gancho;
   }
 
+  // Pista de camino a p1: se narra solo si el caso trae textos_pista_camino (sin texto, queda el tag).
+  let pistaCamino = null;
+  if (caminoP1.camino) {
+    const t = elegirTexto({ id: 'pista_camino_p1', textos: caso?.textos_pista_camino }, estado, new Map(), semilla);
+    pistaCamino = { ...caminoP1.camino, texto: t ? { id: t.id, texto: completarMarcadores(t.texto, estado, contenido, mundo) } : null };
+    if (!texto && pistaCamino.texto) texto = pistaCamino.texto;
+  }
+
   // Desenlace: al alcanzar un final o al abandonar.
   let desenlace = null;
   if (p.sinDesenlace !== true && ((hito?.final && estado.finalAlcanzado) || p.abandonar === true)) {
@@ -195,5 +213,5 @@ export async function turnoDeCaso(p) {
     });
   }
 
-  return { estadoCaso: estado, npcs: mundo.npcs, hito, reparado, texto, gancho, desenlace };
+  return { estadoCaso: estado, npcs: mundo.npcs, hito, reparado, texto, gancho, desenlace, pistaCamino };
 }

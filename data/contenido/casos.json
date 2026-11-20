@@ -423,6 +423,16 @@
             }
           ]
         }
+      ],
+      "textos_pista_camino": [
+        {
+          "id": "caso_01_pista_camino_t1",
+          "texto": "Alguien comenta al pasar que {npc:p1} anda por {escena:p1}. Tal vez valga la pena ir hasta allá."
+        },
+        {
+          "id": "caso_01_pista_camino_t2",
+          "texto": "Según dicen por acá, {npc:p1} suele estar en {escena:p1}. Puede que sepa algo de lo que buscás."
+        }
       ]
     },
     {
@@ -844,6 +854,16 @@
               "nivel": 1
             }
           ]
+        }
+      ],
+      "textos_pista_camino": [
+        {
+          "id": "caso_02_pista_camino_t1",
+          "texto": "Alguien comenta al pasar que {npc:p1} anda por {escena:p1}. Tal vez valga la pena ir hasta allá."
+        },
+        {
+          "id": "caso_02_pista_camino_t2",
+          "texto": "Según dicen por acá, {npc:p1} suele estar en {escena:p1}. Puede que sepa algo de lo que buscás."
         }
       ]
     },
@@ -1267,6 +1287,16 @@
             }
           ]
         }
+      ],
+      "textos_pista_camino": [
+        {
+          "id": "caso_03_pista_camino_t1",
+          "texto": "Alguien comenta al pasar que {npc:p1} anda por {escena:p1}. Tal vez valga la pena ir hasta allá."
+        },
+        {
+          "id": "caso_03_pista_camino_t2",
+          "texto": "Según dicen por acá, {npc:p1} suele estar en {escena:p1}. Puede que sepa algo de lo que buscás."
+        }
       ]
     },
     {
@@ -1688,6 +1718,16 @@
               "nivel": 1
             }
           ]
+        }
+      ],
+      "textos_pista_camino": [
+        {
+          "id": "caso_04_pista_camino_t1",
+          "texto": "Alguien comenta al pasar que {npc:p1} anda por {escena:p1}. Tal vez valga la pena ir hasta allá."
+        },
+        {
+          "id": "caso_04_pista_camino_t2",
+          "texto": "Según dicen por acá, {npc:p1} suele estar en {escena:p1}. Puede que sepa algo de lo que buscás."
         }
       ]
     }
