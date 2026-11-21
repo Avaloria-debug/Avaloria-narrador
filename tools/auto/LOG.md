@@ -24,3 +24,4 @@ P19 | hecho | ritmo en hechosDe, variantes breves t25 y silencio 0.1 con tensió
 P20 | hecho | reformulación en voz del NPC presente; 3ª sugiere opciones
 P21 | hecho | calendario.js: estaciones; festividades solo con calendario.json (A APROBAR)
 P22 | hecho | tools/revisar.js: revisión por tanda, filtro, diff de estados sin escribir
+Cierre | hecho | todo 0 errores, npm test 1861 verde, medición final en INFORME-AUTO.md

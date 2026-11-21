@@ -1,6 +1,6 @@
 {
- "modo": "paso",
- "paso": "P22",
+ "modo": "todo",
+ "paso": null,
  "lineas": 4323,
  "errores": [],
  "avisos": []
