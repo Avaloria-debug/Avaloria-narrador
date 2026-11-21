@@ -96,13 +96,15 @@
    "frase": "mirala",
    "accion": "mirar",
    "objetivo": "lampara_aceite",
-   "cat": "semilla"
+   "cat": "semilla",
+   "ctx": "lampara_aceite"
   },
   {
    "frase": "la miro",
    "accion": "mirar",
    "objetivo": "lampara_aceite",
-   "cat": "semilla"
+   "cat": "semilla",
+   "ctx": "lampara_aceite"
   },
   {
    "frase": "lampra",
@@ -277,27 +279,39 @@
   },
   {
    "frase": "ignorar al perro",
-   "accion": "ignorar",
-   "objetivo": "perro_ciudad",
-   "cat": "semilla"
+   "accion": "aclarar",
+   "cat": "semilla",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ]
   },
   {
    "frase": "ignoro al perro",
-   "accion": "ignorar",
-   "objetivo": "perro_ciudad",
-   "cat": "semilla"
+   "accion": "aclarar",
+   "cat": "semilla",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ]
   },
   {
    "frase": "no le hago caso al perro",
-   "accion": "ignorar",
-   "objetivo": "perro_ciudad",
-   "cat": "negacion"
+   "accion": "aclarar",
+   "cat": "negacion",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ]
   },
   {
    "frase": "paso del perro",
-   "accion": "ignorar",
-   "objetivo": "perro_ciudad",
-   "cat": "semilla"
+   "accion": "aclarar",
+   "cat": "semilla",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ]
   },
   {
    "frase": "agarro la carta",
@@ -4584,6 +4598,131 @@
    "frase": "gracias",
    "accion": "no_entendido",
    "cat": "sin_sentido"
+  },
+  {
+   "frase": "dale",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "seguro",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "doy una vuelta",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "pregunto qué hora es",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "tiro la moneda",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "voy a dormir",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "tomo una cerveza",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "paso por la plaza",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "miro mi mano",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "toco la guitarra",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "escucho música",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "quiero comprar pan",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "me voy",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "cierro la puerta",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "abro la ventana",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "dejo la carta",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "ir a casa",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "ir al baño",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "la gata es linda",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "el perro ladra",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "la vela del barco",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "sigo sin entender",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "sigo caminando",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "miro alrededor",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
+  },
+  {
+   "frase": "no entiendo",
+   "accion": "no_entendido",
+   "cat": "falsos_positivos"
   }
  ]
 }

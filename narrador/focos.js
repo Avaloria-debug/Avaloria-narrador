@@ -280,7 +280,9 @@ export function turnoDeFoco({ amp, contenido, partida, texto, dic = null }) {
   }
   // Sin verbo reconocido (o respuesta a una aclaración): se usa la lectura canónica.
   let forzado = null;
-  if (lec?.texto && (!v || lec.dePendiente)) { texto = lec.texto; v = verboFoco(texto); forzado = lec.lectura.objetivo; }
+  // V7: «no sigo a la gata» → ignorar (verboFoco vería «sigo»).
+  const negada = /^no /.test(normalizar(texto)) && lec?.lectura?.accion !== v?.verbo;
+  if (lec?.texto && (!v || lec.dePendiente || negada)) { texto = lec.texto; v = verboFoco(texto); forzado = lec.lectura.objetivo; }
   fx.aclaracion = null;
   if (!v) return null;
   const fForzado = forzado ? fx.focos.find((f) => f.id === forzado) : null;
@@ -313,7 +315,7 @@ export function turnoDeFoco({ amp, contenido, partida, texto, dic = null }) {
     estado: { ...partida, reloj, reformulacionPendiente: false },
     intencionId: null,
     texto: partes.filter(Boolean).join(' '),
-    foco: { id: ref.tipo === 'fijo' ? `fijo:${ref.id}` : ref.f.id, verbo: v.verbo, rama: r.rama, voz: Boolean(r.voz), fin: r.fin ?? null, interrupcion: npcInt, minutos: r.minutos },
+    foco: { id: ref.tipo === 'fijo' ? `fijo:${ref.id}` : ref.f.id, verbo: v.verbo, modo: lec?.lectura?.modo ?? null, rama: r.rama, voz: Boolean(r.voz), fin: r.fin ?? null, interrupcion: npcInt, minutos: r.minutos },
     extFocos: fx,
   };
 }

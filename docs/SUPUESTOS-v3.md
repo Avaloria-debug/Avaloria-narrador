@@ -101,3 +101,7 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - F6 V4: memoria de referencia con vida de 5 turnos (VIDA_REFERENCIA); «la/lo» son pronombre solo si no los sigue un sustantivo.
 - F6 V5: en el juego la lectura solo actúa con ampliado y sobre focos vigentes; reescribe a la forma canónica cuando verboFoco no reconoce el verbo, o pregunta si hay empate real (mismo alias, misma recencia). La aclaración vive 2 turnos en ext.aclaracion.
 - F6 V6: «agarrar» es tocar en focos.js y tomar en la lectura; en el juego manda focos.js (no hay verbo tomar sobre focos). Sinónimos de cosas = alias de focos + nombre/alias/oficio de NPC (sin léxico aparte).
+- F6 V7: con ampliado, una frase con varias acciones se juega como turnos seguidos de narrar() (un registro por parte); corta si una parte termina en reformulación.
+- F6 V7: el modo (sigilo/prisa) solo viaja como dato en turno.foco.modo; el motor no tiene efecto para él (ignorado).
+- F6 V7: corpus +25 frases de control (falsos_positivos) halladas en la autorrevisión; 4 casos semilla de «ignorar al perro» pasan a aclarar (hay dos perros), como «seguir al perro».
+- F6 V7: tipeo con 4 letras solo para intercambio de letras o letra faltante («hora» no se corrige a «hoja», «tiro» no es «miro»).

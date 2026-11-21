@@ -4,7 +4,7 @@
 import { normalizar, distanciaEdicion, resolverDestino } from './comprension.js';
 
 /** Etapas activas por defecto (cada paso de la fase 6 enciende la suya). */
-export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: true, defaults: true, sinonimos: true, varias: false, negacion: false, modo: false });
+export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: true, defaults: true, sinonimos: true, varias: true, negacion: true, modo: true });
 
 /** Acciones que entiende la lectura. */
 export const ACCIONES = Object.freeze(['seguir', 'mirar', 'tocar', 'escuchar', 'hablar', 'preguntar', 'ignorar', 'tomar', 'callar', 'viajar', 'mostrar', 'llamar']);
@@ -42,10 +42,10 @@ const IRREGULARES = {
   hacer: ['hago', 'hace', 'haces', 'haces', 'hice', 'hizo', 'hace', 'haga', 'haciendo', 'hacé'],
   recoger: ['recojo', 'recoja', 'recoge'],
   volver: ['vuelvo', 'vuelve', 'vuelves', 'volves', 'volvi', 'volvio', 'vuelva'],
-  tomar: [],
+  mostrar: ['muestro', 'muestra', 'muestras', 'muestre', 'muestran'],
 };
 // No son verbos aunque parezcan (excepciones del lematizador).
-export const NO_VERBOS = new Set(['vale', 'sale', 'vela', 'sola', 'solo', 'sala', 'mula', 'mesa', 'misa', 'casa', 'cosa', 'gata', 'gato', 'carta', 'sobre', 'puerta', 'campana', 'perro', 'perra', 'lampara', 'farol', 'nada', 'cada', 'para', 'pera', 'paso', 'vino', 'como', 'cielo', 'luz', 'ves', 'vez', 'sea', 'era', 'eso', 'esto', 'esa', 'ese', 'este', 'esta', 'tras', 'mas', 'menos', 'lado', 'dado', 'mano', 'masa', 'malo', 'mala', 'pelo', 'velo', 'hola', 'gente', 'ruido', 'voces', 'bicho']);
+export const NO_VERBOS = new Set(['vale', 'sale', 'vela', 'sola', 'solo', 'sala', 'mula', 'mesa', 'misa', 'casa', 'cosa', 'gata', 'gato', 'carta', 'sobre', 'puerta', 'campana', 'perro', 'perra', 'lampara', 'farol', 'nada', 'cada', 'para', 'pera', 'vino', 'como', 'cielo', 'luz', 'ves', 'vez', 'sea', 'era', 'eso', 'esto', 'esa', 'ese', 'este', 'esta', 'tras', 'mas', 'menos', 'lado', 'dado', 'mano', 'masa', 'malo', 'mala', 'pelo', 'velo', 'hola', 'gente', 'ruido', 'voces', 'bicho', 'dale', 'seguro', 'segura']);
 
 function regulares(inf) {
   const t = inf.slice(-2);
@@ -108,7 +108,16 @@ export function separarEncliticos(palabra, { sinonimos = true } = {}) {
 /** Distancia máxima por largo: 0 para ≤3 letras, 1 para 4–6, 2 para ≥7. */
 export const toleranciaTipeo = (n) => (n <= 3 ? 0 : n <= 6 ? 1 : 2);
 // Palabras comunes que nunca se corrigen («mesa» no es «misa»).
-export const NO_CORREGIR = new Set(['mesa', 'casa', 'cosa', 'masa', 'mano', 'nada', 'algo', 'todo', 'otro', 'otra', 'bien', 'para', 'pero', 'como', 'esto', 'eso', 'esta', 'este', 'aqui', 'alla', 'despacio', 'rapido', 'luego', 'despues', 'donde', 'cuando', 'hola', 'sobre', 'cerca', 'lejos', 'calle', 'noche', 'tarde', 'mucho', 'poco', 'ahora', 'tambien']);
+export const NO_CORREGIR = new Set(['mesa', 'casa', 'cosa', 'masa', 'mano', 'nada', 'algo', 'todo', 'otro', 'otra', 'bien', 'para', 'pero', 'como', 'esto', 'eso', 'esta', 'este', 'aqui', 'alla', 'despacio', 'rapido', 'luego', 'despues', 'donde', 'cuando', 'hola', 'sobre', 'cerca', 'lejos', 'calle', 'noche', 'tarde', 'mucho', 'poco', 'ahora', 'tambien', 'seguro', 'segura', 'hora', 'hoja']);
+
+/** Con 4 letras solo se corrige un intercambio de letras vecinas o una letra que falta («isal», «selo»): «hora» no es «hoja». */
+export function cuatroSeguro(w, destino) {
+  if (w.length !== 4) return true;
+  if (destino.length === 5) return true;
+  if (destino.length !== 4) return false;
+  const i = [...w].findIndex((c, k) => c !== destino[k]);
+  return i >= 0 && i < 3 && w[i] === destino[i + 1] && w[i + 1] === destino[i] && w.slice(i + 2) === destino.slice(i + 2);
+}
 
 /**
  * Corrige una palabra contra un vocabulario { palabra → clave }. Empate entre claves distintas → sin corregir.
@@ -150,7 +159,14 @@ export function contextoLectura({ focos = {}, npcs = [], presentes = null, escen
 
 function vocabCosas(ctx) {
   const v = new Map();
-  for (const c of ctx.cosas) for (const w of c.alias.split(' ')) if (w.length >= 4 && !VACIAS.has(w)) { const k = `${c.tipo}:${c.id}`; v.set(w, v.has(w) && v.get(w) !== k ? '*' : k); }
+  // Primero alias de una palabra; las palabras de alias compuestos solo si no las tomó nadie.
+  for (const multi of [false, true]) {
+    for (const c of ctx.cosas) {
+      const ws = c.alias.split(' ');
+      if ((ws.length > 1) !== multi) continue;
+      for (const w of ws) if (w.length >= 4 && !VACIAS.has(w)) { const k = `${c.tipo}:${c.id}`; if (multi && v.has(w)) continue; v.set(w, v.has(w) && v.get(w) !== k ? '*' : k); }
+    }
+  }
   // Palabras de escenas: protegen de corregir «lago» a «lazo» o «taberna» a «tabernera».
   for (const e of ctx.escenas ?? []) for (const w of normalizar(e.nombre).split(' ')) if (w.length >= 4 && !VACIAS.has(w) && !v.has(w)) v.set(w, `escena:${e.id}`);
   return v;
@@ -193,7 +209,8 @@ export function separarAcciones(texto, et = ETAPAS) {
   // Partes sin verbo se pegan a la anterior.
   const out = [];
   for (const p of partes) if (out.length && !tieneVerbo(p, et)) out[out.length - 1] = [...out[out.length - 1], ...p]; else out.push(p);
-  return out.slice(0, 3).map((p) => p.join(' '));
+  const sinNexo = (p) => { let i = 0; while (i < p.length - 1 && ['y', 'despues', 'luego', 'entonces'].includes(p[i])) i++; return p.slice(i); };
+  return out.slice(0, 3).map((p) => sinNexo(p).join(' '));
 }
 const tieneVerbo = (ws, et) => ws.some((w) => verboDe(w, et));
 function verboDe(w, et) {
@@ -237,7 +254,7 @@ export function cosasNombradas(ws, ctx, et = ETAPAS) {
     ws.forEach((w, pos) => {
       if (w.length < 4 || VACIAS.has(w) || PRON_F.has(w) || PRON_M.has(w) || PRON_NPC.has(w) || PRON_NEUTRO.has(w) || verboDe(w, et)) return;
       const r = corregirTipeo(w, vocab);
-      if (r && r.clave !== '*' && r.distancia > 0 && !r.clave.startsWith('escena:')) {
+      if (r && r.clave !== '*' && r.distancia > 0 && !r.clave.startsWith('escena:') && cuatroSeguro(w, r.palabra)) {
         const [tipo, ...id] = r.clave.split(':');
         const c = ctx.cosas.find((x) => x.tipo === tipo && x.id === id.join(':'));
         const k = `${tipo}:${c.id}`;
@@ -321,9 +338,9 @@ function leerParte(parte, ctx, et) {
   if (negada) ws = ws.slice(1);
   const lemas = ws.map((w) => verboDe(w, et));
   // V3: tipeo en verbos, si no hay ninguno.
-  if (et.tipeo && !lemas.some(Boolean)) {
+  if (et.tipeo && !lemas.some(Boolean) && ws.length >= 2) {
     const vv = vocabVerbos(et);
-    ws.forEach((w, i) => { if (w.length >= 4 && !VACIAS.has(w)) { const r = corregirTipeo(w, vv); if (r) lemas[i] = { inf: r.clave, pronombres: [] }; } });
+    ws.forEach((w, i) => { if (w.length >= 4 && !VACIAS.has(w)) { const r = corregirTipeo(w, vv); if (r && cuatroSeguro(w, r.palabra)) lemas[i] = { inf: r.clave, pronombres: [] }; } });
   }
   const seq = ws.map((w, i) => lemas[i]?.inf ?? w);
   let accion = null; let usado = -1; let pronombres = [];
@@ -342,6 +359,12 @@ function leerParte(parte, ctx, et) {
       const aux = lemas.findIndex((l) => l && AUXILIARES.includes(l.inf));
       if (aux >= 0 && negada) { usado = aux; accion = lemas[aux].inf === 'decir' ? 'callar_neg' : lemas[aux].inf === 'hacer' && ws.includes('caso') ? 'ignorar' : null; }
     }
+  }
+  // Solo un sustantivo que nombra una cosa («lámpara», «la gata»): mirarla.
+  if (!accion && !negada && et.defaults) {
+    const cont = ws.filter((w) => !VACIAS.has(w));
+    const n = cosasNombradas(ws, ctx, et);
+    if (cont.length && n.length === 1 && n[0].tipo === 'foco' && cont.length === n[0].span.length && cont.every((w) => n[0].span.includes(ws.indexOf(w)))) return { accion: 'mirar', objetivo: n[0].id };
   }
   if (!accion) return { accion: 'no_entendido' };
   if (negada) {
@@ -390,7 +413,8 @@ function leerParte(parte, ctx, et) {
     if (n) r.npc = n;
     const obj = focosN[0]?.id ?? (et.referencias ? resolverReferencia(pronombreEn(resto, pronombres) ?? 'eso', ctx.reciente, { genero: generoDe(ctx) }) : null);
     if (obj) r.objetivo = obj;
-    return n || obj ? r : { accion: 'no_entendido' };
+    const ajenas = resto.filter((w) => !VACIAS.has(w) && !PRON_F.has(w) && !PRON_M.has(w) && !nombradas.some((c) => c.alias.split(' ').includes(w)));
+    return obj && !ajenas.length ? r : { accion: 'no_entendido' };
   }
   // Acciones sobre un foco (y preguntar, que lleva además un NPC).
   if (accion === 'preguntar') {

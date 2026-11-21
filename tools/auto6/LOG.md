@@ -6,3 +6,4 @@
 - V5 hecho: defaults y aclaración, enganche en turnoDeFoco · comprensión 82.9 %
 - revisión 2 (V4-V5): compuertas, regresión y humo verdes, 0 falsos positivos
 - V6 hecho: sinónimos de verbos y cosas, test de colisiones · comprensión 94.4 %
+- V7 hecho: varias acciones, negación, modo; control de falsos positivos · comprensión 99.9 %

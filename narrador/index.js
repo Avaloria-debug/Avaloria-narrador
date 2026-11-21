@@ -19,6 +19,7 @@ import { registroDeTurnoNoResuelto } from './registro/registroTurnos.js';
 // Vive solo en memoria: la frase del jugador no entra al estado de la partida.
 const lineasPendientes = new WeakMap();
 import { narrarTurno, narrarReformulacion, VENTANA_APERTURAS, anotarApertura } from './narracion.js';
+import { separarAcciones } from './lectura.js';
 import { pedirRespuestaIA, datosDeContexto, armarContexto, validarSalida, aperturaIa, SIN_IA, MOTIVOS_IA } from './ia.js';
 import { registroDeTurno, ORIGENES, MAX_ULTIMOS_TURNOS } from './registro.js';
 
@@ -406,6 +407,19 @@ function fechaActual(ahora) {
  * }>}
  */
 export async function narrar(estado, entrada, opciones = {}) {
+  // Fase 6 (V7): con ampliado, «miro la puerta y después toco la ventana» son dos turnos seguidos (máx. 3).
+  if (esObjeto(opciones?.ampliado) && entrada?.tipo === 'texto' && typeof entrada.texto === 'string' && !opciones.__parte) {
+    const partes = separarAcciones(entrada.texto);
+    if (partes.length > 1) {
+      let e = estado; const textos = []; const errs = []; let ultima = null;
+      for (const p of partes) {
+        ultima = await narrar(e, { ...entrada, texto: p }, { ...opciones, __parte: true });
+        textos.push(ultima.texto); errs.push(...ultima.errores); e = ultima.estado;
+        if (ultima.tipo === TIPOS_SALIDA.REFORMULACION || ultima.tipo === 'error') break;
+      }
+      return { ...ultima, texto: textos.filter(Boolean).join('\n\n'), errores: errs };
+    }
+  }
   const errores = [];
   const groqKey = opciones?.groqKey;
   // Ningún mensaje de error puede llevar la clave.
