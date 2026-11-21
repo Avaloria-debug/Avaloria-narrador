@@ -21,3 +21,4 @@ P16 | hecho | objetivos.js: avanzan solos, impulso por afinidad, charla y rumor 
 P17 | hecho | diario.js: entradas por hecho/viaje/conocimiento, fusión, comando diario; conecta t11
 P18 | hecho | apodo.js: verbo dominante con histéresis, usos en saludo
 P19 | hecho | ritmo en hechosDe, variantes breves t25 y silencio 0.1 con tensión alta
+P20 | hecho | reformulación en voz del NPC presente; 3ª sugiere opciones

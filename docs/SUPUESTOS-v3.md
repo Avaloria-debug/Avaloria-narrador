@@ -62,3 +62,5 @@ P17 | comando: el texto exacto "diario" muestra el diario (sin cambiar comprensi
 P11 | (corrección en P17) la reformulación t11 no había quedado conectada en ampliado.js; se conectó en P17 con test
 P18 | saludo con apodo (t24 usos) con prob 0.3 si hay apodo; {apodo} = base si la relación es mala | siempre
 P19 | silencio solo en acciones simples con NPC; ritmo corto usa t25 siempre que haya líneas para la intención | mezclar con las demás
+P20 | voz del NPC (t26) solo para no_entendido e intencion_ambigua; sin NPC cae a t11/v3 (no se agrega símbolo de ambiente) | símbolo de ambiente
+P20 | 3er no entendido seguido (reformulación o IA sin respuesta) sugiere NPCs presentes (falta_npc) o salidas (destino_ambiguo) con plantillas v3 | texto nuevo

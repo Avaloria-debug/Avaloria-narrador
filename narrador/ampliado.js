@@ -62,6 +62,30 @@ export function reformulacionAmpliada({ amp, contenido, turno, ctx, aperturas })
   return elegir(lista, ctx.hechos(), { rng: ctx.rng('reformulacion'), aperturas: (aperturas ?? []).slice(0, -1), aperturaDe, completar: (t) => completarAmp(ctx.expandirTexto(t), valores) });
 }
 
+/** P20: reformulación de no_entendido / intencion_ambigua en la voz de un NPC presente (t26), por franja. */
+export function reformulacionEnEscena({ amp, contenido, despues, ctx, aperturas, turno }) {
+  if (!['no_entendido', 'intencion_ambigua'].includes(turno.motivo)) return null;
+  const presentes = npcsPresentes(despues, contenido).filter((n) => amp.reformulacion?.[n.id]?.length);
+  if (!presentes.length) return null;
+  const rng = ctx.rng('reformulacion-npc');
+  const npc = presentes[Math.min(presentes.length - 1, Math.floor(rng() * presentes.length))];
+  return elegir(amp.reformulacion[npc.id], ctx.hechos({}, npc.id), { rng, aperturas: (aperturas ?? []).slice(0, -1), aperturaDe, completar: (t) => completarAmp(ctx.expandirTexto(t, ctx.hechos({}, npc.id), npc.id), { npc: npc.nombre }) });
+}
+
+/**
+ * P20: tercer no entendido seguido. Sugiere opciones válidas con plantillas que ya existen en el v3:
+ * NPCs presentes (falta_npc, {nombres}) o salidas de la escena (destino_ambiguo, {opciones}).
+ */
+export function sugerirOpciones({ contenido, despues, ctx, aperturas }) {
+  const presentes = npcsPresentes(despues, contenido).map((n) => n.nombre);
+  const escena = porId(contenido.escenas, despues.jugador.escenaId);
+  const salidas = (escena?.salidas ?? []).map((id) => porId(contenido.escenas, id)?.nombre).filter(Boolean);
+  const lista = (l) => (l.length <= 1 ? l[0] : `${l.slice(0, -1).join(', ')} o ${l.at(-1)}`);
+  const [clave, valores] = presentes.length ? ['falta_npc', { nombres: lista(presentes) }] : salidas.length ? ['destino_ambiguo', { opciones: lista(salidas) }] : [null, null];
+  if (!clave) return null;
+  return elegir(contenido.plantillas.reformulacion[clave], {}, { rng: ctx.rng('sugerir'), aperturas: (aperturas ?? []).slice(0, -1), aperturaDe, completar: (t) => completarAmp(t, valores) });
+}
+
 /**
  * P10: consulta sin conocimiento v3 que coincida. Conocimiento ampliado (revelar, o pista si falta relación);
  * si ninguno coincide, respuesta por tema. El texto del jugador solo se usa para buscar palabras clave.
@@ -337,9 +361,16 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
     const d = textoDiario(ext.diario, { amp, contenido, rng: ctx.rng('diario') });
     if (d) return { texto: d, aperturas, ext };
   }
-  // P11 (t11): reformulación diferenciada.
+  // P20: no entendidos seguidos (reformulación o IA sin respuesta). El 3º sugiere opciones válidas del contexto.
+  const noEntendido = turno?.tipo === 'reformular' || (turno?.tipo === 'ia' && tipo !== 'dialogo_ia');
+  ext.noEntendidos = noEntendido ? (ext.noEntendidos ?? 0) + 1 : 0;
+  if (noEntendido && ext.noEntendidos >= 3) {
+    const r = sugerirOpciones({ contenido, despues, ctx, aperturas });
+    if (r) return { texto: r.texto, aperturas: [...(aperturas ?? []).slice(0, -1), r.apertura], ext };
+  }
+  // P11 (t11) y P20: reformulación diferenciada, en la voz del NPC presente si hay.
   if (tipo === 'reformulacion' && turno?.tipo === 'reformular') {
-    const r = reformulacionAmpliada({ amp, contenido, turno, ctx, aperturas });
+    const r = reformulacionEnEscena({ amp, contenido, despues, ctx, aperturas, turno }) ?? reformulacionAmpliada({ amp, contenido, turno, ctx, aperturas });
     if (r) {
       partes[0] = r.texto;
       aperturas = [...(aperturas ?? []).slice(0, -1), r.apertura];
