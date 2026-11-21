@@ -339,7 +339,7 @@
    "cat": "semilla"
   },
   {
-   "frase": "recojo el sobre",
+   "frase": "recojo el pliego",
    "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "semilla"
@@ -4511,8 +4511,9 @@
   },
   {
    "frase": "hola",
-   "accion": "no_entendido",
-   "cat": "sin_sentido"
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "saludos"
   },
   {
    "frase": "42",
@@ -4755,7 +4756,7 @@
    "cat": "tomar_tocar"
   },
   {
-   "frase": "agarro el registro",
+   "frase": "agarro la libreta",
    "accion": "tomar",
    "objetivo": "registro_libreta",
    "cat": "tomar_tocar"
@@ -4797,6 +4798,219 @@
    ],
    "pregunta": "¿El perro o el de granja?",
    "cat": "aclaracion"
+  },
+  {
+   "frase": "hola maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "quien eres",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "identidad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "que haces aqui",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "actividad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "que dice la carta",
+   "accion": "mirar",
+   "objetivo": "carta_suelta",
+   "cat": "charla"
+  },
+  {
+   "frase": "Hola, Maren!",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "buenas maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "buen dia maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "buenas tardes",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "hola serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "presentes": [
+    "serel_panadero"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "que tal maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "¿Quién sos?",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "identidad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "y vos quien sos",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "identidad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "como te llamas",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "identidad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "maren quien eres",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "identidad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "¿Qué hacés acá?",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "actividad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "que estas haciendo",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "actividad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "a que te dedicas",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "actividad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "que haces aca serel",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "presentes": [
+    "serel_panadero"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "de donde sos",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "origen",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "¿De dónde venís?",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "origen",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "charla"
+  },
+  {
+   "frase": "leo la carta",
+   "accion": "mirar",
+   "objetivo": "carta_suelta",
+   "cat": "charla"
+  },
+  {
+   "frase": "que dice el pliego",
+   "accion": "mirar",
+   "objetivo": "carta_suelta",
+   "cat": "charla"
+  },
+  {
+   "frase": "leer la carta",
+   "accion": "mirar",
+   "objetivo": "carta_suelta",
+   "cat": "charla"
+  },
+  {
+   "frase": "lee la carta",
+   "accion": "mirar",
+   "objetivo": "carta_suelta",
+   "cat": "charla"
   }
  ]
 }

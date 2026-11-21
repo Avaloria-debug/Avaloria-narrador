@@ -36,6 +36,7 @@ import { turnoDeCaso } from './casos/narrar.js';
 import { accionesDeIntencion } from './casos/acciones.js';
 import { aplicarAmpliado } from './ampliado.js';
 import { turnoDeFoco } from './focos.js';
+import { turnoDeCharla } from './charla.js';
 
 export const TIPOS_SALIDA = Object.freeze({
   NARRACION: 'narracion',
@@ -461,7 +462,10 @@ export async function narrar(estado, entrada, opciones = {}) {
     let turno = null;
     if (esObjeto(opciones?.ampliado) && entrada?.tipo === 'texto') {
       try {
-        turno = conHistorial(partida.ext?.lineas, () => turnoDeFoco({ amp: opciones.ampliado, contenido, partida, texto: entrada.texto, dic }));
+        // A4: charla directa (saludo con nombre, quién sos / qué hacés / de dónde sos, «qué dice X»).
+        const ch = conHistorial(partida.ext?.lineas, () => turnoDeCharla({ amp: opciones.ampliado, contenido, partida, texto: entrada.texto }));
+        if (ch?.turno) turno = ch.turno;
+        else turno = conHistorial(partida.ext?.lineas, () => turnoDeFoco({ amp: opciones.ampliado, contenido, partida, texto: ch?.reescrito ?? entrada.texto, dic }));
       } catch (e) {
         anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');
       }

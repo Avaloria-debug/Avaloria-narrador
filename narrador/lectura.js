@@ -523,8 +523,40 @@ export function recordar(reciente, l, ctx) {
  * @param {ReturnType<typeof contextoLectura>} ctx
  * @param {{ etapas?: object }} [o]
  */
+// Bugs fase 7 (A4): charla directa. Saludo (+ nombre) → hablar; identidad/actividad/origen → preguntar_npc con tema;
+// «qué dice X» / «leo X» → mirar X.
+const SALUDOS_CHARLA = ['hola', 'holi', 'ola', 'buenas', 'buen dia', 'buenos dias', 'buenas tardes', 'buenas noches', 'que tal', 'hey', 'saludos', 'como estas', 'como esta', 'como andas', 'como va', 'que onda', 'que hay'];
+export const TEMAS_CHARLA = Object.freeze({
+  identidad: /\b(quien (sos|eres|es usted|sos vos|eres tu)|como te (llamas|dicen)|cual es tu nombre|tu nombre)\b/,
+  actividad: /\b(que (haces|hace usted|estas haciendo|anda haciendo|andas haciendo)|a que te dedicas|de que (trabajas|vivis)|en que (andas|estas)|que es lo que haces|cual es tu (trabajo|oficio))\b/,
+  origen: /\b(de donde (sos|eres|venis|vienes|es usted)|sos de aca|eres de aqui)\b/,
+});
+const LEER = /^(que (dice|pone|hay escrito en)|lee|leo|leer|leeme|leele|leemos)\s+(.+)$/;
+
+/** A4: lectura de charla directa; null si la frase no es de este tipo. */
+export function leerCharla(texto, ctx) {
+  const n = normalizar(texto).replace(/\s+/g, ' ').trim();
+  if (!n) return null;
+  const ws = n.split(' ');
+  const npcDe = (palabras) => ctx.npcs.find((x) => palabras.some((w) => x.palabras.includes(w)) && (ctx.presentes ?? []).includes(x.id))?.id ?? null;
+  const nombrado = npcDe(ws);
+  const porDefecto = nombrado ?? (ctx.reciente?.npc && ctx.presentes?.includes(ctx.reciente.npc) ? ctx.reciente.npc : ctx.presentes?.[0] ?? null);
+  // Saludo: solo fórmulas de saludo y, como mucho, el nombre (o el oficio) de un presente.
+  const sinNombre = ws.filter((w) => !(nombrado && ctx.npcs.find((x) => x.id === nombrado).palabras.includes(w)) && !['che', 'senor', 'senora', 'don', 'dona', 'amigo', 'y', 'vos', 'usted', 'tu'].includes(w)).join(' ');
+  const resto = [...SALUDOS_CHARLA].sort((a, b) => b.length - a.length).reduce((t, f) => t.replace(new RegExp(`(^| )${f}( |$)`, 'g'), ' '), ` ${sinNombre} `).trim();
+  if (sinNombre && !resto && porDefecto) return { accion: 'hablar', npc: porDefecto, saludo: true };
+  for (const [tema, re] of Object.entries(TEMAS_CHARLA)) if (re.test(n) && porDefecto) return { accion: 'preguntar_npc', npc: porDefecto, tema };
+  const m = n.match(LEER);
+  if (m) {
+    const cosa = vocabCosas(ctx);
+    for (const w of m[3].split(' ')) { const k = cosa.get(w); if (k && k !== '*' && k.startsWith('foco:')) return { accion: 'mirar', objetivo: k.slice(5) }; }
+  }
+  return null;
+}
+
 export function leerAccion(texto, ctx, { etapas = ETAPAS } = {}) {
   const et = { ...ETAPAS, ...etapas };
+  if (et.charla !== false && !ctx.pendiente) { const c = leerCharla(texto, ctx); if (c) return c; }
   if (et.defaults && ctx.pendiente) {
     const id = responderAclaracion(texto, ctx.pendiente, ctx);
     if (id) return { accion: ctx.pendiente.accion ?? 'seguir', objetivo: id };

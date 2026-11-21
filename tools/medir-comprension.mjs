@@ -14,7 +14,7 @@ import { leerAccion, contextoLectura, ETAPAS } from '../narrador/lectura.js';
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS = path.join(RAIZ, 'data/pruebas/corpus-comprension.json');
 const BASE = path.join(RAIZ, 'tools/auto6/base.json');
-const CAMPOS = ['objetivo', 'npc', 'lugar', 'modo'];
+const CAMPOS = ['objetivo', 'npc', 'lugar', 'modo', 'tema'];
 const DUDA = new Set(['no_entendido', 'aclarar']);
 
 export async function contextoBase() {

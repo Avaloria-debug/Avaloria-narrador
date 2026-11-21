@@ -55,7 +55,7 @@ describe('formato del registro de turno', () => {
     await narrar(e, texto('banana xyz')); // sin registroTurnos
     assert.equal(exportacion.cantidad, 0);
   });
-  const respuestaIA = { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: 'Serel se encoge de hombros.' } }], usage: {} }), text: async () => '' };
+  const respuestaIA = { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: 'Serel se encoge de hombros: «Ni idea».' } }], usage: {} }), text: async () => '' };
   const conIa = (exportacion, groqKey = 'gsk_prueba_prueba_123') => ({ registroTurnos: exportacion, groqKey, http: async () => respuestaIA, esperar: async () => {} });
 
   test('frase no entendida + segunda sin sentido que pasa a la IA: motivo no_entendido y respuestaIA no null', async () => {
@@ -168,7 +168,7 @@ describe('formato del registro de turno', () => {
 });
 
 describe('una línea por frase: la reformulación queda pendiente hasta el turno siguiente', () => {
-  const respuestaIA = { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: 'Serel se encoge de hombros.' } }], usage: {} }), text: async () => '' };
+  const respuestaIA = { ok: true, status: 200, json: async () => ({ choices: [{ message: { content: 'Serel se encoge de hombros: «Ni idea».' } }], usage: {} }), text: async () => '' };
   const conIa = (x) => ({ registroTurnos: x, groqKey: 'gsk_prueba_prueba_123', http: async () => respuestaIA, esperar: async () => {} });
 
   test('no entendida + frase que el motor entiende: 0 líneas (ni la primera ni la segunda)', async () => {

@@ -50,6 +50,9 @@ export const MOTIVOS_SALIDA = Object.freeze({
   LARGO: 'largo',
   ORACIONES: 'oraciones',
   FUEGO_SIN_EVENTO: 'fuego_sin_evento',
+  ECO: 'eco',
+  SIN_HABLA: 'sin_habla',
+  FUERA_DE_PERSONAJE: 'fuera_de_personaje',
 });
 
 // Eventos de fuego y palabras que solo puede usar la IA si uno de ellos está activo en la escena.
@@ -247,6 +250,37 @@ export function contarOraciones(texto) {
  * sin ids (palabras con guion bajo) y dentro del largo (600 caracteres como máximo, 1 a 3 oraciones).
  * @returns {{ ok: boolean, motivo: string|null, texto: string }}
  */
+/** Similitud de palabras (Dice sobre palabras normalizadas, sin tildes ni signos). */
+export function similitud(a, b) {
+  const ws = (t) => String(t ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9ñ ]+/g, ' ').split(/\s+/).filter(Boolean);
+  const x = ws(a); const y = ws(b);
+  if (!x.length || !y.length) return 0;
+  const sy = [...y]; let comunes = 0;
+  for (const w of x) { const i = sy.indexOf(w); if (i >= 0) { comunes++; sy.splice(i, 1); } }
+  return (2 * comunes) / (x.length + y.length);
+}
+export const MAX_SIMILITUD_FRASE = 0.6;
+const VERBOS_HABLA = /\b(dice|dijo|responde|respondi[oó]|contesta|murmura|susurra|gru[ñn]e|explica|pregunta|a[ñn]ade|agrega|comenta|suelta|replica|cuenta|niega|asiente|r[ií]e|suspira)\b/i;
+const NARRACION_2P = /^(mir[aá]s|ves|not[aá]s|escuch[aá]s|o[ií]s|te (acerc|qued|sent|da|alej|par)|camin[aá]s|segu[ií]s|toc[aá]s|tom[aá]s|agarr[aá]s|entr[aá]s|sal[ií]s|dec[ií]s|pregunt[aá]s|tu |le pregunt[aá]s)/i;
+const FUERA = /\b(como (modelo|ia|asistente)|inteligencia artificial|modelo de lenguaje|soy (una|un) (ia|asistente|modelo)|no puedo ayudar|lo siento,? pero|as an ai|i (am|can)|the player|el jugador|prompt|instrucci[oó]n(es)?)\b/i;
+
+/**
+ * Validación contra el turno: eco de la frase del jugador (similitud > 0.6), NPC sin «» ni verbo de habla,
+ * o texto fuera de personaje. Se usa con Groq y con la IA local; si falla, el llamador cae a plantilla.
+ */
+export function validarContraTurno(texto, contexto = {}) {
+  if (typeof contexto?.frase === 'string' && contexto.frase.trim() && similitud(texto, contexto.frase) > MAX_SIMILITUD_FRASE) return MOTIVOS_SALIDA.ECO;
+  if (FUERA.test(texto)) return MOTIVOS_SALIDA.FUERA_DE_PERSONAJE;
+  // Sin «» ni verbo de habla, el texto tiene que sonar a lo que dice el personaje: no narración en 2.ª persona
+  // («Mirás…», «Ves…») ni el propio NPC en 3.ª persona sin decir nada («Serel se encoge de hombros» solo).
+  if (contexto?.npc?.nombre && !/[«»"“”]/.test(texto) && !VERBOS_HABLA.test(texto)) {
+    const nombre = contexto.npc.nombre.split(' ')[0];
+    const narra = NARRACION_2P.test(texto) || (new RegExp(`^${nombre}\\b`).test(texto) && contarOraciones(texto) === 1 && !/[¿?¡!,:]/.test(texto) && texto.split(/\s+/).length <= 8);
+    if (narra) return MOTIVOS_SALIDA.SIN_HABLA;
+  }
+  return null;
+}
+
 export function validarSalida(salida) {
   const texto = typeof salida === 'string' ? salida.trim() : '';
   const no = (motivo) => ({ ok: false, motivo, texto });
@@ -391,6 +425,8 @@ export async function pedirRespuestaIA({ groqKey, contexto, http, esperar = espe
     if (!validacion.ok) {
       return { ok: false, error: null, motivo: MOTIVOS_IA.SALIDA_INVALIDA, detalle: validacion.motivo, texto: null, tokens, reintentos: intento };
     }
+    const contra = validarContraTurno(validacion.texto, contexto);
+    if (contra) return { ok: false, error: null, motivo: MOTIVOS_IA.SALIDA_INVALIDA, detalle: contra, texto: null, tokens, reintentos: intento };
     return { ok: true, error: null, motivo: null, texto: validacion.texto, tokens, reintentos: intento };
   }
   return falla(ultimoMotivo, 1);

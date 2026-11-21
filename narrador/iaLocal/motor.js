@@ -1,6 +1,6 @@
 // Fase 5 (R3): IA local con la misma forma de respuesta que pedirRespuestaIA (ia.js).
 // SIN VERIFICAR: API de WebLLM (CreateMLCEngine, chat.completions.create, unload, enable_thinking) y WebGPU.
-import { validarSalida, fuegoSinEvento, estimarTokens, ErrorDeContexto, SIN_IA, MOTIVOS_IA, MOTIVOS_SALIDA } from '../ia.js';
+import { validarSalida, validarContraTurno, fuegoSinEvento, estimarTokens, ErrorDeContexto, SIN_IA, MOTIVOS_IA, MOTIVOS_SALIDA } from '../ia.js';
 import { armarMensajesLocal } from './contexto.js';
 import { marcarCarga, limpiarCarga, UMBRALES_TOK_S } from './capacidad.js';
 
@@ -94,6 +94,8 @@ export function crearIaLocal({ manifest, nivel = 'local-pc', motorFactory = fabr
     const t = tokens(estimarTokens(texto));
     if (!v.ok) return { ok: false, error: null, motivo: MOTIVOS_IA.SALIDA_INVALIDA, detalle: v.motivo, texto: null, tokens: t, reintentos: 0 };
     if (fuegoSinEvento(v.texto, contexto?.eventosIds)) return { ok: false, error: null, motivo: MOTIVOS_IA.SALIDA_INVALIDA, detalle: MOTIVOS_SALIDA.FUEGO_SIN_EVENTO, texto: null, tokens: t, reintentos: 0 };
+    const contra = validarContraTurno(v.texto, contexto);
+    if (contra) return { ok: false, error: null, motivo: MOTIVOS_IA.SALIDA_INVALIDA, detalle: contra, texto: null, tokens: t, reintentos: 0 };
     return { ok: true, error: null, motivo: null, texto: v.texto, tokens: t, reintentos: 0, modelo: modelo.modeloId };
   }
 
