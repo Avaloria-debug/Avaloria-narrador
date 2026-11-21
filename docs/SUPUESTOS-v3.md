@@ -68,3 +68,4 @@ P21 | año de 360 días, 90 por estación; día 1 = primavera | otro largo
 P21 | festividades sin fecha en t27: solo se activan con data/contenido/ampliado/calendario.json (no existe; A APROBAR) | inventar fechas
 Q1 | calendario.json (lista con dia) se convierte en código a {id:{diaDelAnio}}; el archivo no se toca | convertir el archivo
 Q1 | valores.json y calendario.json respetan su estado (a_aprobar_canon → solo con incluirCanon) | cargarlos siempre
+Q2 | navegador: producción carga a_aprobar y aprobado (cargarPendientes=true por defecto en cargarAmpliadoFetch); los avisos se devuelven y los anota quien llama | anotarlos acá

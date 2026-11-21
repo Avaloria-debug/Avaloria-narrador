@@ -1,0 +1,154 @@
+{
+ "archivos": [
+  {
+   "f": "calendario.json",
+   "estado": "a_aprobar_canon",
+   "tanda": "calendario"
+  },
+  {
+   "f": "t00-guia.json",
+   "estado": "a_aprobar",
+   "tanda": "t00"
+  },
+  {
+   "f": "t01-gramatica.json",
+   "estado": "a_aprobar",
+   "tanda": "t01"
+  },
+  {
+   "f": "t02-ambiente.json",
+   "estado": "a_aprobar",
+   "tanda": "t02"
+  },
+  {
+   "f": "t03-npcs.json",
+   "estado": "a_aprobar",
+   "tanda": "t03"
+  },
+  {
+   "f": "t04-intenciones.json",
+   "estado": "a_aprobar",
+   "tanda": "t04"
+  },
+  {
+   "f": "t05-voces.json",
+   "estado": "a_aprobar",
+   "tanda": "t05"
+  },
+  {
+   "f": "t06-memoria.json",
+   "estado": "a_aprobar",
+   "tanda": "t06"
+  },
+  {
+   "f": "t07-rumores.json",
+   "estado": "a_aprobar",
+   "tanda": "t07"
+  },
+  {
+   "f": "t08-viaje.json",
+   "estado": "a_aprobar",
+   "tanda": "t08"
+  },
+  {
+   "f": "t09-eventos.json",
+   "estado": "a_aprobar",
+   "tanda": "t09"
+  },
+  {
+   "f": "t10-objetos.json",
+   "estado": "a_aprobar",
+   "tanda": "t10"
+  },
+  {
+   "f": "t11-reformulacion.json",
+   "estado": "a_aprobar",
+   "tanda": "t11"
+  },
+  {
+   "f": "t12-unicos.json",
+   "estado": "a_aprobar",
+   "tanda": "t12"
+  },
+  {
+   "f": "t13-ambiente2.json",
+   "estado": "a_aprobar",
+   "tanda": "t13"
+  },
+  {
+   "f": "t14-intenciones2.json",
+   "estado": "a_aprobar",
+   "tanda": "t14"
+  },
+  {
+   "f": "t15-gramatica2.json",
+   "estado": "a_aprobar",
+   "tanda": "t15"
+  },
+  {
+   "f": "t16-conocimientos.json",
+   "estado": "a_aprobar_canon",
+   "tanda": "t16"
+  },
+  {
+   "f": "t17-charla.json",
+   "estado": "a_aprobar",
+   "tanda": "t17"
+  },
+  {
+   "f": "t18-memoria-rumores2.json",
+   "estado": "a_aprobar",
+   "tanda": "t18"
+  },
+  {
+   "f": "t19-eventos2.json",
+   "estado": "a_aprobar",
+   "tanda": "t19"
+  },
+  {
+   "f": "t20-eco.json",
+   "estado": "a_aprobar",
+   "tanda": "t20"
+  },
+  {
+   "f": "t21-consecuencias.json",
+   "estado": "a_aprobar_canon",
+   "tanda": "t21"
+  },
+  {
+   "f": "t22-objetivos.json",
+   "estado": "a_aprobar_canon",
+   "tanda": "t22"
+  },
+  {
+   "f": "t23-diario.json",
+   "estado": "a_aprobar",
+   "tanda": "t23"
+  },
+  {
+   "f": "t24-apodos.json",
+   "estado": "a_aprobar",
+   "tanda": "t24"
+  },
+  {
+   "f": "t25-silencio.json",
+   "estado": "a_aprobar",
+   "tanda": "t25"
+  },
+  {
+   "f": "t26-reformulacion2.json",
+   "estado": "a_aprobar",
+   "tanda": "t26"
+  },
+  {
+   "f": "t27-calendario.json",
+   "estado": "a_aprobar_canon",
+   "tanda": "t27"
+  },
+  {
+   "f": "valores.json",
+   "estado": "a_aprobar_canon",
+   "tanda": "valores"
+  }
+ ]
+}

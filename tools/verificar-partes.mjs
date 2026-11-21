@@ -46,7 +46,7 @@ function cargar() {
   };
   for (const n of v3.npcs) for (const c of n.conocimientos || []) { ctx.knowIds.add(c.id); if (c.requiereMarca) ctx.marcas.add(c.requiereMarca); }
   if (fs.existsSync(AMP))
-    for (const f of fs.readdirSync(AMP).filter(x => x.endsWith('.json')).sort()) {
+    for (const f of fs.readdirSync(AMP).filter(x => x.endsWith('.json') && x !== 'manifest.json').sort()) {
       try { ctx.files[f] = leer(path.join(AMP, f)); } catch (e) { E('json', `${f}: ${e.message}`); }
     }
   return ctx;

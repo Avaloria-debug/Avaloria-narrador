@@ -1,7 +1,8 @@
 // Contenido ampliado (data/contenido/ampliado/t*.json): se fusiona en memoria sobre contenido-v3.json, que no se toca.
 // - "borrador": nunca se carga. "a_aprobar": solo con cargarPendientes. "a_aprobar_canon": además, incluirCanon.
 // - Sin carpeta, vacía o sin nada cargable: null (v3 puro, salida idéntica).
-// SIN VERIFICAR: carga en el navegador (no hay fetch de carpeta; producción no lo carga por defecto).
+// Navegador: no puede listar la carpeta; lee manifest.json (tools/generar-manifest.js) y después cada archivo por fetch.
+// SIN VERIFICAR: fetch real en el navegador (probado con fetch simulado).
 
 export const CLAVES_CONDICION = Object.freeze({
   f: ['madrugada', 'manana', 'tarde', 'noche'],
@@ -183,7 +184,7 @@ export async function leerArchivosAmpliado(dir) {
   const { fileURLToPath } = await import('node:url');
   const ruta = dir ?? fileURLToPath(new URL('../data/contenido/ampliado/', import.meta.url));
   let nombres;
-  try { nombres = (await readdir(ruta)).filter((x) => /^t.*\.json$/.test(x) || x === 'valores.json' || x === 'calendario.json').sort(); } catch (e) { if (e.code === 'ENOENT') return []; throw e; }
+  try { nombres = (await readdir(ruta)).filter(usable).sort(); } catch (e) { if (e.code === 'ENOENT') return []; throw e; }
   const out = [];
   for (const n of nombres) out.push([n, JSON.parse(await readFile(`${ruta.replace(/\/?$/, '/')}${n}`, 'utf8'))]);
   return out;
@@ -194,4 +195,33 @@ export async function cargarAmpliadoNode({ dir, cargarPendientes = false, inclui
   const { leerContenido } = await import('./cargarContenido.js');
   const v3 = await leerContenido();
   return fusionarAmpliado(await leerArchivosAmpliado(dir), v3, { cargarPendientes, incluirCanon });
+}
+
+/** Nombres que la fusión usa (t*.json, valores.json, calendario.json), en orden. */
+const usable = (x) => /^t.*\.json$/.test(x) || x === 'valores.json' || x === 'calendario.json';
+
+/**
+ * Carga por fetch (navegador). Solo pide los archivos cuyo estado se carga (y t00, la guía).
+ * Nunca lanza: ante un error de red o un archivo roto devuelve { ampliado: null, avisos: [...] } (v3 puro).
+ * @param {{ base: string|URL, fetch?: Function, v3: object, cargarPendientes?: boolean, incluirCanon?: boolean }} o
+ * @returns {Promise<{ ampliado: object|null, avisos: object[] }>}
+ */
+export async function cargarAmpliadoFetch({ base, fetch: f = globalThis.fetch, v3, cargarPendientes = true, incluirCanon = false } = {}) {
+  const avisos = [];
+  try {
+    const url = (n) => new URL(n, base).toString();
+    const leer = async (n) => {
+      const r = await f(url(n));
+      if (!r || r.ok === false) throw new Error(`${n}: HTTP ${r?.status ?? '?'}`);
+      return r.json();
+    };
+    const manifest = await leer('manifest.json');
+    const nombres = (manifest?.archivos ?? []).filter((x) => usable(x.f) && (x.f.startsWith('t00') || seCarga(x.estado, { cargarPendientes, incluirCanon }))).map((x) => x.f).sort();
+    const archivos = [];
+    for (const n of nombres) archivos.push([n, await leer(n)]);
+    return { ampliado: fusionarAmpliado(archivos, v3, { cargarPendientes, incluirCanon }), avisos };
+  } catch (e) {
+    avisos.push({ tipo: 'ampliado_no_cargado', detalle: e instanceof Error ? e.message : String(e) });
+    return { ampliado: null, avisos };
+  }
 }
