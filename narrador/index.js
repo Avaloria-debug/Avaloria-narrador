@@ -627,6 +627,8 @@ export async function narrar(estado, entrada, opciones = {}) {
         const visto = `${texto}\n${entrada?.tipo === 'texto' ? entrada.texto : ''}`.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
         for (const n of contenido.npcs ?? []) { const c = n.nombre.split(' ')[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); if (new RegExp(`\\b${c}\\b`).test(visto)) oidos.add(n.id); }
         ext = { ...ext, lineas: anotarTexto(partida.ext?.lineas, texto), nombresOidos: [...oidos] };
+        // Fase 8: un sistema (regateo, trabajo) no sobrevive a un cambio de escena.
+        if (ext.sistema?.sub?.escena && ext.sistema.sub.escena !== turno.estado.jugador.escenaId) ext = { ...ext, sistema: null };
       }
     }
 

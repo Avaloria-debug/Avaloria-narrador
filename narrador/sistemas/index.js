@@ -3,8 +3,9 @@
 //   cerrable?(sub) → boolean }. El estado guarda a lo sumo un sistema activo en `ext.sistema = { id, sub }`;
 // `sub` es JSON plano, así el juego principal puede dibujar su propia UI leyéndolo.
 // Efectos: los de resolver (dinero, objeto_agregado, objeto_usado, marca, movimiento) más `relacion` { npc, delta }
-// y `hecho` { clave, valor } (nuevos; anotados en SUPUESTOS-v3).
+// `hecho` { clave, valor }, `pago`/`cobro` { monto en bronce } (nuevos; anotados en SUPUESTOS-v3).
 import { aplicarEfectos as aplicarDeResolver } from '../resolver.js';
+import { totalBronce, conTotal } from '../economia/monedas.js';
 
 const MODULOS = new Map();
 export const PALABRAS_SALIR = Object.freeze(['salir', 'salgo', 'irme', 'me voy', 'dejar', 'dejo', 'dejarlo', 'basta', 'chau', 'adios']);
@@ -34,11 +35,15 @@ export const esSalir = (texto) => { const t = ` ${normal(texto)} `; return PALAB
 
 /** Aplica efectos al estado. */
 export function aplicarEfectosSistema(estado, efectos = []) {
-  let e = aplicarDeResolver(estado, efectos.filter((x) => x.tipo !== 'relacion' && x.tipo !== 'hecho'));
+  let e = aplicarDeResolver(estado, efectos.filter((x) => !['relacion', 'hecho', 'pago', 'cobro'].includes(x.tipo)));
   for (const x of efectos) {
     if (x.tipo === 'relacion' && e.npcs?.[x.npc]) {
       const r = Math.max(-2, Math.min(2, (e.npcs[x.npc].relacion ?? 0) + x.delta));
       e = { ...e, npcs: { ...e.npcs, [x.npc]: { ...e.npcs[x.npc], relacion: r } } };
+    } else if (x.tipo === 'pago' || x.tipo === 'cobro') {
+      // `pago`: el jugador paga (en bronce); `cobro`: recibe. Nunca negativo.
+      const t = totalBronce(e.jugador) + (x.tipo === 'pago' ? -1 : 1) * Math.max(0, Math.round(x.monto) || 0);
+      e = { ...e, jugador: conTotal(e.jugador, t) };
     } else if (x.tipo === 'hecho') {
       e = { ...e, ext: { ...(e.ext ?? {}), hechosSistema: { ...(e.ext?.hechosSistema ?? {}), [x.clave]: x.valor } } };
     }
@@ -68,9 +73,9 @@ export function turnoSistema(estado, entrada, rng, ctx = {}) {
   const mod = obtenerSistema(s.id);
   const r = mod.turno(s.sub, entrada, rng, { ...ctx, estado, salir: esSalir(entrada?.texto) && (typeof mod.cerrable !== 'function' || mod.cerrable(s.sub)) });
   const tras = conSistema(estado, { id: s.id, sub: r.sub });
-  if (!r.terminado) return { texto: r.texto, estado: tras, terminado: false, efectos: [] };
+  if (!r.terminado) return { id: s.id, texto: r.texto, sub: r.sub, estado: tras, terminado: false, efectos: [] };
   const c = cerrarSistema(tras);
-  return { texto: r.texto, estado: c.estado, terminado: true, efectos: c.efectos };
+  return { id: s.id, texto: r.texto, sub: r.sub, estado: c.estado, terminado: true, efectos: c.efectos };
 }
 
 export const _reiniciarParaTests = () => MODULOS.clear();

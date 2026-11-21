@@ -171,6 +171,11 @@
    "tanda": "t40"
   },
   {
+   "f": "t41-economia.json",
+   "estado": "a_aprobar",
+   "tanda": "t41"
+  },
+  {
    "f": "valores.json",
    "estado": "a_aprobar_canon",
    "tanda": "valores"

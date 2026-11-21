@@ -1,0 +1,290 @@
+{
+ "tanda": "t41",
+ "estado": "a_aprobar",
+ "nota": "Economía: regateo por NPC (acepta/rechaza/contraoferta), trabajos de un día (oferta/durante/fin), favores (pide/cobra/incumplido/saldado) y pagos (exhibir/sin_dinero/informacion). Placeholder {npc}.",
+ "regateo": {
+  "maren_archivista": {
+   "acepta": [
+    "«Sea. Consta el acuerdo», dice Maren, y anota la cifra.",
+    "«Aceptable», dice Maren, sin alegría."
+   ],
+   "rechaza": [
+    "«El precio está fijado. No se discute», dice Maren.",
+    "«El Archivo no regatea», dice Maren, y no levanta la vista."
+   ],
+   "contraoferta": [
+    "«Puedo bajar un poco si deja constancia por escrito», dice Maren.",
+    "«Menos, no. Pero puedo sumarle una copia», dice Maren."
+   ]
+  },
+  "serel_panadero": {
+   "acepta": [
+    "«Bueno, bueno. Llevátelo antes de que me arrepienta», gruñe Serel.",
+    "«Está bien. Pero no le digas a nadie», dice Serel."
+   ],
+   "rechaza": [
+    "«¿Sabés lo que cuesta la harina? No», dice Serel.",
+    "«El pan vale lo que vale», gruñe Serel."
+   ],
+   "contraoferta": [
+    "«Te dejo el de ayer a ese precio. El fresco, no», dice Serel.",
+    "«Si llevás dos, te hago algo», dice Serel."
+   ]
+  },
+  "ivor_cambista": {
+   "acepta": [
+    "«Trato hecho», dice Ivor, y la sonrisa no le llega a los ojos.",
+    "«Acepto. Esta vez», dice Ivor."
+   ],
+   "rechaza": [
+    "«No», dice Ivor. Nada más.",
+    "«Su oferta es un insulto educado», dice Ivor."
+   ],
+   "contraoferta": [
+    "«Puedo mejorar un poco. Muy poco», dice Ivor, anotando.",
+    "«Bajo, si me debe un favor», dice Ivor."
+   ]
+  },
+  "naela_tabernera": {
+   "acepta": [
+    "«Va. Pero la próxima pagás completo», dice Naela.",
+    "«Hecho. No me hagas arrepentir», dice Naela."
+   ],
+   "rechaza": [
+    "«Acá se paga lo que dice la pizarra», dice Naela.",
+    "«Si querés barato, andá al río a beber», dice Naela."
+   ],
+   "contraoferta": [
+    "«Te lo dejo si me contás algo que valga la pena», dice Naela.",
+    "«Menos, si lavás un par de jarros», dice Naela."
+   ]
+  },
+  "tiren_docente": {
+   "acepta": [
+    "«¡Claro! El conocimiento no debería tener precio», dice Tiren.",
+    "«Hecho, hecho. No me importa la plata», dice Tiren."
+   ],
+   "rechaza": [
+    "«Uy, no puedo. La academia me controla las cuentas», dice Tiren, apenado.",
+    "«Me encantaría, pero no», dice Tiren."
+   ],
+   "contraoferta": [
+    "«Si me ayudás a medir un mapa, te lo dejo», dice Tiren.",
+    "«Pagá la mitad y traeme un dato del camino», dice Tiren."
+   ]
+  },
+  "elia_bibliotecaria": {
+   "acepta": [
+    "«Está bien», susurra Elia. «Que no se haga costumbre.»",
+    "«De acuerdo», susurra Elia, y cierra el libro de cuentas."
+   ],
+   "rechaza": [
+    "«Las tarifas son públicas», susurra Elia.",
+    "«No», susurra Elia, y señala el cartel."
+   ],
+   "contraoferta": [
+    "«Puedo reducirlo si devuelve a tiempo», susurra Elia.",
+    "«Menos, si me ayuda a ordenar un estante», susurra Elia."
+   ]
+  },
+  "brenn_arriero": {
+   "acepta": [
+    "«Dale. Entre gente de camino nos entendemos», dice Brenn.",
+    "«Hecho», dice Brenn, y te da la mano curtida."
+   ],
+   "rechaza": [
+    "«Las mulas comen igual, pagues o no», dice Brenn.",
+    "«No. El camino es caro», dice Brenn."
+   ],
+   "contraoferta": [
+    "«Ayudame a cargar y lo arreglamos», dice Brenn.",
+    "«Menos, si viajás conmigo y vigilás de noche», dice Brenn."
+   ]
+  },
+  "ysolde_pescadora": {
+   "acepta": [
+    "«Llevalo. El lago da más mañana», dice Ysolde.",
+    "«Bueno», dice Ysolde, encogiéndose de hombros."
+   ],
+   "rechaza": [
+    "«Ese pescado me costó la mañana. No», dice Ysolde.",
+    "«El lago no rebaja. Yo tampoco», dice Ysolde."
+   ],
+   "contraoferta": [
+    "«Ayudame con la red y te lo regalo», dice Ysolde.",
+    "«Te dejo el chico a ese precio», dice Ysolde."
+   ]
+  },
+  "dario_guardia": {
+   "acepta": [
+    "«Pase. Y no comente», dice Darío, guardando las monedas.",
+    "«Muy bien. No lo vi», dice Darío."
+   ],
+   "rechaza": [
+    "«¿Me está ofreciendo algo? Cuidado», dice Darío.",
+    "«El peaje es el peaje», dice Darío, seco."
+   ],
+   "contraoferta": [
+    "«Con eso no alcanza para que me olvide de usted», dice Darío.",
+    "«Un poco más y su carga no se revisa», dice Darío, mirando a otro lado."
+   ]
+  },
+  "sarin_mensajera": {
+   "acepta": [
+    "«Hecho. Sale ahora», dice Sarin, y ya se está yendo.",
+    "«Dale, pero rápido», dice Sarin."
+   ],
+   "rechaza": [
+    "«La distancia no se regatea», dice Sarin.",
+    "«No. Mis pies valen más», dice Sarin."
+   ],
+   "contraoferta": [
+    "«Barato, si espera a mañana», dice Sarin.",
+    "«Menos, si va en el camino que ya hago», dice Sarin."
+   ]
+  },
+  "hollis_pastor": {
+   "acepta": [
+    "«Bueno. El pasto crece igual», dice Hollis.",
+    "«Llevalo», dice Hollis, sin contar."
+   ],
+   "rechaza": [
+    "«Esa oveja vale más que eso», dice Hollis.",
+    "«No», dice Hollis, y mira las colinas."
+   ],
+   "contraoferta": [
+    "«Ayudame a juntar el rebaño y vemos», dice Hollis.",
+    "«Te cambio por algo de la ciudad», dice Hollis."
+   ]
+  },
+  "oren_peregrino": {
+   "acepta": [
+    "«Lo que puedas dar está bien», dice Oren.",
+    "«Tomalo. El camino provee», dice Oren."
+   ],
+   "rechaza": [
+    "«No es cuestión de precio», dice Oren, suave.",
+    "«Eso no se vende», dice Oren."
+   ],
+   "contraoferta": [
+    "«No quiero monedas. Contame una historia», dice Oren.",
+    "«Dalo a quien lo necesite más, y estamos a mano», dice Oren."
+   ]
+  }
+ },
+ "trabajos": {
+  "mulas_brenn": {
+   "npc": "brenn_arriero",
+   "escenas": [
+    "escena_camino_norte",
+    "escena_puente_aduana"
+   ],
+   "oferta": [
+    "«Necesito brazos para cargar. Pago al final del día», dice Brenn.",
+    "«¿Querés ganarte algo? Las mulas no se cargan solas», dice Brenn."
+   ],
+   "durante": [
+    "Cargás bultos hasta que los brazos te tiemblan. Las mulas te miran con lástima.",
+    "Atás cuerdas, levantás sacos, esquivás una coz. El sol avanza despacio."
+   ],
+   "fin": [
+    "Brenn te paga contando monedas en voz alta. «Volvé cuando quieras.»",
+    "Terminás molido. Brenn te paga y te ofrece agua."
+   ]
+  },
+  "pesca_ysolde": {
+   "npc": "ysolde_pescadora",
+   "escenas": [
+    "escena_lago_espejos"
+   ],
+   "oferta": [
+    "«Me falta alguien en el bote. Se paga en monedas o en pescado», dice Ysolde.",
+    "«¿Sabés remar? No importa, aprendés», dice Ysolde."
+   ],
+   "durante": [
+    "Remás mientras Ysolde tira la red. El agua refleja tanto que marea.",
+    "Sacás la red con las manos heladas. Algo se retuerce entre las mallas."
+   ],
+   "fin": [
+    "Ysolde te paga y te da un pescado envuelto en hojas.",
+    "Volvés a la orilla con olor a lago y unas monedas."
+   ]
+  },
+  "recados_sarin": {
+   "npc": "sarin_mensajera",
+   "escenas": [
+    "escena_mercado_circular",
+    "escena_plaza_cambistas"
+   ],
+   "oferta": [
+    "«Tengo más cartas que piernas. ¿Llevás algunas?», dice Sarin.",
+    "«Recados chicos, paga chica. ¿Te sirve?», dice Sarin."
+   ],
+   "durante": [
+    "Cruzás la ciudad entregando sobres. Una puerta no se abre; otra se abre demasiado rápido.",
+    "Entregás un paquete a alguien que no quiere dar su nombre."
+   ],
+   "fin": [
+    "Sarin te paga sin detenerse.",
+    "Volvés con los pies cansados y unas monedas."
+   ]
+  },
+  "copia_archivo": {
+   "npc": "maren_archivista",
+   "escenas": [
+    "escena_archivo_real"
+   ],
+   "oferta": [
+    "«Hay registros que copiar. Letra clara o no se paga», dice Maren.",
+    "«¿Sabe escribir sin manchar? Hay trabajo», dice Maren."
+   ],
+   "durante": [
+    "Copiás columnas de cifras hasta que se te nublan los ojos.",
+    "Una entrada te llama la atención: el mismo nombre, tres veces tachado."
+   ],
+   "fin": [
+    "Maren revisa la copia línea por línea y te paga lo justo.",
+    "«Aceptable», dice Maren, y te entrega las monedas."
+   ]
+  }
+ },
+ "favores": {
+  "pide": [
+   "{npc} te mira un momento. «Te debo una. No me olvido.»",
+   "«Anotado», dice {npc}. «Los favores se devuelven.»",
+   "«Gracias. Algún día te lo pago», dice {npc}."
+  ],
+  "cobra": [
+   "«¿Te acordás que me debías una? Llegó el día», dice {npc}.",
+   "{npc} te detiene. «Necesito que me devuelvas el favor.»",
+   "«Hoy cobro», dice {npc}, sin sonreír."
+  ],
+  "incumplido": [
+   "{npc} te mira y no dice nada. No hace falta.",
+   "«Ya sé con quién no contar», dice {npc}.",
+   "{npc} te da la espalda. La deuda sigue ahí."
+  ],
+  "saldado": [
+   "«Estamos a mano», dice {npc}.",
+   "{npc} asiente. «Cuentas claras.»",
+   "«Bien. Ahora no nos debemos nada», dice {npc}."
+  ]
+ },
+ "pagos": {
+  "exhibir": [
+   "Al sacar la bolsa, notás que alguien mira más de la cuenta.",
+   "El tintineo de las monedas hace girar un par de cabezas.",
+   "Un hombre apoyado en la pared deja de mirar a otro lado."
+  ],
+  "sin_dinero": [
+   "Contás lo que tenés. No alcanza.",
+   "Revolvés la bolsa. Faltan monedas.",
+   "«Con eso no llega», te dicen, y la mano se queda esperando."
+  ],
+  "informacion": [
+   "{npc} escucha con atención. «Eso vale algo.»",
+   "«Eso no lo sabía», dice {npc}, y te mira distinto.",
+   "{npc} se encoge de hombros. «Ya lo sabía. No vale nada.»"
+  ]
+ }
+}

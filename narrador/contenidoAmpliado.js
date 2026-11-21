@@ -154,6 +154,11 @@ export function fusionarAmpliado(archivos, v3, opciones = {}) {
       if (Array.isArray(d.descanso)) { a.plantillas.intencion_descansar ??= {}; sumar(a.plantillas.intencion_descansar, 'neutro', d.descanso); }
       if (Array.isArray(d.falta_npc)) { a.plantillas.reformulacion ??= {}; sumar(a.plantillas.reformulacion, 'falta_npc', d.falta_npc); }
     }
+    // t41 (fase 8): economía. regateo por NPC, trabajos, favores, pagos.
+    if (esObj(d.regateo) || esObj(d.trabajos) || esObj(d.favores) || esObj(d.pagos)) {
+      a.economia ??= { regateo: {}, trabajos: {}, favores: {}, pagos: {} };
+      for (const k of ['regateo', 'trabajos', 'favores', 'pagos']) Object.assign(a.economia[k], structuredClone(d[k] ?? {}));
+    }
   }
   return a.tandas.length ? a : null;  // valores.json solo no basta para activar el ampliado
 }

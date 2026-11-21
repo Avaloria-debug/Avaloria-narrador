@@ -6,6 +6,8 @@ import { npcsPresentes } from '../turno.js';
 import { estacionDe, festividadActiva } from '../calendario.js';
 import { totalBronce, conTotal, formatoMonto, precioDe, aBronce } from './monedas.js';
 import { elegirLinea } from './textos.js';
+import { abrirSistema, turnoSistema, sistemaActivo } from '../sistemas/index.js';
+import { abreRegateo, formatoAcuerdo, rasgoDinero } from './regateo.js';
 
 // Productos de precios.json: palabras que los nombran, objeto del contenido (si existe) y quién los vende.
 export const PRODUCTOS = Object.freeze({
@@ -95,13 +97,57 @@ const turnoTexto = (partida, texto, economia, extra = {}) => ({
 });
 
 /** Turno económico (ampliado). null → sigue el flujo normal. */
+// Texto de cada sistema según `sub.ultimo` (los módulos no escriben texto: solo eligen la clave).
+export const TEXTO_SISTEMA = {
+  regateo(sub, { L, contenido }) {
+    const npc = nombreNpc(contenido, sub.npc);
+    const v = { npc, monto: formatoAcuerdo(sub), producto: sub.nombre };
+    const t41 = (k) => L(`regateo.${sub.npc}.${k}`, v);
+    switch (sub.ultimo) {
+      case 'abre': return `${L('regateo_abre', v)} ${L('cifra', { ...v, monto: formatoMonto(sub.actual) })} ${L('regateo_opciones', v)}`;
+      case 'acepta': {
+        if (sub.trueque) { const o = (contenido.objetos ?? []).find((x) => x.id === sub.trueque); return `${t41('acepta')} ${L('trueque', { ...v, objeto: o ? o.nombre.toLowerCase() : 'eso' })}`; }
+        return `${t41('acepta')} ${L('compra', v)}`;
+      }
+      case 'rechaza': return t41('rechaza');
+      case 'contraoferta': return `${t41('contraoferta')} ${L('cifra', { ...v, monto: formatoMonto(sub.actual) })}`;
+      case 'sale': return L('regateo_sale', v);
+      case 'sin_dinero': return L('pagos.sin_dinero', v);
+      case 'pago_mas': return `${L('regateo_pago_mas', v)} ${L('compra', v)}`;
+      case 'trueque_no': return L('regateo_trueque_no', v);
+      default: return L('regateo_opciones', v);
+    }
+  },
+};
+
+function turnoConSistema({ amp, contenido, partida, texto, eco, L, abrir = null }) {
+  const base = abrir ? abrirSistema(partida, abrir.id, abrir.ctx) : partida;
+  const r = abrir && !abrir.procesar
+    ? { id: abrir.id, sub: base.ext.sistema.sub, estado: base, terminado: false }
+    : turnoSistema(base, { tipo: 'texto', texto }, () => 0, { contenido, amp });
+  const t = TEXTO_SISTEMA[r.id]?.(r.sub, { L, contenido, amp, partida }) ?? '';
+  const estado = { ...r.estado, ext: partida.ext };
+  return turnoTexto(estado, t, eco, { sistema: r.terminado ? null : r.estado.ext.sistema, hechosSistema: r.estado.ext?.hechosSistema ?? null });
+}
+
 export function turnoDeEconomia({ amp, contenido, partida, texto }) {
-  const lec = leerEconomia(texto);
-  if (!lec) return null;
   const presentes = npcsPresentes(partida, contenido);
   const eco = { ...(partida.ext?.economia ?? {}) };
   const sal = (s) => (amp?.economia?.semilla ?? 0) + (partida.ext?.turno ?? 0) + s;
   const L = (clave, valores = {}) => elegirLinea(amp, clave, valores, sal(clave.length));
+  if (sistemaActivo(partida)) return turnoConSistema({ amp, contenido, partida, texto, eco, L });
+  const n = normalizar(texto);
+  if (abreRegateo(n)) {
+    const producto = productoEn(n) ?? eco.ultimo?.producto ?? null;
+    if (!producto) return turnoTexto(partida, L('pago_que'), eco);
+    const vendedor = vendedorDe(producto, presentes);
+    if (!vendedor) return turnoTexto(partida, L('nadie'), eco);
+    const precio = precioDe(producto, { ...ctxPrecio({ amp, contenido, partida, vendedor }), objetoId: PRODUCTOS[producto].objetoId, categoria: PRODUCTOS[producto].categoria ?? 'consumible' });
+    const ctx = { npc: vendedor, producto, objetoId: PRODUCTOS[producto].objetoId ?? null, nombre: PRODUCTOS[producto].nombre, escena: partida.jugador.escenaId, precio, rasgoDinero: rasgoDinero(amp, vendedor), relacion: partida.npcs[vendedor]?.relacion ?? 0 };
+    return turnoConSistema({ amp, contenido, partida, texto, eco, L, abrir: { id: 'regateo', ctx, procesar: /\d/.test(n) } });
+  }
+  const lec = leerEconomia(texto);
+  if (!lec) return null;
 
   if (lec.tipo === 'venta') {
     const inv = partida.inventario ?? [];
