@@ -5,3 +5,4 @@
 - R4 hecho: enganche en narrar (sin clave + iaLocal lista), 7 tests, regresión ok
 - revisión 2 (R3-R4): compuertas, focos y regresión en verde
 - R5 hecho: botón IA local en la página, 11 tests, panel con latencia/tokens; navegador sin verificar
+- R6 hecho: verificar-modelo (3 tests), bench-ia, hosting doc; dispositivos sin verificar

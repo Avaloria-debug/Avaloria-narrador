@@ -92,3 +92,4 @@ R3 | CDN del motor jsdelivr @mlc-ai/web-llm@0.2.79 (+esm), provisional y A APROB
 R3 | velocidad: generación corta de 16 tokens al cargar; bajo el umbral → siguiente candidato | medir en el primer turno
 R4 | registro sin campo nuevo: la respuesta local queda como origen ia (distinguirla requiere firestore.rules, A APROBAR) | campo origen_ia
 R5 | la página no carga el modelo sola salvo flag guardado tras una activación exitosa; panel muestra tokens.local con latencia | autoarranque
+R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
