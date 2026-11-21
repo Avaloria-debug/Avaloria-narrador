@@ -9,3 +9,4 @@
 - revisión 3 (W5-W6): compuertas, regresión y humo verdes
 - fix W6: caché por función fetch (un test de red rota recibía la caché de otro)
 - W7 hecho: bots de juego 12×500: 0 errores, 220 repeticiones en ventana (listas agotadas)
+- W8 hecho: revisión final verde, informe
