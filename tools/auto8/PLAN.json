@@ -1,0 +1,77 @@
+{
+ "version": 8,
+ "pasos": [
+  {
+   "id": "X1",
+   "nombre": "Prioridad código→Groq→local",
+   "depende": [],
+   "estado": "hecho"
+  },
+  {
+   "id": "X2",
+   "nombre": "Interfaz de sistemas",
+   "depende": [],
+   "estado": "pendiente"
+  },
+  {
+   "id": "X3",
+   "nombre": "Monedas y precios",
+   "depende": [],
+   "estado": "pendiente"
+  },
+  {
+   "id": "X4",
+   "nombre": "Regateo",
+   "depende": [
+    "X2",
+    "X3"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "X5",
+   "nombre": "Trabajos",
+   "depende": [
+    "X2",
+    "X3"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "X6",
+   "nombre": "Favores e información",
+   "depende": [
+    "X3"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "X7",
+   "nombre": "Exhibir dinero",
+   "depende": [
+    "X3"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "X8",
+   "nombre": "t41 y bots",
+   "depende": [
+    "X4",
+    "X5",
+    "X6",
+    "X7"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "X9",
+   "nombre": "Cierre",
+   "depende": [
+    "X1",
+    "X8"
+   ],
+   "estado": "pendiente"
+  }
+ ]
+}

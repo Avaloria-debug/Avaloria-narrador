@@ -1,0 +1,107 @@
+{
+ "nota": "Precios base en bronce (1 plata=100, 1 oro=10000, 1 platino=1000000). Mostrar en la moneda más natural. Provisional; jornal y rangos deducidos del canon.",
+ "monedas": {
+  "bronce": 1,
+  "plata": 100,
+  "oro": 10000,
+  "platino": 1000000
+ },
+ "base": {
+  "pan_viejo": 5,
+  "pan_fresco": 10,
+  "comida_taberna": [
+   20,
+   40
+  ],
+  "bebida": [
+   5,
+   15
+  ],
+  "pescado": [
+   15,
+   40
+  ],
+  "fruta": [
+   3,
+   10
+  ],
+  "rumor": [
+   30,
+   200
+  ],
+  "vela": 8,
+  "cuerda": 25,
+  "cuchillo": [
+   150,
+   400
+  ],
+  "herramienta_caelumia": [
+   800,
+   2000
+  ],
+  "habitacion_pobre": 500,
+  "habitacion_lujosa": 8000,
+  "peaje": [
+   50,
+   150
+  ],
+  "soborno": [
+   200,
+   1000
+  ],
+  "copia_documento": [
+   50,
+   150
+  ]
+ },
+ "jornal": {
+  "mulas_brenn": [
+   150,
+   300
+  ],
+  "pesca_ysolde": [
+   120,
+   250
+  ],
+  "recados_sarin": [
+   80,
+   200
+  ],
+  "copia_archivo": [
+   200,
+   400
+  ]
+ },
+ "modificadores": {
+  "lluvia": {
+   "pan_fresco": 1.2,
+   "pescado": 1.3
+  },
+  "festividad": {
+   "comida_taberna": 1.3,
+   "habitacion_pobre": 1.5
+  },
+  "invierno": {
+   "fruta": 1.5,
+   "vela": 1.3
+  },
+  "importado_caelumia": 1.5,
+  "relacion": {
+   "-2": 1.3,
+   "-1": 1.1,
+   "0": 1,
+   "1": 0.95,
+   "2": 0.9
+  }
+ },
+ "regateo": {
+  "rebaja_max_por_rasgo_dinero": {
+   "-2": 0.4,
+   "-1": 0.25,
+   "0": 0.15,
+   "1": 0.1,
+   "2": 0.05
+  },
+  "pagar_de_mas_relacion": 1
+ }
+}

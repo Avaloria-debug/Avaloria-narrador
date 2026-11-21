@@ -394,6 +394,7 @@ export async function pedirRespuestaIA({ groqKey, contexto, http, esperar = espe
   };
 
   let ultimoMotivo = MOTIVOS_IA.ERROR_RED;
+  let esperaMs = null;
   for (let intento = 0; intento < 2; intento++) {
     let respuesta;
     try {
@@ -408,6 +409,8 @@ export async function pedirRespuestaIA({ groqKey, contexto, http, esperar = espe
       const cuerpo = await cuerpoJson(respuesta);
       if (esLimiteDiario(respuesta, cuerpo)) return sinIa(MOTIVOS_IA.RPD_AGOTADO, intento);
       ultimoMotivo = MOTIVOS_IA.CUPO;
+      const seg = Number(cabecera(respuesta, 'retry-after'));
+      esperaMs = Number.isFinite(seg) && seg > 0 ? seg * 1000 : null;
       if (intento === 0) await esperar(esperaDeCupo(respuesta));
       continue;
     }
@@ -429,5 +432,5 @@ export async function pedirRespuestaIA({ groqKey, contexto, http, esperar = espe
     if (contra) return { ok: false, error: null, motivo: MOTIVOS_IA.SALIDA_INVALIDA, detalle: contra, texto: null, tokens, reintentos: intento };
     return { ok: true, error: null, motivo: null, texto: validacion.texto, tokens, reintentos: intento };
   }
-  return falla(ultimoMotivo, 1);
+  return falla(ultimoMotivo, 1, ultimoMotivo === MOTIVOS_IA.CUPO ? { esperaMs } : {});
 }

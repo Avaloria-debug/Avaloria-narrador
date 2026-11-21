@@ -205,6 +205,7 @@ function conValoresPorDefecto(e) {
     ultimosTurnos: lista(e.ultimosTurnos).filter((t) => typeof t === 'string').slice(-MAX_ULTIMOS_TURNOS),
     numeroRegistro: Number.isInteger(e.numeroRegistro) && e.numeroRegistro >= 0 ? e.numeroRegistro : 0,
     iaAgotadaDia: typeof e.iaAgotadaDia === 'string' ? e.iaAgotadaDia : null,
+    ...(Number.isFinite(e.iaGroqPausaHasta) ? { iaGroqPausaHasta: e.iaGroqPausaHasta } : {}),
     avisos: lista(e.avisos).filter(esObjeto).map((a) => ({ ...a })),
     // Estado del motor de caso (tags, hitos, instancia): se conserva tal cual, copiado.
     caso: esObjeto(e.caso) ? structuredClone(e.caso) : null,
@@ -387,6 +388,8 @@ async function turnoConCasoDeConsulta(partida, turno, plantilla, opciones) {
   return { caso: { ...r.estadoCaso, contadorTurnos }, npcs: npcsNuevos, texto: r.texto?.texto ?? null };
 }
 
+// X1: tras un 429 sin retry-after, Groq queda en pausa 10 min (va a la IA local).
+const PAUSA_GROQ_MS = 10 * 60 * 1000;
 const diaReal = (fecha) => new Date(fecha).toISOString().slice(0, 10);
 
 /** Fecha real del turno. Si el reloj inyectado falla o da algo que no es una fecha, usa el del sistema. */
@@ -498,6 +501,7 @@ export async function narrar(estado, entrada, opciones = {}) {
     let ventanaIa = partida.ventanaAperturasIa;
     let diagnosticoIa = partida.diagnosticoAperturasIa;
     let iaAgotadaDia = partida.iaAgotadaDia;
+    let iaGroqPausaHasta = partida.iaGroqPausaHasta ?? null;
 
     if (turno.tipo === TIPOS_TURNO.IA) {
       // El código no entendió ni tras reformular: IA, si hay clave y cupo.
@@ -517,39 +521,55 @@ export async function narrar(estado, entrada, opciones = {}) {
         anotar(ERRORES.IA, [respuesta.error, respuesta.motivo, respuesta.detalle].filter(Boolean).join(': '));
         return false;
       };
-      if (!hayClave && typeof iaLocal?.listo === 'function' && iaLocal.listo()) {
-        // Fase 5: IA local en el navegador (sin clave de Groq). Nunca recibe la clave.
-        const recientesIa = partida.ventanaAperturasIa;
-        const datos = datosDeContexto(partida, contenido, { frase: entrada.texto, ultimasAcciones: partida.ultimosTurnos, evitarAperturas: recientesIa });
-        let respuesta;
-        try { respuesta = await iaLocal.pedir({ contexto: datos }); } catch (e) { respuesta = { ok: false, error: null, motivo: 'local_error', detalle: e instanceof Error ? e.message : '' }; }
-        aceptar(respuesta ?? { ok: false, motivo: 'local_error' }, recientesIa);
-      } else if (!hayClave) {
+      // X1: prioridad fija código → Groq → IA local → plantilla. Silencioso para el jugador.
+      const ahoraMs = new Date(ahora).getTime();
+      const groqEnPausa = Number.isFinite(iaGroqPausaHasta) && ahoraMs < iaGroqPausaHasta;
+      let usarLocal = false;
+      if (!hayClave) {
         anotar(ERRORES.IA, `${SIN_IA}: ${MOTIVOS_IA.SIN_CLAVE}`);
+        usarLocal = true;
       } else if (sinCupoHoy) {
         anotar(ERRORES.IA, `${SIN_IA}: ${MOTIVOS_IA.RPD_AGOTADO}`);
+        usarLocal = true;
+      } else if (groqEnPausa) {
+        anotar(ERRORES.IA, `${SIN_IA}: ${MOTIVOS_IA.CUPO}: pausa`);
+        usarLocal = true;
       } else {
         const http = typeof opciones?.http === 'function' ? opciones.http : globalThis.fetch?.bind(globalThis);
         if (typeof http !== 'function') {
           anotar(ERRORES.IA, MOTIVOS_IA.ERROR_RED);
+          usarLocal = true;
         } else {
           const recientesIa = partida.ventanaAperturasIa;
           const datos = datosDeContexto(partida, contenido, { frase: entrada.texto, ultimasAcciones: partida.ultimosTurnos, evitarAperturas: recientesIa });
-          const pedir = () => pedirRespuestaIA({
-            groqKey,
-            contexto: datos,
-            http,
-            ...(typeof opciones?.esperar === 'function' ? { esperar: opciones.esperar } : {}),
-          });
-          // Una sola llamada: las aperturas a evitar van en el mismo pedido. Si igual repite, se acepta y se anota.
-          const respuesta = await pedir();
+          let respuesta;
+          try {
+            respuesta = await pedirRespuestaIA({
+              groqKey,
+              contexto: datos,
+              http,
+              ...(typeof opciones?.esperar === 'function' ? { esperar: opciones.esperar } : {}),
+            });
+          } catch (e) {
+            respuesta = { ok: false, error: null, motivo: MOTIVOS_IA.ERROR_RED, detalle: e instanceof Error ? e.message : '' };
+          }
           let recortadas = false;
           try { recortadas = armarContexto(datos).aperturasRecortadas; } catch { /* el contexto no entra: pedirRespuestaIA no llama */ }
           if (recortadas) diagnosticoIa = { ...diagnosticoIa, aperturasRecortadas: diagnosticoIa.aperturasRecortadas + 1 };
           if (!aceptar(respuesta, recientesIa)) {
             if (respuesta.error === SIN_IA && respuesta.motivo === MOTIVOS_IA.RPD_AGOTADO) iaAgotadaDia = diaReal(ahora);
+            if (respuesta.motivo === MOTIVOS_IA.CUPO) iaGroqPausaHasta = ahoraMs + (Number.isFinite(respuesta.esperaMs) && respuesta.esperaMs > 0 ? respuesta.esperaMs : PAUSA_GROQ_MS);
+            usarLocal = true;
           }
         }
+      }
+      if (usarLocal && texto === null && typeof iaLocal?.listo === 'function' && iaLocal.listo()) {
+        // IA local: nunca recibe la clave de Groq.
+        const recientesIa = partida.ventanaAperturasIa;
+        const datos = datosDeContexto(partida, contenido, { frase: entrada.texto, ultimasAcciones: partida.ultimosTurnos, evitarAperturas: recientesIa });
+        let respuesta;
+        try { respuesta = await iaLocal.pedir({ contexto: datos }); } catch (e) { respuesta = { ok: false, error: null, motivo: 'local_error', detalle: e instanceof Error ? e.message : '' }; }
+        aceptar(respuesta ?? { ok: false, motivo: 'local_error' }, recientesIa);
       }
       if (texto === null) {
         // Modo código: la plantilla de "no entendí".
@@ -648,6 +668,7 @@ export async function narrar(estado, entrada, opciones = {}) {
       ultimosTurnos: etiqueta ? [...partida.ultimosTurnos, etiqueta].slice(-MAX_ULTIMOS_TURNOS) : partida.ultimosTurnos,
       numeroRegistro,
       iaAgotadaDia,
+      ...(iaGroqPausaHasta !== null ? { iaGroqPausaHasta } : {}),
       ...(ext ? { ext } : {}),
       semilla: rng.estado(),
     };
