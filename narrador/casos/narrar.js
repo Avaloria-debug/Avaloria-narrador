@@ -13,6 +13,7 @@
 
 import { crearRng, semillaAEntero } from '../azar.js';
 import { sinPuntoDoble } from '../puntuacion.js';
+import { eventoCumplido } from '../conocimientos.js';
 import { escribirTag, subirTag, quitarTag, ajustarReputacion, aplicarTraicion, deltaRelacion } from './tags.js';
 import { tagsDeAccion, OBJETIVOS, OPS } from './acciones.js';
 import { aplicarDecaimientoPorHoras } from './decaimiento.js';
@@ -108,6 +109,20 @@ export function conocimientosNarrados(texto, estadoCaso) {
   return vistos;
 }
 
+/**
+ * ¿El hito narra (en alguno de sus textos) un conocimiento no revelado cuyo evento no está cumplido?
+ * `mundo.eventosActivos` y `mundo.npcs[id].conocimientosRevelados` los pasa el contrato; sin ellos, no bloquea.
+ */
+export function hitoEsperaEvento(hito, estadoCaso, mundo, contenido) {
+  if (!Array.isArray(mundo?.eventosActivos)) return false;
+  const narrados = lista(hito?.textos).flatMap((t) => conocimientosNarrados(t.texto, estadoCaso));
+  return narrados.some(({ npcId, conocimientoId }) => {
+    if ((mundo.npcs?.[npcId]?.conocimientosRevelados ?? []).includes(conocimientoId)) return false;
+    const k = (contenido?.npcs ?? []).find((n) => n.id === npcId)?.conocimientos?.find((x) => x.id === conocimientoId);
+    return k ? !eventoCumplido(k, npcId, mundo.eventosActivos, contenido) : false;
+  });
+}
+
 export function completarMarcadores(texto, estadoCaso, contenido, mundo = null) {
   const pistas = estadoCaso.instancia?.pistas ?? [];
   const valor = (todo, clase, ranura) => {
@@ -191,7 +206,10 @@ export async function turnoDeCaso(p) {
   let revelados = [];
   // `sinDesenlace` (consultas): un hito final no se dispara; queda para un turno de acción.
   const candidato = elegirDisparo(estado, mundo);
-  const elegido = p.sinDesenlace === true && candidato?.final ? null : candidato;
+  // Un hito que narra un conocimiento con evento sin cumplir no se entrega: queda listo hasta que el evento esté
+  // (o el conocimiento ya esté revelado). Así el hito no revela lo que la consulta no revelaría.
+  const sinEvento = candidato && hitoEsperaEvento(candidato, estado, mundo, contenido);
+  const elegido = (p.sinDesenlace === true && candidato?.final) || sinEvento ? null : candidato;
   if (elegido) {
     const r = dispararHito(elegido, estado, mundo);
     estado = r.estadoCaso;

@@ -9,7 +9,7 @@ import {
 } from './efectosEventos.js';
 import { clasificarViaje } from './viaje.js';
 import { leerContenido } from './cargarContenido.js';
-import { eventoActivo as ev } from './utilsPrueba.js';
+import { eventoActivo as ev, contenidoConSenderoPorTormenta } from './utilsPrueba.js';
 
 let contenido;
 before(async () => {
@@ -107,10 +107,11 @@ describe('efectos de eventos — habilita', () => {
   test('la tormenta habilita el conocimiento de Hollis mientras dura', () => {
     const activos = [ev('evento_tormenta_verano', 'escena_camino_sur')];
     const id = 'conocimiento_sendero_sin_vigilancia';
-    assert.equal(conocimientoHabilitado('hollis_pastor', id, activos, contenido), true);
-    assert.equal(conocimientoHabilitado('hollis_pastor', id, [], contenido), false);
-    assert.equal(conocimientoHabilitado('oren_peregrino', id, activos, contenido), false);
-    assert.equal(conocimientoHabilitado('hollis_pastor', 'conocimiento_oren_1', activos, contenido), false);
+    const c = contenidoConSenderoPorTormenta(contenido);
+    assert.equal(conocimientoHabilitado('hollis_pastor', id, activos, c), true);
+    assert.equal(conocimientoHabilitado('hollis_pastor', id, [], c), false);
+    assert.equal(conocimientoHabilitado('oren_peregrino', id, activos, c), false);
+    assert.equal(conocimientoHabilitado('hollis_pastor', 'conocimiento_oren_1', activos, c), false);
   });
 });
 

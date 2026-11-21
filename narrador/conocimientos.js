@@ -8,7 +8,15 @@ export const MOTIVOS_NO_REVELA = Object.freeze({
   EVENTO: 'evento',
   MARCA: 'marca',
   INEXISTENTE: 'inexistente',
+  ORDEN: 'orden',
 });
+
+/** `requiereEvento`: el evento está activo en alguna escena, o un evento activo habilita el conocimiento. Sin requisito: cumplido. */
+export function eventoCumplido(conocimiento, npcId, eventosActivos, contenido) {
+  if (conocimiento?.requiereEvento == null) return true;
+  const activo = (eventosActivos ?? []).some((a) => a.id === conocimiento.requiereEvento);
+  return activo || conocimientoHabilitado(npcId, conocimiento.id, eventosActivos, contenido);
+}
 
 /**
  * ¿Se puede revelar este conocimiento ahora?
@@ -25,16 +33,18 @@ export function puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido, 
   if (npcEstado.bloqueadoConocimientos) return no(MOTIVOS_NO_REVELA.BLOQUEADO);
   if (npcEstado.conocimientosRevelados.includes(conocimiento.id)) return no(MOTIVOS_NO_REVELA.YA_REVELADO);
   if (!sinUmbral && npcEstado.relacion < (umbral ?? conocimiento.umbralRelacion)) return no(MOTIVOS_NO_REVELA.UMBRAL);
-  if (conocimiento.requiereEvento != null) {
-    const activo = (estado.eventosActivos ?? []).some((a) => a.id === conocimiento.requiereEvento);
-    if (!activo && !conocimientoHabilitado(npcId, conocimiento.id, estado.eventosActivos, contenido)) {
-      return no(MOTIVOS_NO_REVELA.EVENTO);
-    }
-  }
+  if (!eventoCumplido(conocimiento, npcId, estado.eventosActivos, contenido)) return no(MOTIVOS_NO_REVELA.EVENTO);
   if (conocimiento.requiereMarca != null && !(estado.marcas ?? []).includes(conocimiento.requiereMarca)) {
     return no(MOTIVOS_NO_REVELA.MARCA);
   }
   return { puede: true, motivo: null };
+}
+
+/** ¿Hay un conocimiento anterior del mismo NPC sin revelar? El _2 nunca se revela antes que el _1. */
+export function anteriorSinRevelar(npcDef, npcEstado, conocimiento) {
+  const lista = npcDef?.conocimientos ?? [];
+  const i = lista.findIndex((k) => k.id === conocimiento?.id);
+  return i > 0 && lista.slice(0, i).some((k) => !npcEstado.conocimientosRevelados.includes(k.id));
 }
 
 /**

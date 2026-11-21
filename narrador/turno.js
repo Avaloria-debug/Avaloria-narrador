@@ -5,7 +5,7 @@
 import { decidir, resolverNpc, resolverObjeto, salirDeEscena, responderDestino, prepararDiccionarios, MOTIVOS } from './comprension.js';
 import { resolverAccion, aplicarEfectos, objetoDisponible, entradaDeInventario, MOTIVOS_FALLO } from './resolver.js';
 import { aplicarTransicion, disposicionEfectiva } from './npcs.js';
-import { conocimientoARevelar, conocimientoPorNarrativo, puedeRevelar, revelar, umbralDeConsulta, usarPrimerContacto, MOTIVOS_NO_REVELA } from './conocimientos.js';
+import { anteriorSinRevelar, conocimientoARevelar, conocimientoPorNarrativo, puedeRevelar, revelar, umbralDeConsulta, usarPrimerContacto, MOTIVOS_NO_REVELA } from './conocimientos.js';
 import { procesarEventos } from './eventos.js';
 import { estadoDeEscena } from './estadoEscena.js';
 import { avanzar } from './reloj.js';
@@ -198,7 +198,9 @@ function ejecutarConsulta(estado, decision, contenido) {
   let npc = npcEstado;
   let base = estado;
   if (conocimiento) {
+    // El _2 nunca antes que el _1 (orden del contenido): con el anterior sin revelar, la consulta falla con motivo `orden`.
     const r = puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido, { umbral: umbralDeConsulta(npcDef, conocimiento, estado) });
+    if (r.puede && anteriorSinRevelar(npcDef, npcEstado, conocimiento)) Object.assign(r, { puede: false, motivo: MOTIVOS_NO_REVELA.ORDEN });
     // El primer contacto se consume solo si la consulta revela o falla por relación; un bloqueo ajeno (evento, marca) no lo gasta.
     if (r.puede || r.motivo === MOTIVOS_NO_REVELA.UMBRAL) base = usarPrimerContacto(estado, npcId);
     if (r.puede) {

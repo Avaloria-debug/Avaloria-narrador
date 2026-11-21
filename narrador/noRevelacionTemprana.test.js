@@ -41,20 +41,31 @@ describe('el _2 no se revela antes de su umbral', () => {
       }
     });
 
-    test(`${npc}: con el umbral exacto sí se revela, y solo una vez`, async () => {
+    test(`${npc}: con el umbral exacto y el _1 revelado sí se revela, y solo una vez; sin el _1, no`, async () => {
       // Los _2 de estos cuatro NPC no piden evento ni marca; las condiciones están en el _1 (más abajo).
       assert.equal(k2.requiereEvento ?? null, null);
       assert.equal(k2.requiereMarca ?? null, null);
+      // 0.0.43: el _2 exige el _1 revelado (orden del contenido), también por consulta.
+      const conK1 = (relacion) => {
+        const e = partida(caso, relacion);
+        return { ...e, npcs: { ...e.npcs, [npc]: { ...e.npcs[npc], conocimientosRevelados: [k1.id] } } };
+      };
       for (const frase of frasesDe(k2)) {
-        const reveladas = await reveladosTras(partida(caso, k2.umbralRelacion), frase, npc);
-        assert.deepEqual(reveladas, [k2.id], frase);
+        assert.deepEqual(await reveladosTras(conK1(k2.umbralRelacion), frase, npc), [k1.id, k2.id], frase);
+        assert.ok(!(await reveladosTras(partida(caso, k2.umbralRelacion), frase, npc)).includes(k2.id), `${frase} (sin el _1)`);
       }
-      const una = await narrar(partida(caso, k2.umbralRelacion), { tipo: 'texto', texto: `¿qué sabés de ${k2.palabrasClave[0]}?` });
+      const una = await narrar(conK1(k2.umbralRelacion), { tipo: 'texto', texto: `¿qué sabés de ${k2.palabrasClave[0]}?` });
       const otra = await narrar(una.estado, { tipo: 'texto', texto: `¿y de ${k2.palabrasClave[0]}?` });
-      assert.deepEqual(otra.estado.npcs[npc].conocimientosRevelados, [k2.id]);
+      assert.deepEqual(otra.estado.npcs[npc].conocimientosRevelados, [k1.id, k2.id]);
     });
 
-    test(`${npc}: hablando con él, el _2 no se revela aunque la relación sea máxima y falte la condición del _1`, async () => {
+    // 0.0.43: el _1 de Hollis ya no pide evento; para él se prueba el orden (sale el _1 antes que el _2).
+    if (k1.requiereEvento == null && k1.requiereMarca == null) {
+      test(`${npc}: el _1 no pide condición; hablando con relación máxima sale el _1 antes que el _2`, async () => {
+        const r = await narrar(partida(caso, 100), { tipo: 'texto', texto: `hablar con ${def(npc).alias[0]}` });
+        assert.deepEqual(r.estado.npcs[npc].conocimientosRevelados, [k1.id]);
+      });
+    } else test(`${npc}: hablando con él, el _2 no se revela aunque la relación sea máxima y falte la condición del _1`, async () => {
       // El _2 nunca se revela antes que el _1: por conversación, el _1 pendiente (sin su evento o marca) lo traba.
       let estado = partida(caso, 100);
       const alias = def(npc).alias[0];
