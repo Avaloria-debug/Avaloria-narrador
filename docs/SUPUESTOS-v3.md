@@ -66,3 +66,5 @@ P20 | voz del NPC (t26) solo para no_entendido e intencion_ambigua; sin NPC cae 
 P20 | 3er no entendido seguido (reformulación o IA sin respuesta) sugiere NPCs presentes (falta_npc) o salidas (destino_ambiguo) con plantillas v3 | texto nuevo
 P21 | año de 360 días, 90 por estación; día 1 = primavera | otro largo
 P21 | festividades sin fecha en t27: solo se activan con data/contenido/ampliado/calendario.json (no existe; A APROBAR) | inventar fechas
+Q1 | calendario.json (lista con dia) se convierte en código a {id:{diaDelAnio}}; el archivo no se toca | convertir el archivo
+Q1 | valores.json y calendario.json respetan su estado (a_aprobar_canon → solo con incluirCanon) | cargarlos siempre

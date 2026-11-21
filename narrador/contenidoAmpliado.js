@@ -41,6 +41,13 @@ export function seCarga(estado, { cargarPendientes = false, incluirCanon = false
   return false;
 }
 
+/** calendario.json ({ festividades: [{ id, dia, ciudad, dias }] }) → { id: { diaDelAnio } }. */
+export function fechasDeCalendario(d) {
+  const f = d?.festividades;
+  if (Array.isArray(f)) return Object.fromEntries(f.filter((x) => typeof x?.id === 'string').map((x) => [x.id, { diaDelAnio: x.dia }]));
+  return f && typeof f === 'object' ? f : {};
+}
+
 function vacio() {
   return {
     tandas: [], guia: null, ambiente: {}, npcsRutina: {}, plantillas: {}, voces: {}, memoria: {}, genericas: {}, rumores: {},
@@ -61,8 +68,9 @@ export function fusionarAmpliado(archivos, v3, opciones = {}) {
   for (const [nombre, d] of archivos) {
     if (!esObj(d)) continue;
     if (nombre.startsWith('t00')) { a.guia = d; continue; }
-    if (nombre === 'valores.json') { a.valores = d.valores ?? d; continue; }
-    if (nombre === 'calendario.json') { a.calendario = d.festividades ?? {}; continue; }
+    // valores.json y calendario.json: canon propuesto; se cargan con el mismo criterio de estado que las tandas.
+    if (nombre === 'valores.json') { if (seCarga(d.estado, opciones)) a.valores = d.valores ?? {}; continue; }
+    if (nombre === 'calendario.json') { if (seCarga(d.estado, opciones)) a.calendario = fechasDeCalendario(d); continue; }
     if (!seCarga(d.estado, opciones)) continue;
     a.tandas.push(d.tanda ?? nombre);
     for (const [k, v] of Object.entries(d.ambiente ?? {})) sumar(a.ambiente, k, v.l ?? v);
