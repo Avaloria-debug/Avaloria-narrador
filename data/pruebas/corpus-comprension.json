@@ -4354,8 +4354,12 @@
   },
   {
    "frase": "miro la gata y el burro",
-   "accion": "mirar",
-   "cat": "varias"
+   "accion": "aclarar",
+   "cat": "varias",
+   "opciones": [
+    "gata_mercado",
+    "burro_atado"
+   ]
   },
   {
    "frase": "no sigo a la garza",

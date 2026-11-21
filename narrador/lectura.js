@@ -4,7 +4,7 @@
 import { normalizar, distanciaEdicion, resolverDestino } from './comprension.js';
 
 /** Etapas activas por defecto (cada paso de la fase 6 enciende la suya). */
-export const ETAPAS = Object.freeze({ lematizar: false, encliticos: false, tipeo: false, referencias: false, defaults: false, sinonimos: false, varias: false, negacion: false, modo: false });
+export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: false, referencias: false, defaults: false, sinonimos: false, varias: false, negacion: false, modo: false });
 
 /** Acciones que entiende la lectura. */
 export const ACCIONES = Object.freeze(['seguir', 'mirar', 'tocar', 'escuchar', 'hablar', 'preguntar', 'ignorar', 'tomar', 'callar', 'viajar', 'mostrar', 'llamar']);
@@ -38,7 +38,7 @@ const IRREGULARES = {
   ir: ['voy', 'vas', 'va', 'vamos', 'van', 'fui', 'fue', 'fuiste', 'yendo', 'vaya', 'anda', 'andate', 've'],
   ver: ['veo', 'ves', 'vi', 'vio', 'viendo', 'vea'],
   decir: ['digo', 'dice', 'dices', 'decis', 'dije', 'dijo', 'deci', 'diga', 'diciendo', 'di'],
-  dar: ['doy', 'da', 'das', 'di', 'dio', 'dando', 'de'],
+  dar: ['doy', 'da', 'das', 'dio', 'dando'],
   hacer: ['hago', 'hace', 'haces', 'haces', 'hice', 'hizo', 'hace', 'haga', 'haciendo', 'hacé'],
   recoger: ['recojo', 'recoja', 'recoge'],
   volver: ['vuelvo', 'vuelve', 'vuelves', 'volves', 'volvi', 'volvio', 'vuelva'],
@@ -63,7 +63,8 @@ function construirFormas(conSinonimos) {
   const mapa = new Map(); // forma → infinitivo
   const infs = { ...BASE, ...(conSinonimos ? SINONIMOS : {}) };
   for (const inf of [...Object.keys(infs), ...AUXILIARES]) {
-    for (const f of [...regulares(inf), ...(IRREGULARES[inf] ?? [])]) if (!mapa.has(f) && !NO_VERBOS.has(f)) mapa.set(f, inf);
+    // Verbos cortos (ir, ver, dar, oir): solo sus formas irregulares; las regulares darían «a», «e», «va»…
+    for (const f of [...(inf.length <= 3 ? [inf] : regulares(inf)), ...(IRREGULARES[inf] ?? [])]) if (!mapa.has(f) && !NO_VERBOS.has(f)) mapa.set(f, inf);
   }
   return { mapa, infs };
 }
@@ -131,7 +132,7 @@ const genero = (alias) => (/a(s)?$/.test(normalizar(alias).split(' ')[0]) ? 'f' 
 export function contextoLectura({ focos = {}, npcs = [], presentes = null, escenas = [], reciente = {}, pendiente = null } = {}) {
   const cosas = [];
   for (const [id, d] of Object.entries(focos)) for (const a of d.alias ?? []) cosas.push({ tipo: 'foco', id, alias: normalizar(a), genero: genero(d.alias[0]), clase: d.clase });
-  const npcsCtx = npcs.map((n) => ({ id: n.id, nombre: n.nombre, palabras: [...new Set([...normalizar(n.nombre).split(' '), ...(n.alias ?? []).map(normalizar)])] }));
+  const npcsCtx = npcs.map((n) => ({ id: n.id, nombre: n.nombre, palabras: [...new Set([...normalizar(n.nombre).split(' '), ...(n.alias ?? []).map(normalizar)])].filter((w) => w && !VACIAS.has(w)) }));
   for (const n of npcsCtx) for (const w of n.palabras) cosas.push({ tipo: 'npc', id: n.id, alias: w });
   return { cosas, npcs: npcsCtx, presentes: presentes ?? npcsCtx.map((n) => n.id), escenas, reciente: { ...reciente }, pendiente };
 }
@@ -200,8 +201,11 @@ export function cosasNombradas(ws, ctx, et = ETAPAS) {
   const hall = new Map();
   const usadas = new Set();
   const cosas = [...ctx.cosas].sort((a, b) => b.alias.length - a.alias.length);
+  // V2: plurales de sustantivos («las campanas» → campana).
+  const textoSing = et.lematizar ? ` ${ws.map((w) => (w.length > 4 && w.endsWith('es') && !ctx.cosas.some((c) => c.alias === w) ? w.slice(0, -2) : w.length > 3 && w.endsWith('s') && !ctx.cosas.some((c) => c.alias === w) ? w.slice(0, -1) : w)).join(' ')} ` : texto;
   for (const c of cosas) {
-    const i = texto.indexOf(` ${c.alias} `);
+    let i = texto.indexOf(` ${c.alias} `);
+    if (i < 0 && textoSing !== texto) i = textoSing.indexOf(` ${c.alias} `);
     if (i < 0) continue;
     const pos = texto.slice(0, i).trim().split(' ').filter(Boolean).length;
     if (FUNCIONALES.has(c.alias) && !ARTICULOS.has(ws[pos - 1])) continue;
@@ -271,7 +275,9 @@ export function responderAclaracion(texto, pendiente, ctx) {
 function nombreDe(id, opciones, ctx) {
   const al = ctx.cosas.filter((c) => c.id === id).map((c) => c.alias);
   const otras = new Set(opciones.filter((o) => o !== id).flatMap((o) => ctx.cosas.filter((c) => c.id === o).map((c) => c.alias)));
-  const a = al.find((x) => !otras.has(x)) ?? al[0] ?? id;
+  // la primera opción va con su nombre principal; las demás, con el más largo que no compartan
+  const propias = al.filter((x) => !otras.has(x)).sort((x, y) => y.length - x.length);
+  const a = (opciones[0] === id ? al[0] : propias[0]) ?? al[0] ?? id;
   return `${genero(a) === 'f' ? 'la' : 'el'} ${a}`;
 }
 const capital = (s) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -297,6 +303,7 @@ function leerParte(parte, ctx, et) {
   let ws = normalizar(parte).replace(/\bx\b/g, 'por').split(' ').filter(Boolean);
   let modo = null;
   if (et.modo) ({ modo, palabras: ws } = extraerModo(ws));
+  if (!et.negacion && ws[0] === 'no') return { accion: 'no_entendido' }; // precisión: sin etapa de negación, no adivinar
   const negada = et.negacion && ws[0] === 'no';
   if (negada) ws = ws.slice(1);
   const lemas = ws.map((w) => verboDe(w, et));
@@ -382,7 +389,7 @@ function leerParte(parte, ctx, et) {
     const mismaPalabra = new Set(focosValidos.map((c) => c.span.join())).size === 1;
     if (mismaPalabra && ctx.reciente?.foco && ids.includes(ctx.reciente.foco)) return { ...r, objetivo: ctx.reciente.foco };
     if (mismaPalabra) return { accion: 'aclarar', opciones: ids, pregunta: preguntaAclaracion({ opciones: ids }, ctx) };
-    return { ...r, objetivo: ids[0] };
+    return { accion: 'aclarar', opciones: ids, pregunta: preguntaAclaracion({ opciones: ids }, ctx) };
   }
   // Sin cosa nombrada: referencias (V4) y defaults (V5).
   if (et.referencias) {
