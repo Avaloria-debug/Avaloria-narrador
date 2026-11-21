@@ -371,6 +371,13 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   const F = datosFocos(amp);
   let mundo = null;
   let antepuesta = null;
+  // S2: focos mencionados en lo emitido (también el inicio de evento) y generados desde símbolos. En toda salida.
+  const cerrarFocos = (salida) => {
+    if (!F) return;
+    const escena = despues.jugador.escenaId;
+    ext.focos = vigentes(detectar(ext.focos, salida, { F, turno: ext.turno, escena, generadas: ctx.generadas }), { F, turno: ext.turno, escena, siguiendo: ext.siguiendo });
+    if (ext.siguiendo && !ext.focos.some((f) => f.id === ext.siguiendo)) ext.siguiendo = null;
+  };
   // P6: el recuerdo se lee ANTES de registrar el hecho de este turno.
   const hechosPrevios = ext.hechos;
   ext.tension = ajustarTension(ext.tension, verboDe(turno, contenido));
@@ -380,14 +387,14 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   // P17: "diario" (texto exacto) muestra el diario en lugar de la respuesta.
   if (amp.diario && typeof entrada?.texto === 'string' && normalizarTexto(entrada.texto) === 'diario') {
     const d = textoDiario(ext.diario, { amp, contenido, rng: ctx.rng('diario') });
-    if (d) return { texto: d, aperturas, ext };
+    if (d) { cerrarFocos(''); return { texto: d, aperturas, ext }; }
   }
   // P20: no entendidos seguidos (reformulación o IA sin respuesta). El 3º sugiere opciones válidas del contexto.
   const noEntendido = turno?.tipo === 'reformular' || (turno?.tipo === 'ia' && tipo !== 'dialogo_ia');
   ext.noEntendidos = noEntendido ? (ext.noEntendidos ?? 0) + 1 : 0;
   if (noEntendido && ext.noEntendidos >= 3) {
     const r = sugerirOpciones({ contenido, despues, ctx, aperturas });
-    if (r) return { texto: r.texto, aperturas: [...(aperturas ?? []).slice(0, -1), r.apertura], ext };
+    if (r) { cerrarFocos(r.texto); return { texto: r.texto, aperturas: [...(aperturas ?? []).slice(0, -1), r.apertura], ext }; }
   }
   // P11 (t11) y P20: reformulación diferenciada, en la voz del NPC presente si hay.
   if (tipo === 'reformulacion' && turno?.tipo === 'reformular') {
@@ -481,11 +488,6 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   let salida = partes.filter(Boolean).join(' ');
   if (antepuesta) salida = `${antepuesta} ${salida}`;
   if (mundo) salida = `${salida}\n\n${mundo}`;
-  // S2: focos mencionados en lo emitido (también el inicio de evento) y generados desde símbolos.
-  if (F) {
-    const escena = despues.jugador.escenaId;
-    ext.focos = vigentes(detectar(ext.focos, salida, { F, turno: ext.turno, escena, generadas: ctx.generadas }), { F, turno: ext.turno, escena, siguiendo: ext.siguiendo });
-    if (ext.siguiendo && !ext.focos.some((f) => f.id === ext.siguiendo)) ext.siguiendo = null;
-  }
+  cerrarFocos(salida);
   return { texto: salida, aperturas, ext };
 }

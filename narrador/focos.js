@@ -221,7 +221,8 @@ export function turnoDeFoco({ amp, contenido, partida, texto, dic = null }) {
   const turno = (Number.isInteger(ext.turno) ? ext.turno : 0) + 1;
   const escena = partida.jugador.escenaId;
   const fx = extFocos(ext);
-  fx.focos = vigentes(fx.focos, { F, turno, escena, siguiendo: fx.siguiendo });
+  // Lo que quedó a la vista al cerrar el turno anterior sigue accionable en este.
+  fx.focos = vigentes(fx.focos, { F, turno: turno - 1, escena, siguiendo: fx.siguiendo });
   const rng = derivar(`${Number.isInteger(ext.semillaBase) ? ext.semillaBase : partida.semilla | 0}:${turno}`, 'focos');
   const ref = resolverReferente(texto, v, { F, lista: fx.focos, escena });
   if (!ref) {
