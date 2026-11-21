@@ -1,0 +1,1 @@
+- R1 hecho: capacidad.js, 15 tests, anti-crash

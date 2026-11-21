@@ -1,0 +1,126 @@
+{
+ "version": 3,
+ "rama": "actual",
+ "pasos": [
+  {
+   "id": "R1",
+   "nombre": "Capacidad y marca anti-crash",
+   "depende": [],
+   "archivos": [
+    "narrador/iaLocal/capacidad.js",
+    "narrador/iaLocal/capacidad.test.js"
+   ],
+   "tests": [
+    "narrador/iaLocal/capacidad.test.js"
+   ],
+   "cambiaConducta": false,
+   "estado": "hecho",
+   "aprobacion": "a_aprobar"
+  },
+  {
+   "id": "R2",
+   "nombre": "Contexto local compacto",
+   "depende": [],
+   "archivos": [
+    "narrador/iaLocal/contexto.js",
+    "narrador/iaLocal/contexto.test.js"
+   ],
+   "tests": [
+    "narrador/iaLocal/contexto.test.js"
+   ],
+   "cambiaConducta": false,
+   "estado": "pendiente",
+   "aprobacion": null
+  },
+  {
+   "id": "R3",
+   "nombre": "Motor local con misma interfaz que Groq",
+   "depende": [
+    "R1",
+    "R2"
+   ],
+   "archivos": [
+    "narrador/iaLocal/motor.js",
+    "narrador/iaLocal/modelo-manifest.json",
+    "narrador/iaLocal/motor.test.js"
+   ],
+   "tests": [
+    "narrador/iaLocal/motor.test.js"
+   ],
+   "cambiaConducta": false,
+   "estado": "pendiente",
+   "aprobacion": null
+  },
+  {
+   "id": "R4",
+   "nombre": "Enganche en narrar()",
+   "depende": [
+    "R3"
+   ],
+   "archivos": [
+    "narrador/iaLocalIntegracion.test.js"
+   ],
+   "tests": [
+    "narrador/iaLocalIntegracion.test.js",
+    "narrador/sinIa.test.js"
+   ],
+   "cambiaConducta": true,
+   "estado": "pendiente",
+   "aprobacion": null
+  },
+  {
+   "id": "R5",
+   "nombre": "Página de prueba",
+   "depende": [
+    "R4"
+   ],
+   "archivos": [
+    "narrador/prueba/iaLocalPagina.js",
+    "narrador/prueba/iaLocalPagina.test.js"
+   ],
+   "tests": [
+    "narrador/prueba/iaLocalPagina.test.js",
+    "narrador/prueba/panel.test.js"
+   ],
+   "cambiaConducta": true,
+   "estado": "pendiente",
+   "aprobacion": null
+  },
+  {
+   "id": "R6",
+   "nombre": "Modelo, hosting y medición",
+   "depende": [
+    "R3"
+   ],
+   "archivos": [
+    "tools/verificar-modelo.mjs",
+    "tools/verificar-modelo.test.js",
+    "narrador/prueba/bench-ia.html",
+    "narrador/prueba/bench-ia.js",
+    "docs/ia-local-hosting.md"
+   ],
+   "tests": [
+    "tools/verificar-modelo.test.js"
+   ],
+   "cambiaConducta": false,
+   "estado": "pendiente",
+   "aprobacion": null
+  },
+  {
+   "id": "R7",
+   "nombre": "Cierre e informe",
+   "depende": [
+    "R4",
+    "R5",
+    "R6"
+   ],
+   "archivos": [
+    "INFORME-AUTO5.md"
+   ],
+   "tests": [],
+   "cambiaConducta": false,
+   "estado": "pendiente",
+   "aprobacion": null
+  }
+ ]
+}

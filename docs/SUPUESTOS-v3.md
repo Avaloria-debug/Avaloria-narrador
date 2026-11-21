@@ -84,3 +84,5 @@ Q4 | firestore.rules no se tocó: camposDeRegistro() con hasOnly rechazaría pas
 - F4 U2: la voz del NPC (t31) tiene prioridad sobre ramas.preguntar propias del foco; sin NPC se usa la rama y luego la clase.
 - F4 U2: sin «a <npc>» en el texto se usa el primer NPC presente; fijos usan la clase objeto de t31.
 - F4 U3: stopwords del reporte «sin foco» viven en tools/bots-focos.js (STOP), no en contenido.
+R0 | rama: se trabaja en claude/quirky-keller-fn77dr (la sesión solo permite pushear esa rama) | crear claude/ia-local-fase5
+R1 | umbrales PC ≥20 tok/s y móvil ≥6 tok/s provisionales (UMBRALES_TOK_S.prov) | otros valores
