@@ -137,3 +137,4 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - Fase 8 (X2/X3): sistemas en `ext.sistema`; efectos nuevos `relacion` y `hecho`. Dinero interno en bronce pero guardado como plata+bronce (sin cambiar esquema); vendedor fijo por producto o el primer presente; venta a mitad del precio de contenido.
 - Regateo: rebaja máx. × (1 + 0,25·relación) (tope ×1,5); hallazgo sin precio = 100 bronce (×2 Ivor/Maren, ×0,5 resto); pagar de más = +20 %; t41 cargado al manifest en X4 (lo necesita el regateo).
 - Trabajos: se ofrecen con «busco trabajo» y variantes (no al saludar, para no tocar la charla); el reloj avanza al cerrar el trabajo; rumor = hecho `rumor_trabajo:<id>`.
+- Favores: ayudar con éxito → el NPC te debe; fiado solo con relación ≥ 1; cobro saldado = 2 h; deuda de NPC vence a los 10 días; información: curiosidad ≥ 1 → favor, si no 25 % de descuento en la próxima compra.

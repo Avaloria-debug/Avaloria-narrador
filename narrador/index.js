@@ -37,7 +37,7 @@ import { accionesDeIntencion } from './casos/acciones.js';
 import { aplicarAmpliado } from './ampliado.js';
 import { turnoDeFoco } from './focos.js';
 import { turnoDeCharla } from './charla.js';
-import { turnoDeEconomia } from './economia/index.js';
+import { turnoDeEconomia, tickEconomia } from './economia/index.js';
 import { hechosCoherencia } from './coherencia.js';
 import { climaEn } from './ambiente.js';
 import { franjaDe } from './seleccion.js';
@@ -618,6 +618,11 @@ export async function narrar(estado, entrada, opciones = {}) {
         if (textoMostrable(r.texto)) texto = mayusculasDeOracion(r.texto);
         aperturas = r.aperturas;
         ext = r.ext;
+        // Fase 8: favores (ayudar, cobros, incumplidos) y marcas de economía, una vez por turno.
+        const te = conHistorial(ext?.lineas, () => tickEconomia({ amp: opciones.ampliado, contenido, turno, estado: turno.estado, ext }));
+        if (te.estado !== turno.estado) turno = { ...turno, estado: te.estado };
+        ext = te.ext;
+        if (te.lineas.length) texto = `${texto}\n\n${te.lineas.join(' ')}`;
       } catch (e) {
         anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');
       }

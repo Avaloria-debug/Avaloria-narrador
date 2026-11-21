@@ -5,8 +5,9 @@ import { normalizar } from '../comprension.js';
 import { npcsPresentes } from '../turno.js';
 import { estacionDe, festividadActiva } from '../calendario.js';
 import { totalBronce, conTotal, formatoMonto, precioDe, aBronce } from './monedas.js';
-import { elegirLinea } from './textos.js';
-import { abrirSistema, turnoSistema, sistemaActivo } from '../sistemas/index.js';
+import { elegirLinea, elegirDe } from './textos.js';
+import { abrirSistema, turnoSistema, sistemaActivo, aplicarEfectosSistema } from '../sistemas/index.js';
+import { nuevoFavor, avanzarFavores, respuestaCobro, pideCobrar, pideFiado, cuentaInfo, curiosidad, infoEnFrase, yaLoSabe, lineasInformacion, DESCUENTO_INFO } from './favores.js';
 import { pideTrabajo, trabajoEn } from './trabajos.js';
 import { abreRegateo, formatoAcuerdo, rasgoDinero } from './regateo.js';
 
@@ -144,6 +145,75 @@ function turnoConSistema({ amp, contenido, partida, texto, eco, L, abrir = null 
   return turnoTexto(estado, t, eco, { sistema: r.terminado ? null : r.estado.ext.sistema, hechosSistema: r.estado.ext?.hechosSistema ?? null });
 }
 
+/** X6: responder un cobro, cobrar un favor, fiado y pagar con información. null si la frase no es de favores. */
+function favoresDeTurno({ amp, contenido, partida, n, texto, eco, L, presentes }) {
+  const ids = presentes.map((p) => p.id);
+  const favores = partida.ext?.favores ?? [];
+  const dia = partida.reloj.dia;
+  const nom = (id) => nombreNpc(contenido, id);
+  const cambia = (lista, f, estado) => lista.map((x) => (x === f ? { ...x, estado } : x));
+  const cobrando = favores.find((f) => f.estado === 'cobrando' && f.deudor === 'jugador' && ids.includes(f.npc));
+  if (cobrando) {
+    const resp = respuestaCobro(texto);
+    if (resp === 'saldar') {
+      const e = aplicarEfectosSistema(partida, [{ tipo: 'reloj', horas: 2 }]);
+      return turnoTexto(e, `${L('favor_cumple')} ${L('favores.saldado', { npc: nom(cobrando.npc) })}`, eco, { favores: cambia(favores, cobrando, 'saldado') });
+    }
+    if (resp === 'negar') {
+      const e = aplicarEfectosSistema(partida, [{ tipo: 'relacion', npc: cobrando.npc, delta: -1 }]);
+      return turnoTexto(e, L('favores.incumplido', { npc: nom(cobrando.npc) }), eco, { favores: cambia(favores, cobrando, 'incumplido'), hechosSistema: { ...(partida.ext?.hechosSistema ?? {}), [`rumor_incumplido:${cobrando.npc}`]: dia } });
+    }
+  }
+  if (pideCobrar(n)) {
+    const f = favores.find((x) => x.deudor === 'npc' && x.estado === 'pendiente' && ids.includes(x.npc));
+    if (!f) return turnoTexto(partida, L('favor_nadie'), eco);
+    return turnoTexto(partida, L('favores.saldado', { npc: nom(f.npc) }), { ...eco, descuentos: { ...(eco.descuentos ?? {}), [f.npc]: DESCUENTO_INFO } }, { favores: cambia(favores, f, 'saldado') });
+  }
+  if (pideFiado(n) && eco.ultimo && ids.includes(eco.ultimo.vendedor)) {
+    const { producto, vendedor } = eco.ultimo;
+    if ((partida.npcs[vendedor]?.relacion ?? 0) < 1) return turnoTexto(partida, L('fiado_no', { npc: nom(vendedor) }), eco);
+    const e = conObjeto(partida, contenido, PRODUCTOS[producto].objetoId);
+    const resto = { ...eco }; delete resto.ultimo;
+    return turnoTexto(e, L('fiado', { npc: nom(vendedor), producto: PRODUCTOS[producto].nombre }), resto, { favores: nuevoFavor(favores, { npc: vendedor, deudor: 'jugador', motivo: `fiado:${producto}`, dia }) });
+  }
+  if (cuentaInfo(n)) {
+    const destino = presentes.find((p) => n.includes(normalizar(p.nombre.split(' ')[0])) || (p.alias ?? []).some((a) => new RegExp(`(^| )${normalizar(a)}( |$)`).test(n)))?.id ?? ids[0];
+    if (!destino) return null;
+    const info = infoEnFrase(n, { estado: partida, contenido });
+    if (!info) return turnoTexto(partida, L('info_nada', { npc: nom(destino) }), eco);
+    const { vale, sabia } = lineasInformacion(amp);
+    const contadas = eco.contadas ?? {};
+    const pick = (l, prov) => (l.length ? elegirDe(l, { npc: nom(destino) }) : L(prov, { npc: nom(destino) }));
+    if (yaLoSabe(destino, info, contadas)) return turnoTexto(partida, pick(sabia, 'info_sabia'), eco);
+    const eco2 = { ...eco, contadas: { ...contadas, [destino]: [...(contadas[destino] ?? []), info.id] } };
+    if (curiosidad(amp, destino) >= 1) return turnoTexto(partida, pick(vale, 'info_vale'), eco2, { favores: nuevoFavor(favores, { npc: destino, deudor: 'npc', motivo: `info:${info.id}`, dia }) });
+    eco2.descuentos = { ...(eco.descuentos ?? {}), [destino]: DESCUENTO_INFO };
+    return turnoTexto(partida, pick(vale, 'info_vale'), eco2);
+  }
+  return null;
+}
+
+/** Tick de economía de cada turno con ampliado: favores nuevos por ayudar, cobros, incumplidos y deudas vencidas. */
+export function tickEconomia({ amp, contenido, turno, estado, ext }) {
+  let favores = ext?.favores ?? [];
+  const lineas = [];
+  const dia = estado.reloj.dia;
+  const presentes = npcsPresentes(estado, contenido).map((p) => p.id);
+  const L = (clave, v) => elegirLinea(amp, clave, v, (ext?.turno ?? 0) + clave.length);
+  const a = turno?.accion;
+  if (turno?.tipo === 'accion' && a?.verbo === 'ayudar' && a.resultado !== 'fallo' && a.parametros?.npcId) {
+    const antes = favores;
+    favores = nuevoFavor(favores, { npc: a.parametros.npcId, deudor: 'npc', motivo: 'ayuda', dia });
+    if (favores !== antes) lineas.push(L('favores.pide', { npc: nombreNpc(contenido, a.parametros.npcId) }));
+  }
+  const r = avanzarFavores(favores, { dia, presentes, semillaBase: ext?.semillaBase ?? 0 });
+  for (const l of r.lineas) lineas.push(L(l.clave, { npc: nombreNpc(contenido, l.npc) }));
+  const nuevoEstado = r.relacion.length ? aplicarEfectosSistema(estado, r.relacion.map((x) => ({ tipo: 'relacion', ...x }))) : estado;
+  const hechos = Object.keys(r.hechos).length ? { hechosSistema: { ...(ext?.hechosSistema ?? {}), ...r.hechos } } : {};
+  const cambio = r.favores !== (ext?.favores ?? []) && JSON.stringify(r.favores) !== JSON.stringify(ext?.favores ?? []);
+  return { estado: nuevoEstado, ext: cambio || Object.keys(hechos).length ? { ...ext, favores: r.favores, ...hechos } : ext, lineas: lineas.filter(Boolean) };
+}
+
 export function turnoDeEconomia({ amp, contenido, partida, texto }) {
   const presentes = npcsPresentes(partida, contenido);
   const eco = { ...(partida.ext?.economia ?? {}) };
@@ -151,6 +221,8 @@ export function turnoDeEconomia({ amp, contenido, partida, texto }) {
   const L = (clave, valores = {}) => elegirLinea(amp, clave, valores, sal(clave.length));
   if (sistemaActivo(partida)) return turnoConSistema({ amp, contenido, partida, texto, eco, L });
   const n = normalizar(texto);
+  const fav = favoresDeTurno({ amp, contenido, partida, n, texto, eco, L, presentes });
+  if (fav) return fav;
   if (abreRegateo(n)) {
     const producto = productoEn(n) ?? eco.ultimo?.producto ?? null;
     if (!producto) return turnoTexto(partida, L('pago_que'), eco);
@@ -197,10 +269,13 @@ export function turnoDeEconomia({ amp, contenido, partida, texto }) {
   eco.ultimo = { producto, vendedor, precio, dia: partida.reloj.dia };
   if (lec.tipo === 'precio') return turnoTexto(partida, L('precio', { npc, monto: formatoMonto(precio), producto: PRODUCTOS[producto].nombre }), eco);
 
-  // compra o pago
-  const pagado = cobrar(partida, precio);
+  // compra o pago (con el descuento ganado con información o un favor saldado, una vez)
+  const desc = eco.descuentos?.[vendedor] ?? 0;
+  const final$ = desc > 0 ? Math.max(1, Math.ceil(precio * (1 - desc))) : precio;
+  const pagado = cobrar(partida, final$);
   if (!pagado) return turnoTexto(partida, L('sin_dinero', { npc }), eco);
   delete eco.ultimo;
+  if (desc > 0) { eco.descuentos = { ...eco.descuentos }; delete eco.descuentos[vendedor]; }
   const final = conObjeto(pagado, contenido, PRODUCTOS[producto].objetoId);
-  return turnoTexto(final, L('compra', { npc, monto: formatoMonto(precio), producto: PRODUCTOS[producto].nombre }), eco);
+  return turnoTexto(final, L('compra', { npc, monto: formatoMonto(final$), producto: PRODUCTOS[producto].nombre }), eco);
 }

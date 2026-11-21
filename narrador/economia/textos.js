@@ -33,6 +33,11 @@ export const TEXTOS_ECONOMIA = Object.freeze({
   trabajo_contratiempo: ['Algo sale mal y se pierde parte del día. La paga va a ser menor.'],
   trabajo_paga: ['Te pagan {monto}.'],
   favor_cumple: ['Hacés lo que te pide.'],
+  favor_nadie: ['Acá nadie te debe nada.'],
+  fiado: ['{npc} duda, pero te da {producto}. «Me lo debés.»'],
+  fiado_no: ['«Acá no se fía», dice {npc}.', '{npc} niega con la cabeza. «Primero se paga.»'],
+  info_vale: ['{npc} escucha con atención. «Eso vale algo.»'],
+  info_sabia: ['{npc} se encoge de hombros. «Ya lo sabía.»'],
   info_nada: ['No tenés nada que contarle que no sepa.'],
 });
 const NUM = /\{(\w+)\}/g;
@@ -54,6 +59,14 @@ export function lineasDe(amp, clave) {
 }
 export function elegirLinea(amp, clave, valores = {}, sal = 0) {
   const l = lineasDe(amp, clave).map((t) => mayus(completar(t, valores)));
+  if (!l.length) return '';
+  const libres = sinRepetir(l);
+  return libres[Math.abs(sal | 0) % libres.length];
+}
+
+/** Elige de una lista ya dada (sin repetir en la ventana). */
+export function elegirDe(lista, valores = {}, sal = 0) {
+  const l = lista.map((t) => mayus(completar(t, valores)));
   if (!l.length) return '';
   const libres = sinRepetir(l);
   return libres[Math.abs(sal | 0) % libres.length];
