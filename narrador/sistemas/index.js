@@ -81,4 +81,3 @@ export function turnoSistema(estado, entrada, rng, ctx = {}) {
   return { id: s.id, texto: r.texto, sub: r.sub, estado: c.estado, terminado: true, efectos: c.efectos };
 }
 
-export const _reiniciarParaTests = () => MODULOS.clear();

@@ -8,3 +8,5 @@
 - Autorrevisión (X5–X6): compuertas verdes, bots-juego y humo sin errores.
 - X7: exhibir dinero (atencion_ladrones con decaimiento) y sin_dinero de t41
 - X8: t41 cargado, bots de economía 12×300 sin errores, +40 frases de economía al corpus
+- X9: autorrevisión final; compuertas, bots y barrido en verde; INFORME-AUTO8.md.
+- X9: cierre: autorrevisión, compuertas e INFORME-AUTO8
