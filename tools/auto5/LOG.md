@@ -6,3 +6,5 @@
 - revisión 2 (R3-R4): compuertas, focos y regresión en verde
 - R5 hecho: botón IA local en la página, 11 tests, panel con latencia/tokens; navegador sin verificar
 - R6 hecho: verificar-modelo (3 tests), bench-ia, hosting doc; dispositivos sin verificar
+- revisión 3 (R5-R6): compuertas, focos y regresión en verde
+- R7 hecho: produccion OK, 1983/0, informe
