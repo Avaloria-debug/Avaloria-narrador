@@ -1,0 +1,11 @@
+{
+ "prov": true,
+ "nota": "Ids tomados de prebuiltAppConfig de WebLLM (sin verificar contra la versión publicada). tamanoMB aproximado, a medir con tools/verificar-modelo.mjs.",
+ "motor": { "origen": "https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.79/+esm", "prov": true },
+ "principal": { "modeloId": "Qwen2.5-1.5B-Instruct-q4f16_1-MLC", "origen": "https://huggingface.co/mlc-ai/Qwen2.5-1.5B-Instruct-q4f16_1-MLC", "espejo": "", "tamanoMB": 900, "piensa": false, "prov": true },
+ "movil": { "modeloId": "Qwen2.5-0.5B-Instruct-q4f16_1-MLC", "origen": "https://huggingface.co/mlc-ai/Qwen2.5-0.5B-Instruct-q4f16_1-MLC", "espejo": "", "tamanoMB": 300, "piensa": false, "prov": true },
+ "respaldo": [
+  { "modeloId": "Qwen3-0.6B-q4f16_1-MLC", "origen": "https://huggingface.co/mlc-ai/Qwen3-0.6B-q4f16_1-MLC", "espejo": "", "tamanoMB": 350, "piensa": true, "prov": true },
+  { "modeloId": "Llama-3.2-1B-Instruct-q4f16_1-MLC", "origen": "https://huggingface.co/mlc-ai/Llama-3.2-1B-Instruct-q4f16_1-MLC", "espejo": "", "tamanoMB": 700, "piensa": false, "prov": true }
+ ]
+}

@@ -87,3 +87,6 @@ Q4 | firestore.rules no se tocó: camposDeRegistro() con hasOnly rechazaría pas
 R0 | rama: se trabaja en claude/quirky-keller-fn77dr (la sesión solo permite pushear esa rama) | crear claude/ia-local-fase5
 R1 | umbrales PC ≥20 tok/s y móvil ≥6 tok/s provisionales (UMBRALES_TOK_S.prov) | otros valores
 R2 | además de acciones 3→0 se quitan descripción, salidas y aperturas antes de ErrorDeContexto | error con 0 acciones
+R3 | modelo: PC Qwen2.5-1.5B-Instruct q4f16 (mejor español en ~1 GB, Apache 2.0); móvil Qwen2.5-0.5B q4f16; respaldo Qwen3-0.6B (piensa: enable_thinking:false) y Llama-3.2-1B; ids de prebuiltAppConfig sin verificar en red | Qwen3 como móvil
+R3 | CDN del motor jsdelivr @mlc-ai/web-llm@0.2.79 (+esm), provisional y A APROBAR | esm.run
+R3 | velocidad: generación corta de 16 tokens al cargar; bajo el umbral → siguiente candidato | medir en el primer turno

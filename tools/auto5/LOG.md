@@ -1,2 +1,4 @@
 - R1 hecho: capacidad.js, 15 tests, anti-crash
 - R2 hecho: contexto.js, 9 tests
+- revisión 1 (R1-R2): compuertas, focos y regresión en verde
+- R3 hecho: motor.js + manifest, 14 tests con motor falso

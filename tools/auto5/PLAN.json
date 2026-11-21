@@ -48,8 +48,8 @@
     "narrador/iaLocal/motor.test.js"
    ],
    "cambiaConducta": false,
-   "estado": "pendiente",
-   "aprobacion": null
+   "estado": "hecho",
+   "aprobacion": "a_aprobar"
   },
   {
    "id": "R4",
