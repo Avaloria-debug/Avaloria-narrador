@@ -1,0 +1,4585 @@
+{
+ "nota": "Semilla: Code la amplía a ≥500. ctx = foco/NPC reciente que el caso asume. Adaptar nombres de acción a los de comprension.js (mapa en el medidor, no en el corpus). Ampliado por la fase 6 (V1): cat = categoría; presentes = NPC presentes (por defecto serel_panadero); pendiente = aclaración pendiente.",
+ "casos": [
+  {
+   "frase": "seguir a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "sigo a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "seguí a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "segui a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "seguila",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "voy tras la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "persigo a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "segir a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "seguir la gatta",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "acompaño a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "semilla"
+  },
+  {
+   "frase": "mirar la lampara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "miro la lámpara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "mirá la lámpara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "observo el farol",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "examino la lámpara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "mirala",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "la miro",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "lampra",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "mirar lamapra",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "contemplo la lampara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "semilla"
+  },
+  {
+   "frase": "tocar la puerta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "semilla"
+  },
+  {
+   "frase": "toco la puerta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "semilla"
+  },
+  {
+   "frase": "golpeo la puerta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "semilla"
+  },
+  {
+   "frase": "tocala",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "ctx": "puerta_cerrada",
+   "cat": "semilla"
+  },
+  {
+   "frase": "toco eso",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "ctx": "puerta_cerrada",
+   "cat": "semilla"
+  },
+  {
+   "frase": "toca la puerta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "semilla"
+  },
+  {
+   "frase": "tocar la pueta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "semilla"
+  },
+  {
+   "frase": "escuchar las campanas",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "semilla"
+  },
+  {
+   "frase": "escucho la campana",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "semilla"
+  },
+  {
+   "frase": "oigo la campana",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "semilla"
+  },
+  {
+   "frase": "presto atención a la campana",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "semilla"
+  },
+  {
+   "frase": "escuchala",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "ctx": "campana_lejana",
+   "cat": "semilla"
+  },
+  {
+   "frase": "hablar con serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con el panadero",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablarle",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlo con serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablr con serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntar por la gata a serel",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a serel por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntale por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "serel_panadero",
+   "ctx": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "pregunto por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntar x la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "serel_panadero",
+   "cat": "npcs"
+  },
+  {
+   "frase": "ignorar al perro",
+   "accion": "ignorar",
+   "objetivo": "perro_ciudad",
+   "cat": "semilla"
+  },
+  {
+   "frase": "ignoro al perro",
+   "accion": "ignorar",
+   "objetivo": "perro_ciudad",
+   "cat": "semilla"
+  },
+  {
+   "frase": "no le hago caso al perro",
+   "accion": "ignorar",
+   "objetivo": "perro_ciudad",
+   "cat": "negacion"
+  },
+  {
+   "frase": "paso del perro",
+   "accion": "ignorar",
+   "objetivo": "perro_ciudad",
+   "cat": "semilla"
+  },
+  {
+   "frase": "agarro la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "semilla"
+  },
+  {
+   "frase": "tomo la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "semilla"
+  },
+  {
+   "frase": "levanto la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "semilla"
+  },
+  {
+   "frase": "agarrala",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "ctx": "carta_suelta",
+   "cat": "semilla"
+  },
+  {
+   "frase": "recojo el sobre",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "semilla"
+  },
+  {
+   "frase": "agarro la carta y se la muestro a ivor",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "luego": {
+    "accion": "mostrar",
+    "npc": "ivor_cambista"
+   },
+   "cat": "varias"
+  },
+  {
+   "frase": "miro la lámpara y después toco la puerta",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "luego": {
+    "accion": "tocar",
+    "objetivo": "puerta_cerrada"
+   },
+   "cat": "varias"
+  },
+  {
+   "frase": "sigo a la gata despacio",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "modo": "sigilo",
+   "cat": "modo"
+  },
+  {
+   "frase": "sigo a la gata a escondidas",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "modo": "sigilo",
+   "cat": "modo"
+  },
+  {
+   "frase": "no le digo nada",
+   "accion": "callar",
+   "cat": "negacion"
+  },
+  {
+   "frase": "no sigo a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "negacion"
+  },
+  {
+   "frase": "seguir al perro",
+   "accion": "aclarar",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ],
+   "cat": "ambiguas"
+  },
+  {
+   "frase": "mirar",
+   "accion": "aclarar",
+   "cat": "ambiguas"
+  },
+  {
+   "frase": "ir al lago",
+   "accion": "viajar",
+   "lugar": "escena_lago_espejos",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy al lago",
+   "accion": "viajar",
+   "lugar": "escena_lago_espejos",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir al archivo",
+   "accion": "viajar",
+   "lugar": "escena_archivo_real",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos a la taberna",
+   "accion": "viajar",
+   "lugar": "escena_taberna_lareth",
+   "cat": "escenas"
+  },
+  {
+   "frase": "seguir al burro",
+   "accion": "seguir",
+   "objetivo": "burro_atado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "seguir a la garza",
+   "accion": "seguir",
+   "objetivo": "garza_lago",
+   "cat": "verbos"
+  },
+  {
+   "frase": "seguir al halcón",
+   "accion": "seguir",
+   "objetivo": "halcon_alto",
+   "cat": "verbos"
+  },
+  {
+   "frase": "seguir al cuervo",
+   "accion": "seguir",
+   "objetivo": "cuervo_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "seguir a la carreta",
+   "accion": "seguir",
+   "objetivo": "carreta_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "sigo al burro",
+   "accion": "seguir",
+   "objetivo": "burro_atado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "sigo a la garza",
+   "accion": "seguir",
+   "objetivo": "garza_lago",
+   "cat": "verbos"
+  },
+  {
+   "frase": "sigo al halcón",
+   "accion": "seguir",
+   "objetivo": "halcon_alto",
+   "cat": "verbos"
+  },
+  {
+   "frase": "sigo al cuervo",
+   "accion": "seguir",
+   "objetivo": "cuervo_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "sigo a la carreta",
+   "accion": "seguir",
+   "objetivo": "carreta_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "seguí al burro",
+   "accion": "seguir",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "seguí a la garza",
+   "accion": "seguir",
+   "objetivo": "garza_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "seguí al halcón",
+   "accion": "seguir",
+   "objetivo": "halcon_alto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "seguí al cuervo",
+   "accion": "seguir",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "seguí a la carreta",
+   "accion": "seguir",
+   "objetivo": "carreta_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigue a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigue al burro",
+   "accion": "seguir",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigue a la garza",
+   "accion": "seguir",
+   "objetivo": "garza_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigue al halcón",
+   "accion": "seguir",
+   "objetivo": "halcon_alto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigue al cuervo",
+   "accion": "seguir",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigue a la carreta",
+   "accion": "seguir",
+   "objetivo": "carreta_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "siga a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "siga al burro",
+   "accion": "seguir",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "siga a la garza",
+   "accion": "seguir",
+   "objetivo": "garza_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "siga al halcón",
+   "accion": "seguir",
+   "objetivo": "halcon_alto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "siga al cuervo",
+   "accion": "seguir",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "siga a la carreta",
+   "accion": "seguir",
+   "objetivo": "carreta_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "voy siguiendo a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "voy siguiendo al burro",
+   "accion": "seguir",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "voy siguiendo a la garza",
+   "accion": "seguir",
+   "objetivo": "garza_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "voy siguiendo al halcón",
+   "accion": "seguir",
+   "objetivo": "halcon_alto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "voy siguiendo al cuervo",
+   "accion": "seguir",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "voy siguiendo a la carreta",
+   "accion": "seguir",
+   "objetivo": "carreta_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mirar la lámpara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "verbos"
+  },
+  {
+   "frase": "mirar la puerta",
+   "accion": "mirar",
+   "objetivo": "puerta_cerrada",
+   "cat": "verbos"
+  },
+  {
+   "frase": "mirar la isla",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "cat": "verbos"
+  },
+  {
+   "frase": "mirar el roble",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "cat": "verbos"
+  },
+  {
+   "frase": "mirar la ventana",
+   "accion": "mirar",
+   "objetivo": "ventana_abierta",
+   "cat": "verbos"
+  },
+  {
+   "frase": "mirar el libro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "cat": "verbos"
+  },
+  {
+   "frase": "mirar la niebla",
+   "accion": "mirar",
+   "objetivo": "niebla_densa",
+   "cat": "verbos"
+  },
+  {
+   "frase": "mirar la garza",
+   "accion": "mirar",
+   "objetivo": "garza_lago",
+   "cat": "verbos"
+  },
+  {
+   "frase": "miro la puerta",
+   "accion": "mirar",
+   "objetivo": "puerta_cerrada",
+   "cat": "verbos"
+  },
+  {
+   "frase": "miro la isla",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "cat": "verbos"
+  },
+  {
+   "frase": "miro el roble",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "cat": "verbos"
+  },
+  {
+   "frase": "miro la ventana",
+   "accion": "mirar",
+   "objetivo": "ventana_abierta",
+   "cat": "verbos"
+  },
+  {
+   "frase": "miro el libro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "cat": "verbos"
+  },
+  {
+   "frase": "miro la niebla",
+   "accion": "mirar",
+   "objetivo": "niebla_densa",
+   "cat": "verbos"
+  },
+  {
+   "frase": "miro la garza",
+   "accion": "mirar",
+   "objetivo": "garza_lago",
+   "cat": "verbos"
+  },
+  {
+   "frase": "mirá la puerta",
+   "accion": "mirar",
+   "objetivo": "puerta_cerrada",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mirá la isla",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mirá el roble",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mirá la ventana",
+   "accion": "mirar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mirá el libro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mirá la niebla",
+   "accion": "mirar",
+   "objetivo": "niebla_densa",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mirá la garza",
+   "accion": "mirar",
+   "objetivo": "garza_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mira la lámpara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mira la puerta",
+   "accion": "mirar",
+   "objetivo": "puerta_cerrada",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mira la isla",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mira el roble",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mira la ventana",
+   "accion": "mirar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mira el libro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mira la niebla",
+   "accion": "mirar",
+   "objetivo": "niebla_densa",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mira la garza",
+   "accion": "mirar",
+   "objetivo": "garza_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mire la lámpara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mire la puerta",
+   "accion": "mirar",
+   "objetivo": "puerta_cerrada",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mire la isla",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mire el roble",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mire la ventana",
+   "accion": "mirar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mire el libro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mire la niebla",
+   "accion": "mirar",
+   "objetivo": "niebla_densa",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "mire la garza",
+   "accion": "mirar",
+   "objetivo": "garza_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "miré la lámpara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "miré la puerta",
+   "accion": "mirar",
+   "objetivo": "puerta_cerrada",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "miré la isla",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "miré el roble",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "miré la ventana",
+   "accion": "mirar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "miré el libro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "miré la niebla",
+   "accion": "mirar",
+   "objetivo": "niebla_densa",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "miré la garza",
+   "accion": "mirar",
+   "objetivo": "garza_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo mirando la lámpara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo mirando la puerta",
+   "accion": "mirar",
+   "objetivo": "puerta_cerrada",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo mirando la isla",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo mirando el roble",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo mirando la ventana",
+   "accion": "mirar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo mirando el libro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo mirando la niebla",
+   "accion": "mirar",
+   "objetivo": "niebla_densa",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo mirando la garza",
+   "accion": "mirar",
+   "objetivo": "garza_lago",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tocar la lámpara",
+   "accion": "tocar",
+   "objetivo": "lampara_aceite",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tocar la moneda",
+   "accion": "tocar",
+   "objetivo": "moneda_suelo",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tocar el burro",
+   "accion": "tocar",
+   "objetivo": "burro_atado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tocar la ventana",
+   "accion": "tocar",
+   "objetivo": "ventana_abierta",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tocar el sello",
+   "accion": "tocar",
+   "objetivo": "sello_lacre",
+   "cat": "verbos"
+  },
+  {
+   "frase": "toco la lámpara",
+   "accion": "tocar",
+   "objetivo": "lampara_aceite",
+   "cat": "verbos"
+  },
+  {
+   "frase": "toco la moneda",
+   "accion": "tocar",
+   "objetivo": "moneda_suelo",
+   "cat": "verbos"
+  },
+  {
+   "frase": "toco el burro",
+   "accion": "tocar",
+   "objetivo": "burro_atado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "toco la ventana",
+   "accion": "tocar",
+   "objetivo": "ventana_abierta",
+   "cat": "verbos"
+  },
+  {
+   "frase": "toco el sello",
+   "accion": "tocar",
+   "objetivo": "sello_lacre",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tocá la puerta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tocá la lámpara",
+   "accion": "tocar",
+   "objetivo": "lampara_aceite",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tocá la moneda",
+   "accion": "tocar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tocá el burro",
+   "accion": "tocar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tocá la ventana",
+   "accion": "tocar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tocá el sello",
+   "accion": "tocar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toca la lámpara",
+   "accion": "tocar",
+   "objetivo": "lampara_aceite",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toca la moneda",
+   "accion": "tocar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toca el burro",
+   "accion": "tocar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toca la ventana",
+   "accion": "tocar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toca el sello",
+   "accion": "tocar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toque la puerta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toque la lámpara",
+   "accion": "tocar",
+   "objetivo": "lampara_aceite",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toque la moneda",
+   "accion": "tocar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toque el burro",
+   "accion": "tocar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toque la ventana",
+   "accion": "tocar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toque el sello",
+   "accion": "tocar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toqué la puerta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toqué la lámpara",
+   "accion": "tocar",
+   "objetivo": "lampara_aceite",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toqué la moneda",
+   "accion": "tocar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toqué el burro",
+   "accion": "tocar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toqué la ventana",
+   "accion": "tocar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toqué el sello",
+   "accion": "tocar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tocando la puerta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tocando la lámpara",
+   "accion": "tocar",
+   "objetivo": "lampara_aceite",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tocando la moneda",
+   "accion": "tocar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tocando el burro",
+   "accion": "tocar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tocando la ventana",
+   "accion": "tocar",
+   "objetivo": "ventana_abierta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tocando el sello",
+   "accion": "tocar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escuchar la campana",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "verbos"
+  },
+  {
+   "frase": "escuchar la lluvia",
+   "accion": "escuchar",
+   "objetivo": "lluvia_cae",
+   "cat": "verbos"
+  },
+  {
+   "frase": "escuchar el cuervo",
+   "accion": "escuchar",
+   "objetivo": "cuervo_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "escucho la lluvia",
+   "accion": "escuchar",
+   "objetivo": "lluvia_cae",
+   "cat": "verbos"
+  },
+  {
+   "frase": "escucho el cuervo",
+   "accion": "escuchar",
+   "objetivo": "cuervo_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "escuchá la campana",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escuchá la lluvia",
+   "accion": "escuchar",
+   "objetivo": "lluvia_cae",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escuchá el cuervo",
+   "accion": "escuchar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escucha la campana",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escucha la lluvia",
+   "accion": "escuchar",
+   "objetivo": "lluvia_cae",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escucha el cuervo",
+   "accion": "escuchar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escuche la campana",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escuche la lluvia",
+   "accion": "escuchar",
+   "objetivo": "lluvia_cae",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escuche el cuervo",
+   "accion": "escuchar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escuché la campana",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escuché la lluvia",
+   "accion": "escuchar",
+   "objetivo": "lluvia_cae",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "escuché el cuervo",
+   "accion": "escuchar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo escuchando la campana",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo escuchando la lluvia",
+   "accion": "escuchar",
+   "objetivo": "lluvia_cae",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo escuchando el cuervo",
+   "accion": "escuchar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llamar a la gata",
+   "accion": "llamar",
+   "objetivo": "gata_mercado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "llamar al burro",
+   "accion": "llamar",
+   "objetivo": "burro_atado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "llamar al halcón",
+   "accion": "llamar",
+   "objetivo": "halcon_alto",
+   "cat": "verbos"
+  },
+  {
+   "frase": "llamo a la gata",
+   "accion": "llamar",
+   "objetivo": "gata_mercado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "llamo al burro",
+   "accion": "llamar",
+   "objetivo": "burro_atado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "llamo al halcón",
+   "accion": "llamar",
+   "objetivo": "halcon_alto",
+   "cat": "verbos"
+  },
+  {
+   "frase": "llamá a la gata",
+   "accion": "llamar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llamá al burro",
+   "accion": "llamar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llamá al halcón",
+   "accion": "llamar",
+   "objetivo": "halcon_alto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llama a la gata",
+   "accion": "llamar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llama al burro",
+   "accion": "llamar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llama al halcón",
+   "accion": "llamar",
+   "objetivo": "halcon_alto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llame a la gata",
+   "accion": "llamar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llame al burro",
+   "accion": "llamar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llame al halcón",
+   "accion": "llamar",
+   "objetivo": "halcon_alto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llamé a la gata",
+   "accion": "llamar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llamé al burro",
+   "accion": "llamar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "llamé al halcón",
+   "accion": "llamar",
+   "objetivo": "halcon_alto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo llamando a la gata",
+   "accion": "llamar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo llamando al burro",
+   "accion": "llamar",
+   "objetivo": "burro_atado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo llamando al halcón",
+   "accion": "llamar",
+   "objetivo": "halcon_alto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignorar a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "ignorar a la campana",
+   "accion": "ignorar",
+   "objetivo": "campana_lejana",
+   "cat": "verbos"
+  },
+  {
+   "frase": "ignorar al cuervo",
+   "accion": "ignorar",
+   "objetivo": "cuervo_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "ignorar a la carreta",
+   "accion": "ignorar",
+   "objetivo": "carreta_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "ignoro a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "verbos"
+  },
+  {
+   "frase": "ignoro a la campana",
+   "accion": "ignorar",
+   "objetivo": "campana_lejana",
+   "cat": "verbos"
+  },
+  {
+   "frase": "ignoro al cuervo",
+   "accion": "ignorar",
+   "objetivo": "cuervo_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "ignoro a la carreta",
+   "accion": "ignorar",
+   "objetivo": "carreta_camino",
+   "cat": "verbos"
+  },
+  {
+   "frase": "ignorá a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignorá a la campana",
+   "accion": "ignorar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignorá al cuervo",
+   "accion": "ignorar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignorá a la carreta",
+   "accion": "ignorar",
+   "objetivo": "carreta_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignora a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignora a la campana",
+   "accion": "ignorar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignora al cuervo",
+   "accion": "ignorar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignora a la carreta",
+   "accion": "ignorar",
+   "objetivo": "carreta_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignore a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignore a la campana",
+   "accion": "ignorar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignore al cuervo",
+   "accion": "ignorar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignore a la carreta",
+   "accion": "ignorar",
+   "objetivo": "carreta_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignoré a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignoré a la campana",
+   "accion": "ignorar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignoré al cuervo",
+   "accion": "ignorar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "ignoré a la carreta",
+   "accion": "ignorar",
+   "objetivo": "carreta_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo ignorando a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo ignorando a la campana",
+   "accion": "ignorar",
+   "objetivo": "campana_lejana",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo ignorando al cuervo",
+   "accion": "ignorar",
+   "objetivo": "cuervo_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo ignorando a la carreta",
+   "accion": "ignorar",
+   "objetivo": "carreta_camino",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tomar la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tomar la moneda",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tomar el libro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tomar el sello",
+   "accion": "tomar",
+   "objetivo": "sello_lacre",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tomo la moneda",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tomo el libro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tomo el sello",
+   "accion": "tomar",
+   "objetivo": "sello_lacre",
+   "cat": "verbos"
+  },
+  {
+   "frase": "tomá la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tomá la moneda",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tomá el libro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tomá el sello",
+   "accion": "tomar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toma la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toma la moneda",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toma el libro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "toma el sello",
+   "accion": "tomar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tome la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tome la moneda",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tome el libro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tome el sello",
+   "accion": "tomar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tomé la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tomé la moneda",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tomé el libro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "tomé el sello",
+   "accion": "tomar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tomando la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tomando la moneda",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tomando el libro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "sigo tomando el sello",
+   "accion": "tomar",
+   "objetivo": "sello_lacre",
+   "cat": "conjugacion"
+  },
+  {
+   "frase": "seguilo",
+   "accion": "seguir",
+   "objetivo": "burro_atado",
+   "ctx": "burro_atado",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "miralo",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "ctx": "libro_abierto",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "tocalo",
+   "accion": "tocar",
+   "objetivo": "sello_lacre",
+   "ctx": "sello_lacre",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "llamala",
+   "accion": "llamar",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "llamalo",
+   "accion": "llamar",
+   "objetivo": "burro_atado",
+   "ctx": "burro_atado",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "ignorala",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "ignoralo",
+   "accion": "ignorar",
+   "objetivo": "cuervo_camino",
+   "ctx": "cuervo_camino",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "agarralo",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "ctx": "libro_abierto",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "tomala",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "ctx": "carta_suelta",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "tomalo",
+   "accion": "tomar",
+   "objetivo": "sello_lacre",
+   "ctx": "sello_lacre",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "mírala",
+   "accion": "mirar",
+   "objetivo": "puerta_cerrada",
+   "ctx": "puerta_cerrada",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "seguirla",
+   "accion": "seguir",
+   "objetivo": "garza_lago",
+   "ctx": "garza_lago",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "mirarla",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "ctx": "isla_lago",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "tocarlo",
+   "accion": "tocar",
+   "objetivo": "burro_atado",
+   "ctx": "burro_atado",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "escucharla",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "ctx": "campana_lejana",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "síguela",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "tócala",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "ctx": "puerta_cerrada",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "agárrala",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "ctx": "carta_suelta",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "levantala",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "ctx": "moneda_suelo",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "recogela",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "ctx": "carta_suelta",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "observala",
+   "accion": "mirar",
+   "objetivo": "garza_lago",
+   "ctx": "garza_lago",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "obsérvalo",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "ctx": "roble_lejano",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "acariciala",
+   "accion": "tocar",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "encliticos"
+  },
+  {
+   "frase": "mirar eso",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "ctx": "isla_lago",
+   "cat": "referencias"
+  },
+  {
+   "frase": "miro eso",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "ctx": "roble_lejano",
+   "cat": "referencias"
+  },
+  {
+   "frase": "sigo eso",
+   "accion": "seguir",
+   "objetivo": "carreta_camino",
+   "ctx": "carreta_camino",
+   "cat": "referencias"
+  },
+  {
+   "frase": "toco esto",
+   "accion": "tocar",
+   "objetivo": "moneda_suelo",
+   "ctx": "moneda_suelo",
+   "cat": "referencias"
+  },
+  {
+   "frase": "escucho eso",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "ctx": "campana_lejana",
+   "cat": "referencias"
+  },
+  {
+   "frase": "seguir eso",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "referencias"
+  },
+  {
+   "frase": "la sigo",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "referencias"
+  },
+  {
+   "frase": "lo sigo",
+   "accion": "seguir",
+   "objetivo": "burro_atado",
+   "ctx": "burro_atado",
+   "cat": "referencias"
+  },
+  {
+   "frase": "lo miro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "ctx": "libro_abierto",
+   "cat": "referencias"
+  },
+  {
+   "frase": "la toco",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "ctx": "puerta_cerrada",
+   "cat": "referencias"
+  },
+  {
+   "frase": "lo toco",
+   "accion": "tocar",
+   "objetivo": "sello_lacre",
+   "ctx": "sello_lacre",
+   "cat": "referencias"
+  },
+  {
+   "frase": "la escucho",
+   "accion": "escuchar",
+   "objetivo": "lluvia_cae",
+   "ctx": "lluvia_cae",
+   "cat": "referencias"
+  },
+  {
+   "frase": "la agarro",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "ctx": "carta_suelta",
+   "cat": "referencias"
+  },
+  {
+   "frase": "lo agarro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "ctx": "libro_abierto",
+   "cat": "referencias"
+  },
+  {
+   "frase": "la llamo",
+   "accion": "llamar",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "referencias"
+  },
+  {
+   "frase": "lo ignoro",
+   "accion": "ignorar",
+   "objetivo": "cuervo_camino",
+   "ctx": "cuervo_camino",
+   "cat": "referencias"
+  },
+  {
+   "frase": "la ignoro",
+   "accion": "ignorar",
+   "objetivo": "campana_lejana",
+   "ctx": "campana_lejana",
+   "cat": "referencias"
+  },
+  {
+   "frase": "miro ahí",
+   "accion": "mirar",
+   "objetivo": "ventana_abierta",
+   "ctx": "ventana_abierta",
+   "cat": "referencias"
+  },
+  {
+   "frase": "miro allá",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "ctx": "isla_lago",
+   "cat": "referencias"
+  },
+  {
+   "frase": "sigo a ella",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "referencias"
+  },
+  {
+   "frase": "voy tras eso",
+   "accion": "seguir",
+   "objetivo": "carreta_camino",
+   "ctx": "carreta_camino",
+   "cat": "referencias"
+  },
+  {
+   "frase": "la sigo ya",
+   "accion": "aclarar",
+   "cat": "referencias",
+   "ctx": "burro_atado"
+  },
+  {
+   "frase": "lo miro ya",
+   "accion": "aclarar",
+   "cat": "referencias",
+   "ctx": "lampara_aceite"
+  },
+  {
+   "frase": "la toco ya",
+   "accion": "aclarar",
+   "cat": "referencias",
+   "ctx": "sello_lacre"
+  },
+  {
+   "frase": "lo agarro ya",
+   "accion": "aclarar",
+   "cat": "referencias",
+   "ctx": "carta_suelta"
+  },
+  {
+   "frase": "mirala ahora",
+   "accion": "aclarar",
+   "cat": "referencias"
+  },
+  {
+   "frase": "seguilo ahora",
+   "accion": "aclarar",
+   "cat": "referencias"
+  },
+  {
+   "frase": "tocalo ahora",
+   "accion": "aclarar",
+   "cat": "referencias"
+  },
+  {
+   "frase": "miro eso ahora",
+   "accion": "aclarar",
+   "cat": "referencias"
+  },
+  {
+   "frase": "seguir a la gatta",
+   "accion": "seguir",
+   "cat": "tipeos",
+   "objetivo": "gata_mercado"
+  },
+  {
+   "frase": "mirar la lampra",
+   "accion": "mirar",
+   "cat": "tipeos",
+   "objetivo": "lampara_aceite"
+  },
+  {
+   "frase": "mirar la pueta",
+   "accion": "mirar",
+   "cat": "tipeos",
+   "objetivo": "puerta_cerrada"
+  },
+  {
+   "frase": "tocar la ventaan",
+   "accion": "tocar",
+   "cat": "tipeos",
+   "objetivo": "ventana_abierta"
+  },
+  {
+   "frase": "escuchar la campna",
+   "accion": "escuchar",
+   "cat": "tipeos",
+   "objetivo": "campana_lejana"
+  },
+  {
+   "frase": "agarar la carta",
+   "accion": "tomar",
+   "cat": "tipeos",
+   "objetivo": "carta_suelta"
+  },
+  {
+   "frase": "mirra el libro",
+   "accion": "mirar",
+   "cat": "tipeos",
+   "objetivo": "libro_abierto"
+  },
+  {
+   "frase": "seguir al buro",
+   "accion": "seguir",
+   "cat": "tipeos",
+   "objetivo": "burro_atado"
+  },
+  {
+   "frase": "mirar la isal",
+   "accion": "mirar",
+   "cat": "tipeos",
+   "objetivo": "isla_lago"
+  },
+  {
+   "frase": "tocar la monedda",
+   "accion": "tocar",
+   "cat": "tipeos",
+   "objetivo": "moneda_suelo"
+  },
+  {
+   "frase": "escuhar la lluvia",
+   "accion": "escuchar",
+   "cat": "tipeos",
+   "objetivo": "lluvia_cae"
+  },
+  {
+   "frase": "mirar el robel",
+   "accion": "mirar",
+   "cat": "tipeos",
+   "objetivo": "roble_lejano"
+  },
+  {
+   "frase": "seguir a la garsa",
+   "accion": "seguir",
+   "cat": "tipeos",
+   "objetivo": "garza_lago"
+  },
+  {
+   "frase": "ignorar al cuerbo",
+   "accion": "ignorar",
+   "cat": "tipeos",
+   "objetivo": "cuervo_camino"
+  },
+  {
+   "frase": "tomar el selo",
+   "accion": "tomar",
+   "cat": "tipeos",
+   "objetivo": "sello_lacre"
+  },
+  {
+   "frase": "mirar la nieblla",
+   "accion": "mirar",
+   "cat": "tipeos",
+   "objetivo": "niebla_densa"
+  },
+  {
+   "frase": "seguir la carretta",
+   "accion": "seguir",
+   "cat": "tipeos",
+   "objetivo": "carreta_camino"
+  },
+  {
+   "frase": "mirar la ventnaa",
+   "accion": "mirar",
+   "cat": "tipeos",
+   "objetivo": "ventana_abierta"
+  },
+  {
+   "frase": "tocar la lampara",
+   "accion": "tocar",
+   "cat": "tipeos",
+   "objetivo": "lampara_aceite"
+  },
+  {
+   "frase": "sguir a la gata",
+   "accion": "seguir",
+   "cat": "tipeos",
+   "objetivo": "gata_mercado"
+  },
+  {
+   "frase": "mirarr la puerta",
+   "accion": "mirar",
+   "cat": "tipeos",
+   "objetivo": "puerta_cerrada"
+  },
+  {
+   "frase": "toacr la puerta",
+   "accion": "tocar",
+   "cat": "tipeos",
+   "objetivo": "puerta_cerrada"
+  },
+  {
+   "frase": "escucahr la campana",
+   "accion": "escuchar",
+   "cat": "tipeos",
+   "objetivo": "campana_lejana"
+  },
+  {
+   "frase": "habalr con maren",
+   "accion": "hablar",
+   "cat": "tipeos",
+   "npc": "maren_archivista",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ]
+  },
+  {
+   "frase": "preguntr por la gata",
+   "accion": "preguntar",
+   "cat": "tipeos",
+   "objetivo": "gata_mercado",
+   "npc": "serel_panadero"
+  },
+  {
+   "frase": "ignroar al perro",
+   "accion": "aclarar",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ],
+   "cat": "tipeos"
+  },
+  {
+   "frase": "mirar la mesa",
+   "accion": "no_entendido",
+   "cat": "tipeos"
+  },
+  {
+   "frase": "tocar la mesa",
+   "accion": "no_entendido",
+   "cat": "tipeos"
+  },
+  {
+   "frase": "mirar la casa",
+   "accion": "no_entendido",
+   "cat": "tipeos"
+  },
+  {
+   "frase": "tocar la cosa",
+   "accion": "no_entendido",
+   "cat": "tipeos"
+  },
+  {
+   "frase": "hablar con maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con la archivista",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a maren por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a maren por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a serel por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "serel_panadero",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a serel por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "serel_panadero",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con la cambista",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a ivor por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a ivor por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con naela",
+   "accion": "hablar",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Naela",
+   "accion": "hablar",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con naela",
+   "accion": "hablar",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con naela",
+   "accion": "hablar",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con la tabernera",
+   "accion": "hablar",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a naela",
+   "accion": "hablar",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a naela",
+   "accion": "hablar",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con naela",
+   "accion": "hablar",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a naela por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a naela por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "naela_tabernera",
+   "presentes": [
+    "naela_tabernera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con tiren",
+   "accion": "hablar",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Tiren",
+   "accion": "hablar",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con tiren",
+   "accion": "hablar",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con tiren",
+   "accion": "hablar",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con el docente",
+   "accion": "hablar",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a tiren",
+   "accion": "hablar",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a tiren",
+   "accion": "hablar",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con tiren",
+   "accion": "hablar",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a tiren por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a tiren por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "tiren_docente",
+   "presentes": [
+    "tiren_docente",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con elia",
+   "accion": "hablar",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Elia",
+   "accion": "hablar",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con elia",
+   "accion": "hablar",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con elia",
+   "accion": "hablar",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con la bibliotecaria",
+   "accion": "hablar",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a elia",
+   "accion": "hablar",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a elia",
+   "accion": "hablar",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con elia",
+   "accion": "hablar",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a elia por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a elia por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "elia_bibliotecaria",
+   "presentes": [
+    "elia_bibliotecaria",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con brenn",
+   "accion": "hablar",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Brenn",
+   "accion": "hablar",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con brenn",
+   "accion": "hablar",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con brenn",
+   "accion": "hablar",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con el arriero",
+   "accion": "hablar",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a brenn",
+   "accion": "hablar",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a brenn",
+   "accion": "hablar",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con brenn",
+   "accion": "hablar",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a brenn por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a brenn por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "brenn_arriero",
+   "presentes": [
+    "brenn_arriero",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con ysolde",
+   "accion": "hablar",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Ysolde",
+   "accion": "hablar",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con ysolde",
+   "accion": "hablar",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con ysolde",
+   "accion": "hablar",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con la pescadora",
+   "accion": "hablar",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a ysolde",
+   "accion": "hablar",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a ysolde",
+   "accion": "hablar",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con ysolde",
+   "accion": "hablar",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a ysolde por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a ysolde por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "ysolde_pescadora",
+   "presentes": [
+    "ysolde_pescadora",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con darío",
+   "accion": "hablar",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Darío",
+   "accion": "hablar",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con darío",
+   "accion": "hablar",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con darío",
+   "accion": "hablar",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con la guardia",
+   "accion": "hablar",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a darío",
+   "accion": "hablar",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a darío",
+   "accion": "hablar",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con darío",
+   "accion": "hablar",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a darío por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a darío por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con sarin",
+   "accion": "hablar",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Sarin",
+   "accion": "hablar",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con sarin",
+   "accion": "hablar",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con sarin",
+   "accion": "hablar",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con la mensajera",
+   "accion": "hablar",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a sarin",
+   "accion": "hablar",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a sarin",
+   "accion": "hablar",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con sarin",
+   "accion": "hablar",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a sarin por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a sarin por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "sarin_mensajera",
+   "presentes": [
+    "sarin_mensajera",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con hollis",
+   "accion": "hablar",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Hollis",
+   "accion": "hablar",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con hollis",
+   "accion": "hablar",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con hollis",
+   "accion": "hablar",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con el pastor",
+   "accion": "hablar",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a hollis",
+   "accion": "hablar",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a hollis",
+   "accion": "hablar",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con hollis",
+   "accion": "hablar",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a hollis por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a hollis por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "hollis_pastor",
+   "presentes": [
+    "hollis_pastor",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablar con oren",
+   "accion": "hablar",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con Oren",
+   "accion": "hablar",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablá con oren",
+   "accion": "hablar",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "charlar con oren",
+   "accion": "hablar",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo con el peregrino",
+   "accion": "hablar",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le hablo a oren",
+   "accion": "hablar",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "saludo a oren",
+   "accion": "hablar",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "converso con oren",
+   "accion": "hablar",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "preguntarle a oren por la gata",
+   "accion": "preguntar",
+   "objetivo": "gata_mercado",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "le pregunto a oren por la campana",
+   "accion": "preguntar",
+   "objetivo": "campana_lejana",
+   "npc": "oren_peregrino",
+   "presentes": [
+    "oren_peregrino",
+    "serel_panadero"
+   ],
+   "cat": "npcs"
+  },
+  {
+   "frase": "hablo",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "defaults"
+  },
+  {
+   "frase": "charlar",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "defaults"
+  },
+  {
+   "frase": "hablar con alguien",
+   "accion": "aclarar",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ],
+   "cat": "defaults"
+  },
+  {
+   "frase": "quiero hablar",
+   "accion": "aclarar",
+   "presentes": [
+    "serel_panadero",
+    "maren_archivista"
+   ],
+   "cat": "defaults"
+  },
+  {
+   "frase": "pregunto por la lámpara",
+   "accion": "preguntar",
+   "objetivo": "lampara_aceite",
+   "npc": "serel_panadero",
+   "cat": "defaults"
+  },
+  {
+   "frase": "miro",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "ctx": "isla_lago",
+   "cat": "defaults"
+  },
+  {
+   "frase": "toco",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "ctx": "puerta_cerrada",
+   "cat": "defaults"
+  },
+  {
+   "frase": "sigo",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "ctx": "gata_mercado",
+   "cat": "defaults"
+  },
+  {
+   "frase": "escucho",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "ctx": "campana_lejana",
+   "cat": "defaults"
+  },
+  {
+   "frase": "tocar",
+   "accion": "aclarar",
+   "cat": "defaults"
+  },
+  {
+   "frase": "seguir",
+   "accion": "aclarar",
+   "cat": "defaults"
+  },
+  {
+   "frase": "agarrar",
+   "accion": "aclarar",
+   "cat": "defaults"
+  },
+  {
+   "frase": "tomar",
+   "accion": "aclarar",
+   "cat": "defaults"
+  },
+  {
+   "frase": "llamar",
+   "accion": "aclarar",
+   "cat": "defaults"
+  },
+  {
+   "frase": "mirar al perro",
+   "accion": "aclarar",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ],
+   "cat": "ambiguas"
+  },
+  {
+   "frase": "llamar al perro",
+   "accion": "aclarar",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ],
+   "cat": "ambiguas"
+  },
+  {
+   "frase": "sigo al perro",
+   "accion": "aclarar",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ],
+   "cat": "ambiguas"
+  },
+  {
+   "frase": "sigo al perro ",
+   "accion": "seguir",
+   "objetivo": "perro_granja",
+   "ctx": "perro_granja",
+   "cat": "ambiguas"
+  },
+  {
+   "frase": "el primero",
+   "accion": "seguir",
+   "objetivo": "perro_ciudad",
+   "pendiente": {
+    "accion": "seguir",
+    "opciones": [
+     "perro_ciudad",
+     "perro_granja"
+    ]
+   },
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "el segundo",
+   "accion": "seguir",
+   "objetivo": "perro_granja",
+   "pendiente": {
+    "accion": "seguir",
+    "opciones": [
+     "perro_ciudad",
+     "perro_granja"
+    ]
+   },
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "el de granja",
+   "accion": "seguir",
+   "objetivo": "perro_granja",
+   "pendiente": {
+    "accion": "seguir",
+    "opciones": [
+     "perro_ciudad",
+     "perro_granja"
+    ]
+   },
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "el de la granja",
+   "accion": "seguir",
+   "objetivo": "perro_granja",
+   "pendiente": {
+    "accion": "seguir",
+    "opciones": [
+     "perro_ciudad",
+     "perro_granja"
+    ]
+   },
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "el último",
+   "accion": "seguir",
+   "objetivo": "perro_granja",
+   "pendiente": {
+    "accion": "seguir",
+    "opciones": [
+     "perro_ciudad",
+     "perro_granja"
+    ]
+   },
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "la gata",
+   "accion": "mirar",
+   "objetivo": "gata_mercado",
+   "pendiente": {
+    "accion": "mirar",
+    "opciones": [
+     "gata_mercado",
+     "lampara_aceite"
+    ]
+   },
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "la lámpara",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "pendiente": {
+    "accion": "mirar",
+    "opciones": [
+     "gata_mercado",
+     "lampara_aceite"
+    ]
+   },
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "el farol",
+   "accion": "mirar",
+   "objetivo": "lampara_aceite",
+   "pendiente": {
+    "accion": "mirar",
+    "opciones": [
+     "gata_mercado",
+     "lampara_aceite"
+    ]
+   },
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "la primera",
+   "accion": "mirar",
+   "objetivo": "gata_mercado",
+   "pendiente": {
+    "accion": "mirar",
+    "opciones": [
+     "gata_mercado",
+     "lampara_aceite"
+    ]
+   },
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "ir al mercado",
+   "accion": "viajar",
+   "lugar": "escena_mercado_circular",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy al mercado",
+   "accion": "viajar",
+   "lugar": "escena_mercado_circular",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar al mercado",
+   "accion": "viajar",
+   "lugar": "escena_mercado_circular",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos al mercado",
+   "accion": "viajar",
+   "lugar": "escena_mercado_circular",
+   "cat": "escenas"
+  },
+  {
+   "frase": "andá al mercado",
+   "accion": "viajar",
+   "lugar": "escena_mercado_circular",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vuelvo al mercado",
+   "accion": "viajar",
+   "lugar": "escena_mercado_circular",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy al archivo",
+   "accion": "viajar",
+   "lugar": "escena_archivo_real",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar al archivo",
+   "accion": "viajar",
+   "lugar": "escena_archivo_real",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos al archivo",
+   "accion": "viajar",
+   "lugar": "escena_archivo_real",
+   "cat": "escenas"
+  },
+  {
+   "frase": "andá al archivo",
+   "accion": "viajar",
+   "lugar": "escena_archivo_real",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vuelvo al archivo",
+   "accion": "viajar",
+   "lugar": "escena_archivo_real",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir a la plaza",
+   "accion": "viajar",
+   "lugar": "escena_plaza_cambistas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy a la plaza",
+   "accion": "viajar",
+   "lugar": "escena_plaza_cambistas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar a la plaza",
+   "accion": "viajar",
+   "lugar": "escena_plaza_cambistas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos a la plaza",
+   "accion": "viajar",
+   "lugar": "escena_plaza_cambistas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "andá a la plaza",
+   "accion": "viajar",
+   "lugar": "escena_plaza_cambistas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vuelvo a la plaza",
+   "accion": "viajar",
+   "lugar": "escena_plaza_cambistas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir a la taberna",
+   "accion": "viajar",
+   "lugar": "escena_taberna_lareth",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy a la taberna",
+   "accion": "viajar",
+   "lugar": "escena_taberna_lareth",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar a la taberna",
+   "accion": "viajar",
+   "lugar": "escena_taberna_lareth",
+   "cat": "escenas"
+  },
+  {
+   "frase": "andá a la taberna",
+   "accion": "viajar",
+   "lugar": "escena_taberna_lareth",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vuelvo a la taberna",
+   "accion": "viajar",
+   "lugar": "escena_taberna_lareth",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir a la biblioteca",
+   "accion": "viajar",
+   "lugar": "escena_biblioteca_publica",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy a la biblioteca",
+   "accion": "viajar",
+   "lugar": "escena_biblioteca_publica",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar a la biblioteca",
+   "accion": "viajar",
+   "lugar": "escena_biblioteca_publica",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos a la biblioteca",
+   "accion": "viajar",
+   "lugar": "escena_biblioteca_publica",
+   "cat": "escenas"
+  },
+  {
+   "frase": "andá a la biblioteca",
+   "accion": "viajar",
+   "lugar": "escena_biblioteca_publica",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vuelvo a la biblioteca",
+   "accion": "viajar",
+   "lugar": "escena_biblioteca_publica",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir a la aula",
+   "accion": "viajar",
+   "lugar": "escena_aula_cartografia",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy a la aula",
+   "accion": "viajar",
+   "lugar": "escena_aula_cartografia",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar a la aula",
+   "accion": "viajar",
+   "lugar": "escena_aula_cartografia",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos a la aula",
+   "accion": "viajar",
+   "lugar": "escena_aula_cartografia",
+   "cat": "escenas"
+  },
+  {
+   "frase": "andá a la aula",
+   "accion": "viajar",
+   "lugar": "escena_aula_cartografia",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vuelvo a la aula",
+   "accion": "viajar",
+   "lugar": "escena_aula_cartografia",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir al camino del norte",
+   "accion": "viajar",
+   "lugar": "escena_camino_norte",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy al camino norte",
+   "accion": "viajar",
+   "lugar": "escena_camino_norte",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar al camino del norte",
+   "accion": "viajar",
+   "lugar": "escena_camino_norte",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos al camino norte",
+   "accion": "viajar",
+   "lugar": "escena_camino_norte",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir al camino del este",
+   "accion": "viajar",
+   "lugar": "escena_camino_este",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy al camino este",
+   "accion": "viajar",
+   "lugar": "escena_camino_este",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar al camino del este",
+   "accion": "viajar",
+   "lugar": "escena_camino_este",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos al camino este",
+   "accion": "viajar",
+   "lugar": "escena_camino_este",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir al camino del sur",
+   "accion": "viajar",
+   "lugar": "escena_camino_sur",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy al camino sur",
+   "accion": "viajar",
+   "lugar": "escena_camino_sur",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar al camino del sur",
+   "accion": "viajar",
+   "lugar": "escena_camino_sur",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos al camino sur",
+   "accion": "viajar",
+   "lugar": "escena_camino_sur",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar al lago",
+   "accion": "viajar",
+   "lugar": "escena_lago_espejos",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos al lago",
+   "accion": "viajar",
+   "lugar": "escena_lago_espejos",
+   "cat": "escenas"
+  },
+  {
+   "frase": "andá al lago",
+   "accion": "viajar",
+   "lugar": "escena_lago_espejos",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vuelvo al lago",
+   "accion": "viajar",
+   "lugar": "escena_lago_espejos",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir al puente",
+   "accion": "viajar",
+   "lugar": "escena_puente_aduana",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy al puente",
+   "accion": "viajar",
+   "lugar": "escena_puente_aduana",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar al puente",
+   "accion": "viajar",
+   "lugar": "escena_puente_aduana",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos al puente",
+   "accion": "viajar",
+   "lugar": "escena_puente_aduana",
+   "cat": "escenas"
+  },
+  {
+   "frase": "andá al puente",
+   "accion": "viajar",
+   "lugar": "escena_puente_aduana",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vuelvo al puente",
+   "accion": "viajar",
+   "lugar": "escena_puente_aduana",
+   "cat": "escenas"
+  },
+  {
+   "frase": "ir al cruce",
+   "accion": "viajar",
+   "lugar": "escena_cruce_colinas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "voy al cruce",
+   "accion": "viajar",
+   "lugar": "escena_cruce_colinas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "viajar al cruce",
+   "accion": "viajar",
+   "lugar": "escena_cruce_colinas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vamos al cruce",
+   "accion": "viajar",
+   "lugar": "escena_cruce_colinas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "andá al cruce",
+   "accion": "viajar",
+   "lugar": "escena_cruce_colinas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "vuelvo al cruce",
+   "accion": "viajar",
+   "lugar": "escena_cruce_colinas",
+   "cat": "escenas"
+  },
+  {
+   "frase": "persigo a la garza",
+   "accion": "seguir",
+   "cat": "sinonimos",
+   "objetivo": "garza_lago"
+  },
+  {
+   "frase": "observo la isla",
+   "accion": "mirar",
+   "cat": "sinonimos",
+   "objetivo": "isla_lago"
+  },
+  {
+   "frase": "examino el libro",
+   "accion": "mirar",
+   "cat": "sinonimos",
+   "objetivo": "libro_abierto"
+  },
+  {
+   "frase": "contemplo la niebla",
+   "accion": "mirar",
+   "cat": "sinonimos",
+   "objetivo": "niebla_densa"
+  },
+  {
+   "frase": "veo el roble",
+   "accion": "mirar",
+   "cat": "sinonimos",
+   "objetivo": "roble_lejano"
+  },
+  {
+   "frase": "golpeo la ventana",
+   "accion": "tocar",
+   "cat": "sinonimos",
+   "objetivo": "ventana_abierta"
+  },
+  {
+   "frase": "acaricio al burro",
+   "accion": "tocar",
+   "cat": "sinonimos",
+   "objetivo": "burro_atado"
+  },
+  {
+   "frase": "oigo la lluvia",
+   "accion": "escuchar",
+   "cat": "sinonimos",
+   "objetivo": "lluvia_cae"
+  },
+  {
+   "frase": "oír la campana",
+   "accion": "escuchar",
+   "cat": "sinonimos",
+   "objetivo": "campana_lejana"
+  },
+  {
+   "frase": "agarro la moneda",
+   "accion": "tomar",
+   "cat": "sinonimos",
+   "objetivo": "moneda_suelo"
+  },
+  {
+   "frase": "levanto el libro",
+   "accion": "tomar",
+   "cat": "sinonimos",
+   "objetivo": "libro_abierto"
+  },
+  {
+   "frase": "recojo la moneda",
+   "accion": "tomar",
+   "cat": "sinonimos",
+   "objetivo": "moneda_suelo"
+  },
+  {
+   "frase": "junto la carta",
+   "accion": "tomar",
+   "cat": "sinonimos",
+   "objetivo": "carta_suelta"
+  },
+  {
+   "frase": "silbo al burro",
+   "accion": "llamar",
+   "cat": "sinonimos",
+   "objetivo": "burro_atado"
+  },
+  {
+   "frase": "le grito a la gata",
+   "accion": "llamar",
+   "cat": "sinonimos",
+   "objetivo": "gata_mercado"
+  },
+  {
+   "frase": "inspecciono la puerta",
+   "accion": "mirar",
+   "cat": "sinonimos",
+   "objetivo": "puerta_cerrada"
+  },
+  {
+   "frase": "reviso la carta",
+   "accion": "mirar",
+   "cat": "sinonimos",
+   "objetivo": "carta_suelta"
+  },
+  {
+   "frase": "palpo la puerta",
+   "accion": "tocar",
+   "cat": "sinonimos",
+   "objetivo": "puerta_cerrada"
+  },
+  {
+   "frase": "voy detrás de la gata",
+   "accion": "seguir",
+   "cat": "sinonimos",
+   "objetivo": "gata_mercado"
+  },
+  {
+   "frase": "presto atención a la lluvia",
+   "accion": "escuchar",
+   "cat": "sinonimos",
+   "objetivo": "lluvia_cae"
+  },
+  {
+   "frase": "paso de la campana",
+   "accion": "ignorar",
+   "cat": "sinonimos",
+   "objetivo": "campana_lejana"
+  },
+  {
+   "frase": "dejo pasar la carreta",
+   "accion": "ignorar",
+   "cat": "sinonimos",
+   "objetivo": "carreta_camino"
+  },
+  {
+   "frase": "me fijo en la ventana",
+   "accion": "mirar",
+   "cat": "sinonimos",
+   "objetivo": "ventana_abierta"
+  },
+  {
+   "frase": "rastreo al cuervo",
+   "accion": "seguir",
+   "cat": "sinonimos",
+   "objetivo": "cuervo_camino"
+  },
+  {
+   "frase": "empujo la puerta",
+   "accion": "tocar",
+   "cat": "sinonimos",
+   "objetivo": "puerta_cerrada"
+  },
+  {
+   "frase": "consulto a serel por la gata",
+   "accion": "preguntar",
+   "cat": "sinonimos",
+   "objetivo": "gata_mercado",
+   "npc": "serel_panadero"
+  },
+  {
+   "frase": "hablo con el guardia",
+   "accion": "hablar",
+   "npc": "dario_guardia",
+   "presentes": [
+    "dario_guardia",
+    "oren_peregrino"
+   ],
+   "cat": "sinonimos"
+  },
+  {
+   "frase": "hablo con el cambista",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista",
+    "oren_peregrino"
+   ],
+   "cat": "sinonimos"
+  },
+  {
+   "frase": "miro la puerta y después toco la ventana",
+   "accion": "mirar",
+   "objetivo": "puerta_cerrada",
+   "luego": {
+    "accion": "tocar",
+    "objetivo": "ventana_abierta"
+   },
+   "cat": "varias"
+  },
+  {
+   "frase": "agarro la moneda y la miro",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "luego": {
+    "accion": "mirar",
+    "objetivo": "moneda_suelo"
+   },
+   "cat": "varias"
+  },
+  {
+   "frase": "sigo a la gata y luego la llamo",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "luego": {
+    "accion": "llamar",
+    "objetivo": "gata_mercado"
+   },
+   "cat": "varias"
+  },
+  {
+   "frase": "miro la isla, después escucho la lluvia",
+   "accion": "mirar",
+   "objetivo": "isla_lago",
+   "luego": {
+    "accion": "escuchar",
+    "objetivo": "lluvia_cae"
+   },
+   "cat": "varias"
+  },
+  {
+   "frase": "tomo el libro y lo leo... no, lo miro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "cat": "varias"
+  },
+  {
+   "frase": "toco la puerta y espero",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "varias"
+  },
+  {
+   "frase": "agarro la carta y se la muestro a serel",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "luego": {
+    "accion": "mostrar",
+    "npc": "serel_panadero"
+   },
+   "cat": "varias"
+  },
+  {
+   "frase": "escucho la campana y después sigo al burro",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "luego": {
+    "accion": "seguir",
+    "objetivo": "burro_atado"
+   },
+   "cat": "varias"
+  },
+  {
+   "frase": "miro el roble y voy al lago",
+   "accion": "mirar",
+   "objetivo": "roble_lejano",
+   "luego": {
+    "accion": "viajar",
+    "lugar": "escena_lago_espejos"
+   },
+   "cat": "varias"
+  },
+  {
+   "frase": "busco pan y queso",
+   "accion": "no_entendido",
+   "cat": "varias"
+  },
+  {
+   "frase": "miro la gata y el burro",
+   "accion": "mirar",
+   "cat": "varias"
+  },
+  {
+   "frase": "no sigo a la garza",
+   "accion": "ignorar",
+   "cat": "negacion",
+   "objetivo": "garza_lago"
+  },
+  {
+   "frase": "no miro la lámpara",
+   "accion": "ignorar",
+   "cat": "negacion",
+   "objetivo": "lampara_aceite"
+  },
+  {
+   "frase": "no escucho la campana",
+   "accion": "ignorar",
+   "cat": "negacion",
+   "objetivo": "campana_lejana"
+  },
+  {
+   "frase": "no llamo al burro",
+   "accion": "ignorar",
+   "cat": "negacion",
+   "objetivo": "burro_atado"
+  },
+  {
+   "frase": "no le hago caso a la gata",
+   "accion": "ignorar",
+   "cat": "negacion",
+   "objetivo": "gata_mercado"
+  },
+  {
+   "frase": "no digo nada",
+   "accion": "callar",
+   "cat": "negacion"
+  },
+  {
+   "frase": "me callo",
+   "accion": "callar",
+   "cat": "negacion"
+  },
+  {
+   "frase": "callo",
+   "accion": "callar",
+   "cat": "negacion"
+  },
+  {
+   "frase": "no hablo",
+   "accion": "callar",
+   "cat": "negacion"
+  },
+  {
+   "frase": "sigo a la garza en silencio",
+   "accion": "seguir",
+   "objetivo": "garza_lago",
+   "modo": "sigilo",
+   "cat": "modo"
+  },
+  {
+   "frase": "sigo al burro despacio",
+   "accion": "seguir",
+   "objetivo": "burro_atado",
+   "modo": "sigilo",
+   "cat": "modo"
+  },
+  {
+   "frase": "sigo a la gata corriendo",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "modo": "prisa",
+   "cat": "modo"
+  },
+  {
+   "frase": "voy tras el cuervo rápido",
+   "accion": "seguir",
+   "objetivo": "cuervo_camino",
+   "modo": "prisa",
+   "cat": "modo"
+  },
+  {
+   "frase": "miro la ventana a escondidas",
+   "accion": "mirar",
+   "objetivo": "ventana_abierta",
+   "modo": "sigilo",
+   "cat": "modo"
+  },
+  {
+   "frase": "sigo a la carreta con cuidado",
+   "accion": "seguir",
+   "objetivo": "carreta_camino",
+   "modo": "sigilo",
+   "cat": "modo"
+  },
+  {
+   "frase": "tomo la moneda rápido",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "modo": "prisa",
+   "cat": "modo"
+  },
+  {
+   "frase": "asdf qwer",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "el cielo es azul",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "qué hora es",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "bailar un tango",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "tengo hambre",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "jajaja",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "me gusta el pan",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "hola",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "42",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "zzz",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "la vida es bella",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "bla bla bla",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "comer una manzana",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "dormir la siesta",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "cantar fuerte",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "nadar en el río",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "volar por el cielo",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "programar en javascript",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "compro acciones",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "el perro de mi vecino",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "quiero ser rey",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "ok",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "sí",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "no",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  },
+  {
+   "frase": "gracias",
+   "accion": "no_entendido",
+   "cat": "sin_sentido"
+  }
+ ]
+}

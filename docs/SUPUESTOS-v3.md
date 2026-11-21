@@ -93,3 +93,6 @@ R3 | velocidad: generación corta de 16 tokens al cargar; bajo el umbral → sig
 R4 | registro sin campo nuevo: la respuesta local queda como origen ia (distinguirla requiere firestore.rules, A APROBAR) | campo origen_ia
 R5 | la página no carga el modelo sola salvo flag guardado tras una activación exitosa; panel muestra tokens.local con latencia | autoarranque
 R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
+- F6 V0: las etapas viven en narrador/lectura.js, que usa comprension.js (normalizar, distanciaEdicion, resolverDestino); comprension.js no la importa para evitar ciclo.
+- F6 V1: corpus generado a 655 casos; a 5 casos semilla con pronombre se les agregó `ctx` (el referente que asumían); presentes por defecto = Serel.
+- F6 V1: línea base = todas las etapas apagadas (solo infinitivo y 1.ª persona de los verbos base, alias exactos).

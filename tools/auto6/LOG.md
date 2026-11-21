@@ -1,0 +1,1 @@
+- V1 hecho: corpus 655 casos + medidor, base 31 % · comprensión 31 %

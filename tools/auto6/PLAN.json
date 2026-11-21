@@ -1,0 +1,79 @@
+{
+ "version": 6,
+ "pasos": [
+  {
+   "id": "V1",
+   "nombre": "Corpus y medidor",
+   "depende": [],
+   "estado": "hecho"
+  },
+  {
+   "id": "V2",
+   "nombre": "Lematizador y enclíticos",
+   "depende": [
+    "V1"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "V3",
+   "nombre": "Tipeo y tildes",
+   "depende": [
+    "V1"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "V4",
+   "nombre": "Referencias",
+   "depende": [
+    "V2"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "V5",
+   "nombre": "Defaults y aclaración",
+   "depende": [
+    "V4"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "V6",
+   "nombre": "Sinónimos",
+   "depende": [
+    "V2"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "V7",
+   "nombre": "Varias acciones, negación y modo",
+   "depende": [
+    "V4",
+    "V6"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "V8",
+   "nombre": "Registro de no entendidas",
+   "depende": [
+    "V5"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "V9",
+   "nombre": "Cierre",
+   "depende": [
+    "V3",
+    "V5",
+    "V7",
+    "V8"
+   ],
+   "estado": "pendiente"
+  }
+ ]
+}
