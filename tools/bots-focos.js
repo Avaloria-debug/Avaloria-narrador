@@ -17,10 +17,11 @@ const PREFIJO = { seguir: 'seguir a', mirar: 'mirar a', llamar: 'llamar a', toca
 const ACCIONES = ['observar', 'explorar', 'examinar', 'hablar con serel', 'hablar con maren', 'mirar eso', 'seguir eso', 'escuchar', 'descansar', 'viajar a la plaza', 'viajar al mercado', 'viajar al archivo', 'viajar a la taberna', 'ir al camino norte', 'trabajar', 'leer'];
 const ARTICULOS = new Set(['un', 'una', 'el', 'la', 'unos', 'unas']);
 
-export async function correr({ partidas = 200, turnos = 60, semilla = 1, amp = null } = {}) {
+export async function correr({ partidas = 200, turnos = 60, semilla = 1, amp = null, sinMotor = false } = {}) {
   amp ??= await cargarAmpliadoNode({ cargarPendientes: true });
   const F = amp.focos;
-  const op = { ampliado: amp, ahora: () => 0 };
+  // sinMotor: narra sin focos (línea de base "antes"), pero prueba los mismos objetivos.
+  const op = { ampliado: sinMotor ? { ...amp, focos: null } : amp, ahora: () => 0 };
   const m = { pruebas: 0, ok: 0, rama: 0, clase: 0, interrupciones: 0, agotados: 0, errores: [], textos: new Set(), palabras: new Set(), propios: 0, generados: 0 };
   const sinFoco = {};
   const todosAlias = [...Object.values(F.defs).flatMap((d) => d.alias), ...Object.values(F.fijos).flatMap((e) => Object.values(e).flatMap((o) => o.alias)), ...Object.values(FAMILIAS).flatMap((x) => x.alias)].map(normalizar);
