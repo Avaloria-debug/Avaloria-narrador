@@ -299,7 +299,7 @@ async function turnoConCaso(partida, turno, opciones) {
   const nuevo = turno.estado;
   const posiciones = posicionesDeNpcs(nuevo.reloj, contenido);
   const npcs = Object.fromEntries(
-    Object.entries(nuevo.npcs).map(([id, n]) => [id, { escena: posiciones[id] ?? null, relacion: n.relacion, bloqueadoConocimientos: n.bloqueadoConocimientos === true }]),
+    Object.entries(nuevo.npcs).map(([id, n]) => [id, { escena: posiciones[id] ?? null, relacion: n.relacion, bloqueadoConocimientos: n.bloqueadoConocimientos === true, conocimientosRevelados: [...(n.conocimientosRevelados ?? [])] }]),
   );
   const parametros = turno.accion.parametros ?? {};
   const accionId = accionesDeIntencion(turno.accion.intencionId)[0] ?? null;
@@ -314,6 +314,7 @@ async function turnoConCaso(partida, turno, opciones) {
       turno: contadorTurnos,
       escena: nuevo.jugador.escenaId,
       estadoEvento: turno.escena?.estado ?? null,
+      eventosActivos: nuevo.eventosActivos ?? [],
       npcs,
     },
     horasAvanzadas: turno.accion.costoHoras ?? 0,
@@ -345,7 +346,7 @@ async function turnoConCasoDeConsulta(partida, turno, plantilla, opciones) {
   const nuevo = turno.estado;
   const posiciones = posicionesDeNpcs(nuevo.reloj, contenido);
   const npcs = Object.fromEntries(
-    Object.entries(nuevo.npcs).map(([id, n]) => [id, { escena: posiciones[id] ?? null, relacion: n.relacion, bloqueadoConocimientos: n.bloqueadoConocimientos === true }]),
+    Object.entries(nuevo.npcs).map(([id, n]) => [id, { escena: posiciones[id] ?? null, relacion: n.relacion, bloqueadoConocimientos: n.bloqueadoConocimientos === true, conocimientosRevelados: [...(n.conocimientosRevelados ?? [])] }]),
   );
   const { npcId, conocimientoId } = turno.consulta;
   const escenaId = nuevo.jugador.escenaId;
@@ -359,7 +360,7 @@ async function turnoConCasoDeConsulta(partida, turno, plantilla, opciones) {
       // La consulta ya pasó el umbral de revelación del conocimiento (`puedeRevelar`).
       contexto: { superaUmbral: true, ranuraHabilitada: pista ? ranuraHabilitada(estadoCaso, pista.ranura) : false },
     },
-    mundo: { hora: minutosAbsolutos(nuevo.reloj) / 60, turno: contadorTurnos, escena: escenaId, estadoEvento: estadoDeEscena(escenaId, nuevo.eventosActivos ?? [], contenido), npcs },
+    mundo: { hora: minutosAbsolutos(nuevo.reloj) / 60, turno: contadorTurnos, escena: escenaId, estadoEvento: estadoDeEscena(escenaId, nuevo.eventosActivos ?? [], contenido), eventosActivos: nuevo.eventosActivos ?? [], npcs },
     horasAvanzadas: 0,
     sinDesenlace: true,
     contenido,
