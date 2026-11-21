@@ -229,9 +229,10 @@ const usable = (x) => /^t.*\.json$/.test(x) || x === 'valores.json' || x === 'ca
  * @param {{ base: string|URL, fetch?: Function, v3: object, cargarPendientes?: boolean, incluirCanon?: boolean }} o
  * @returns {Promise<{ ampliado: object|null, avisos: object[] }>}
  */
-const CACHE_FETCH = new Map();
+// W6: caché por función fetch (otra función = otra caché).
+let CACHES = new WeakMap();
 /** W6: vacía la caché de archivos pedidos por fetch (tests). */
-export const vaciarCacheAmpliado = () => CACHE_FETCH.clear();
+export const vaciarCacheAmpliado = () => { CACHES = new WeakMap(); };
 
 export async function cargarAmpliadoFetch({ base, fetch: f = globalThis.fetch, v3, cargarPendientes = true, incluirCanon = false } = {}) {
   const avisos = [];
@@ -246,6 +247,8 @@ export async function cargarAmpliadoFetch({ base, fetch: f = globalThis.fetch, v
     const nombres = (manifest?.archivos ?? []).filter((x) => usable(x.f) && (x.f.startsWith('t00') || seCarga(x.estado, { cargarPendientes, incluirCanon }))).map((x) => x.f).sort();
     // W6: pedidos en paralelo y caché en memoria por url + huella del manifest (una segunda carga no vuelve a pedir).
     const huella = (n) => `${url(n)}#${(manifest.archivos.find((x) => x.f === n) ?? {}).sha ?? (manifest.archivos.find((x) => x.f === n) ?? {}).bytes ?? ''}`;
+    if (!CACHES.has(f)) CACHES.set(f, new Map());
+    const CACHE_FETCH = CACHES.get(f);
     const archivos = await Promise.all(nombres.map(async (n) => {
       const k = huella(n);
       if (!CACHE_FETCH.has(k)) CACHE_FETCH.set(k, leer(n).catch((e) => { CACHE_FETCH.delete(k); throw e; }));

@@ -6,3 +6,5 @@
 - revisión 2 (W3-W4): compuertas, regresión, humo y bots verdes
 - W5 hecho: fila de opciones (lógica pura + página)
 - W6 hecho: medido 451 KB (20 % por escena); fetch en paralelo + caché; sin paquetes por escena
+- revisión 3 (W5-W6): compuertas, regresión y humo verdes
+- fix W6: caché por función fetch (un test de red rota recibía la caché de otro)
