@@ -134,3 +134,4 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - IA: «sin habla» = sin «», sin verbo de habla y narración en 2.ª persona o el NPC en 3.ª persona sin decir nada (el prompt pide habla sin comillas, así que no se exige «»).
 - Charla: identidad → saludo de t05 (prefiere líneas con «»); actividad → t39/t03 en su escena, si no `no_se`; origen → `no_se`.
 - NPC por oficio (segundo alias) hasta que su nombre aparece en el texto o lo escribe el jugador (`ext.nombresOidos`).
+- Fase 8 (X2/X3): sistemas en `ext.sistema`; efectos nuevos `relacion` y `hecho`. Dinero interno en bronce pero guardado como plata+bronce (sin cambiar esquema); vendedor fijo por producto o el primer presente; venta a mitad del precio de contenido.

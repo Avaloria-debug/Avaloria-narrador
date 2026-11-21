@@ -37,6 +37,7 @@ import { accionesDeIntencion } from './casos/acciones.js';
 import { aplicarAmpliado } from './ampliado.js';
 import { turnoDeFoco } from './focos.js';
 import { turnoDeCharla } from './charla.js';
+import { turnoDeEconomia } from './economia/index.js';
 import { hechosCoherencia } from './coherencia.js';
 import { climaEn } from './ambiente.js';
 import { franjaDe } from './seleccion.js';
@@ -486,7 +487,8 @@ export async function narrar(estado, entrada, opciones = {}) {
         // A4: charla directa (saludo con nombre, quién sos / qué hacés / de dónde sos, «qué dice X»).
         const ch = conHistorial(partida.ext?.lineas, () => turnoDeCharla({ amp: opciones.ampliado, contenido, partida, texto: entrada.texto }), coh(partida));
         if (ch?.turno) turno = ch.turno;
-        else turno = conHistorial(partida.ext?.lineas, () => turnoDeFoco({ amp: opciones.ampliado, contenido, partida, texto: ch?.reescrito ?? entrada.texto, dic }), coh(partida));
+        if (!turno) turno = conHistorial(partida.ext?.lineas, () => turnoDeEconomia({ amp: opciones.ampliado, contenido, partida, texto: entrada.texto }), coh(partida));
+        if (!turno) turno = conHistorial(partida.ext?.lineas, () => turnoDeFoco({ amp: opciones.ampliado, contenido, partida, texto: ch?.reescrito ?? entrada.texto, dic }), coh(partida));
       } catch (e) {
         anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');
       }

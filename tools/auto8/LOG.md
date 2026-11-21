@@ -1,2 +1,3 @@
 - X1 hecho: prioridad código→Groq→local→plantilla; pausa Groq tras 429 (retry-after o 10 min); 9 tests.
 - X2: interfaz de sistemas (registro de módulos, ext.sistema, cierre forzado)
+- X3: monedas y precios (precios.json, formato natural, modificadores, compra/venta/precio con ampliado)
