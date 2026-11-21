@@ -1,1 +1,2 @@
 - U1 hecho: t32 fusionado (61 focos, id repetido = error), t31 en focos.preguntar, {foco} en PH, manifest; tests 1910/0.
+- U2 hecho: preguntar con NPC presente → t31 (npc nombrado o primero presente); sin NPC → clase; tests 1914/0.

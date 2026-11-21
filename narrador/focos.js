@@ -172,9 +172,16 @@ const pasoDe = (p) => (typeof p === 'string' ? { t: p } : p ?? null);
 /**
  * Ejecuta el verbo sobre el referente. Muta `fx` (estado de focos). Devuelve { texto, minutos, fin, rama }.
  */
-export function ejecutarVerbo({ F, fx, ref, verbo, rng, turno, escena }) {
+export function ejecutarVerbo({ F, fx, ref, verbo, rng, turno, escena, npc = null }) {
   const clases = F.clases ?? {};
+  // U2 (t31): preguntar con NPC presente → su voz para la clase del foco; {foco} = primer alias.
+  const voz = (clase, alias) => {
+    const l = verbo === 'preguntar' && npc ? F.preguntar?.[npc]?.[clase] : null;
+    return l?.length ? pick(l, rng).replaceAll('{foco}', alias ?? '') : null;
+  };
   if (ref.tipo === 'fijo') {
+    const v = voz('objeto', ref.o.alias?.[0]);
+    if (v) return { texto: v, minutos: 0, rama: false, voz: true };
     const lista = verbo === 'tocar' ? ref.o.tocar : verbo === 'mirar' || verbo === 'examinar' ? ref.o.examinar : clases.objeto?.[verbo];
     return { texto: pick(lista, rng), minutos: 0, rama: verbo === 'tocar' || verbo === 'mirar' || verbo === 'examinar' };
   }
@@ -185,6 +192,8 @@ export function ejecutarVerbo({ F, fx, ref, verbo, rng, turno, escena }) {
   const generico = (k) => pick(clases[clase]?.[k] ?? clases.objeto?.[k], rng);
   if (f.agotado) return { texto: generico('ignorar'), minutos: 0, rama: false, repetido: true };
   if (v === 'ignorar') { f.agotado = true; return { texto: generico('ignorar'), minutos: 0, rama: false }; }
+  const enVoz = voz(clase, f.gen ? f.alias?.[0] : F.defs[f.id]?.alias?.[0]);
+  if (enVoz) return { texto: enVoz, minutos: 0, rama: false, voz: true };
   const rama = f.gen ? null : F.defs[f.id]?.ramas?.[v];
   const i = f.pasos[v] ?? 0;
   if (!Array.isArray(rama) || i >= rama.length) return { texto: generico(v), minutos: 0, rama: false };
@@ -196,6 +205,14 @@ export function ejecutarVerbo({ F, fx, ref, verbo, rng, turno, escena }) {
     if (p.fin === 'hallazgo' && !fx.marcasFoco.includes(`foco_${f.id}_hallazgo`)) fx.marcasFoco.push(`foco_${f.id}_hallazgo`);
   }
   return { texto: p.t, minutos: Number.isFinite(p.tiempoMin) ? p.tiempoMin : 0, fin: p.fin ?? null, rama: true };
+}
+
+/** U2: el NPC presente nombrado en el texto («… a Serel»), o el primero presente; null si no hay nadie. */
+function npcNombrado(texto, presentes) {
+  if (!presentes.length) return null;
+  const norm = normalizar(texto);
+  const n = presentes.find((p) => [p.nombre, ...(p.alias ?? [])].some((x) => x && tieneAlias(norm, normalizar(x))));
+  return (n ?? presentes[0]).id;
 }
 
 /** S5: ¿el jugador deja a medias una charla? Devuelve el npc o null. */
@@ -234,7 +251,8 @@ export function turnoDeFoco({ amp, contenido, partida, texto, dic = null }) {
   if (ref.tipo === 'no_visto') return { tipo: 'foco', estado: partida, intencionId: null, texto: pick(F.no_visto, rng), foco: { id: null, verbo: v.verbo, noVisto: true }, extFocos: fx };
   const presentes = npcsPresentes(partida, contenido).map((n) => n.id);
   const npcInt = interrumpe({ fx, verbo: v.verbo, turno, presentes, ref, F });
-  const r = ejecutarVerbo({ F, fx, ref, verbo: v.verbo, rng, turno, escena });
+  const npcPreg = v.verbo === 'preguntar' ? npcNombrado(texto, npcsPresentes(partida, contenido)) : null;
+  const r = ejecutarVerbo({ F, fx, ref, verbo: v.verbo, rng, turno, escena, npc: npcPreg });
   if (!r.texto) return null;
   const partes = [];
   if (npcInt) {
@@ -251,7 +269,7 @@ export function turnoDeFoco({ amp, contenido, partida, texto, dic = null }) {
     estado: { ...partida, reloj, reformulacionPendiente: false },
     intencionId: null,
     texto: partes.filter(Boolean).join(' '),
-    foco: { id: ref.tipo === 'fijo' ? `fijo:${ref.id}` : ref.f.id, verbo: v.verbo, rama: r.rama, fin: r.fin ?? null, interrupcion: npcInt, minutos: r.minutos },
+    foco: { id: ref.tipo === 'fijo' ? `fijo:${ref.id}` : ref.f.id, verbo: v.verbo, rama: r.rama, voz: Boolean(r.voz), fin: r.fin ?? null, interrupcion: npcInt, minutos: r.minutos },
     extFocos: fx,
   };
 }

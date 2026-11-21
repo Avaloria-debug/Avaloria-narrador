@@ -170,7 +170,9 @@ async function conFocos(ids, semilla = 1) {
 const textosFoco = (id, verbo) => {
   const d = F.defs[id];
   const rama = (d.ramas[verbo] ?? []).map((p) => (typeof p === 'string' ? p : p.t));
-  return [...rama, ...(F.clases[d.clase][verbo] ?? [])];
+  // U2: con NPC presente, preguntar responde en su voz (t31).
+  const voz = verbo === 'preguntar' ? Object.values(F.preguntar ?? {}).flatMap((n) => (n[d.clase] ?? []).map((t) => t.replaceAll('{foco}', d.alias[0]))) : [];
+  return [...rama, ...(F.clases[d.clase][verbo] ?? []), ...voz];
 };
 
 test('S3 cada verbo sobre un foco activo responde con su rama o su clase', async () => {
