@@ -56,3 +56,4 @@ P10 | únicos: tienen prioridad sobre el ambiente, sin sorteo, nunca dos turnos 
 P12 | propiedades corren 200×30 en v3 puro y con ampliado (pendientes+canon); frases del jugador sintéticas de sílabas | frases reales
 P14 | sin lista de insultos en data (no se inventa): la palabra de eco tiene que existir en el vocabulario del contenido, lo que excluye insultos y datos personales | lista en data A APROBAR
 P14 | eco solo si la frase tiene ≥2 palabras y en acciones simples de intenciones con líneas en t20 | todas
+P15 | la tabla de efectos es t21 (canon, solo con incluirCanon); aparición una vez por activación al estar en la escena; expiración solo si el jugador la vio y está ahí | narrar siempre

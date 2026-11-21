@@ -16,3 +16,4 @@ P11 | hecho | stemmer Snowball (28378/28378 oficiales), trigramas, reformulació
 P12 | hecho | propiedades 200 corridas (v3 y ampliado) verdes; CI sin verificar
 P13 | hecho | 200x50: textos 544→4860, palabras 441→2193, aperturas 248→571, excepciones 0→0; se repite al cierre
 P14 | hecho | eco.js: una palabra filtrada por vocabulario del contenido, 1 cada 4 turnos
+P15 | hecho | consecuencias.js: efectos t21 por hecho, aparecen y expiran

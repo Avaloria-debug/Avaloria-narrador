@@ -15,6 +15,7 @@ import { cumple, especificidad, normalizar } from './seleccion.js';
 import { propagar, bloquesCruzados, rumorPendiente, fuerzaDe, MENSAJEROS } from './rumores.js';
 import { temaDe, conocimientoQueCoincide, unicoDisponible } from './temas.js';
 import { palabraDeEco, puedeEco } from './eco.js';
+import { efectosGuardados, activarPorHecho, vencer, efectosEn } from './consecuencias.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
@@ -144,6 +145,7 @@ export function extInicial(ext, semilla = 0) {
     rumores: e.rumores && typeof e.rumores === 'object' ? structuredClone(e.rumores) : {},
     unicasUsadas: Array.isArray(e.unicasUsadas) ? [...e.unicasUsadas] : [],
     reveladosAmp: Array.isArray(e.reveladosAmp) ? [...e.reveladosAmp] : [],
+    efectos: efectosGuardados(e),
     afinidad: e.afinidad && typeof e.afinidad === 'object' ? { ...e.afinidad } : {},
     ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
   };
@@ -181,6 +183,8 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
     const { rec, ant } = recuerdo(npc);
     const rumor = npc ? rumorPendiente(ext.rumores, npc) : null;
     if (rumor) extra = { escuchoDe: rumor.tipo, fz: fuerzaDe(rumor.fuerza), ...extra };
+    const efecto = efectosEn(ext.efectos ?? [], estado.jugador.escenaId);
+    if (efecto.length) extra = { efecto, ...extra };
     const verbo = turno?.accion?.verbo;
     const afin = npc && verbo ? afinidadAccion(amp, npc, verbo) : 0;
     return hechosDe(estado, { contenido, npcId: npc, umbrales, extra: { rec, ant, ...(afin ? { afinidadAccion: afin } : {}), ...extra } });
@@ -214,6 +218,25 @@ export function narrarRumor({ amp, contenido, despues, ext, ctx, npc }) {
   const remate = ciudad && rng() < 0.5 ? pick(amp.remateCiudad?.[ciudad]) : null;
   if (remate) partes.push(remate);
   return partes.join(' ');
+}
+
+/**
+ * P15: vence efectos (línea de expiración si el jugador está ahí) y muestra la aparición de un efecto activo en la escena.
+ */
+export function narrarConsecuencias({ amp, despues, ext, ctx }) {
+  if (!amp.efectos?.length) return null;
+  const rng = ctx.rng('consecuencias');
+  const pick = (l) => (l?.length ? l[Math.min(l.length - 1, Math.floor(rng() * l.length))] : null);
+  const esc = despues.jugador.escenaId;
+  const def = (id) => amp.efectos.find((x) => x.id === id);
+  const { activos, vencidos } = vencer(ext.efectos, despues.reloj);
+  ext.efectos = activos;
+  const vencidoAqui = vencidos.find((e) => e.escena === esc && e.visto);
+  if (vencidoAqui) return ctx.expandirTexto(pick(def(vencidoAqui.id)?.expira) ?? '') || null;
+  const nuevo = ext.efectos.find((e) => e.escena === esc && !e.visto);
+  if (!nuevo) return null;
+  nuevo.visto = true;
+  return ctx.expandirTexto(pick(def(nuevo.id)?.aparece) ?? '') || null;
 }
 
 /**
@@ -281,6 +304,8 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       partes[0] = frase.texto;
       aperturas = [...(aperturas ?? []).slice(0, -1), frase.apertura];
     }
+    const cons = narrarConsecuencias({ amp, despues, ext, ctx });
+    if (cons) partes.push(cons);
     const ev = narrarEventos({ amp, contenido, antes, despues, ext, ctx });
     if (ev) partes.push(ev);
     const unico = ext.ultimoAmbiente === ext.turno - 1 ? null : unicoDisponible(amp.unicos, ctx.hechos(), ext.unicasUsadas);
@@ -302,7 +327,9 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
     const npcA = turno.accion.parametros?.npcId;
     const afin = npcA ? afinidadAccion(amp, npcA, turno.accion.verbo) : 0;
     if (afin) ext.afinidad[npcA] = Math.round(((ext.afinidad[npcA] ?? 0) + afin) * 100) / 100;
+    const ultimoAntes = ext.hechos.at(-1);
     ext.hechos = registrarHecho(ext.hechos, { verbo: turno.accion.verbo, npc: turno.accion.parametros?.npcId, escena: antes.jugador.escenaId, reloj: despues.reloj });
+    if (ext.hechos.at(-1) && ext.hechos.at(-1) !== ultimoAntes) ext.efectos = activarPorHecho(ext.efectos, amp.efectos, ext.hechos.at(-1), despues.reloj);
   }
   return { texto: partes.filter(Boolean).join(' '), aperturas, ext };
 }
