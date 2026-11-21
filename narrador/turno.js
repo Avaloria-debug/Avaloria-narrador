@@ -199,7 +199,8 @@ function ejecutarConsulta(estado, decision, contenido) {
   let base = estado;
   if (conocimiento) {
     const r = puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido, { umbral: umbralDeConsulta(npcDef, conocimiento, estado) });
-    base = usarPrimerContacto(estado, npcId);
+    // El primer contacto se consume solo si la consulta revela o falla por relación; un bloqueo ajeno (evento, marca) no lo gasta.
+    if (r.puede || r.motivo === MOTIVOS_NO_REVELA.UMBRAL) base = usarPrimerContacto(estado, npcId);
     if (r.puede) {
       npc = revelar(npcEstado, conocimiento.id);
       consulta.resultado = RESULTADOS_CONSULTA.EXITO;

@@ -116,9 +116,9 @@ describe('consultas de tema', () => {
     assert.equal(r.tipo, TIPOS_SALIDA.NARRACION);
     assert.ok(EXITO.includes(r.texto), r.texto);
     assert.deepEqual(r.estado.npcs[SEREL].conocimientosRevelados, [HARINA]);
-    // Ya revelado: la plantilla de fallo, y no se repite.
+    // Ya revelado: repite lo que contó con la plantilla de éxito (0.0.42, ver SUPUESTOS-v3), y no se revela de nuevo.
     const otra = await decir(r.estado, '¿y el precio de la harina?');
-    assert.ok(FALLO.includes(otra.texto), otra.texto);
+    assert.ok(EXITO.includes(otra.texto), otra.texto);
     assert.deepEqual(otra.estado.npcs[SEREL].conocimientosRevelados, [HARINA]);
   });
   test('tema conocido sin llegar al umbral: plantilla de fallo, sin revelar', async () => {
