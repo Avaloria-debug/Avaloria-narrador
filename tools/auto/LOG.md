@@ -18,3 +18,4 @@ P13 | hecho | 200x50: textos 544→4860, palabras 441→2193, aperturas 248→57
 P14 | hecho | eco.js: una palabra filtrada por vocabulario del contenido, 1 cada 4 turnos
 P15 | hecho | consecuencias.js: efectos t21 por hecho, aparecen y expiran
 P16 | hecho | objetivos.js: avanzan solos, impulso por afinidad, charla y rumor por paso (canon)
+P17 | hecho | diario.js: entradas por hecho/viaje/conocimiento, fusión, comando diario; conecta t11

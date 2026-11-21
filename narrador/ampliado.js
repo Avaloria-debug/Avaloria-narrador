@@ -17,6 +17,8 @@ import { temaDe, conocimientoQueCoincide, unicoDisponible } from './temas.js';
 import { palabraDeEco, puedeEco } from './eco.js';
 import { efectosGuardados, activarPorHecho, vencer, efectosEn } from './consecuencias.js';
 import { objetivosGuardados, avanzarObjetivos, impulsar, objetivoPasoDe, pasoActual } from './objetivos.js';
+import { diarioGuardado, anotar as anotarDiario, textoDiario } from './diario.js';
+import { normalizar as normalizarTexto } from './comprension.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
@@ -154,6 +156,7 @@ export function extInicial(ext, semilla = 0) {
     reveladosAmp: Array.isArray(e.reveladosAmp) ? [...e.reveladosAmp] : [],
     efectos: efectosGuardados(e),
     objetivos: objetivosGuardados(e),
+    diario: diarioGuardado(e),
     afinidad: e.afinidad && typeof e.afinidad === 'object' ? { ...e.afinidad } : {},
     ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
   };
@@ -307,6 +310,19 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   ext.clima = climaEn(ext.semillaBase, despues.reloj, amp.guia?.umbrales?.clima_cambia_cada_horas);
   const ctx = contexto({ amp, contenido, despues, turno, ext });
   const partes = [texto];
+  // P17: "diario" (texto exacto) muestra el diario en lugar de la respuesta.
+  if (amp.diario && typeof entrada?.texto === 'string' && normalizarTexto(entrada.texto) === 'diario') {
+    const d = textoDiario(ext.diario, { amp, contenido, rng: ctx.rng('diario') });
+    if (d) return { texto: d, aperturas, ext };
+  }
+  // P11 (t11): reformulación diferenciada.
+  if (tipo === 'reformulacion' && turno?.tipo === 'reformular') {
+    const r = reformulacionAmpliada({ amp, contenido, turno, ctx, aperturas });
+    if (r) {
+      partes[0] = r.texto;
+      aperturas = [...(aperturas ?? []).slice(0, -1), r.apertura];
+    }
+  }
   if (tipo === 'narracion') {
     // P6: memoria al saludar o hablar con un NPC que recuerda algo (una vez cada 6 turnos por NPC).
     const npcMem = turno?.tipo === 'saludo' ? turno.npcId : turno?.accion?.verbo === 'hablar_con' ? turno.accion.parametros?.npcId : null;
@@ -349,6 +365,14 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   }
   // P9: rumores cada 6 h de reloj.
   for (let i = 0, n = Math.min(4, bloquesCruzados(antes.reloj, despues.reloj)); i < n; i++) ext.rumores = propagar(ext.rumores, ext.hechos, { contenido, reloj: despues.reloj });
+  // P17: entradas del diario.
+  const dia = despues.reloj.dia;
+  if (turno?.tipo === 'accion' && turno.accion) {
+    const v = turno.accion.verbo;
+    if (amp.diario?.entradas?.[v] && turno.accion.parametros?.npcId) ext.diario = anotarDiario(ext.diario, { dia, tipo: v, npc: turno.accion.parametros.npcId, escena: antes.jugador.escenaId });
+    else if (antes.jugador.escenaId !== despues.jugador.escenaId) ext.diario = anotarDiario(ext.diario, { dia, tipo: 'viaje', npc: null, escena: despues.jugador.escenaId });
+  }
+  if (turno?.consulta?.resultado === 'exito') ext.diario = anotarDiario(ext.diario, { dia, tipo: 'conocimiento', npc: turno.consulta.npcId, escena: despues.jugador.escenaId });
   if (turno?.tipo === 'accion' && turno.accion) {
     const npcA = turno.accion.parametros?.npcId;
     const afin = npcA ? afinidadAccion(amp, npcA, turno.accion.verbo) : 0;

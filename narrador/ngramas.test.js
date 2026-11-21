@@ -38,3 +38,14 @@ test('comprension: verbos de riesgo y viajar no pasan por las pasadas de respald
   assert.equal(coincidirPorRaiz('atacando', I), null);
   assert.equal(coincidirPorRaiz('viajando', I), null);
 });
+
+test('t11: reformulación diferenciada con el contenido ampliado (npc_ausente → nombre_desconocido)', async () => {
+  const { reformulacionAmpliada, contexto, extInicial } = await import('./ampliado.js');
+  const { cargarAmpliadoNode } = await import('./contenidoAmpliado.js');
+  const { crearPartida } = await import('./index.js');
+  const amp = await cargarAmpliadoNode({ cargarPendientes: true });
+  const turno = { tipo: 'reformular', motivo: 'npc_ausente', datos: { nombres: [] } };
+  const ctx = contexto({ amp, contenido, despues: crearPartida({ semilla: 1 }), turno, ext: { ...extInicial({}, 1), turno: 1 } });
+  const r = reformulacionAmpliada({ amp, contenido, turno, ctx, aperturas: [] });
+  assert.ok(amp.plantillas.reformulacion.nombre_desconocido.map((x) => x.t ?? x).includes(r.texto), r.texto);
+});

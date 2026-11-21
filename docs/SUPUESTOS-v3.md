@@ -58,3 +58,5 @@ P14 | sin lista de insultos en data (no se inventa): la palabra de eco tiene que
 P14 | eco solo si la frase tiene ≥2 palabras y en acciones simples de intenciones con líneas en t20 | todas
 P15 | la tabla de efectos es t21 (canon, solo con incluirCanon); aparición una vez por activación al estar en la escena; expiración solo si el jugador la vio y está ahí | narrar siempre
 P16 | objetivos desde t22 (no objetivos.json aparte); charla del paso 30% en hablar_con; rumor de objetivo ajeno 20% | archivo nuevo
+P17 | comando: el texto exacto "diario" muestra el diario (sin cambiar comprension ni ui) | intención nueva
+P11 | (corrección en P17) la reformulación t11 no había quedado conectada en ampliado.js; se conectó en P17 con test
