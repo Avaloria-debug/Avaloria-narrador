@@ -1,2 +1,4 @@
 - W1 hecho: rótulo de aclaración y tomar/tocar · comprensión 99.9 %
 - W2 hecho: anti-repetición global (ext.lineas 30)
+- revisión 1 (W1-W2): compuertas, regresión, humo y bots verdes
+- W3 hecho: no entendí + Podrías…, generador único sugerencias.js

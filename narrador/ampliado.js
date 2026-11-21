@@ -24,6 +24,7 @@ import { estacionDe, festividadActiva } from './calendario.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 import { elegirLinea } from './historial.js';
+import { opcionesDeTurno, sugerencias } from './sugerencias.js';
 import { datosFocos, extFocos, detectar, vigentes, lineaDeRegreso, castigoInterrupcion, FAMILIAS } from './focos.js';
 
 const porId = (l, id) => (l ?? []).find((x) => x.id === id);
@@ -404,6 +405,11 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       partes[0] = r.texto;
       aperturas = [...(aperturas ?? []).slice(0, -1), r.apertura];
     }
+  }
+  // W3: «no entendí» + «Podrías …» con 2–3 acciones reales de la escena.
+  if (noEntendido && (turno?.tipo === 'ia' || turno?.motivo === 'no_entendido')) {
+    const s = sugerencias(opcionesDeTurno({ ...despues, ext: { ...ext, focos: antes.ext?.focos ?? ext.focos, turno: Math.max(0, (ext.turno ?? 1) - 1) } }, { amp, contenido }), ctx.rng('sugerencias'), { anterior: ext.ultimaSugerencia ?? null });
+    if (s.texto) { partes.push(s.texto); ext.ultimaSugerencia = s.clave; }
   }
   if (tipo === 'narracion') {
     // P6: memoria al saludar o hablar con un NPC que recuerda algo (una vez cada 6 turnos por NPC).

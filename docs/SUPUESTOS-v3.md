@@ -110,3 +110,4 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - F7 W1: rótulo = escena donde se vio cada candidato (si difieren) o el resto de un alias propio («el de granja»).
 - F7 W1: manifest regenerado ya en W1 porque t39 llegó en el paquete (el test de manifest lo exige).
 - F7 W2: no había historial global (solo ventanaAmbiente de 8 y aperturas); se agregó narrador/historial.js (ext.lineas, 30 párrafos) consultado por seleccion.elegir, elegirPlantilla, gramática y los picks de focos/ampliado; fragmentos <20 caracteres no cuentan. Repeticiones en 200 turnos: 29 → 22 (las que quedan son listas agotadas, p. ej. descansar con 2 variantes).
+- F7 W3: la sugerencia se suma a cada no_entendido (reformulación con motivo no_entendido o IA sin respuesta); el 3.º seguido conserva la sugerencia P20 existente. Test de reformulación: la voz del NPC ahora es prefijo.

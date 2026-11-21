@@ -14,7 +14,9 @@ test('reformulación: en la voz de un NPC presente', async () => {
   const r = await narrar(e, nada, { ampliado: amp, ahora: () => 0 });
   assert.equal(r.tipo, 'reformulacion');
   const voces = new Set(presentes.flatMap((id) => amp.reformulacion[id] ?? []).map((x) => x.t ?? x));
-  assert.ok(voces.has(r.texto), r.texto);
+  // W3 (fase 7): a la voz del NPC se le suma «Podrías …».
+  assert.ok([...voces].some((v) => r.texto.startsWith(v)), r.texto);
+  assert.match(r.texto, /Podrías /);
 });
 
 test('reformulación: máx. 2 seguidas; la 3ª sugiere opciones válidas', async () => {
