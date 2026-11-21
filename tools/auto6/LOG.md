@@ -9,3 +9,4 @@
 - V7 hecho: varias acciones, negación, modo; control de falsos positivos · comprensión 99.9 %
 - revisión 3 (V6-V7): compuertas, regresión, humo verdes; 25 frases de control sumadas, 0 falsos positivos
 - V8 hecho: registro local de no entendidas + botón exportar · comprensión 99.9 %
+- V9 hecho: revisión final verde, informe · comprensión 99.9 %
