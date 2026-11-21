@@ -14,6 +14,7 @@ import { ajustarTension, ajustarObjetivo, elegirPorSaliencia, NIVEL_CATEGORIA } 
 import { cumple, especificidad, normalizar } from './seleccion.js';
 import { propagar, bloquesCruzados, rumorPendiente, fuerzaDe, MENSAJEROS } from './rumores.js';
 import { temaDe, conocimientoQueCoincide, unicoDisponible } from './temas.js';
+import { palabraDeEco, puedeEco } from './eco.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
@@ -90,6 +91,12 @@ export function fraseAmpliada({ amp, contenido, turno, ctx, aperturas, valoresEx
     const a = turno.accion;
     const valores = valoresDeAccion(a, contenido);
     const npc = a.parametros?.npcId;
+    // P14: eco de una palabra del jugador (t20), máx. 1 cada 4 turnos.
+    const eco = typeof entrada?.texto === 'string' && puedeEco(ctx.ext) ? palabraDeEco(entrada.texto, { contenido, amp }) : null;
+    if (eco && amp.eco?.[a.intencionId]?.length) {
+      const r = elegir(amp.eco[a.intencionId], ctx.hechos({ eco: '1' }), opc({ ...valores, eco }));
+      if (r && !r.texto.includes(entrada.texto)) { ctx.ext.ultimoEco = ctx.ext.turno; return r; }
+    }
     if (a.verbo === 'hablar_con' && npc && amp.charla?.[npc]?.length && rng() < 0.5) {
       const r = elegir(amp.charla[npc], ctx.hechos(), opc(valores));
       if (r) return r;

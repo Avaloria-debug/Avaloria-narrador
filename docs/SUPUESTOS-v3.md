@@ -54,3 +54,5 @@ P10 | únicos: tienen prioridad sobre el ambiente, sin sorteo, nunca dos turnos 
 - P11 | la pasada queda en turno.pasada; el registro Firestore tiene esquema cerrado: campo `pasada_comprension` A APROBAR | agregarlo al esquema
 - P11 | t11 claves nuevas: npc_ausente→nombre_desconocido, sin_objetos→objeto_desconocido, falta_destino→destino_invalido, sin_salidas→cerrado; verbo_desconocido sin disparador (no hay motivo) | inventar motivo
 P12 | propiedades corren 200×30 en v3 puro y con ampliado (pendientes+canon); frases del jugador sintéticas de sílabas | frases reales
+P14 | sin lista de insultos en data (no se inventa): la palabra de eco tiene que existir en el vocabulario del contenido, lo que excluye insultos y datos personales | lista en data A APROBAR
+P14 | eco solo si la frase tiene ≥2 palabras y en acciones simples de intenciones con líneas en t20 | todas
