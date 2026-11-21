@@ -33,6 +33,7 @@ import { posicionesDeNpcs } from './movimientoNpcs.js';
 import { turnoDeCaso } from './casos/narrar.js';
 import { accionesDeIntencion } from './casos/acciones.js';
 import { aplicarAmpliado } from './ampliado.js';
+import { turnoDeFoco } from './focos.js';
 
 export const TIPOS_SALIDA = Object.freeze({
   NARRACION: 'narracion',
@@ -438,7 +439,16 @@ export async function narrar(estado, entrada, opciones = {}) {
 
     // `opciones.diccionarios`: para tests; `null` los apaga.
     const dic = esObjeto(opciones) && 'diccionarios' in opciones ? opciones.diccionarios : diccionarios;
-    const turno = ejecutarTurno(partida, entrada, { contenido, rng, diccionarios: dic });
+    // Fase 3: con ampliado, un verbo sobre un foco activo (o un fijo de la escena) gana antes de la comprensión.
+    let turno = null;
+    if (esObjeto(opciones?.ampliado) && entrada?.tipo === 'texto') {
+      try {
+        turno = turnoDeFoco({ amp: opciones.ampliado, contenido, partida, texto: entrada.texto, dic });
+      } catch (e) {
+        anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');
+      }
+    }
+    turno ??= ejecutarTurno(partida, entrada, { contenido, rng, diccionarios: dic });
     if (turno.tipo === TIPOS_TURNO.ERROR) return error(ERRORES.ENTRADA_INVALIDA, turno.error);
 
     let texto = null;
@@ -495,6 +505,8 @@ export async function narrar(estado, entrada, opciones = {}) {
         texto = plantilla.texto;
         aperturas = anotarApertura(ventana, plantilla.apertura);
       }
+    } else if (turno.tipo === 'foco') {
+      texto = turno.texto;
     } else {
       const narracion = narrarTurno(turno, { contenido, rng, aperturas: ventana });
       texto = narracion.texto;

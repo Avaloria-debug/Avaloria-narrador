@@ -146,6 +146,11 @@
    "tanda": "t27"
   },
   {
+   "f": "t30-focos.json",
+   "estado": "a_aprobar",
+   "tanda": "t30"
+  },
+  {
    "f": "valores.json",
    "estado": "a_aprobar_canon",
    "tanda": "valores"

@@ -21,7 +21,7 @@ export function variantesDe(clave, simbolos, hechos = {}) {
  * @param {object} simbolos
  * @param {{ rng: () => number, hechos?: object, profundidadMax?: number, avisos?: object[] }} opciones
  */
-export function expandir(texto, simbolos, { rng, hechos = {}, profundidadMax = 6, avisos = [] } = {}) {
+export function expandir(texto, simbolos, { rng, hechos = {}, profundidadMax = 6, avisos = [], alExpandir = null } = {}) {
   if (typeof texto !== 'string') return texto;
   if (typeof rng !== 'function') throw new TypeError('expandir necesita un rng');
   const paso = (t, prof) => t.replace(PATRON, (_, clave) => {
@@ -29,7 +29,9 @@ export function expandir(texto, simbolos, { rng, hechos = {}, profundidadMax = 6
     const vs = variantesDe(clave, simbolos, hechos);
     if (!vs) { avisos.push({ tipo: 'gramatica_simbolo', simbolo: clave }); return ''; }
     const elegido = vs[Math.min(vs.length - 1, Math.floor(rng() * vs.length))];
-    return paso(String(typeof elegido === 'string' ? elegido : elegido?.t ?? ''), prof + 1);
+    const salida = paso(String(typeof elegido === 'string' ? elegido : elegido?.t ?? ''), prof + 1);
+    if (typeof alExpandir === 'function') alExpandir(clave, salida);
+    return salida;
   });
   return paso(texto, 0).replace(/ {2,}/g, ' ').replace(/ ([.,;:])/g, '$1').trim();
 }

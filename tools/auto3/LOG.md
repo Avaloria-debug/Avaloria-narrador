@@ -1,0 +1,1 @@
+- S1 hecho: fijos t30 + objeto_desconocido, eco por referente, eventos (inicio emitido / línea de mundo aparte).

@@ -54,7 +54,7 @@ function vacio() {
     tandas: [], guia: null, ambiente: {}, npcsRutina: {}, plantillas: {}, voces: {}, memoria: {}, genericas: {}, rumores: {},
     remateCiudad: {}, mensajeros: {}, reaccionNpc: {}, rumoresExtra: {}, charla: {}, eventos: {}, cierre: {}, simbolos: {},
     conocimientos: {}, temas: {}, unicos: [], reformulacion: {}, viaje: {}, objetos: {}, eco: {}, efectos: [], objetivos: {},
-    diario: {}, apodos: null, silencio: { corto: {}, gesto: [] }, estaciones: {}, festividades: {},
+    diario: {}, apodos: null, silencio: { corto: {}, gesto: [] }, estaciones: {}, festividades: {}, focos: null,
   };
 }
 
@@ -116,6 +116,15 @@ export function fusionarAmpliado(archivos, v3, opciones = {}) {
     if (Array.isArray(d.gesto)) a.silencio.gesto.push(...d.gesto);
     for (const [s, e] of Object.entries(d.estaciones ?? {})) { a.estaciones[s] ??= {}; for (const [esc, l] of Object.entries(e)) sumar(a.estaciones[s], esc, l); }
     for (const [id, f] of Object.entries(d.festividades ?? {})) a.festividades[id] = f;
+    // Fase 3 (t30): focos, clases por verbo, no_visto, interrupciones y fijos por escena.
+    if (esObj(d.focos) || esObj(d.fijos)) {
+      a.focos ??= { defs: {}, clases: {}, no_visto: [], interrupcion: {}, fijos: {} };
+      Object.assign(a.focos.defs, d.focos ?? {});
+      for (const [c, vs] of Object.entries(d.clases ?? {})) { a.focos.clases[c] ??= {}; for (const [v, l] of Object.entries(vs)) sumar(a.focos.clases[c], v, l); }
+      a.focos.no_visto.push(...(d.no_visto ?? []));
+      for (const [n, o] of Object.entries(d.interrupcion ?? {})) { a.focos.interrupcion[n] ??= {}; for (const [k, l] of Object.entries(o)) sumar(a.focos.interrupcion[n], k, l); }
+      for (const [e, o] of Object.entries(d.fijos ?? {})) a.focos.fijos[e] = { ...(a.focos.fijos[e] ?? {}), ...o };
+    }
   }
   return a.tandas.length ? a : null;  // valores.json solo no basta para activar el ampliado
 }

@@ -23,6 +23,7 @@ import { derivarApodo, apodoPara } from './apodo.js';
 import { estacionDe, festividadActiva } from './calendario.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
+import { datosFocos, extFocos, detectar, vigentes, lineaDeRegreso, castigoInterrupcion, FAMILIAS } from './focos.js';
 
 const porId = (l, id) => (l ?? []).find((x) => x.id === id);
 
@@ -125,7 +126,9 @@ export function fraseAmpliada({ amp, contenido, turno, ctx, aperturas, valoresEx
     const npc = a.parametros?.npcId;
     // P14: eco de una palabra del jugador (t20), máx. 1 cada 4 turnos.
     const eco = typeof entrada?.texto === 'string' && puedeEco(ctx.ext) ? palabraDeEco(entrada.texto, { contenido, amp }) : null;
-    if (eco && amp.eco?.[a.intencionId]?.length) {
+    // S1 (fase 3): el eco solo si la palabra es el referente resuelto (objeto, NPC o lugar).
+    const referentes = new Set(normalizarTexto([valores.objeto, valores.npc, valores.lugar].filter((x) => typeof x === 'string').join(' ')).split(' ').filter(Boolean));
+    if (eco && referentes.has(normalizarTexto(eco)) && amp.eco?.[a.intencionId]?.length) {
       const r = elegir(amp.eco[a.intencionId], ctx.hechos({ eco: '1' }), opc({ ...valores, eco }));
       if (r && !r.texto.includes(entrada.texto)) { ctx.ext.ultimoEco = ctx.ext.turno; return r; }
     }
@@ -205,6 +208,8 @@ export function extInicial(ext, semilla = 0) {
     apodo: e.apodo && typeof e.apodo === 'object' ? { ...e.apodo } : null,
     afinidad: e.afinidad && typeof e.afinidad === 'object' ? { ...e.afinidad } : {},
     ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
+    eventosEmitidos: Array.isArray(e.eventosEmitidos) ? e.eventosEmitidos.filter((x) => typeof x === 'string').slice(-20) : [],
+    ...extFocos(e),
   };
 }
 
@@ -252,11 +257,13 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
     const afin = npc && verbo ? afinidadAccion(amp, npc, verbo) : 0;
     return hechosDe(estado, { contenido, npcId: npc, umbrales, extra: { rec, ant, ...(afin ? { afinidadAccion: afin } : {}), ...extra } });
   };
+  const generadas = [];
+  const alExpandir = (clave, texto) => { const fam = clave.split('.')[0]; if (FAMILIAS[fam] && texto) generadas.push({ familia: fam, texto }); };
   const expandirTexto = (t, h = hechos(), npc = npcId, objetoId = turno?.accion?.parametros?.objetoId) => {
     const simbolos = npc && amp.npcsRutina?.[npc]?.gestos?.length ? { ...amp.simbolos, gesto: amp.npcsRutina[npc].gestos.map((g) => (typeof g === 'string' ? g : g.t)) } : amp.simbolos;
-    return aplicarGenero(expandir(t, simbolos, { rng: rng('gramatica'), hechos: h, avisos: ext.avisos }), { npcId: npc, objetoId, genero: amp.guia?.genero });
+    return aplicarGenero(expandir(t, simbolos, { rng: rng('gramatica'), hechos: h, avisos: ext.avisos, alExpandir }), { npcId: npc, objetoId, genero: amp.guia?.genero });
   };
-  return { rng, npcId, hechos, expandirTexto, estado, recuerdo, ext };
+  return { rng, npcId, hechos, expandirTexto, estado, recuerdo, ext, generadas };
 }
 
 /**
@@ -328,7 +335,7 @@ export function narrarEventos({ amp, contenido, antes, despues, ext, ctx }) {
     const def = porId(contenido.eventos, a.id);
     for (const v of amp.eventos?.[a.id] ?? []) {
       const n = normalizar(v);
-      if (n && cumple(n.c, hechos)) cand.push({ clave: n.t, texto: n.t, especificidad: especificidad(n), nivel: NIVEL_CATEGORIA[def?.categoria] ?? 3 });
+      if (n && cumple(n.c, hechos)) cand.push({ clave: n.t, texto: n.t, especificidad: especificidad(n), nivel: NIVEL_CATEGORIA[def?.categoria] ?? 3, ev: clave(a) });
     }
   }
   let texto = null;
@@ -336,10 +343,15 @@ export function narrarEventos({ amp, contenido, antes, despues, ext, ctx }) {
     const e = elegirPorSaliencia(cand, { usos: ext.usosEvento, turno: ext.turno, objetivo: ext.tensionObjetivo, rng: ctx.rng('eventos') });
     texto = e.texto;
     ext.usosEvento[e.clave] = ext.turno;
+    // S1: se recuerda qué inicios se emitieron (un cierre peligroso/combate sin inicio emitido no se narra).
+    ext.eventosEmitidos = [...(ext.eventosEmitidos ?? []).filter((x) => x !== e.ev), e.ev].slice(-20);
   } else if (esc === antes.jugador.escenaId) {
+    // S1: el cierre solo si el evento estuvo activo en esta escena y expira en este turno.
     const cerrado = (antes.eventosActivos ?? []).find((a) => a.escenaId === esc && !ahora.has(clave(a)));
     const cat = cerrado && porId(contenido.eventos, cerrado.id)?.categoria;
-    const lista = cat ? amp.cierre?.[cat] : null;
+    const emitido = cerrado && (ext.eventosEmitidos ?? []).includes(clave(cerrado));
+    if (cerrado) ext.eventosEmitidos = (ext.eventosEmitidos ?? []).filter((x) => x !== clave(cerrado));
+    const lista = cat && (emitido || !['peligroso', 'combate'].includes(cat)) ? amp.cierre?.[cat] : null;
     if (lista?.length) texto = elegir(lista, hechos, { rng: ctx.rng('eventos') })?.texto ?? null;
   }
   const hubo = Boolean(texto) && cand.length > 0;
@@ -354,6 +366,11 @@ export function narrarEventos({ amp, contenido, antes, despues, ext, ctx }) {
  */
 export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, aperturas, tipo, entrada = null }) {
   let ext = contabilizar(antes.ext, { antes, despues, turno, contenido });
+  // Fase 3: el turno de foco trae su estado de focos (narrador/focos.js).
+  if (turno?.extFocos) Object.assign(ext, structuredClone(turno.extFocos));
+  const F = datosFocos(amp);
+  let mundo = null;
+  let antepuesta = null;
   // P6: el recuerdo se lee ANTES de registrar el hecho de este turno.
   const hechosPrevios = ext.hechos;
   ext.tension = ajustarTension(ext.tension, verboDe(turno, contenido));
@@ -383,6 +400,13 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   if (tipo === 'narracion') {
     // P6: memoria al saludar o hablar con un NPC que recuerda algo (una vez cada 6 turnos por NPC).
     const npcMem = turno?.tipo === 'saludo' ? turno.npcId : turno?.accion?.verbo === 'hablar_con' ? turno.accion.parametros?.npcId : null;
+    // S5: al volver a hablar con un NPC que dejaste a medias (24 h), su línea de regreso, una vez.
+    const npcCharla = npcMem ?? (turno?.tipo === 'consulta' ? turno.consulta?.npcId : null);
+    if (F && npcCharla) {
+      const linea = lineaDeRegreso(F, ext, npcCharla, despues.reloj, ctx.rng('focos'));
+      if (linea) antepuesta = linea;
+      ext.ultimaCharla = { npc: npcCharla, turno: ext.turno };
+    }
     if (npcMem && !(ext.turno - (ext.ultimoRecuerdo[npcMem] ?? -99) < 6)) {
       const linea = lineaDeMemoria(amp, npcMem, recuerdosDe(hechosPrevios, npcMem, despues.reloj, amp.guia?.umbrales?.recuerdo?.reciente_horas), ctx.rng('memoria'));
       const t = linea && completarAmp(ctx.expandirTexto(linea), { npc: porId(contenido.npcs, npcMem)?.nombre });
@@ -399,8 +423,8 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
     }
     const cons = narrarConsecuencias({ amp, despues, ext, ctx });
     if (cons) partes.push(cons);
-    const ev = narrarEventos({ amp, contenido, antes, despues, ext, ctx });
-    if (ev) partes.push(ev);
+    // S1: el evento va como línea de mundo aparte, al final (nunca entre la respuesta y su cierre).
+    mundo = narrarEventos({ amp, contenido, antes, despues, ext, ctx });
     const unico = ext.ultimoAmbiente === ext.turno - 1 ? null : unicoDisponible(amp.unicos, ctx.hechos(), ext.unicasUsadas);
     if (unico) {
       ext.unicasUsadas.push(unico.id);
@@ -448,5 +472,20 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
     ext.hechos = registrarHecho(ext.hechos, { verbo: turno.accion.verbo, npc: turno.accion.parametros?.npcId, escena: antes.jugador.escenaId, reloj: despues.reloj });
     if (ext.hechos.at(-1) && ext.hechos.at(-1) !== ultimoAntes) ext.efectos = activarPorHecho(ext.efectos, amp.efectos, ext.hechos.at(-1), despues.reloj);
   }
-  return { texto: partes.filter(Boolean).join(' '), aperturas, ext };
+  // S5: tercera interrupción al mismo NPC → afinidad menor.
+  if (F && turno?.foco?.interrupcion) {
+    const npc = turno.foco.interrupcion;
+    const d = castigoInterrupcion(ext, npc, amp.valores);
+    if (d) ext.afinidad[npc] = Math.round(((ext.afinidad[npc] ?? 0) + d) * 100) / 100;
+  }
+  let salida = partes.filter(Boolean).join(' ');
+  if (antepuesta) salida = `${antepuesta} ${salida}`;
+  if (mundo) salida = `${salida}\n\n${mundo}`;
+  // S2: focos mencionados en lo emitido (también el inicio de evento) y generados desde símbolos.
+  if (F) {
+    const escena = despues.jugador.escenaId;
+    ext.focos = vigentes(detectar(ext.focos, salida, { F, turno: ext.turno, escena, generadas: ctx.generadas }), { F, turno: ext.turno, escena, siguiendo: ext.siguiendo });
+    if (ext.siguiendo && !ext.focos.some((f) => f.id === ext.siguiendo)) ext.siguiendo = null;
+  }
+  return { texto: salida, aperturas, ext };
 }

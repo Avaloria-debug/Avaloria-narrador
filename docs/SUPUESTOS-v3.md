@@ -72,3 +72,7 @@ Q2 | navegador: producción carga a_aprobar y aprobado (cargarPendientes=true po
 Q3 | no hay ui/ ni index.html en la raíz: el punto de entrada real es narrador/prueba/app.js (diff mínimo) | crear ui/
 Q3 | la página guarda el estado en IndexedDB (con ext); firestore.rules /partidas usa keys().hasOnly([...]) sin 'ext': si el estado del narrador se sube ahí, hay que agregar 'ext' (A APROBAR) | cambiar rules
 Q4 | firestore.rules no se tocó: camposDeRegistro() con hasOnly rechazaría pasada_comprension; A APROBAR agregar 'pasada_comprension' a esa lista | editar rules
+- F3-S1: "examinar/tocar X" con X sin objeto, fijo, foco, NPC ni lugar en la escena → reformulación `sin_objetos` (clave t11 `objeto_desconocido`); "examinar" solo sigue examinando la escena.
+- F3-S1: la línea de inicio/cierre de evento va al final, separada por línea en blanco (`\n\n`).
+- F3-S1: `{eco}` solo si la palabra coincide con el nombre del objeto, NPC o lugar resueltos.
+- F3: el estado de focos vive en `estado.ext` (focos, siguiendo, marcasFoco, interrupciones, ultimaCharla); `fin: hallazgo` marca `ext.marcasFoco` (las marcas base se filtran contra contenido-v3).
