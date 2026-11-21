@@ -16,6 +16,7 @@ import { propagar, bloquesCruzados, rumorPendiente, fuerzaDe, MENSAJEROS } from 
 import { temaDe, conocimientoQueCoincide, unicoDisponible } from './temas.js';
 import { palabraDeEco, puedeEco } from './eco.js';
 import { efectosGuardados, activarPorHecho, vencer, efectosEn } from './consecuencias.js';
+import { objetivosGuardados, avanzarObjetivos, impulsar, objetivoPasoDe, pasoActual } from './objetivos.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
@@ -98,6 +99,12 @@ export function fraseAmpliada({ amp, contenido, turno, ctx, aperturas, valoresEx
       const r = elegir(amp.eco[a.intencionId], ctx.hechos({ eco: '1' }), opc({ ...valores, eco }));
       if (r && !r.texto.includes(entrada.texto)) { ctx.ext.ultimoEco = ctx.ext.turno; return r; }
     }
+    // P16: charla del paso en curso del objetivo del NPC.
+    const pasoObj = a.verbo === 'hablar_con' && npc ? pasoActual(ctx.ext.objetivos, amp.objetivos, npc) : null;
+    if (pasoObj?.charla?.length && rng() < 0.3) {
+      const r = elegir(pasoObj.charla, ctx.hechos(), opc(valores));
+      if (r) return r;
+    }
     if (a.verbo === 'hablar_con' && npc && amp.charla?.[npc]?.length && rng() < 0.5) {
       const r = elegir(amp.charla[npc], ctx.hechos(), opc(valores));
       if (r) return r;
@@ -146,6 +153,7 @@ export function extInicial(ext, semilla = 0) {
     unicasUsadas: Array.isArray(e.unicasUsadas) ? [...e.unicasUsadas] : [],
     reveladosAmp: Array.isArray(e.reveladosAmp) ? [...e.reveladosAmp] : [],
     efectos: efectosGuardados(e),
+    objetivos: objetivosGuardados(e),
     afinidad: e.afinidad && typeof e.afinidad === 'object' ? { ...e.afinidad } : {},
     ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
   };
@@ -183,6 +191,8 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
     const { rec, ant } = recuerdo(npc);
     const rumor = npc ? rumorPendiente(ext.rumores, npc) : null;
     if (rumor) extra = { escuchoDe: rumor.tipo, fz: fuerzaDe(rumor.fuerza), ...extra };
+    const objetivoPaso = npc ? objetivoPasoDe(ext.objetivos, amp.objetivos, npc) : null;
+    if (objetivoPaso) extra = { objetivoPaso, ...extra };
     const efecto = efectosEn(ext.efectos ?? [], estado.jugador.escenaId);
     if (efecto.length) extra = { efecto, ...extra };
     const verbo = turno?.accion?.verbo;
@@ -237,6 +247,16 @@ export function narrarConsecuencias({ amp, despues, ext, ctx }) {
   if (!nuevo) return null;
   nuevo.visto = true;
   return ctx.expandirTexto(pick(def(nuevo.id)?.aparece) ?? '') || null;
+}
+
+/** P16: rumor sobre el objetivo de otro NPC que ya avanzó (pasos[paso-1].rumor), con prob 0.2. */
+export function rumorDeObjetivo({ amp, ext, ctx, npc }) {
+  const rng = ctx.rng('objetivos');
+  if (rng() >= 0.2) return null;
+  const otros = Object.entries(ext.objetivos ?? {}).filter(([n, e]) => n !== npc && e.paso >= 1 && amp.objetivos?.[n]?.pasos?.[e.paso - 1]?.rumor);
+  if (!otros.length) return null;
+  const [n, e] = otros[Math.min(otros.length - 1, Math.floor(rng() * otros.length))];
+  return ctx.expandirTexto(amp.objetivos[n].pasos[e.paso - 1].rumor);
 }
 
 /**
@@ -295,7 +315,7 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       const t = linea && completarAmp(ctx.expandirTexto(linea), { npc: porId(contenido.npcs, npcMem)?.nombre });
       if (t) { partes.push(t); ext.ultimoRecuerdo[npcMem] = ext.turno; }
       else {
-        const rum = narrarRumor({ amp, contenido, despues, ext, ctx, npc: npcMem });
+        const rum = narrarRumor({ amp, contenido, despues, ext, ctx, npc: npcMem }) ?? rumorDeObjetivo({ amp, ext, ctx, npc: npcMem });
         if (rum) partes.push(rum);
       }
     }
@@ -320,6 +340,12 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       ext = amb.ext;
       partes.push(ctx.expandirTexto(amb.texto));
     }
+  }
+  // P16: objetivos que avanzan solos; los hechos del jugador los impulsan o frenan.
+  if (amp.objetivos && Object.keys(amp.objetivos).length) {
+    ext.objetivos = avanzarObjetivos(ext.objetivos, amp.objetivos, { reloj: despues.reloj, semillaBase: ext.semillaBase });
+    const npcO = turno?.accion?.parametros?.npcId;
+    if (npcO) ext.objetivos = impulsar(ext.objetivos, amp.objetivos, { npc: npcO, verbo: turno.accion.verbo });
   }
   // P9: rumores cada 6 h de reloj.
   for (let i = 0, n = Math.min(4, bloquesCruzados(antes.reloj, despues.reloj)); i < n; i++) ext.rumores = propagar(ext.rumores, ext.hechos, { contenido, reloj: despues.reloj });

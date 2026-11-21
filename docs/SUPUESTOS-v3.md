@@ -57,3 +57,4 @@ P12 | propiedades corren 200×30 en v3 puro y con ampliado (pendientes+canon); f
 P14 | sin lista de insultos en data (no se inventa): la palabra de eco tiene que existir en el vocabulario del contenido, lo que excluye insultos y datos personales | lista en data A APROBAR
 P14 | eco solo si la frase tiene ≥2 palabras y en acciones simples de intenciones con líneas en t20 | todas
 P15 | la tabla de efectos es t21 (canon, solo con incluirCanon); aparición una vez por activación al estar en la escena; expiración solo si el jugador la vio y está ahí | narrar siempre
+P16 | objetivos desde t22 (no objetivos.json aparte); charla del paso 30% en hablar_con; rumor de objetivo ajeno 20% | archivo nuevo
