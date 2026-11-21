@@ -229,6 +229,10 @@ const usable = (x) => /^t.*\.json$/.test(x) || x === 'valores.json' || x === 'ca
  * @param {{ base: string|URL, fetch?: Function, v3: object, cargarPendientes?: boolean, incluirCanon?: boolean }} o
  * @returns {Promise<{ ampliado: object|null, avisos: object[] }>}
  */
+const CACHE_FETCH = new Map();
+/** W6: vacía la caché de archivos pedidos por fetch (tests). */
+export const vaciarCacheAmpliado = () => CACHE_FETCH.clear();
+
 export async function cargarAmpliadoFetch({ base, fetch: f = globalThis.fetch, v3, cargarPendientes = true, incluirCanon = false } = {}) {
   const avisos = [];
   try {
@@ -240,8 +244,13 @@ export async function cargarAmpliadoFetch({ base, fetch: f = globalThis.fetch, v
     };
     const manifest = await leer('manifest.json');
     const nombres = (manifest?.archivos ?? []).filter((x) => usable(x.f) && (x.f.startsWith('t00') || seCarga(x.estado, { cargarPendientes, incluirCanon }))).map((x) => x.f).sort();
-    const archivos = [];
-    for (const n of nombres) archivos.push([n, await leer(n)]);
+    // W6: pedidos en paralelo y caché en memoria por url + huella del manifest (una segunda carga no vuelve a pedir).
+    const huella = (n) => `${url(n)}#${(manifest.archivos.find((x) => x.f === n) ?? {}).sha ?? (manifest.archivos.find((x) => x.f === n) ?? {}).bytes ?? ''}`;
+    const archivos = await Promise.all(nombres.map(async (n) => {
+      const k = huella(n);
+      if (!CACHE_FETCH.has(k)) CACHE_FETCH.set(k, leer(n).catch((e) => { CACHE_FETCH.delete(k); throw e; }));
+      return [n, structuredClone(await CACHE_FETCH.get(k))];
+    }));
     return { ampliado: fusionarAmpliado(archivos, v3, { cargarPendientes, incluirCanon }), avisos };
   } catch (e) {
     avisos.push({ tipo: 'ampliado_no_cargado', detalle: e instanceof Error ? e.message : String(e) });

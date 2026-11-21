@@ -5,3 +5,4 @@
 - W4 hecho: narración de escena t39 + selector de densidad
 - revisión 2 (W3-W4): compuertas, regresión, humo y bots verdes
 - W5 hecho: fila de opciones (lógica pura + página)
+- W6 hecho: medido 451 KB (20 % por escena); fetch en paralelo + caché; sin paquetes por escena
