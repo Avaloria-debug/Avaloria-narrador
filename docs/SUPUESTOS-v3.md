@@ -123,3 +123,7 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - Foco agotado: responde con la línea siguiente de su verbo si queda; si no, una de `TEXTOS_AGOTADO` (prov, 5 variantes). El test S4 de fase 3 («repetir = ignorar») ahora espera esa línea de cierre.
 - `tools/bots-juego.js` escribe `tools/auto7/repetidas.json` (40 listas que más repiten, con su ruta y variantes). «(sin lista)» = plantillas con huecos rellenados.
 - W6 cerrado sin paquetes por escena.
+
+## t40 (variantes)
+- `clases` reemplaza `focos.clases.<clase>.<verbo>`; `variantes.<foco>.<verbo>` se usa en ramas de un solo paso (no seguir), también al repetir el verbo; `agotado` reemplaza `TEXTOS_AGOTADO`; `descanso` se suma a `intencion_descansar.neutro` sin duplicar la original; `falta_npc` se suma a la reformulación, pero la 3.ª reformulación (sugerir opciones) solo usa líneas con `{nombres}`.
+- Avisos `[dup]` entre t30 y t40: esperados (reemplazo).

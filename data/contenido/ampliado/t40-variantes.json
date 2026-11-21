@@ -1,0 +1,271 @@
+{
+ "tanda": "t40",
+ "estado": "a_aprobar",
+ "nota": "Variantes contra repetición (repetidas.json). clases: REEMPLAZA focos.clases.<clase>.<verbo> (incluye las 2 originales). variantes: pool alternativo para verbos de un solo paso del foco (no seguir); incluye la línea original. agotado: reemplaza TEXTOS_AGOTADO. descanso: lista para el texto sin lista «Descansás un rato en {lugar}». falta_npc: extiende contenido.plantillas.reformulacion.falta_npc.",
+ "clases": {
+  "objeto": {
+   "mirar": [
+    "Lo mirás un buen rato. Es lo que parece.",
+    "Lo estudiás de cerca. Nada que no se vea a simple vista.",
+    "Tiene el desgaste de las cosas que se usan todos los días.",
+    "Le das una vuelta con la mirada. Ninguna marca que diga de quién es.",
+    "Lo mirás con atención. Hay un detalle torcido que antes no habías visto.",
+    "Está ahí, quieto, con la paciencia de los objetos.",
+    "Lo observás. Alguien lo dejó con cuidado, o con prisa; no se sabe.",
+    "La luz le da de costado y le saca un brillo gastado."
+   ],
+   "escuchar": [
+    "No emite ningún ruido.",
+    "Acercás la oreja. Nada, salvo tu propia respiración.",
+    "Está mudo, como corresponde.",
+    "Escuchás. Solo el ruido del lugar, alrededor.",
+    "Ni un crujido. Es un objeto honesto.",
+    "Te quedás escuchando algo que no va a hablar."
+   ],
+   "tocar": [
+    "Lo tocás. Está donde debía estar.",
+    "Al tacto es más frío de lo que parecía.",
+    "Pasás los dedos. Hay polvo, y debajo, una superficie lisa.",
+    "Lo rozás apenas. No se mueve.",
+    "Tiene la tibieza de algo que estuvo al sol.",
+    "Lo tocás con la punta de los dedos, como pidiendo permiso."
+   ]
+  },
+  "persona": {
+   "mirar": [
+    "Notás cómo camina. Nada más.",
+    "Lleva la ropa de alguien que trabaja con las manos.",
+    "Mira a todos lados menos al tuyo.",
+    "Tiene un gesto cansado que no se esfuerza en esconder.",
+    "Lo observás un momento. Parece esperar a alguien que no llega.",
+    "Se rasca la nuca, distraído, y sigue en lo suyo.",
+    "Nada en su cara te dice algo; tal vez por eso la recordás.",
+    "Camina como quien conoce el lugar de memoria."
+   ],
+   "escuchar": [
+    "Aguzás el oído. Murmullos sin importancia.",
+    "Habla de precios, o de alguien; no llegás a saberlo.",
+    "Tararea algo sin melodía clara.",
+    "Alcanzás media frase: «…y eso fue todo». Nada más.",
+    "Se queja en voz baja del tiempo, como todos.",
+    "Escuchás. Cuenta algo, se ríe solo, se calla."
+   ],
+   "tocar": [
+    "Un roce y un «perdón». Fin.",
+    "Le tocás el hombro. Se da vuelta, te mira y sigue.",
+    "Rozás su manga. Se aparta sin decir nada.",
+    "Te mira la mano antes de mirarte a vos.",
+    "Un toque leve. Te devuelve un gesto seco.",
+    "Se sobresalta, te mide y se aleja un paso."
+   ],
+   "seguir": [
+    "Seguís a la figura a distancia prudente. Se mezcla con la gente y la perdés.",
+    "La seguís un trecho. Dobla una esquina y ya no está.",
+    "Vas tras ella sin apuro. Entra a una casa y cierra la puerta.",
+    "La seguís hasta que se detiene a hablar con alguien. No pasa nada más.",
+    "Caminás detrás. Se da vuelta una vez, y decidís que alcanza.",
+    "La seguís un rato. Solo hacía un mandado."
+   ]
+  },
+  "fenomeno": {
+   "mirar": [
+    "Lo observás a la distancia. Parece más cerca de lo que está.",
+    "Cambia mientras lo mirás, despacio, sin pedir permiso.",
+    "Tiene algo hipnótico; te cuesta apartar la vista.",
+    "Lo mirás hasta que deja de parecer extraño.",
+    "Se mueve con un ritmo propio, lento y sin dueño.",
+    "Le das un rato de atención. Sigue igual, indiferente."
+   ],
+   "escuchar": [
+    "Escuchás. Nada que no esperaras.",
+    "Tiene un sonido parejo, de fondo, que se vuelve silencio.",
+    "Prestás atención: un rumor bajo, constante.",
+    "Lo escuchás y te das cuenta de que estaba ahí desde antes.",
+    "Suena a lo que es, nada más.",
+    "Un murmullo largo, que no termina de decir nada."
+   ]
+  },
+  "lugar": {
+   "mirar": [
+    "Lo mirás desde donde estás. Se ve quieto.",
+    "Desde acá parece más chico de lo que es.",
+    "Lo estudiás. Hay marcas de paso, pero nadie a la vista.",
+    "Se ve gastado por los años y por la gente.",
+    "Lo mirás con calma. Nada se mueve.",
+    "Tiene la quietud de un lugar que espera a alguien."
+   ],
+   "escuchar": [
+    "Escuchás del otro lado. Silencio.",
+    "Llega un rumor apagado, sin forma.",
+    "Algo cruje adentro, o no; cuesta saber.",
+    "Escuchás un rato. Solo el viento.",
+    "Un eco lejano, que podría ser cualquier cosa.",
+    "Nada. Un silencio que parece a propósito."
+   ]
+  },
+  "animal": {
+   "mirar": [
+    "Observás sus movimientos. Nada fuera de lo común.",
+    "Te devuelve la mirada un segundo y se olvida de vos.",
+    "Se lame una pata con total indiferencia.",
+    "Mueve la cabeza a sacudones, atento a algo que no ves.",
+    "Parece saber exactamente adónde va.",
+    "Se queda quieto, como si posara.",
+    "Tiene una cicatriz vieja que no le molesta."
+   ],
+   "escuchar": [
+    "Prestás atención. No dice nada nuevo.",
+    "Hace un ruido chico, de garganta, y se calla.",
+    "Respira rápido, atento.",
+    "Se oyen sus pasos, livianos, y nada más.",
+    "Suelta un sonido corto que parece una queja.",
+    "Escuchás. Está demasiado ocupado para hacer ruido."
+   ],
+   "tocar": [
+    "Estirás la mano. Se aparta justo a tiempo.",
+    "Se deja tocar un segundo y se va, digno.",
+    "Te olfatea la mano antes de decidir que no.",
+    "Lo rozás. El pelaje es más áspero de lo que parecía.",
+    "Se tensa bajo tu mano y se escapa.",
+    "Te mira la mano como si fuera una ofensa."
+   ]
+  }
+ },
+ "variantes": {
+  "cambistas_mesa": {
+   "mirar": [
+    "Los cambistas cuentan en silencio, con los labios moviéndose.",
+    "Uno de los cambistas pesa una moneda dos veces y la aparta.",
+    "Las balanzas suben y bajan; los cambistas, no.",
+    "Un cambista cierra el libro cuando pasás cerca."
+   ]
+  },
+  "silueta_colina": {
+   "mirar": [
+    "Una figura inmóvil sobre la colina. No se ve si mira hacia vos.",
+    "La figura de la colina sigue ahí. O se movió apenas.",
+    "Desde acá es solo una mancha vertical contra el cielo.",
+    "Por un momento creés que levanta un brazo. No estás seguro."
+   ]
+  },
+  "carta_suelta": {
+   "mirar": [
+    "Una carta con el lacre roto, doblada muchas veces.",
+    "La carta tiene una esquina mojada y la tinta corrida.",
+    "Se lee una sola palabra en el reverso: «mañana».",
+    "El papel está ajado de tanto pasar de mano en mano."
+   ],
+   "tocar": [
+    "La levantás. El papel es grueso y huele a humo.",
+    "El lacre roto todavía tiene un borde filoso.",
+    "La doblez está tan marcada que casi se corta."
+   ]
+  },
+  "polvo_aire": {
+   "tocar": [
+    "Pasás el dedo por una superficie. Queda una línea limpia.",
+    "El polvo se te pega a los dedos como harina gris.",
+    "Soplás y se levanta una nube chica que tarda en bajar."
+   ]
+  },
+  "carreta_camino": {
+   "mirar": [
+    "Una carreta cargada avanza despacio. El eje chirría con una nota fija.",
+    "La carga va tapada con una lona atada con prisa.",
+    "Una rueda tiene un parche de madera nueva.",
+    "El cochero cabecea y las mulas siguen solas."
+   ]
+  },
+  "copista_pluma": {
+   "mirar": [
+    "El copista no levanta la vista. La pluma se mueve con la regularidad de un reloj.",
+    "Tiene tinta hasta los nudillos y no parece notarlo.",
+    "Moja la pluma, la escurre, sigue. Siempre igual.",
+    "Se detiene, relee una línea y suspira."
+   ],
+   "escuchar": [
+    "Se oye solo el raspar de la pluma y un suspiro cada tanto.",
+    "Murmura las palabras a medida que las copia.",
+    "La pluma raspa, se detiene, vuelve a raspar."
+   ]
+  },
+  "libro_abierto": {
+   "mirar": [
+    "Un libro abierto boca abajo, con el lomo doblado. A quien lo leyó no le importaba.",
+    "Las hojas tienen manchas de dedos en las esquinas.",
+    "Hay una flor seca aplastada entre dos páginas."
+   ],
+   "tocar": [
+    "Pasás los dedos por el lomo. Es cuero viejo, seco.",
+    "Las hojas crujen como hojas de verdad.",
+    "El cuero de la tapa está descascarado en los bordes."
+   ]
+  },
+  "lluvia_cae": {
+   "escuchar": [
+    "La lluvia golpea los techos con insistencia y repite el mismo ritmo.",
+    "Las canaletas cantan con un gorgoteo grueso.",
+    "Debajo del ruido de la lluvia se oye un goteo más lento, más cerca.",
+    "La lluvia afloja y vuelve, como si respirara."
+   ],
+   "mirar": [
+    "La lluvia cae oblicua y suave. Las gotas dibujan círculos en los charcos.",
+    "Cada gota rebota en el empedrado y se lleva un poco de polvo.",
+    "La lluvia borra los bordes de todo lo que está lejos.",
+    "Un hilo de agua baja por el medio de la calle, buscando el río."
+   ]
+  },
+  "sello_lacre": {
+   "mirar": [
+    "Un sello de lacre con una burbuja arriba. Es señal de auténtico, dicen.",
+    "El lacre es rojo oscuro, casi marrón.",
+    "El relieve muestra una letra que no reconocés."
+   ],
+   "tocar": [
+    "Pasás el dedo por el relieve. Una línea fina y una letra torcida.",
+    "El lacre está frío y un poco pegajoso.",
+    "Tiene una grieta finita que lo cruza entero."
+   ]
+  },
+  "silencio_pesado": {
+   "escuchar": [
+    "El silencio tiene capas. Debajo se oye una respiración, un roce, un crujido lejano.",
+    "Es un silencio de lugar viejo, con memoria.",
+    "En el silencio, tu propio pulso se vuelve ruido.",
+    "Algo muy lejos cae y el silencio lo agranda."
+   ]
+  }
+ },
+ "agotado": [
+  "No queda nada más ahí.",
+  "Ya le sacaste todo lo que tenía.",
+  "No hay más que ver; lo sabés.",
+  "Insistir no va a cambiar nada.",
+  "Ya no te dice nada nuevo.",
+  "Lo dejás estar. Ya fue suficiente.",
+  "Eso ya dio lo que podía dar.",
+  "Nada nuevo. Es momento de mirar otra cosa.",
+  "Ya lo conocés de memoria.",
+  "Le das una última mirada y lo soltás.",
+  "No hay más. A veces las cosas son así.",
+  "Lo que había, ya lo encontraste."
+ ],
+ "descanso": [
+  "Descansás un rato en {lugar}.",
+  "Te sentás un momento en {lugar} y dejás que pase el tiempo.",
+  "Hacés una pausa en {lugar}. El cuerpo lo agradece.",
+  "Te quedás quieto en {lugar}, sin apuro, mirando alrededor.",
+  "Te tomás un respiro en {lugar}.",
+  "Descansás en {lugar}; el mundo sigue sin vos un rato.",
+  "Recuperás el aliento en {lugar}.",
+  "Te apoyás en algún lado de {lugar} y cerrás los ojos un momento."
+ ],
+ "falta_npc": [
+  "¿Con quién querés hablar?",
+  "¿A quién te dirigís?",
+  "¿Con quién?",
+  "¿Hablar con quién, exactamente?",
+  "Decime con quién querés hablar.",
+  "¿A quién le hablás?"
+ ]
+}

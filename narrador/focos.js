@@ -197,14 +197,18 @@ export function ejecutarVerbo({ F, fx, ref, verbo, rng, turno, escena, npc = nul
   const generico = (k) => pick(clases[clase]?.[k] ?? clases.objeto?.[k], rng);
   const rama0 = f.gen ? null : F.defs[f.id]?.ramas?.[v];
   // Ajuste fase 7: agotado → la línea que quede de su verbo; si no queda, una de cierre (prov).
-  if (f.agotado && !(Array.isArray(rama0) && (f.pasos[v] ?? 0) < rama0.length)) return { texto: pick(TEXTOS_AGOTADO.lineas, rng), minutos: 0, rama: false, repetido: true };
+  if (f.agotado && !(Array.isArray(rama0) && (f.pasos[v] ?? 0) < rama0.length)) return { texto: pick(F.agotado?.length ? F.agotado : TEXTOS_AGOTADO.lineas, rng), minutos: 0, rama: false, repetido: true };
   if (v === 'ignorar' && !f.agotado) { f.agotado = true; return { texto: generico('ignorar'), minutos: 0, rama: false }; }
   const enVoz = voz(clase, f.gen ? f.alias?.[0] : F.defs[f.id]?.alias?.[0]);
   if (enVoz) return { texto: enVoz, minutos: 0, rama: false, voz: true };
   const rama = f.gen ? null : F.defs[f.id]?.ramas?.[v];
   const i = f.pasos[v] ?? 0;
+  // t40: verbo de un solo paso (no seguir) con pool alternativo: el paso y sus repeticiones salen del pool.
+  const alt = !f.gen && v !== 'seguir' && Array.isArray(rama) && rama.length === 1 ? F.variantes?.[f.id]?.[v] : null;
+  if (alt?.length && i >= 1) return { texto: pick(alt, rng), minutos: 0, rama: false };
   if (!Array.isArray(rama) || i >= rama.length) return { texto: generico(v), minutos: 0, rama: false };
-  const p = pasoDe(rama[i]);
+  const p0 = pasoDe(rama[i]);
+  const p = alt?.length ? { ...p0, t: pick(alt, rng) } : p0;
   f.pasos[v] = i + 1;
   for (const e of p.emite ?? []) if (F.defs[e]) activar(fx.focos, e, { turno, escena });
   if (p.fin) {

@@ -139,6 +139,17 @@ export function fusionarAmpliado(archivos, v3, opciones = {}) {
       for (const [n, o] of Object.entries(d.interrupcion ?? {})) { a.focos.interrupcion[n] ??= {}; for (const [k, l] of Object.entries(o)) sumar(a.focos.interrupcion[n], k, l); }
       for (const [e, o] of Object.entries(d.fijos ?? {})) a.focos.fijos[e] = { ...(a.focos.fijos[e] ?? {}), ...o };
     }
+    // t40: variantes contra repetición. clases REEMPLAZA focos.clases.<clase>.<verbo>; variantes por foco (verbos de un paso);
+    // agotado reemplaza TEXTOS_AGOTADO; descanso = intencion_descansar.neutro; falta_npc extiende la reformulación.
+    if (esObj(d.variantes) || Array.isArray(d.agotado) || Array.isArray(d.descanso)) {
+      a.focos ??= { defs: {}, clases: {}, no_visto: [], interrupcion: {}, fijos: {}, preguntar: {} };
+      for (const [c, vs] of Object.entries(d.clases ?? {})) { a.focos.clases[c] ??= {}; for (const [v, l] of Object.entries(vs)) a.focos.clases[c][v] = [...l]; }
+      a.focos.variantes ??= {};
+      for (const [id, vs] of Object.entries(d.variantes ?? {})) { a.focos.variantes[id] ??= {}; for (const [v, l] of Object.entries(vs)) a.focos.variantes[id][v] = [...l]; }
+      if (Array.isArray(d.agotado) && d.agotado.length) a.focos.agotado = [...d.agotado];
+      if (Array.isArray(d.descanso)) { a.plantillas.intencion_descansar ??= {}; sumar(a.plantillas.intencion_descansar, 'neutro', d.descanso); }
+      if (Array.isArray(d.falta_npc)) { a.plantillas.reformulacion ??= {}; sumar(a.plantillas.reformulacion, 'falta_npc', d.falta_npc); }
+    }
   }
   return a.tandas.length ? a : null;  // valores.json solo no basta para activar el ampliado
 }

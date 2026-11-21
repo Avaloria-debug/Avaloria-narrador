@@ -166,6 +166,11 @@
    "tanda": "t39"
   },
   {
+   "f": "t40-variantes.json",
+   "estado": "a_aprobar",
+   "tanda": "t40"
+  },
+  {
    "f": "valores.json",
    "estado": "a_aprobar_canon",
    "tanda": "valores"

@@ -17,3 +17,7 @@ Rama: `claude/quirky-keller-fn77dr`. W1–W8 hechos (W6 con alcance reducido, ve
 - Foco agotado: línea restante de su verbo o cierre prov (`TEXTOS_AGOTADO`). Test S4 actualizado.
 - Bots 6000 turnos: 0 errores, 259 repeticiones en ventana, 6 seguidas. Detalle por lista en `tools/auto7/repetidas.json` (las más repetidas: genéricos de clase con 2 variantes).
 - W6: cerrado sin paquetes.
+
+## t40
+- Cargado (manifest a_aprobar). Bots 6000 turnos: repeticiones en ventana 259 → 84, seguidas 6 → 2, 0 errores. Las 7 listas que encabezaban repetidas.json bajan a 0; nuevo top: plantillas con huecos (16) y charla de tiren_docente / ivor_cambista (15 c/u). repetidas.json regenerado.
+- Compuertas: comprensión 99.9 %, partes/focos/producción 0 errores, npm test 2067/0, humo ok, bots-focos 100 %.

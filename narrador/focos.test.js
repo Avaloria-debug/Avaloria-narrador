@@ -222,7 +222,7 @@ test('S4 rama completa de gata_mercado: seguir ×3 (tiempo, emite gatas_patio, f
   assert.ok(s[1].estado.ext.focos.some((f) => f.id === 'gatas_patio'));
   assert.ok(s[2].estado.ext.focos.find((f) => f.id === 'gata_mercado').agotado);
   assert.ok(s[3].texto.includes(pasoT('gatas_patio', 'mirar', 0)), s[3].texto);
-  assert.ok(TEXTOS_AGOTADO.lineas.some((t) => s[4].texto.includes(t)), s[4].texto);
+  assert.ok((F.agotado ?? TEXTOS_AGOTADO.lineas).some((t) => s[4].texto.includes(t)), s[4].texto);
   assert.equal(min(s[4]), min(s[3]));
 });
 
@@ -311,6 +311,13 @@ test('Ajuste fase 7: foco agotado responde con la línea que quede de su verbo',
   const r = F.defs.gata_mercado.ramas;
   const v = r.mirar ? 'mirar' : r.examinar ? 'examinar' : null;
   if (v) assert.ok(s[1].texto.includes(pasoT('gata_mercado', v, 0)), s[1].texto);
-  else assert.ok(TEXTOS_AGOTADO.lineas.some((t) => s[1].texto.includes(t)), s[1].texto);
+  else assert.ok((F.agotado ?? TEXTOS_AGOTADO.lineas).some((t) => s[1].texto.includes(t)), s[1].texto);
   assert.ok(TEXTOS_AGOTADO.lineas.length >= 4 && TEXTOS_AGOTADO.prov);
+});
+
+test('t40: clases reemplazadas, variantes por foco, agotado y descanso cargados', () => {
+  assert.ok(F.agotado?.length >= 4);
+  assert.ok(F.variantes?.cambistas_mesa?.mirar?.length > 1);
+  assert.ok(F.clases.objeto.mirar.length > 2);
+  assert.equal(new Set(F.clases.objeto.mirar).size, F.clases.objeto.mirar.length);
 });

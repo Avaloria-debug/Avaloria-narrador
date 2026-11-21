@@ -81,14 +81,16 @@ export function reformulacionEnEscena({ amp, contenido, despues, ctx, aperturas,
  * P20: tercer no entendido seguido. Sugiere opciones válidas con plantillas que ya existen en el v3:
  * NPCs presentes (falta_npc, {nombres}) o salidas de la escena (destino_ambiguo, {opciones}).
  */
-export function sugerirOpciones({ contenido, despues, ctx, aperturas }) {
+export function sugerirOpciones({ amp = null, contenido, despues, ctx, aperturas }) {
   const presentes = npcsPresentes(despues, contenido).map((n) => n.nombre);
   const escena = porId(contenido.escenas, despues.jugador.escenaId);
   const salidas = (escena?.salidas ?? []).map((id) => porId(contenido.escenas, id)?.nombre).filter(Boolean);
   const lista = (l) => (l.length <= 1 ? l[0] : `${l.slice(0, -1).join(', ')} o ${l.at(-1)}`);
   const [clave, valores] = presentes.length ? ['falta_npc', { nombres: lista(presentes) }] : salidas.length ? ['destino_ambiguo', { opciones: lista(salidas) }] : [null, null];
   if (!clave) return null;
-  return elegir(contenido.plantillas.reformulacion[clave], {}, { rng: ctx.rng('sugerir'), aperturas: (aperturas ?? []).slice(0, -1), aperturaDe, completar: (t) => completarAmp(t, valores) });
+  // t40 extiende falta_npc; para sugerir opciones solo sirven las líneas que nombran ({nombres}/{opciones}).
+  const ampl = (amp?.plantillas?.reformulacion?.[clave] ?? []).filter((x) => typeof x === 'string' && /\{(nombres|opciones)\}/.test(x) && !contenido.plantillas.reformulacion[clave].includes(x));
+  return elegir([...contenido.plantillas.reformulacion[clave], ...ampl], {}, { rng: ctx.rng('sugerir'), aperturas: (aperturas ?? []).slice(0, -1), aperturaDe, completar: (t) => completarAmp(t, valores) });
 }
 
 /**
@@ -157,7 +159,9 @@ export function fraseAmpliada({ amp, contenido, turno, ctx, aperturas, valoresEx
     }
     const extra = amp.plantillas?.[a.intencionId]?.[a.resultado] ?? [];
     if (!extra.length) return null;
-    return elegir([...(resolverPlantillas(contenido, a.intencionId, a.resultado) ?? []), ...extra], ctx.hechos(), opc(valores));
+    const base = resolverPlantillas(contenido, a.intencionId, a.resultado) ?? [];
+    // t40: las listas que incluyen la línea original no la duplican.
+    return elegir([...base, ...extra.filter((x) => typeof x !== 'string' || !base.includes(x))], ctx.hechos(), opc(valores));
   }
   // P18: saludo con el apodo (t24 usos), 30%.
   if (turno?.tipo === 'saludo' && amp.apodos?.usos?.length && ctx.ext.apodo && rng() < 0.3) {
@@ -396,7 +400,7 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   const noEntendido = turno?.tipo === 'reformular' || (turno?.tipo === 'ia' && tipo !== 'dialogo_ia');
   ext.noEntendidos = noEntendido ? (ext.noEntendidos ?? 0) + 1 : 0;
   if (noEntendido && ext.noEntendidos >= 3) {
-    const r = sugerirOpciones({ contenido, despues, ctx, aperturas });
+    const r = sugerirOpciones({ amp, contenido, despues, ctx, aperturas });
     if (r) { cerrarFocos(r.texto); return { texto: r.texto, aperturas: [...(aperturas ?? []).slice(0, -1), r.apertura], ext }; }
   }
   // P11 (t11) y P20: reformulación diferenciada, en la voz del NPC presente si hay.
