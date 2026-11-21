@@ -99,3 +99,4 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - F6 V2: verbos de ≤3 letras (ir, ver, dar, oír) solo con formas irregulares; sin etapa de negación, una frase que empieza con «no» queda no_entendido; dos cosas distintas nombradas → aclaración.
 - F6 V3: palabras de escenas y pronombres no se corrigen por tipeo; en viajar, el destino gana a una cosa hallada solo por tipeo.
 - F6 V4: memoria de referencia con vida de 5 turnos (VIDA_REFERENCIA); «la/lo» son pronombre solo si no los sigue un sustantivo.
+- F6 V5: en el juego la lectura solo actúa con ampliado y sobre focos vigentes; reescribe a la forma canónica cuando verboFoco no reconoce el verbo, o pregunta si hay empate real (mismo alias, misma recencia). La aclaración vive 2 turnos en ext.aclaracion.

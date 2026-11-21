@@ -3,3 +3,4 @@
 - V3 hecho: tipeo y tildes · comprensión 71.9 %
 - revisión 1 (V1-V3): compuertas y regresión verdes, 0 falsos positivos
 - V4 hecho: referencias y memoria con vida · comprensión 79.8 %
+- V5 hecho: defaults y aclaración, enganche en turnoDeFoco · comprensión 82.9 %

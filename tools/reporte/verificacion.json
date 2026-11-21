@@ -1,9 +1,6 @@
 {
- "modo": "todo",
+ "modo": "regresion",
  "paso": null,
- "lineas": 5216,
  "errores": [],
- "avisos": [
-  "[dup] texto repetido entre t30-focos.json y t32-focos2.json: \"libros\""
- ]
+ "avisos": []
 }

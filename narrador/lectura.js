@@ -4,7 +4,7 @@
 import { normalizar, distanciaEdicion, resolverDestino } from './comprension.js';
 
 /** Etapas activas por defecto (cada paso de la fase 6 enciende la suya). */
-export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: true, defaults: false, sinonimos: false, varias: false, negacion: false, modo: false });
+export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: true, defaults: true, sinonimos: false, varias: false, negacion: false, modo: false });
 
 /** Acciones que entiende la lectura. */
 export const ACCIONES = Object.freeze(['seguir', 'mirar', 'tocar', 'escuchar', 'hablar', 'preguntar', 'ignorar', 'tomar', 'callar', 'viajar', 'mostrar', 'llamar']);
@@ -392,8 +392,7 @@ function leerParte(parte, ctx, et) {
   if (ids.length > 1) {
     const mismaPalabra = new Set(focosValidos.map((c) => c.span.join())).size === 1;
     if (mismaPalabra && ctx.reciente?.foco && ids.includes(ctx.reciente.foco)) return { ...r, objetivo: ctx.reciente.foco };
-    if (mismaPalabra) return { accion: 'aclarar', opciones: ids, pregunta: preguntaAclaracion({ opciones: ids }, ctx) };
-    return { accion: 'aclarar', opciones: ids, pregunta: preguntaAclaracion({ opciones: ids }, ctx) };
+    return { accion: 'aclarar', verbo: accion, opciones: ids, pregunta: preguntaAclaracion({ opciones: ids }, ctx) };
   }
   // Sin cosa nombrada: referencias (V4) y defaults (V5).
   if (et.referencias) {
@@ -401,14 +400,14 @@ function leerParte(parte, ctx, et) {
     if (pron && !(accion === 'preguntar' && pron === 'le')) {
       const ref = resolverReferencia(pron, ctx.reciente, { genero: generoDe(ctx) });
       if (ref) return { ...r, objetivo: ref };
-      return { accion: 'aclarar', pregunta: preguntaAclaracion({ verbo: accion }, ctx) };
+      return { accion: 'aclarar', verbo: accion, pregunta: preguntaAclaracion({ verbo: accion }, ctx) };
     }
   }
   const quedan = sueltos.filter((w) => !PRON_NPC.has(w) && !(r.npc && ctx.npcs.find((n) => n.id === r.npc)?.palabras.includes(w)));
   if (quedan.length) return { accion: 'no_entendido' };
   if (et.defaults && ctx.reciente?.foco && accion !== 'preguntar') return { ...r, objetivo: ctx.reciente.foco };
   if (accion === 'escuchar' && !quedan.length) return r; // escuchar a secas: el ambiente
-  return { accion: 'aclarar', pregunta: preguntaAclaracion({ verbo: accion }, ctx) };
+  return { accion: 'aclarar', verbo: accion, pregunta: preguntaAclaracion({ verbo: accion }, ctx) };
 }
 // «la/lo» son pronombre solo si no las sigue un sustantivo («mirá la» sí; «mirá la torre» no).
 function pronombreEn(ws, pronombres) {

@@ -7,6 +7,7 @@ import { normalizar, tokenizar, coincidePalabra, resolverObjeto } from './compre
 import { objetosAplicables, npcsPresentes } from './turno.js';
 import { avanzar, minutosAbsolutos } from './reloj.js';
 import { MOTIVOS } from './motivos.js';
+import { leerAccion, contextoLectura, referenciasVigentes, anotarReferencias } from './lectura.js';
 
 export const VERBOS_FOCO = Object.freeze(['seguir', 'mirar', 'llamar', 'tocar', 'escuchar', 'preguntar', 'ignorar']);
 export const MAX_FOCOS = 8;
@@ -60,6 +61,9 @@ export function extFocos(ext) {
     marcasFoco: Array.isArray(e.marcasFoco) ? e.marcasFoco.filter((m) => typeof m === 'string') : [],
     interrupciones: e.interrupciones && typeof e.interrupciones === 'object' ? structuredClone(e.interrupciones) : {},
     ultimaCharla: e.ultimaCharla && typeof e.ultimaCharla.npc === 'string' ? { ...e.ultimaCharla } : null,
+    // Fase 6: memoria de referencia y aclaración pendiente.
+    refs: e.refs && typeof e.refs === 'object' ? structuredClone(e.refs) : {},
+    aclaracion: e.aclaracion && Array.isArray(e.aclaracion.opciones) ? structuredClone(e.aclaracion) : null,
   };
 }
 
@@ -229,11 +233,38 @@ export function interrumpe({ fx, verbo, turno, presentes, ref, F }) {
  * Turno de foco, antes de la comprensión. null = comportamiento anterior.
  * @returns {null | { tipo: 'foco'|'reformular', estado, intencionId: null, texto?, motivo?, datos?, foco?, extFocos? }}
  */
+const PREFIJO_FOCO = { seguir: 'seguir a', mirar: 'mirar a', llamar: 'llamar a', tocar: 'tocar', escuchar: 'escuchar', preguntar: 'preguntar por', ignorar: 'ignorar' };
+
+/**
+ * Fase 6: lectura por etapas (lectura.js) sobre los focos vigentes. Devuelve el texto canónico que entiende
+ * verboFoco/resolverReferente, una aclaración, o null (sigue como antes).
+ */
+function leerSobreFocos({ F, fx, texto, partida, contenido, turno, escena }) {
+  const focos = {};
+  for (const f of fx.focos) focos[f.id] = { alias: aliasDe(f, F), clase: claseDe(f, F) };
+  for (const [id, o] of fijosDe(F, escena)) focos[`fijo:${id}`] ??= { alias: o.alias ?? [], clase: 'objeto' };
+  const presentes = npcsPresentes(partida, contenido).map((n) => n.id);
+  const reciente = referenciasVigentes(fx.refs, turno);
+  // Un solo candidato visto más recientemente que el resto vale como referencia (como en resolverReferente).
+  const masReciente = [...fx.focos].sort((a, b) => b.visto - a.visto);
+  if (!reciente.foco && masReciente.length && (masReciente.length === 1 || masReciente[0].visto > masReciente[1].visto)) reciente.foco = masReciente[0].id;
+  const pend = fx.aclaracion && turno - fx.aclaracion.turno <= 2 ? fx.aclaracion : null;
+  const ctx = contextoLectura({ focos, npcs: contenido.npcs, presentes, escenas: contenido.escenas, reciente, pendiente: pend });
+  const l = leerAccion(texto, ctx);
+  const canon = (accion, id, npc) => {
+    if (!PREFIJO_FOCO[accion] || !focos[id]) return null;
+    const alias = focos[id].alias[0];
+    const n = npc ? contenido.npcs.find((x) => x.id === npc) : null;
+    return `${PREFIJO_FOCO[accion]} ${alias}${accion === 'preguntar' && n ? ` a ${n.nombre.split(' ')[0]}` : ''}`;
+  };
+  if (l.accion === 'aclarar' && l.opciones?.length >= 2 && l.opciones.every((id) => focos[id]) && PREFIJO_FOCO[l.verbo]) return { aclarar: l, ctx };
+  const t = canon(l.accion, l.objetivo, l.npc);
+  return t ? { texto: t, lectura: l, ctx, dePendiente: Boolean(pend && l.objetivo && pend.opciones.includes(l.objetivo)) } : null;
+}
+
 export function turnoDeFoco({ amp, contenido, partida, texto, dic = null }) {
   const F = datosFocos(amp);
   if (!F || typeof texto !== 'string') return null;
-  const v = verboFoco(texto);
-  if (!v) return null;
   const ext = partida.ext ?? {};
   const turno = (Number.isInteger(ext.turno) ? ext.turno : 0) + 1;
   const escena = partida.jugador.escenaId;
@@ -241,7 +272,19 @@ export function turnoDeFoco({ amp, contenido, partida, texto, dic = null }) {
   // Lo que quedó a la vista al cerrar el turno anterior sigue accionable en este.
   fx.focos = vigentes(fx.focos, { F, turno: turno - 1, escena, siguiendo: fx.siguiendo });
   const rng = derivar(`${Number.isInteger(ext.semillaBase) ? ext.semillaBase : partida.semilla | 0}:${turno}`, 'focos');
-  const ref = resolverReferente(texto, v, { F, lista: fx.focos, escena });
+  let v = verboFoco(texto);
+  const lec = leerSobreFocos({ F, fx, texto, partida, contenido, turno, escena });
+  if (lec?.aclarar && (!v || resolverReferente(texto, v, { F, lista: fx.focos, escena })?.tipo !== 'fijo')) {
+    fx.aclaracion = { accion: lec.aclarar.verbo, opciones: lec.aclarar.opciones, turno };
+    return { tipo: 'foco', estado: { ...partida, reformulacionPendiente: false }, intencionId: null, texto: lec.aclarar.pregunta, foco: { id: null, verbo: lec.aclarar.verbo, aclaracion: lec.aclarar.opciones }, extFocos: fx };
+  }
+  // Sin verbo reconocido (o respuesta a una aclaración): se usa la lectura canónica.
+  let forzado = null;
+  if (lec?.texto && (!v || lec.dePendiente)) { texto = lec.texto; v = verboFoco(texto); forzado = lec.lectura.objetivo; }
+  fx.aclaracion = null;
+  if (!v) return null;
+  const fForzado = forzado ? fx.focos.find((f) => f.id === forzado) : null;
+  const ref = fForzado ? { tipo: 'foco', f: fForzado } : resolverReferente(texto, v, { F, lista: fx.focos, escena });
   if (!ref) {
     if ((v.verbo === 'examinar' || v.verbo === 'tocar') && referenteDesconocido(texto, v, { contenido, partida, dic })) {
       return { tipo: 'reformular', estado: partida, intencionId: null, motivo: MOTIVOS.SIN_OBJETOS, datos: { nombres: [] }, extFocos: fx };
@@ -263,6 +306,7 @@ export function turnoDeFoco({ amp, contenido, partida, texto, dic = null }) {
   }
   partes.push(r.texto);
   if (v.verbo === 'seguir' && ref.tipo === 'foco') fx.siguiendo = r.fin ? null : ref.f.id;
+  if (ref.tipo === 'foco') fx.refs = anotarReferencias(fx.refs, { accion: v.verbo, objetivo: ref.f.id }, lec?.ctx ?? { cosas: [] }, turno);
   const reloj = r.minutos ? avanzar(partida.reloj, r.minutos / 60) : partida.reloj;
   return {
     tipo: 'foco',
