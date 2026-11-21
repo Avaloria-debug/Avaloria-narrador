@@ -2,6 +2,7 @@
 // No escribe texto propio: solo elige una plantilla, completa sus placeholders y une frases con un espacio.
 // La ventana de aperturas entra y sale como dato; este módulo no la guarda.
 import { resolverPlantillas } from './contenido.js';
+import { sinPuntoDoble } from './puntuacion.js';
 import { destinosDeViaje } from './comprension.js';
 import { BLOQUE_REFORMULACION, MOTIVOS, REPETIR_SEGUNDA, YA_EN_DESTINO } from './motivos.js';
 
@@ -54,7 +55,8 @@ export function completar(plantilla, valores) {
   if (typeof plantilla !== 'string') return null;
   const limpios = limpiarValores(valores);
   if (!placeholdersDe(plantilla).every((p) => Object.hasOwn(limpios, p))) return null;
-  const texto = plantilla.replace(PATRON, (_, nombre) => limpios[nombre]);
+  // Si el valor ya cierra con puntuación final, no se agrega el punto de la plantilla (sin "..").
+  const texto = plantilla.replace(/\{([^{}]*)\}(\.?)/g, (_, nombre, punto) => sinPuntoDoble(limpios[nombre], punto));
   return /[{}]/.test(texto) ? null : texto;
 }
 

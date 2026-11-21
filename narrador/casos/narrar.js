@@ -12,6 +12,7 @@
 //   Sin disparo: gancho fuera de escena. Final alcanzado o abandono: desenlace (§9).
 
 import { crearRng, semillaAEntero } from '../azar.js';
+import { sinPuntoDoble } from '../puntuacion.js';
 import { escribirTag, subirTag, quitarTag, ajustarReputacion, aplicarTraicion, deltaRelacion } from './tags.js';
 import { tagsDeAccion, OBJETIVOS, OPS } from './acciones.js';
 import { aplicarDecaimientoPorHoras } from './decaimiento.js';
@@ -109,7 +110,7 @@ export function conocimientosNarrados(texto, estadoCaso) {
 
 export function completarMarcadores(texto, estadoCaso, contenido, mundo = null) {
   const pistas = estadoCaso.instancia?.pistas ?? [];
-  return String(texto).replace(/\{(npc|conocimiento|escena):(p\d+)\}/g, (todo, clase, ranura) => {
+  const valor = (todo, clase, ranura) => {
     const pista = pistas.find((p) => p.ranura === ranura);
     const npc = (contenido?.npcs ?? []).find((n) => n.id === pista?.npcId);
     if (!pista || !npc) return todo;
@@ -119,6 +120,11 @@ export function completarMarcadores(texto, estadoCaso, contenido, mundo = null) 
       return (contenido?.escenas ?? []).find((e) => e.id === escenaId)?.nombre ?? todo;
     }
     return (npc.conocimientos ?? []).find((k) => k.id === pista.conocimientoId)?.contenido ?? todo;
+  };
+  // Sin "..": si el valor ya cierra con puntuación final, no se agrega el punto del texto.
+  return String(texto).replace(/\{(npc|conocimiento|escena):(p\d+)\}(\.?)/g, (todo, clase, ranura, punto) => {
+    const v = valor(todo.slice(0, todo.length - punto.length), clase, ranura);
+    return sinPuntoDoble(v, punto);
   });
 }
 
