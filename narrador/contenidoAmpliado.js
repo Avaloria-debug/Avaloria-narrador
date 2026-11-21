@@ -62,6 +62,7 @@ export function fusionarAmpliado(archivos, v3, opciones = {}) {
     if (!esObj(d)) continue;
     if (nombre.startsWith('t00')) { a.guia = d; continue; }
     if (nombre === 'valores.json') { a.valores = d.valores ?? d; continue; }
+    if (nombre === 'calendario.json') { a.calendario = d.festividades ?? {}; continue; }
     if (!seCarga(d.estado, opciones)) continue;
     a.tandas.push(d.tanda ?? nombre);
     for (const [k, v] of Object.entries(d.ambiente ?? {})) sumar(a.ambiente, k, v.l ?? v);
@@ -174,7 +175,7 @@ export async function leerArchivosAmpliado(dir) {
   const { fileURLToPath } = await import('node:url');
   const ruta = dir ?? fileURLToPath(new URL('../data/contenido/ampliado/', import.meta.url));
   let nombres;
-  try { nombres = (await readdir(ruta)).filter((x) => /^t.*\.json$/.test(x) || x === 'valores.json').sort(); } catch (e) { if (e.code === 'ENOENT') return []; throw e; }
+  try { nombres = (await readdir(ruta)).filter((x) => /^t.*\.json$/.test(x) || x === 'valores.json' || x === 'calendario.json').sort(); } catch (e) { if (e.code === 'ENOENT') return []; throw e; }
   const out = [];
   for (const n of nombres) out.push([n, JSON.parse(await readFile(`${ruta.replace(/\/?$/, '/')}${n}`, 'utf8'))]);
   return out;

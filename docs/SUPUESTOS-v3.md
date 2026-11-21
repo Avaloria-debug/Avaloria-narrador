@@ -64,3 +64,5 @@ P18 | saludo con apodo (t24 usos) con prob 0.3 si hay apodo; {apodo} = base si l
 P19 | silencio solo en acciones simples con NPC; ritmo corto usa t25 siempre que haya líneas para la intención | mezclar con las demás
 P20 | voz del NPC (t26) solo para no_entendido e intencion_ambigua; sin NPC cae a t11/v3 (no se agrega símbolo de ambiente) | símbolo de ambiente
 P20 | 3er no entendido seguido (reformulación o IA sin respuesta) sugiere NPCs presentes (falta_npc) o salidas (destino_ambiguo) con plantillas v3 | texto nuevo
+P21 | año de 360 días, 90 por estación; día 1 = primavera | otro largo
+P21 | festividades sin fecha en t27: solo se activan con data/contenido/ampliado/calendario.json (no existe; A APROBAR) | inventar fechas

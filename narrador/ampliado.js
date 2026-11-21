@@ -20,6 +20,7 @@ import { objetivosGuardados, avanzarObjetivos, impulsar, objetivoPasoDe, pasoAct
 import { diarioGuardado, anotar as anotarDiario, textoDiario } from './diario.js';
 import { normalizar as normalizarTexto } from './comprension.js';
 import { derivarApodo, apodoPara } from './apodo.js';
+import { estacionDe, festividadActiva } from './calendario.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
@@ -242,6 +243,9 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
     const objetivoPaso = npc ? objetivoPasoDe(ext.objetivos, amp.objetivos, npc) : null;
     if (objetivoPaso) extra = { objetivoPaso, ...extra };
     if (ext.apodo) extra = { apodo: ext.apodo.verbo, ...extra };
+    const escenaDef = (contenido.escenas ?? []).find((x) => x.id === estado.jugador.escenaId);
+    const festividad = festividadActiva(amp.festividades, amp.calendario, { dia: estado.reloj.dia, escena: escenaDef });
+    extra = { estacion: estacionDe(estado.reloj.dia), ...(festividad ? { festividad } : {}), ...extra };
     const efecto = efectosEn(ext.efectos ?? [], estado.jugador.escenaId);
     if (efecto.length) extra = { efecto, ...extra };
     const verbo = turno?.accion?.verbo;
@@ -404,7 +408,15 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       partes.push(ctx.expandirTexto(unico.t));
     }
     const presentes = npcsPresentes(despues, contenido).map((n) => n.id);
-    const amb = mensajeAmbiental({ ext, amp, hechos: ctx.hechos(), escenaId: despues.jugador.escenaId, presentes, npcTurno: ctx.npcId, rng: ctx.rng('ambiente') });
+    // P21: líneas de estación y de festividad activa se suman al ambiente de la escena.
+    const hAmb = ctx.hechos();
+    const esc = despues.jugador.escenaId;
+    const extraAmb = [
+      ...(amp.estaciones?.[hAmb.estacion]?.[esc] ?? []).map((t) => (typeof t === 'string' ? { c: { estacion: hAmb.estacion }, t } : t)),
+      ...(hAmb.festividad ? (amp.festividades?.[hAmb.festividad]?.lineas ?? []).map((t) => (typeof t === 'string' ? { c: { festividad: hAmb.festividad }, t } : t)) : []),
+    ];
+    const ampAmb = extraAmb.length ? { ...amp, ambiente: { ...amp.ambiente, [esc]: [...(amp.ambiente?.[esc] ?? []), ...extraAmb] } } : amp;
+    const amb = mensajeAmbiental({ ext, amp: ampAmb, hechos: hAmb, escenaId: despues.jugador.escenaId, presentes, npcTurno: ctx.npcId, rng: ctx.rng('ambiente') });
     if (amb) {
       ext = amb.ext;
       partes.push(ctx.expandirTexto(amb.texto));
