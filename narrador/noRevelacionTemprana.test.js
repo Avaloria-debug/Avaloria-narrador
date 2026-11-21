@@ -54,7 +54,13 @@ describe('el _2 no se revela antes de su umbral', () => {
       assert.deepEqual(otra.estado.npcs[npc].conocimientosRevelados, [k2.id]);
     });
 
-    test(`${npc}: hablando con él, el _2 no se revela aunque la relación sea máxima y falte la condición del _1`, async () => {
+    // 0.0.43: el _1 de Hollis ya no pide evento; para él se prueba el orden (sale el _1 antes que el _2).
+    if (k1.requiereEvento == null && k1.requiereMarca == null) {
+      test(`${npc}: el _1 no pide condición; hablando con relación máxima sale el _1 antes que el _2`, async () => {
+        const r = await narrar(partida(caso, 100), { tipo: 'texto', texto: `hablar con ${def(npc).alias[0]}` });
+        assert.deepEqual(r.estado.npcs[npc].conocimientosRevelados, [k1.id]);
+      });
+    } else test(`${npc}: hablando con él, el _2 no se revela aunque la relación sea máxima y falte la condición del _1`, async () => {
       // El _2 nunca se revela antes que el _1: por conversación, el _1 pendiente (sin su evento o marca) lo traba.
       let estado = partida(caso, 100);
       const alias = def(npc).alias[0];

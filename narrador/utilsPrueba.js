@@ -21,3 +21,17 @@ export function rngSembrado(semilla) {
 
 /** Evento activo sin vencimiento, para armar estados de prueba. */
 export const eventoActivo = (id, escenaId) => ({ id, escenaId, turnosRestantes: null, horaFin: null });
+
+/**
+ * Copia del contenido donde el _1 de Hollis vuelve a pedir la tormenta (como hasta 0.0.42).
+ * Desde 0.0.43 el contenido real no lo pide; los tests del mecanismo evento/habilita la usan.
+ */
+export function contenidoConSenderoPorTormenta(contenido) {
+  return {
+    ...contenido,
+    npcs: contenido.npcs.map((n) => (n.id !== 'hollis_pastor' ? n : {
+      ...n,
+      conocimientos: n.conocimientos.map((k) => (k.id === 'conocimiento_sendero_sin_vigilancia' ? { ...k, requiereEvento: 'evento_tormenta_verano' } : k)),
+    })),
+  };
+}

@@ -4,7 +4,7 @@ import { ejecutarTurno, npcsPresentes, objetosAplicables, TIPOS_TURNO } from './
 import { estadoInicial } from './estado.js';
 import { eventosDeEscena } from './eventos.js';
 import { leerContenido } from './cargarContenido.js';
-import { rngDe, rngSembrado, eventoActivo as ev } from './utilsPrueba.js';
+import { rngDe, rngSembrado, eventoActivo as ev, contenidoConSenderoPorTormenta } from './utilsPrueba.js';
 
 let contenido;
 before(async () => {
@@ -239,12 +239,14 @@ describe('turno — conocimientos', () => {
     assert.equal(efecto(conMarca, 'conocimiento_revelado').conocimientoId, 'conocimiento_elia_1');
   });
 
-  test('evento requerido: Hollis con la tormenta', () => {
+  test('evento requerido: Hollis con la tormenta (contenido con el sendero por tormenta)', () => {
+    const c = contenidoConSenderoPorTormenta(contenido);
+    const textoC = (estado, frase) => ejecutarTurno(estado, { tipo: 'texto', texto: frase }, { contenido: c, rng: rngDe([0.1]) });
     const base = { jugador: { escenaId: 'escena_camino_sur' }, npcs: { hollis_pastor: { relacion: 60 } } };
-    assert.equal(efecto(texto(partida(base), 'hablar con Hollis'), 'conocimiento_revelado'), undefined);
+    assert.equal(efecto(textoC(partida(base), 'hablar con Hollis'), 'conocimiento_revelado'), undefined);
     const conTormenta = partida({ ...base, eventosActivos: [ev('evento_tormenta_verano', 'escena_camino_sur')] });
     assert.equal(
-      efecto(texto(conTormenta, 'hablar con Hollis'), 'conocimiento_revelado').conocimientoId,
+      efecto(textoC(conTormenta, 'hablar con Hollis'), 'conocimiento_revelado').conocimientoId,
       'conocimiento_sendero_sin_vigilancia',
     );
   });
@@ -443,7 +445,9 @@ describe('turno — efectos de eventos', () => {
     assert.equal(abierto.estado.jugador.escenaId, 'escena_mercado_circular');
   });
 
-  test('habilita: la tormenta habilita el conocimiento y al cerrarse deja de valer', () => {
+  test('habilita: la tormenta habilita el conocimiento y al cerrarse deja de valer (contenido con el sendero por tormenta)', () => {
+    const c = contenidoConSenderoPorTormenta(contenido);
+    const texto = (estado, frase) => ejecutarTurno(estado, { tipo: 'texto', texto: frase }, { contenido: c, rng: rngDe([0.1]) });
     const tormenta = { id: 'evento_tormenta_verano', escenaId: 'escena_lago_espejos', turnosRestantes: null, horaFin: { dia: 1, hora: '08:00' } };
     const e = partida({
       jugador: { escenaId: 'escena_camino_sur' },

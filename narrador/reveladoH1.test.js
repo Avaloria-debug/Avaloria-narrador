@@ -9,7 +9,7 @@ import { posicionesDeNpcs } from './movimientoNpcs.js';
 const SEREL = 'serel_panadero';
 const S1 = 'conocimiento_serel_1';
 const HOLLIS = 'hollis_pastor';
-const SENDERO = 'conocimiento_sendero_sin_vigilancia'; // _1 de Hollis: umbral 30, pide evento_tormenta_verano
+const SENDERO = 'conocimiento_sendero_sin_vigilancia'; // _1 de Hollis: umbral 30, sin evento desde 0.0.43
 const ahora = () => '2026-11-20T10:00:00Z';
 const serel = contenido.npcs.find((n) => n.id === SEREL);
 const EXITO = contenido.plantillas.revelar_conocimiento.exito.map((p) => completar(p, { npc: serel.nombre, conocimiento: serel.conocimientos[0].contenido }));
@@ -81,14 +81,26 @@ describe('primer contacto: solo se consume si revela o falla por relación', () 
   const SOBRE_SENDERO = 'Hollis Dren, ¿qué sabés del sendero de las colinas?';
 
   test('bloqueada por evento: no revela y la marca queda sin usar', async () => {
-    const r = await decir(conHollis(0), SOBRE_SENDERO);
-    assert.deepEqual(r.estado.npcs[HOLLIS].conocimientosRevelados, []);
+    // Desde 0.0.43 el _1 de Hollis no pide evento; el bloqueo por evento se prueba con Ivor (pide evento_deuda_impaga).
+    const IVOR = 'ivor_cambista';
+    const I1 = 'conocimiento_ivor_1';
+    const e0 = crearPartida({ semilla: 5 });
+    const conIvor = conNpc({ ...e0, jugador: { ...e0.jugador, escenaId: 'escena_plaza_cambistas' }, caso: { primerContactoPista: { npcId: IVOR, usado: false } } }, IVOR, { relacion: 0 });
+    const SOBRE_DEUDAS = 'Ivor Aster, ¿qué sabés de las deudas?';
+    const r = await decir(conIvor, SOBRE_DEUDAS);
+    assert.deepEqual(r.estado.npcs[IVOR].conocimientosRevelados, []);
     assert.equal(r.estado.caso.primerContactoPista.usado, false);
-    // Con la tormenta activa, la misma consulta con relación 0 revela usando el primer contacto y lo consume.
-    const tormenta = { ...r.estado, eventosActivos: [{ id: 'evento_tormenta_verano', escenaId: r.estado.jugador.escenaId, turnosRestantes: 5, horaFin: null }] };
-    const r2 = await decir(tormenta, SOBRE_SENDERO);
-    assert.deepEqual(r2.estado.npcs[HOLLIS].conocimientosRevelados, [SENDERO]);
+    // Con la deuda impaga activa, la misma consulta con relación 0 revela usando el primer contacto y lo consume.
+    const deuda = { ...r.estado, eventosActivos: [{ id: 'evento_deuda_impaga', escenaId: r.estado.jugador.escenaId, turnosRestantes: 5, horaFin: null }] };
+    const r2 = await decir(deuda, SOBRE_DEUDAS);
+    assert.deepEqual(r2.estado.npcs[IVOR].conocimientosRevelados, [I1]);
     assert.equal(r2.estado.caso.primerContactoPista.usado, true);
+  });
+
+  test('0.0.43: el _1 de Hollis ya no pide tormenta: la consulta con relación 0 revela y consume la marca', async () => {
+    const r = await decir(conHollis(0), SOBRE_SENDERO);
+    assert.deepEqual(r.estado.npcs[HOLLIS].conocimientosRevelados, [SENDERO]);
+    assert.equal(r.estado.caso.primerContactoPista.usado, true);
   });
 
   test('la consulta que revela consume la marca', async () => {

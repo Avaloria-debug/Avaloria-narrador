@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { puedeRevelar, conocimientoARevelar, conocimientoPorNarrativo, revelar, MOTIVOS_NO_REVELA as M } from './conocimientos.js';
 import { npcInicial } from './npcs.js';
 import { leerContenido } from './cargarContenido.js';
-import { eventoActivo as ev } from './utilsPrueba.js';
+import { eventoActivo as ev, contenidoConSenderoPorTormenta } from './utilsPrueba.js';
 
 let contenido;
 before(async () => {
@@ -32,11 +32,19 @@ describe('conocimientos — revelar por conversación', () => {
     assert.equal(aRevelar('ivor_cambista', npc('ivor_cambista', { relacion: 49 }), conDeuda).motivo, M.UMBRAL);
   });
 
-  test('evento que habilita: Hollis con la tormenta de verano', () => {
+  test('evento que habilita: Hollis con la tormenta de verano (contenido con el sendero por tormenta)', () => {
+    // Desde 0.0.43 el contenido real no pide la tormenta; el mecanismo se prueba con la copia que la pide.
+    const c = contenidoConSenderoPorTormenta(contenido);
     const hollis = npc('hollis_pastor', { relacion: 30 });
-    assert.equal(aRevelar('hollis_pastor', hollis).motivo, M.EVENTO);
+    const aRevelarC = (est = estado()) => conocimientoARevelar(c.npcs.find((n) => n.id === 'hollis_pastor'), hollis, est, c);
+    assert.equal(aRevelarC().motivo, M.EVENTO);
     const conTormenta = estado({ eventosActivos: [ev('evento_tormenta_verano', 'escena_lago_espejos')] });
-    assert.equal(aRevelar('hollis_pastor', hollis, conTormenta).conocimiento.id, 'conocimiento_sendero_sin_vigilancia');
+    assert.equal(aRevelarC(conTormenta).conocimiento.id, 'conocimiento_sendero_sin_vigilancia');
+  });
+
+  test('0.0.43: en el contenido real el _1 de Hollis no pide evento y se revela sin tormenta', () => {
+    assert.equal(def('hollis_pastor').conocimientos[0].requiereEvento, null);
+    assert.equal(aRevelar('hollis_pastor', npc('hollis_pastor', { relacion: 30 })).conocimiento.id, 'conocimiento_sendero_sin_vigilancia');
   });
 
   test('marca leyo: Elia y Oren', () => {
