@@ -179,6 +179,7 @@ export function ejecutarVerbo({ F, fx, ref, verbo, rng, turno, escena }) {
     return { texto: pick(lista, rng), minutos: 0, rama: verbo === 'tocar' || verbo === 'mirar' || verbo === 'examinar' };
   }
   const f = fx.focos.find((x) => x.id === ref.f.id) ?? ref.f;
+  f.visto = turno; // actuar sobre un foco lo mantiene a la vista
   const clase = claseDe(f, F);
   const v = verbo === 'examinar' ? 'mirar' : verbo;
   const generico = (k) => pick(clases[clase]?.[k] ?? clases.objeto?.[k], rng);

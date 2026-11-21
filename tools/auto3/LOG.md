@@ -1,3 +1,4 @@
 - S1 hecho: fijos t30 + objeto_desconocido, eco por referente, eventos (inicio emitido / línea de mundo aparte).
 - S2 hecho: focos.js: detección por alias, generados desde símbolos, vida/máx 8, fijos, ext.focos.
 - S3 hecho: verboFoco/resolverReferente: prioridad foco > anterior, eso/reciente, no_visto, typos.
+- S4 hecho: ramas en orden con tiempoMin/emite/fin, fallback por clase, ignorar tras fin.

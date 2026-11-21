@@ -206,3 +206,38 @@ test('S3 typos en verbo y alias ("persegir al caballo")', async () => {
   const [r] = await jugar(await conFocos(['caballo_suelto']), ['persegir al cabalo']);
   assert.ok(textosFoco('caballo_suelto', 'seguir').some((t) => r.texto.includes(t)), r.texto);
 });
+
+// ---- S4: ramas y finales ----
+import { minutosAbsolutos } from './reloj.js';
+const pasoT = (id, v, i) => { const p = F.defs[id].ramas[v][i]; return typeof p === 'string' ? p : p.t; };
+
+test('S4 rama completa de gata_mercado: seguir ×3 (tiempo, emite gatas_patio, fin nada) → mirar gatas_patio → repetir = ignorar', async () => {
+  const e0 = await conFocos(['gata_mercado']);
+  const s = await jugar(e0, ['seguir a la gata', 'seguir a la gata', 'seguir a la gata', 'mirar las gatas', 'seguir a la gata']);
+  for (let i = 0; i < 3; i++) assert.ok(s[i].texto.includes(pasoT('gata_mercado', 'seguir', i)), s[i].texto);
+  const min = (r) => minutosAbsolutos(r.estado.reloj);
+  assert.equal(min(s[0]) - minutosAbsolutos(e0.reloj), F.defs.gata_mercado.ramas.seguir[0].tiempoMin);
+  assert.ok(s[1].estado.ext.focos.some((f) => f.id === 'gatas_patio'));
+  assert.ok(s[2].estado.ext.focos.find((f) => f.id === 'gata_mercado').agotado);
+  assert.ok(s[3].texto.includes(pasoT('gatas_patio', 'mirar', 0)), s[3].texto);
+  assert.ok(F.clases.animal.ignorar.some((t) => s[4].texto.includes(t)), s[4].texto);
+  assert.equal(min(s[4]), min(s[3]));
+});
+
+test('S4 fin hallazgo marca ext.marcasFoco; fin nada no', async () => {
+  const [a] = await jugar(await conFocos(['gatas_patio']), ['seguir a las gatas']);
+  assert.ok(a.estado.ext.marcasFoco.includes('foco_gatas_patio_hallazgo'));
+  const s = await jugar(await conFocos(['gata_mercado']), Array(3).fill('seguir a la gata'));
+  assert.deepEqual(s.at(-1).estado.ext.marcasFoco, []);
+});
+
+test('S4 sin rama para el verbo → clases.<clase>.<verbo>', async () => {
+  const [r] = await jugar(await conFocos(['gatas_patio']), ['llamar a las gatas']);
+  assert.ok(F.clases.animal.llamar.some((t) => r.texto.includes(t)), r.texto);
+});
+
+test('S4 el turno de foco es un turno normal (ext.turno avanza, el ambiente sigue)', async () => {
+  const e0 = await conFocos(['gata_mercado']);
+  const [r] = await jugar(e0, ['mirar a la gata']);
+  assert.equal(r.estado.ext.turno, e0.ext.turno + 1);
+});
