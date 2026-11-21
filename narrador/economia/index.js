@@ -302,3 +302,17 @@ export function turnoDeEconomia({ amp, contenido, partida, texto }) {
   const final = conObjeto(pagado, contenido, PRODUCTOS[producto].objetoId);
   return turnoTexto(final, L('compra', { npc, monto: formatoMonto(final$), producto: PRODUCTOS[producto].nombre }), eco);
 }
+
+/** Fase 8 (corpus): intención económica de una frase, en la forma del medidor de comprensión ({ accion, objetivo? }). */
+export function intencionEconomica(texto) {
+  const n = normalizar(texto);
+  if (!n) return null;
+  if (pideFiado(n)) return { accion: 'fiado' };
+  if (pideCobrar(n)) return { accion: 'cobrar_favor' };
+  if (cuentaInfo(n)) return { accion: 'informar' };
+  if (/(^| )(muestro|enseno|saco|cuento|agito) (la bolsa|mi bolsa|las monedas|mis monedas|el dinero|mi dinero|la plata|mi plata)( |$)/.test(n)) return { accion: 'exhibir' };
+  if (abreRegateo(n)) { const p = productoEn(n); return { accion: 'regatear', ...(p ? { objetivo: p } : {}) }; }
+  if (pideTrabajo(n)) return { accion: 'trabajo' };
+  const l = leerEconomia(texto);
+  return l ? { accion: l.tipo, ...(l.producto ? { objetivo: l.producto } : {}) } : null;
+}

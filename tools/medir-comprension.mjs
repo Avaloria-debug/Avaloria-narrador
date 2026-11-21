@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { contenido } from '../narrador/index.js';
 import { cargarAmpliadoNode } from '../narrador/contenidoAmpliado.js';
 import { leerAccion, contextoLectura, ETAPAS } from '../narrador/lectura.js';
+import { intencionEconomica } from '../narrador/economia/index.js';
 
 const RAIZ = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const CORPUS = path.join(RAIZ, 'data/pruebas/corpus-comprension.json');
@@ -46,7 +47,7 @@ export async function medir({ etapas = ETAPAS, corpus = JSON.parse(fs.readFileSy
     for (const x of [].concat(c.ctx ?? [])) { if (npcIds.has(x)) reciente.npc = x; else reciente.foco = x; }
     const focos = c.escenaDe ? Object.fromEntries(Object.entries(base.focos).map(([id, d]) => [id, c.escenaDe[id] ? { ...d, escena: c.escenaDe[id] } : d])) : base.focos;
     const ctx = contextoLectura({ ...base, focos, presentes: c.presentes ?? ['serel_panadero'], reciente, pendiente: c.pendiente ?? null });
-    const leido = leerAccion(c.frase, ctx, { etapas });
+    const leido = c.cat === 'economia' ? intencionEconomica(c.frase) : leerAccion(c.frase, ctx, { etapas });
     return { i, frase: c.frase, cat: c.cat ?? 'otros', estado: juzgar(c, leido), leido };
   });
   const por = {};

@@ -7,3 +7,4 @@
 - X6: favores, deudas e información como pago
 - Autorrevisión (X5–X6): compuertas verdes, bots-juego y humo sin errores.
 - X7: exhibir dinero (atencion_ladrones con decaimiento) y sin_dinero de t41
+- X8: t41 cargado, bots de economía 12×300 sin errores, +40 frases de economía al corpus

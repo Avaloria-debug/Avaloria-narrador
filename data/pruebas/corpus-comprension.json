@@ -6262,6 +6262,221 @@
    "frase": "dejo el vaso",
    "accion": "no_entendido",
    "cat": "real_acciones"
+  },
+  {
+   "frase": "cuánto cuesta el pan",
+   "accion": "precio",
+   "cat": "economia",
+   "objetivo": "pan_fresco"
+  },
+  {
+   "frase": "¿cuánto sale el pescado?",
+   "accion": "precio",
+   "cat": "economia",
+   "objetivo": "pescado"
+  },
+  {
+   "frase": "precio de la vela",
+   "accion": "precio",
+   "cat": "economia",
+   "objetivo": "vela"
+  },
+  {
+   "frase": "a cuánto la cuerda",
+   "accion": "precio",
+   "cat": "economia",
+   "objetivo": "cuerda"
+  },
+  {
+   "frase": "qué precio tiene la habitación",
+   "accion": "precio",
+   "cat": "economia",
+   "objetivo": "habitacion_pobre"
+  },
+  {
+   "frase": "cuánto vale un rumor",
+   "accion": "precio",
+   "cat": "economia",
+   "objetivo": "rumor"
+  },
+  {
+   "frase": "cuánto cobrás por una copia",
+   "accion": "precio",
+   "cat": "economia",
+   "objetivo": "copia_documento"
+  },
+  {
+   "frase": "compro pan",
+   "accion": "compra",
+   "cat": "economia",
+   "objetivo": "pan_fresco"
+  },
+  {
+   "frase": "quiero comprar fruta",
+   "accion": "compra",
+   "cat": "economia",
+   "objetivo": "fruta"
+  },
+  {
+   "frase": "me llevo el pan viejo",
+   "accion": "compra",
+   "cat": "economia",
+   "objetivo": "pan_viejo"
+  },
+  {
+   "frase": "compro una cerveza",
+   "accion": "compra",
+   "cat": "economia",
+   "objetivo": "bebida"
+  },
+  {
+   "frase": "dame un plato",
+   "accion": "compra",
+   "cat": "economia",
+   "objetivo": "comida_taberna"
+  },
+  {
+   "frase": "compro una herramienta",
+   "accion": "compra",
+   "cat": "economia",
+   "objetivo": "herramienta_caelumia"
+  },
+  {
+   "frase": "vendo la daga",
+   "accion": "venta",
+   "cat": "economia"
+  },
+  {
+   "frase": "te vendo mi cuchillo",
+   "accion": "venta",
+   "cat": "economia"
+  },
+  {
+   "frase": "pago",
+   "accion": "pago",
+   "cat": "economia"
+  },
+  {
+   "frase": "le pago",
+   "accion": "pago",
+   "cat": "economia"
+  },
+  {
+   "frase": "regatear",
+   "accion": "regatear",
+   "cat": "economia"
+  },
+  {
+   "frase": "quiero regatear el pan",
+   "accion": "regatear",
+   "cat": "economia",
+   "objetivo": "pan_fresco"
+  },
+  {
+   "frase": "más barato",
+   "accion": "regatear",
+   "cat": "economia"
+  },
+  {
+   "frase": "hacé una rebaja",
+   "accion": "regatear",
+   "cat": "economia"
+  },
+  {
+   "frase": "te doy 5 por el pan",
+   "accion": "regatear",
+   "cat": "economia",
+   "objetivo": "pan_fresco"
+  },
+  {
+   "frase": "ofrezco 20",
+   "accion": "regatear",
+   "cat": "economia"
+  },
+  {
+   "frase": "¿me hacés descuento?",
+   "accion": "regatear",
+   "cat": "economia"
+  },
+  {
+   "frase": "busco trabajo",
+   "accion": "trabajo",
+   "cat": "economia"
+  },
+  {
+   "frase": "¿tenés trabajo?",
+   "accion": "trabajo",
+   "cat": "economia"
+  },
+  {
+   "frase": "¿hay trabajo?",
+   "accion": "trabajo",
+   "cat": "economia"
+  },
+  {
+   "frase": "quiero trabajar",
+   "accion": "trabajo",
+   "cat": "economia"
+  },
+  {
+   "frase": "¿necesitás ayuda?",
+   "accion": "trabajo",
+   "cat": "economia"
+  },
+  {
+   "frase": "me lo fiás",
+   "accion": "fiado",
+   "cat": "economia"
+  },
+  {
+   "frase": "después te pago",
+   "accion": "fiado",
+   "cat": "economia"
+  },
+  {
+   "frase": "anotalo, te lo debo",
+   "accion": "fiado",
+   "cat": "economia"
+  },
+  {
+   "frase": "me debés una",
+   "accion": "cobrar_favor",
+   "cat": "economia"
+  },
+  {
+   "frase": "cobro el favor",
+   "accion": "cobrar_favor",
+   "cat": "economia"
+  },
+  {
+   "frase": "le cuento a Serel lo del archivo",
+   "accion": "informar",
+   "cat": "economia"
+  },
+  {
+   "frase": "te cuento lo del puente",
+   "accion": "informar",
+   "cat": "economia"
+  },
+  {
+   "frase": "¿sabías que cerraron el puente?",
+   "accion": "informar",
+   "cat": "economia"
+  },
+  {
+   "frase": "saco la bolsa",
+   "accion": "exhibir",
+   "cat": "economia"
+  },
+  {
+   "frase": "cuento mis monedas",
+   "accion": "exhibir",
+   "cat": "economia"
+  },
+  {
+   "frase": "miro el pan",
+   "accion": "no_entendido",
+   "cat": "economia"
   }
  ]
 }
