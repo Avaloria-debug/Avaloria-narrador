@@ -98,3 +98,4 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - F6 V1: línea base = todas las etapas apagadas (solo infinitivo y 1.ª persona de los verbos base, alias exactos).
 - F6 V2: verbos de ≤3 letras (ir, ver, dar, oír) solo con formas irregulares; sin etapa de negación, una frase que empieza con «no» queda no_entendido; dos cosas distintas nombradas → aclaración.
 - F6 V3: palabras de escenas y pronombres no se corrigen por tipeo; en viajar, el destino gana a una cosa hallada solo por tipeo.
+- F6 V4: memoria de referencia con vida de 5 turnos (VIDA_REFERENCIA); «la/lo» son pronombre solo si no los sigue un sustantivo.

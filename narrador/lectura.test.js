@@ -54,3 +54,32 @@ test('V3 «mesa» no se corrige a «misa»; ≤3 letras no se corrigen', () => {
 test('V3 empate entre claves distintas → sin corregir', () => {
   assert.equal(corregirTipeo('cesa', new Map([['casa', 'a'], ['cosa', 'b']])), null);
 });
+
+// ---- V4: referencias ----
+import { resolverReferencia, referenciasVigentes, anotarReferencias, leerAccion, contextoLectura } from './lectura.js';
+const ctx4 = (reciente = {}) => contextoLectura({
+  focos: { gata_mercado: { alias: ['gata'], clase: 'animal' }, burro_atado: { alias: ['burro'], clase: 'animal' } },
+  npcs: [{ id: 'serel_panadero', nombre: 'Serel Norlen', alias: ['serel', 'panadero'] }], reciente,
+});
+const g = (id) => ({ gata_mercado: 'f', burro_atado: 'm' })[id];
+test('V4 pronombres por género y recencia', () => {
+  assert.equal(resolverReferencia('la', { foco: 'gata_mercado' }, { genero: g }), 'gata_mercado');
+  assert.equal(resolverReferencia('lo', { foco: 'gata_mercado' }, { genero: g }), null);
+  assert.equal(resolverReferencia('eso', { foco: 'burro_atado' }), 'burro_atado');
+  assert.equal(resolverReferencia('le', { npc: 'serel_panadero' }, { tipo: 'npc' }), 'serel_panadero');
+});
+test('V4 enclítico y pronombre usan la memoria; sin candidato compatible → aclaración', () => {
+  assert.deepEqual(leerAccion('seguila', ctx4({ foco: 'gata_mercado' })), { accion: 'seguir', objetivo: 'gata_mercado' });
+  assert.deepEqual(leerAccion('lo miro', ctx4({ foco: 'burro_atado' })), { accion: 'mirar', objetivo: 'burro_atado' });
+  assert.equal(leerAccion('lo sigo', ctx4({ foco: 'gata_mercado' })).accion, 'aclarar');
+  assert.equal(leerAccion('mirala', ctx4()).accion, 'aclarar');
+});
+test('V4 memoria con tiempo de vida', () => {
+  const m = anotarReferencias({}, { accion: 'mirar', objetivo: 'gata_mercado' }, ctx4(), 3);
+  assert.deepEqual(referenciasVigentes(m, 5), { foco: 'gata_mercado' });
+  assert.deepEqual(referenciasVigentes(m, 20), {});
+});
+test('V4 varias acciones: la 2.ª usa la referencia de la 1.ª', () => {
+  const l = leerAccion('miro la gata y la sigo', ctx4(), { etapas: { varias: true } });
+  assert.equal(l.luego?.objetivo, 'gata_mercado');
+});

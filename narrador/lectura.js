@@ -4,7 +4,7 @@
 import { normalizar, distanciaEdicion, resolverDestino } from './comprension.js';
 
 /** Etapas activas por defecto (cada paso de la fase 6 enciende la suya). */
-export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: false, defaults: false, sinonimos: false, varias: false, negacion: false, modo: false });
+export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: true, defaults: false, sinonimos: false, varias: false, negacion: false, modo: false });
 
 /** Acciones que entiende la lectura. */
 export const ACCIONES = Object.freeze(['seguir', 'mirar', 'tocar', 'escuchar', 'hablar', 'preguntar', 'ignorar', 'tomar', 'callar', 'viajar', 'mostrar', 'llamar']);
@@ -120,7 +120,7 @@ export function corregirTipeo(palabra, vocab) {
 }
 
 // ---- vocabulario de cosas ----
-const VACIAS = new Set(['a', 'al', 'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'con', 'por', 'x', 'en', 'y', 'que', 'le', 'lo', 'les', 'se', 'me', 'mi', 'tu', 'su', 'hacia', 'para', 'hasta', 'otra', 'vez', 'ahora', 'bien', 'muy', 'tras', 'atencion', 'oido', 'caso', 'nada', 'yo', 'vos']);
+const VACIAS = new Set(['a', 'al', 'el', 'la', 'los', 'las', 'un', 'una', 'unos', 'unas', 'de', 'del', 'con', 'por', 'x', 'en', 'y', 'que', 'le', 'lo', 'les', 'se', 'me', 'mi', 'tu', 'su', 'hacia', 'para', 'hasta', 'otra', 'vez', 'ahora', 'bien', 'muy', 'tras', 'atencion', 'oido', 'caso', 'nada', 'yo', 'vos', 'ya']);
 const ARTICULOS = new Set(['el', 'la', 'los', 'las', 'un', 'una', 'al', 'del']);
 const FUNCIONALES = new Set(['sobre', 'bajo', 'entre']); // alias que también son preposición: exigen artículo antes
 const genero = (alias) => (/a(s)?$/.test(normalizar(alias).split(' ')[0]) ? 'f' : 'm');
@@ -416,6 +416,22 @@ function pronombreEn(ws, pronombres) {
   return ws.find((w, i) => PRON_NEUTRO.has(w) || ((PRON_F.has(w) || PRON_M.has(w)) && (i === ws.length - 1 || VACIAS.has(ws[i + 1])))) ?? null;
 }
 const generoDe = (ctx) => (id) => ctx.cosas.find((c) => c.id === id)?.genero ?? null;
+
+/** Turnos que vive cada referencia (foco, objeto, NPC, lugar). */
+export const VIDA_REFERENCIA = 5;
+/** V4: memoria de referencia vigente en `turno` (las entradas viejas se olvidan). */
+export function referenciasVigentes(memoria, turno, vida = VIDA_REFERENCIA) {
+  const out = {};
+  for (const [k, v] of Object.entries(memoria ?? {})) if (v && typeof v === 'object' && Number.isInteger(v.turno) && turno - v.turno <= vida) out[k] = v.id;
+  return out;
+}
+/** V4: guarda en la memoria (con turno) lo que dejó una lectura. */
+export function anotarReferencias(memoria, l, ctx, turno) {
+  const m = { ...(memoria ?? {}) };
+  const plano = recordar({}, l, ctx);
+  for (const [k, id] of Object.entries(plano)) m[k] = { id, turno };
+  return m;
+}
 
 /** Actualiza la memoria de referencia con lo leído. */
 export function recordar(reciente, l, ctx) {
