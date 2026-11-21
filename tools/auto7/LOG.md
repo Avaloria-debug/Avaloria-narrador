@@ -3,3 +3,5 @@
 - revisión 1 (W1-W2): compuertas, regresión, humo y bots verdes
 - W3 hecho: no entendí + Podrías…, generador único sugerencias.js
 - W4 hecho: narración de escena t39 + selector de densidad
+- revisión 2 (W3-W4): compuertas, regresión, humo y bots verdes
+- W5 hecho: fila de opciones (lógica pura + página)

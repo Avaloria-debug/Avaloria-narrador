@@ -9,6 +9,7 @@ import { ExportacionArchivo } from '../registro/exportacionArchivo.js';
 import { crearAlmacenIndexedDB } from '../../persistencia/adaptadores/almacenIndexedDB.js';
 import { cargarAmpliadoPagina } from './ampliado.js';
 import { crearIaLocal } from '../iaLocal/motor.js';
+import { botonesDeTurno, filaOculta, guardarFilaOculta, textoParaInput, TEXTOS_FILA } from './filaOpciones.js';
 import { esNoEntendida, guardarNoEntendida, leerNoEntendidas, exportarNoEntendidas } from './noEntendidas.js';
 import { infoDePagina, estadoDeBoton, textoDeAviso, textoDeProgreso, leerFlag, CLAVE_FLAG } from './iaLocalPagina.js';
 import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, fijarRelacion, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
@@ -56,6 +57,7 @@ function llenarSelect(select, opciones) {
 }
 
 function pintarEscena() {
+  pintarFila();
   pintarContador();
   pintarRelaciones();
   const hay = estado !== null;
@@ -274,3 +276,42 @@ $('exportarNoEntendidas')?.addEventListener('click', async () => {
   }
 });
 pintarNoEntendidas();
+
+// ---- Fase 7 (W5): fila de opciones sobre la barra. Toque largo o ✎: escribe sin ejecutar. SIN VERIFICAR en móvil. ----
+var filaEscribir = false;
+function botonFila(texto, alTocar, alLargo) {
+  const b = document.createElement('button');
+  b.type = 'button'; b.textContent = texto;
+  let t = null; let largo = false;
+  b.addEventListener('pointerdown', () => { largo = false; t = setTimeout(() => { largo = true; alLargo?.(); }, 500); });
+  const cortar = () => clearTimeout(t);
+  b.addEventListener('pointerup', cortar); b.addEventListener('pointerleave', cortar);
+  b.addEventListener('click', () => { if (!largo) alTocar(); });
+  return b;
+}
+function escribirEnInput(frase) {
+  const i = $('entrada'); i.value = textoParaInput(frase); i.focus(); i.setSelectionRange(i.value.length, i.value.length);
+}
+function pintarFila() {
+  const fila = $('filaOpciones'); const verbos = $('filaVerbos'); const ocultar = $('ocultarFila');
+  if (!fila) return;
+  const oculta = filaOculta(localStorage);
+  ocultar.textContent = oculta ? TEXTOS_FILA.mostrar : TEXTOS_FILA.ocultar;
+  fila.replaceChildren(); verbos.replaceChildren(); verbos.hidden = true;
+  fila.hidden = oculta || !estado || !ampliado;
+  if (fila.hidden) return;
+  const lapiz = botonFila(TEXTOS_FILA.escribir, () => { filaEscribir = !filaEscribir; lapiz.classList.toggle('activo', filaEscribir); });
+  lapiz.classList.toggle('activo', filaEscribir);
+  fila.append(lapiz);
+  for (const o of botonesDeTurno(estado, { amp: ampliado, contenido })) {
+    fila.append(botonFila(o.rotulo, () => {
+      verbos.replaceChildren(botonFila(TEXTOS_FILA.volver, () => { verbos.hidden = true; }));
+      for (const v of o.verbos) {
+        verbos.append(botonFila(v.rotulo, () => { if (filaEscribir) escribirEnInput(v.frase); else if (!ocupado) turno({ tipo: 'texto', texto: v.frase }); }, () => escribirEnInput(v.frase)));
+      }
+      verbos.hidden = false;
+    }));
+  }
+}
+$('ocultarFila')?.addEventListener('click', () => { guardarFilaOculta(localStorage, !filaOculta(localStorage)); pintarFila(); });
+pintarFila();

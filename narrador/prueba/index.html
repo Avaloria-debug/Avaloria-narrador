@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Narrador — página de prueba</title>
 <style>
+  .opciones { display: flex; gap: 8px; overflow-x: auto; white-space: nowrap; padding: 4px 0 8px; -webkit-overflow-scrolling: touch; }
+  .opciones button { min-height: 44px; min-width: 44px; padding: 0 14px; border-radius: 22px; flex: 0 0 auto; }
+  .opciones button.activo { outline: 2px solid currentColor; }
+  button.chico { min-height: 40px; }
   body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; max-width: 900px; margin-inline: auto; line-height: 1.4; }
   h1 { font-size: 1.2rem; } h2 { font-size: 1rem; margin: 0 0 6px; }
   section { border: 1px solid #8888; border-radius: 6px; padding: 12px; margin-bottom: 12px; }
@@ -57,6 +61,9 @@
 
 <section>
   <h2>Turno</h2>
+  <div id="filaOpciones" class="opciones" aria-label="Opciones"></div>
+  <div id="filaVerbos" class="opciones" hidden></div>
+  <div class="fila"><button id="ocultarFila" type="button" class="chico"></button></div>
   <form id="formTexto" class="fila">
     <input id="entrada" type="text" autocomplete="off" placeholder="Escribí qué hacés" disabled>
     <button id="enviar" disabled>Enviar</button>
@@ -89,7 +96,7 @@
   </dl>
 </section>
 
-<div id="version">v0.0.96</div>
+<div id="version">v0.0.97</div>
 
 <script type="module" src="./app.js"></script>
 </body>
