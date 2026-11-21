@@ -19,6 +19,7 @@ import { efectosGuardados, activarPorHecho, vencer, efectosEn } from './consecue
 import { objetivosGuardados, avanzarObjetivos, impulsar, objetivoPasoDe, pasoActual } from './objetivos.js';
 import { diarioGuardado, anotar as anotarDiario, textoDiario } from './diario.js';
 import { normalizar as normalizarTexto } from './comprension.js';
+import { derivarApodo, apodoPara } from './apodo.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
@@ -115,6 +116,13 @@ export function fraseAmpliada({ amp, contenido, turno, ctx, aperturas, valoresEx
     if (!extra.length) return null;
     return elegir([...(resolverPlantillas(contenido, a.intencionId, a.resultado) ?? []), ...extra], ctx.hechos(), opc(valores));
   }
+  // P18: saludo con el apodo (t24 usos), 30%.
+  if (turno?.tipo === 'saludo' && amp.apodos?.usos?.length && ctx.ext.apodo && rng() < 0.3) {
+    const npc = porId(contenido.npcs, turno.npcId);
+    const apodo = apodoPara(ctx.ext.apodo, amp.apodos.base, ctx.hechos({}, turno.npcId).r);
+    const r = elegir(amp.apodos.usos, ctx.hechos(), opc({ npc: npc?.nombre, apodo }));
+    if (r) return r;
+  }
   if (turno?.tipo === 'saludo' && amp.voces?.[turno.npcId]?.saludo?.length) {
     const npc = porId(contenido.npcs, turno.npcId);
     return elegir(amp.voces[turno.npcId].saludo, ctx.hechos(), opc({ npc: npc?.nombre }));
@@ -157,6 +165,7 @@ export function extInicial(ext, semilla = 0) {
     efectos: efectosGuardados(e),
     objetivos: objetivosGuardados(e),
     diario: diarioGuardado(e),
+    apodo: e.apodo && typeof e.apodo === 'object' ? { ...e.apodo } : null,
     afinidad: e.afinidad && typeof e.afinidad === 'object' ? { ...e.afinidad } : {},
     ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
   };
@@ -196,6 +205,7 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
     if (rumor) extra = { escuchoDe: rumor.tipo, fz: fuerzaDe(rumor.fuerza), ...extra };
     const objetivoPaso = npc ? objetivoPasoDe(ext.objetivos, amp.objetivos, npc) : null;
     if (objetivoPaso) extra = { objetivoPaso, ...extra };
+    if (ext.apodo) extra = { apodo: ext.apodo.verbo, ...extra };
     const efecto = efectosEn(ext.efectos ?? [], estado.jugador.escenaId);
     if (efecto.length) extra = { efecto, ...extra };
     const verbo = turno?.accion?.verbo;
@@ -365,6 +375,8 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   }
   // P9: rumores cada 6 h de reloj.
   for (let i = 0, n = Math.min(4, bloquesCruzados(antes.reloj, despues.reloj)); i < n; i++) ext.rumores = propagar(ext.rumores, ext.hechos, { contenido, reloj: despues.reloj });
+  // P18: apodo (se recalcula con los hechos, con histéresis).
+  if (amp.apodos) ext.apodo = derivarApodo(ext.apodo, ext.hechos, amp.apodos.tabla, ctx.rng('apodo'));
   // P17: entradas del diario.
   const dia = despues.reloj.dia;
   if (turno?.tipo === 'accion' && turno.accion) {

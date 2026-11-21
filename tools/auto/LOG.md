@@ -19,3 +19,4 @@ P14 | hecho | eco.js: una palabra filtrada por vocabulario del contenido, 1 cada
 P15 | hecho | consecuencias.js: efectos t21 por hecho, aparecen y expiran
 P16 | hecho | objetivos.js: avanzan solos, impulso por afinidad, charla y rumor por paso (canon)
 P17 | hecho | diario.js: entradas por hecho/viaje/conocimiento, fusión, comando diario; conecta t11
+P18 | hecho | apodo.js: verbo dominante con histéresis, usos en saludo

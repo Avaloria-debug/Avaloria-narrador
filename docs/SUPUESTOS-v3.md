@@ -60,3 +60,4 @@ P15 | la tabla de efectos es t21 (canon, solo con incluirCanon); aparición una 
 P16 | objetivos desde t22 (no objetivos.json aparte); charla del paso 30% en hablar_con; rumor de objetivo ajeno 20% | archivo nuevo
 P17 | comando: el texto exacto "diario" muestra el diario (sin cambiar comprension ni ui) | intención nueva
 P11 | (corrección en P17) la reformulación t11 no había quedado conectada en ampliado.js; se conectó en P17 con test
+P18 | saludo con apodo (t24 usos) con prob 0.3 si hay apodo; {apodo} = base si la relación es mala | siempre
