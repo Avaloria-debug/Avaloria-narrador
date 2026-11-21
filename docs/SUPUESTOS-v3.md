@@ -86,3 +86,4 @@ Q4 | firestore.rules no se tocó: camposDeRegistro() con hasOnly rechazaría pas
 - F4 U3: stopwords del reporte «sin foco» viven en tools/bots-focos.js (STOP), no en contenido.
 R0 | rama: se trabaja en claude/quirky-keller-fn77dr (la sesión solo permite pushear esa rama) | crear claude/ia-local-fase5
 R1 | umbrales PC ≥20 tok/s y móvil ≥6 tok/s provisionales (UMBRALES_TOK_S.prov) | otros valores
+R2 | además de acciones 3→0 se quitan descripción, salidas y aperturas antes de ErrorDeContexto | error con 0 acciones

@@ -29,8 +29,8 @@
     "narrador/iaLocal/contexto.test.js"
    ],
    "cambiaConducta": false,
-   "estado": "pendiente",
-   "aprobacion": null
+   "estado": "hecho",
+   "aprobacion": "a_aprobar"
   },
   {
    "id": "R3",
