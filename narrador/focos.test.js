@@ -292,3 +292,14 @@ test('S5 carga vieja sin interrupciones ni charla', () => {
   assert.deepEqual(x.interrupciones, {});
   assert.equal(x.ultimaCharla, null);
 });
+
+// ---- S7: integración ----
+test('S7 sin ampliado (?ampliado=0): sin detección ni verbos de foco, salida igual a la base', async () => {
+  const e = await conFocos(['gata_mercado']);
+  const base = structuredClone(e);
+  const r1 = await narrar(e, { tipo: 'texto', texto: 'seguir a la gata' }, { ahora: () => 0 });
+  const r2 = await narrar(base, { tipo: 'texto', texto: 'seguir a la gata' }, { ahora: () => 0 });
+  assert.equal(r1.texto, r2.texto);
+  assert.ok(!textosFoco('gata_mercado', 'seguir').some((t) => r1.texto.includes(t)));
+  assert.deepEqual(r1.estado.ext.focos, e.ext.focos);
+});

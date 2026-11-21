@@ -25,6 +25,7 @@ export async function humo({ semilla = 1, turnos = 60 } = {}) {
   const { port } = servidor.address();
   const fallas = [];
   let avisos = [];
+  let focos = 0;
   try {
     const carga = await cargarAmpliadoFetch({ base: `http://127.0.0.1:${port}/data/contenido/ampliado/`, v3: contenido });
     avisos = carga.avisos;
@@ -32,12 +33,16 @@ export async function humo({ semilla = 1, turnos = 60 } = {}) {
     const rng = crearRng(semillaAEntero(`humo:${semilla}`));
     let estado = crearPartida({ semilla });
     const frases = ['calmando la situacion', 'observar la gente', 'diario', 'asdf qwer', 'explorar la ciudad entera'];
+    // Fase 3: acciones sobre focos (el más reciente, o un fijo de la escena).
+    const sobreFoco = ['mirar eso', 'seguir eso', 'examinar la fuente', 'escuchar eso', 'tocar la mesa', 'ignorar eso'];
     for (let t = 0; t < turnos; t++) {
-      const entrada = t % 5 === 4 ? { tipo: 'texto', texto: frases[t % frases.length] } : accionAlAzar(estado, rng);
+      const entrada = t % 5 === 4 ? { tipo: 'texto', texto: frases[t % frases.length] }
+        : t % 5 === 2 ? { tipo: 'texto', texto: sobreFoco[(t / 5 | 0) % sobreFoco.length] } : accionAlAzar(estado, rng);
       try {
         const r = await narrar(estado, entrada, { ampliado: carga.ampliado, ahora: () => 0 });
         if (/[{}#]|\bundefined\b|\bNaN\b/.test(r.texto)) fallas.push(`turno ${t}: ${r.texto}`);
         if (r.errores.length) fallas.push(`turno ${t}: ${r.errores.join(',')}`);
+        if ((r.estado.ext?.focos ?? []).length || entrada.texto && sobreFoco.includes(entrada.texto)) focos++;
         estado = r.estado;
       } catch (e) { fallas.push(`turno ${t}: excepción ${e.message}`); }
     }
@@ -47,7 +52,7 @@ export async function humo({ semilla = 1, turnos = 60 } = {}) {
   }
   const ms = Date.now() - t0;
   if (ms >= 10000) fallas.push(`tardó ${ms} ms`);
-  return { ok: fallas.length === 0 && avisos.length === 0, turnos, ms, fallas: fallas.slice(0, 5), avisos: avisos.slice(0, 5) };
+  return { ok: fallas.length === 0 && avisos.length === 0, turnos, focos, ms, fallas: fallas.slice(0, 5), avisos: avisos.slice(0, 5) };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
