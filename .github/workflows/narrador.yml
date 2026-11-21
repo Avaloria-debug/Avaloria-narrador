@@ -1,0 +1,22 @@
+# Tests del narrador y reporte del simulador. No despliega nada.
+# SIN VERIFICAR: no se pudo correr en GitHub Actions desde el entorno local.
+name: narrador
+on:
+  push:
+  pull_request:
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install
+      - run: npm test
+      - run: node narrador/validarContenido.js
+      - run: node tools/simular.js --semilla 1 --partidas 200 --turnos 50
+      - uses: actions/upload-artifact@v4
+        with:
+          name: reporte-simulador
+          path: tools/reporte

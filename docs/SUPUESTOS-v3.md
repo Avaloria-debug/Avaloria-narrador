@@ -53,3 +53,4 @@ P10 | únicos: tienen prioridad sobre el ambiente, sin sorteo, nunca dos turnos 
 - P11 | trigramas: además de coseno ≥0.6, misma inicial y largo ±2 (evita "blablabla"→hablar) | solo coseno
 - P11 | la pasada queda en turno.pasada; el registro Firestore tiene esquema cerrado: campo `pasada_comprension` A APROBAR | agregarlo al esquema
 - P11 | t11 claves nuevas: npc_ausente→nombre_desconocido, sin_objetos→objeto_desconocido, falta_destino→destino_invalido, sin_salidas→cerrado; verbo_desconocido sin disparador (no hay motivo) | inventar motivo
+P12 | propiedades corren 200×30 en v3 puro y con ampliado (pendientes+canon); frases del jugador sintéticas de sílabas | frases reales
