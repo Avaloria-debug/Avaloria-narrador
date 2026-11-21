@@ -6,3 +6,5 @@ Q3 | hecho | página de prueba carga ampliado por fetch; ?ampliado=0 lo apaga
 Q4 | hecho | registro: pasada_comprension opcional; rules A APROBAR
 Q5 | hecho | humo HTTP local 60 turnos ok (161 ms); DOM sin verificar
 Q6 | hecho | verificar-yml estático; workflow con verificadores y manifest; Actions sin verificar
+Q7 | bloqueado | tools/aprobar.js hecho y probado en copia temporal; aplicar la aprobación del canon quedó denegado por permisos: la corre el autor
+Cierre | hecho | todo verde; Q7 pendiente del autor
