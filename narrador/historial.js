@@ -3,14 +3,18 @@
 // Los selectores (seleccion.elegir, picks de focos y ampliado) consultan el historial activo del turno.
 // El historial se activa solo dentro de funciones síncronas (conHistorial), así no se mezcla entre partidas.
 
+import { coherente } from './coherencia.js';
+
 export const VENTANA_LINEAS = 30;
 let activo = null;
+let coh = null;
 
-/** Corre `fn` con `lineas` como historial activo. */
-export function conHistorial(lineas, fn) {
-  const previo = activo;
+/** Corre `fn` con `lineas` como historial activo (y, opcional, los hechos de coherencia del turno). */
+export function conHistorial(lineas, fn, hechosCoh = null) {
+  const previo = activo; const previoCoh = coh;
   activo = Array.isArray(lineas) ? lineas : [];
-  try { return fn(); } finally { activo = previo; }
+  coh = hechosCoh;
+  try { return fn(); } finally { activo = previo; coh = previoCoh; }
 }
 
 // Fragmentos cortos (símbolos de gramática) no cuentan: se repiten por naturaleza.
@@ -23,6 +27,8 @@ const ultimoUso = (t) => { if (typeof t !== 'string' || t.length < 20) return -1
  */
 export function sinRepetir(candidatas, textoDe = (c) => (typeof c === 'string' ? c : c?.t ?? c?.texto)) {
   if (!activo || !Array.isArray(candidatas) || candidatas.length < 2) return candidatas;
+  // Coherencia (B): fuera las candidatas que contradicen la escena, si queda alguna.
+  if (coh) { const ok = candidatas.filter((c) => coherente(textoDe(c), coh)); if (ok.length && ok.length < candidatas.length) candidatas = ok; }
   const libres = candidatas.filter((c) => !repetida(textoDe(c)));
   if (libres.length) return libres;
   let mejor = candidatas[0]; let min = Infinity;

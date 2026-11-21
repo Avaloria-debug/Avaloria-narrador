@@ -1,10 +1,8 @@
 // Selección por especificidad (P2). Sin texto propio: elige entre variantes del contenido.
 import { sinRepetir } from './historial.js';
-import escenasConfig from '../data/config/escenas.json' with { type: 'json' };
+import { INTERIORES, CLIMA_DE_AFUERA } from './coherencia.js';
 
-/** Escenas interiores (data/config/escenas.json): el clima solo se nombra en el turno de llegada. */
-export const INTERIORES = new Set(Object.entries(escenasConfig.escenas).filter(([, e]) => e.interior).map(([id]) => id));
-export const CLIMA_DE_AFUERA = new Set(['lluvia', 'niebla', 'viento']);
+export { INTERIORES, CLIMA_DE_AFUERA };
 // Variante: string (0 claves) o { c?, t }. Gana la que cumple más claves de `c`; desempata la ventana de aperturas y el rng.
 import { VENTANA_APERTURAS } from './narracion.js';
 

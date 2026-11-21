@@ -127,3 +127,10 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 ## t40 (variantes)
 - `clases` reemplaza `focos.clases.<clase>.<verbo>`; `variantes.<foco>.<verbo>` se usa en ramas de un solo paso (no seguir), también al repetir el verbo; `agotado` reemplaza `TEXTOS_AGOTADO`; `descanso` se suma a `intencion_descansar.neutro` sin duplicar la original; `falta_npc` se suma a la reformulación, pero la 3.ª reformulación (sugerir opciones) solo usa líneas con `{nombres}`.
 - Avisos `[dup]` entre t30 y t40: esperados (reemplazo).
+
+## Bugs de prueba real (fase 7)
+- Alias bloqueados se quitan al cargar t30/t32; un alias que también está en la frase del jugador no abre foco nuevo (sí refresca uno vigente).
+- Interior: `cumple` descarta líneas con `c.cl` lluvia/niebla/viento salvo en la llegada; la coherencia por palabras clave aplica lo mismo a líneas sin `c`, solo si queda otra candidata.
+- IA: «sin habla» = sin «», sin verbo de habla y narración en 2.ª persona o el NPC en 3.ª persona sin decir nada (el prompt pide habla sin comillas, así que no se exige «»).
+- Charla: identidad → saludo de t05 (prefiere líneas con «»); actividad → t39/t03 en su escena, si no `no_se`; origen → `no_se`.
+- NPC por oficio (segundo alias) hasta que su nombre aparece en el texto o lo escribe el jugador (`ext.nombresOidos`).

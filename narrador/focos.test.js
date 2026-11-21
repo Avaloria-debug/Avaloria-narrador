@@ -179,7 +179,7 @@ test('S3 cada verbo sobre un foco activo responde con su rama o su clase', async
   for (const verbo of ['seguir', 'mirar', 'llamar', 'tocar', 'escuchar', 'preguntar', 'ignorar']) {
     const frase = { seguir: 'seguir a la gata', mirar: 'mirar a la gata', llamar: 'llamar a la gata', tocar: 'tocar la gata', escuchar: 'escuchar a la gata', preguntar: 'preguntar por la gata', ignorar: 'ignorar a la gata' }[verbo];
     const [r] = await jugar(await conFocos(['gata_mercado']), [frase]);
-    assert.ok(textosFoco('gata_mercado', verbo).some((t) => r.texto.includes(t)), `${verbo}: ${r.texto}`);
+    assert.ok(textosFoco("gata_mercado", verbo).some((t) => r.texto.toLowerCase().includes(t.toLowerCase())), `${verbo}: ${r.texto}`);
   }
 });
 

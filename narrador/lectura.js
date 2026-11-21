@@ -109,7 +109,7 @@ export function separarEncliticos(palabra, { sinonimos = true } = {}) {
 /** Distancia máxima por largo: 0 para ≤3 letras, 1 para 4–6, 2 para ≥7. */
 export const toleranciaTipeo = (n) => (n <= 3 ? 0 : n <= 6 ? 1 : 2);
 // Palabras comunes que nunca se corrigen («mesa» no es «misa»).
-export const NO_CORREGIR = new Set(['mesa', 'casa', 'cosa', 'masa', 'mano', 'nada', 'algo', 'todo', 'otro', 'otra', 'bien', 'para', 'pero', 'como', 'esto', 'eso', 'esta', 'este', 'aqui', 'alla', 'despacio', 'rapido', 'luego', 'despues', 'donde', 'cuando', 'hola', 'sobre', 'cerca', 'lejos', 'calle', 'noche', 'tarde', 'mucho', 'poco', 'ahora', 'tambien', 'seguro', 'segura', 'hora', 'hoja']);
+export const NO_CORREGIR = new Set(['aburro', 'aburre', 'aburrido', 'aburrida', 'mesa', 'casa', 'cosa', 'masa', 'mano', 'nada', 'algo', 'todo', 'otro', 'otra', 'bien', 'para', 'pero', 'como', 'esto', 'eso', 'esta', 'este', 'aqui', 'alla', 'despacio', 'rapido', 'luego', 'despues', 'donde', 'cuando', 'hola', 'sobre', 'cerca', 'lejos', 'calle', 'noche', 'tarde', 'mucho', 'poco', 'ahora', 'tambien', 'seguro', 'segura', 'hora', 'hoja']);
 
 /** Con 4 letras solo se corrige un intercambio de letras vecinas o una letra que falta («isal», «selo»): «hora» no es «hoja». */
 export function cuatroSeguro(w, destino) {
@@ -252,6 +252,11 @@ export function cosasNombradas(ws, ctx, et = ETAPAS) {
   for (const c of cosas) {
     let i = texto.indexOf(` ${c.alias} `);
     if (i < 0 && textoSing !== texto) i = textoSing.indexOf(` ${c.alias} `);
+    // B: singular escrito de un alias que solo está en plural («el papel» → «papeles»).
+    if (i < 0 && et.lematizar && !c.alias.includes(' ')) {
+      const sing = c.alias.length > 5 && c.alias.endsWith('es') ? c.alias.slice(0, -2) : c.alias.length > 4 && c.alias.endsWith('s') ? c.alias.slice(0, -1) : null;
+      if (sing && sing.length >= 4 && !ctx.cosas.some((x) => x.alias === sing)) i = texto.indexOf(` ${sing} `);
+    }
     if (i < 0) continue;
     const pos = texto.slice(0, i).trim().split(' ').filter(Boolean).length;
     if (FUNCIONALES.has(c.alias) && !ARTICULOS.has(ws[pos - 1])) continue;
@@ -535,7 +540,8 @@ const LEER = /^(que (dice|pone|hay escrito en)|lee|leo|leer|leeme|leele|leemos)\
 
 /** A4: lectura de charla directa; null si la frase no es de este tipo. */
 export function leerCharla(texto, ctx) {
-  const n = normalizar(texto).replace(/\s+/g, ' ').trim();
+  // Letras estiradas al final («holaa», «buenass»).
+  const n = normalizar(texto).replace(/\s+/g, ' ').trim().split(' ').map((w) => w.replace(/([a-z])\1{2,}/g, '$1')).map((w) => (w.length >= 5 ? w.replace(/([aeious])\1+$/, '$1') : w)).map((w) => ({ k: 'que', q: 'que', ke: 'que', kien: 'quien', qien: 'quien' })[w] ?? w).join(' ');
   if (!n) return null;
   const ws = n.split(' ');
   const npcDe = (palabras) => ctx.npcs.find((x) => palabras.some((w) => x.palabras.includes(w)) && (ctx.presentes ?? []).includes(x.id))?.id ?? null;
@@ -543,19 +549,28 @@ export function leerCharla(texto, ctx) {
   const porDefecto = nombrado ?? (ctx.reciente?.npc && ctx.presentes?.includes(ctx.reciente.npc) ? ctx.reciente.npc : ctx.presentes?.[0] ?? null);
   // Saludo: solo fórmulas de saludo y, como mucho, el nombre (o el oficio) de un presente.
   const sinNombre = ws.filter((w) => !(nombrado && ctx.npcs.find((x) => x.id === nombrado).palabras.includes(w)) && !['che', 'senor', 'senora', 'don', 'dona', 'amigo', 'y', 'vos', 'usted', 'tu'].includes(w)).join(' ');
-  const resto = [...SALUDOS_CHARLA].sort((a, b) => b.length - a.length).reduce((t, f) => t.replace(new RegExp(`(^| )${f}( |$)`, 'g'), ' '), ` ${sinNombre} `).trim();
+  let resto = ` ${sinNombre} `;
+  for (let previo = null; previo !== resto;) { previo = resto; resto = [...SALUDOS_CHARLA].sort((a, b) => b.length - a.length).reduce((t, f) => t.replace(new RegExp(` ${f} `, 'g'), '  '), resto); }
+  resto = resto.trim();
   if (sinNombre && !resto && porDefecto) return { accion: 'hablar', npc: porDefecto, saludo: true };
   for (const [tema, re] of Object.entries(TEMAS_CHARLA)) if (re.test(n) && porDefecto) return { accion: 'preguntar_npc', npc: porDefecto, tema };
   const m = n.match(LEER);
   if (m) {
     const cosa = vocabCosas(ctx);
-    for (const w of m[3].split(' ')) { const k = cosa.get(w); if (k && k !== '*' && k.startsWith('foco:')) return { accion: 'mirar', objetivo: k.slice(5) }; }
+    for (const w of m[3].split(' ')) for (const v of [w, `${w}s`, `${w}es`]) { const k = cosa.get(v); if (k && k !== '*' && k.startsWith('foco:')) return { accion: 'mirar', objetivo: k.slice(5) }; }
   }
   return null;
 }
 
+// B: muletillas que no son acción («a ver», «o sea») y «no le doy bola a X» = ignorar.
+const MULETILLAS = new Set(['a ver', 'o sea', 'este', 'tipo', 'bueno', 'nada', 'ya', 'y', 'eh']);
 export function leerAccion(texto, ctx, { etapas = ETAPAS } = {}) {
   const et = { ...ETAPAS, ...etapas };
+  if (typeof texto === 'string') {
+    const n0 = normalizar(texto).trim();
+    if (MULETILLAS.has(n0)) return { accion: 'no_entendido' };
+    texto = texto.replace(/\bno (le )?(doy|des|presto|prestes) (bola|bolilla|atenci[oó]n)( a)?\b/i, 'ignoro a');
+  }
   if (et.charla !== false && !ctx.pendiente) { const c = leerCharla(texto, ctx); if (c) return c; }
   if (et.defaults && ctx.pendiente) {
     const id = responderAclaracion(texto, ctx.pendiente, ctx);

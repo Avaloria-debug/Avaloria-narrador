@@ -9,6 +9,7 @@ import { avanzar, minutosAbsolutos } from './reloj.js';
 import { MOTIVOS } from './motivos.js';
 import { elegirLinea } from './historial.js';
 import { leerAccion, contextoLectura, referenciasVigentes, anotarReferencias } from './lectura.js';
+import { INTERIORES, coherente } from './coherencia.js';
 
 export const VERBOS_FOCO = Object.freeze(['seguir', 'mirar', 'llamar', 'tocar', 'escuchar', 'preguntar', 'ignorar']);
 export const MAX_FOCOS = 8;
@@ -99,16 +100,24 @@ export function detectar(lista, texto, { F, turno, escena, generadas = [], entra
     const al = (def.alias ?? []).filter((a) => tieneAlias(norm, a));
     if (!al.length) continue;
     if (!out.some((f) => f.id === id) && delJugador && al.every((a) => tieneAlias(delJugador, a))) continue;
+    // Interior: un fenómeno de clima (lluvia, niebla, viento) no se vuelve foco.
+    if (INTERIORES.has(escena) && (def.alias ?? []).some((a) => !coherente(a, { interior: true }))) continue;
+    // Un foco de otra escena nombrado al viajar («dejás atrás la carreta») no se muda a la escena nueva.
+    const previo = out.find((f) => f.id === id);
+    if (previo && previo.escena !== escena) continue;
     activar(out, id, { turno, escena });
+    // B (conocimiento): el nombre con que el texto lo mostró es el que usan la fila y las sugerencias.
+    const f = out.find((x) => x.id === id); if (f) f.rotulo = al[0];
   }
   generadas.forEach((g, i) => {
     const fam = FAMILIAS[g.familia];
     const n = normalizar(g.texto ?? '');
     if (!fam || !n || !norm.includes(n)) return;
+    if (INTERIORES.has(escena) && !coherente(g.texto, { interior: true })) return;
     if (Object.values(F.defs).some((d) => (d.alias ?? []).some((a) => tieneAlias(n, a)))) return;
     const contenido = n.split(' ').filter((p) => p.length >= 5 && !VACIAS_LARGAS.has(p));
     const id = `gen_${g.familia}_${turno}_${i}`;
-    if (!out.some((f) => f.id === id)) out.push({ id, gen: true, clase: fam.clase, alias: [...new Set([...fam.alias, ...contenido])], visto: turno, escena, pasos: {}, agotado: false });
+    if (!out.some((f) => f.id === id)) out.push({ id, gen: true, clase: fam.clase, alias: [...new Set([...fam.alias.filter((a) => tieneAlias(n, a)), ...fam.alias, ...contenido])], nombrado: fam.alias.some((a) => tieneAlias(n, a)), visto: turno, escena, pasos: {}, agotado: false });
   });
   return out.sort((a, b) => a.visto - b.visto).slice(-MAX_FOCOS);
 }

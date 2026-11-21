@@ -10,10 +10,11 @@ import { datosFocos } from './focos.js';
 const lineas = (v) => (Array.isArray(v) ? v : []);
 
 /** Líneas candidatas para un tema del NPC. */
-export function lineasDeTema(amp, npcId, tema, franja) {
+export function lineasDeTema(amp, npcId, tema, franja, { enSuLugar = true } = {}) {
   const voces = amp?.voces?.[npcId] ?? {};
   if (tema === 'identidad') return lineas(voces.saludo);
   if (tema === 'actividad') {
+    if (!enSuLugar) return lineas(voces.no_se);
     const act = amp?.narracion?.actividad?.[npcId];
     const t39 = Array.isArray(act) ? act : lineas(act?.[franja]);
     return [...t39, ...lineas(amp?.npcsRutina?.[npcId]?.rutina ?? amp?.npcsRutina?.[npcId])];
@@ -40,7 +41,8 @@ export function turnoDeCharla({ amp, contenido, partida, texto }) {
   const h = hechosDe(partida, { contenido, npcId: l.npc });
   const rng = derivar(`${partida.ext?.semillaBase ?? partida.semilla | 0}:${(partida.ext?.turno ?? 0) + 1}`, 'charla');
   // Identidad y origen: primero lo que el NPC dice («…»); actividad: lo que hace.
-  const todas = lineasDeTema(amp, l.npc, l.tema, franja);
+  const def = contenido.npcs.find((x) => x.id === l.npc);
+  const todas = lineasDeTema(amp, l.npc, l.tema, franja, { enSuLugar: !def?.escenaInicialId || def.escenaInicialId === partida.jugador.escenaId });
   const dichas = l.tema === 'actividad' ? [] : todas.filter((x) => /«/.test(typeof x === 'string' ? x : x?.t ?? ''));
   const r = elegir(dichas, h, { rng }) ?? elegir(todas, h, { rng });
   if (!r) return null;

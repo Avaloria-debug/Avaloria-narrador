@@ -73,7 +73,7 @@ export async function correr({ partidas = 200, turnos = 60, semilla = 1, amp = n
           if (verbo === 'preguntar' && presentes.length) {
             m.preg++;
             const voz = (F.preguntar?.[presentes[0]]?.[o.clase] ?? []).map((t) => t.replaceAll('{foco}', o.alias));
-            if (voz.some((t) => s.texto.includes(t))) { m.pregVoz++; enVoz = true; }
+            if (voz.some((t) => s.texto.toLowerCase().includes(t.toLowerCase()))) { m.pregVoz++; enVoz = true; }
           }
           const propia = o.fijo ? ['mirar', 'tocar'].includes(verbo) : !o.gen && ramaDe(o.id, verbo).some((x) => s.texto.includes(x));
           if (enVoz) continue;

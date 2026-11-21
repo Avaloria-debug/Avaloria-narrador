@@ -5011,6 +5011,1231 @@
    "accion": "mirar",
    "objetivo": "carta_suelta",
    "cat": "charla"
+  },
+  {
+   "frase": "Hola!",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "HOLA SEREL",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "ola serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "holi",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buenas",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buenas!!",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buen dia",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buen día serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buenos dias",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buenas tardes serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buenas noches",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "que tal",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "qué tal, serel?",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hey",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hey serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "saludos",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "como estas",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "cómo estás serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "como andas",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "que onda",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola don serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola panadero",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buenas panadero",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola, como estas?",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola serel como andas",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola che",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buenas buenas",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola hola",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola archivista",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "qué tal maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista"
+   ],
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buen dia ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista"
+   ],
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "quien sos",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "quién sos?",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "quien eres tu",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "vos quien sos",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "cómo te llamás?",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "cual es tu nombre",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "tu nombre?",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "quien es usted",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "como te dicen",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "serel quien sos",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "y tu quien eres",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "que haces",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "qué hacés?",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "que haces aca",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "qué hacés acá serel",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "qué estás haciendo?",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "de que trabajas",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "en que andas",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "que es lo que haces",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "cual es tu trabajo",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "cual es tu oficio",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "que hace usted aca",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "y que haces",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "de dónde sos?",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "origen",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "de donde eres",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "origen",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "de donde venis",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "origen",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "de dónde venís",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "origen",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "sos de aca?",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "origen",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "de donde es usted",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "origen",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "maren quien sos",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "identidad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "que haces aqui maren",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "actividad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "de donde sos maren",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "origen",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "como te llamas archivista",
+   "accion": "preguntar_npc",
+   "npc": "maren_archivista",
+   "tema": "identidad",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "muchas gracias",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "gracias serel",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "perdon",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "perdón",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "disculpa",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "disculpá",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "listo",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "bueno",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "de nada",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "por favor",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "chau",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "adios",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "hasta luego",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "nos vemos",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "perfecto",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "genial",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "entendido",
+   "accion": "no_entendido",
+   "cat": "real_cortesia"
+  },
+  {
+   "frase": "sos un idiota",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "idiota",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "tarado",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "que boludo",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "callate",
+   "accion": "callar",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "andate a la mierda",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "sos un inutil",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "estupido",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "no servis para nada",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "te odio",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "vete",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "sos feo",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "imbecil",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "que pesado",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "tonto",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "eh",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "y",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "y eso",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "mmm",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "a ver",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "este",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "bueno y",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "que",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "no se",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "nada",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "asi que",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "pero",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "entonces",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "o sea",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "y ahora",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "ya",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "esto",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "hmm",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "eee",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "tipo",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "miro la gata",
+   "accion": "mirar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "mira la gata",
+   "accion": "mirar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "sigo ala gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "persigo al gato",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "agaro la carta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "agarro la crta",
+   "accion": "tomar",
+   "objetivo": "carta_suelta",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "levanto la moneda",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "agarro la bolsa",
+   "accion": "tomar",
+   "objetivo": "bolsa_olvidada",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "recojo el papel",
+   "accion": "tomar",
+   "objetivo": "papel_suelto",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "tomo el vaso",
+   "accion": "tomar",
+   "objetivo": "vaso_mesa",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "toco la campana",
+   "accion": "tocar",
+   "objetivo": "campana_lejana",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "escucho la campna",
+   "accion": "escuchar",
+   "objetivo": "campana_lejana",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "que dice la carta?",
+   "accion": "mirar",
+   "objetivo": "carta_suelta",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "leer el libro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "que dice el libro",
+   "accion": "mirar",
+   "objetivo": "libro_abierto",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "leo el papel",
+   "accion": "mirar",
+   "objetivo": "papel_suelto",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "ignoro la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "no le doy bola a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "llamo al perro",
+   "accion": "aclarar",
+   "cat": "real_acciones",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ]
+  },
+  {
+   "frase": "miro el vaso",
+   "accion": "mirar",
+   "objetivo": "vaso_mesa",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "miro la moneda",
+   "accion": "mirar",
+   "objetivo": "moneda_suelo",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "miro la libreta",
+   "accion": "mirar",
+   "objetivo": "registro_libreta",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "hablo con serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_hablar"
+  },
+  {
+   "frase": "hablo con maren",
+   "accion": "hablar",
+   "npc": "maren_archivista",
+   "presentes": [
+    "maren_archivista"
+   ],
+   "cat": "real_hablar"
+  },
+  {
+   "frase": "hablo con ivor",
+   "accion": "hablar",
+   "npc": "ivor_cambista",
+   "presentes": [
+    "ivor_cambista"
+   ],
+   "cat": "real_hablar"
+  },
+  {
+   "frase": "mirá la gata",
+   "accion": "mirar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "mira esa gata",
+   "accion": "mirar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "toco el libro",
+   "accion": "tocar",
+   "objetivo": "libro_abierto",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "agarro el sello",
+   "accion": "tomar",
+   "objetivo": "sello_lacre",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "miro el sello",
+   "accion": "mirar",
+   "objetivo": "sello_lacre",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "escucho al perro",
+   "accion": "aclarar",
+   "cat": "real_acciones",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ]
+  },
+  {
+   "frase": "ignoro el perro",
+   "accion": "aclarar",
+   "cat": "real_acciones",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ]
+  },
+  {
+   "frase": "miro las gatas",
+   "accion": "mirar",
+   "objetivo": "gatas_patio",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "tomo la cinta",
+   "accion": "tomar",
+   "objetivo": "cinta_atada",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "agarro las piedras",
+   "accion": "tomar",
+   "objetivo": "piedras_camino",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "miro la cinta",
+   "accion": "mirar",
+   "objetivo": "cinta_atada",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "quien sos vos",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "y vos que haces",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "que haces vos aca",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "de donde venis vos",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "origen",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "buenas serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "holaa",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola!! serel",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buen dia panadero",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "jaja",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "xd",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "???",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "...",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "lol",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "uff",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "ah",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "oh",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "wow",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "si",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "mirro la gata",
+   "accion": "mirar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "miro la gatta",
+   "accion": "mirar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "sigoo a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "tomo la monedaa",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "agarro la moneda del suelo",
+   "accion": "tomar",
+   "objetivo": "moneda_suelo",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "miro bien la carta",
+   "accion": "mirar",
+   "objetivo": "carta_suelta",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "quiero mirar la gata",
+   "accion": "mirar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "voy a seguir a la gata",
+   "accion": "seguir",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "dejo la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "paso de la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "que dice ese papel",
+   "accion": "mirar",
+   "objetivo": "papel_suelto",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "leo lo que dice la carta",
+   "accion": "mirar",
+   "objetivo": "carta_suelta",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "examino la libreta",
+   "accion": "mirar",
+   "objetivo": "registro_libreta",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "reviso la bolsa",
+   "accion": "mirar",
+   "objetivo": "bolsa_olvidada",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "toco la cinta",
+   "accion": "tocar",
+   "objetivo": "cinta_atada",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "holaaa",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buenaaas",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola serel!!!",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "hola señor",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "buenas señora",
+   "accion": "hablar",
+   "npc": "serel_panadero",
+   "cat": "real_saludos"
+  },
+  {
+   "frase": "quien sos?? ",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "k haces",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "ke haces aca",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "actividad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "kien sos",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "como te llamas vos",
+   "accion": "preguntar_npc",
+   "npc": "serel_panadero",
+   "tema": "identidad",
+   "cat": "real_preguntas"
+  },
+  {
+   "frase": "sos re pesado",
+   "accion": "no_entendido",
+   "cat": "real_insultos"
+  },
+  {
+   "frase": "no entiendo nada",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "ayuda",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "que hago",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "no se que hacer",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
+  },
+  {
+   "frase": "me aburro",
+   "accion": "no_entendido",
+   "cat": "real_a_medias"
   }
  ]
 }

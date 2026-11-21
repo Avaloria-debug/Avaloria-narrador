@@ -37,6 +37,16 @@ import { accionesDeIntencion } from './casos/acciones.js';
 import { aplicarAmpliado } from './ampliado.js';
 import { turnoDeFoco } from './focos.js';
 import { turnoDeCharla } from './charla.js';
+import { hechosCoherencia } from './coherencia.js';
+import { climaEn } from './ambiente.js';
+import { franjaDe } from './seleccion.js';
+
+// B (vacío): con el ampliado, las piezas que se juntan («… limpia. el ruido …», «ovejas… me») arrancan en mayúscula.
+export function mayusculasDeOracion(t) {
+  return String(t).split('\n').map((p) => p
+    .replace(/^(\s*[«¿¡"]?)([a-záéíóúñ])/, (_, a, c) => a + c.toUpperCase())
+    .replace(/([.!?]»? +[«¿¡]?)([a-záéíóúñ])/g, (_, a, c) => a + c.toUpperCase())).join('\n');
+}
 
 export const TIPOS_SALIDA = Object.freeze({
   NARRACION: 'narracion',
@@ -424,7 +434,15 @@ export async function narrar(estado, entrada, opciones = {}) {
   }
   const errores = [];
   // W2: anti-repetición global, solo con ampliado (sin ampliado: idéntico a antes).
-  const conLineas = (fn) => (esObjeto(opciones?.ampliado) ? conHistorial(estado?.ext?.lineas, fn) : fn());
+  // Coherencia (B): hechos de la escena para filtrar candidatas (clima del turno, franja, interior/llegada).
+  const coh = (est) => {
+    if (!esObjeto(opciones?.ampliado) || !est?.jugador) return null;
+    const ext = est.ext ?? {};
+    const clima = Number.isInteger(ext.semillaBase) ? climaEn(ext.semillaBase, est.reloj, opciones.ampliado.guia?.umbrales?.clima_cambia_cada_horas) : null;
+    const llegada = est !== estado && est.jugador.escenaId !== estado?.jugador?.escenaId;
+    return { ...hechosCoherencia({ estado: est, clima, franja: franjaDe(est.reloj?.hora ?? '08:00') }), llegada };
+  };
+  const conLineas = (fn, est = estado) => (esObjeto(opciones?.ampliado) ? conHistorial(estado?.ext?.lineas, fn, coh(est)) : fn());
   const groqKey = opciones?.groqKey;
   // Ningún mensaje de error puede llevar la clave.
   const anotar = (codigo, detalle = '') => {
@@ -463,9 +481,9 @@ export async function narrar(estado, entrada, opciones = {}) {
     if (esObjeto(opciones?.ampliado) && entrada?.tipo === 'texto') {
       try {
         // A4: charla directa (saludo con nombre, quién sos / qué hacés / de dónde sos, «qué dice X»).
-        const ch = conHistorial(partida.ext?.lineas, () => turnoDeCharla({ amp: opciones.ampliado, contenido, partida, texto: entrada.texto }));
+        const ch = conHistorial(partida.ext?.lineas, () => turnoDeCharla({ amp: opciones.ampliado, contenido, partida, texto: entrada.texto }), coh(partida));
         if (ch?.turno) turno = ch.turno;
-        else turno = conHistorial(partida.ext?.lineas, () => turnoDeFoco({ amp: opciones.ampliado, contenido, partida, texto: ch?.reescrito ?? entrada.texto, dic }));
+        else turno = conHistorial(partida.ext?.lineas, () => turnoDeFoco({ amp: opciones.ampliado, contenido, partida, texto: ch?.reescrito ?? entrada.texto, dic }), coh(partida));
       } catch (e) {
         anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');
       }
@@ -574,14 +592,20 @@ export async function narrar(estado, entrada, opciones = {}) {
     let ext = partida.ext;
     if (esObjeto(opciones?.ampliado)) {
       try {
-        const r = conLineas(() => aplicarAmpliado({ amp: opciones.ampliado, contenido, antes: partida, despues: turno.estado, turno, entrada, texto, aperturas, tipo, densidad: opciones.densidad }));
-        if (textoMostrable(r.texto)) texto = r.texto;
+        const r = conLineas(() => aplicarAmpliado({ amp: opciones.ampliado, contenido, antes: partida, despues: turno.estado, turno, entrada, texto, aperturas, tipo, densidad: opciones.densidad }), turno.estado);
+        if (textoMostrable(r.texto)) texto = mayusculasDeOracion(r.texto);
         aperturas = r.aperturas;
         ext = r.ext;
       } catch (e) {
         anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');
       }
-      if (esObjeto(ext)) ext = { ...ext, lineas: anotarTexto(partida.ext?.lineas, texto) };
+      if (esObjeto(ext)) {
+        // B (conocimiento): NPC cuyo nombre ya salió en el texto o lo escribió el jugador.
+        const oidos = new Set(Array.isArray(partida.ext?.nombresOidos) ? partida.ext.nombresOidos : []);
+        const visto = `${texto}\n${entrada?.tipo === 'texto' ? entrada.texto : ''}`.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        for (const n of contenido.npcs ?? []) { const c = n.nombre.split(' ')[0].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); if (new RegExp(`\\b${c}\\b`).test(visto)) oidos.add(n.id); }
+        ext = { ...ext, lineas: anotarTexto(partida.ext?.lineas, texto), nombresOidos: [...oidos] };
+      }
     }
 
     // Registro: solo los turnos con texto libre.

@@ -22,6 +22,8 @@ export function narracionDeEscena({ amp, contenido, antes, despues, ext, turno, 
   if (!N) return out;
   const d = DENSIDADES.includes(densidad) ? densidad : 'normal';
   const esc = despues.jugador.escenaId;
+  // B (coherencia): la actividad de un NPC (t39) habla de su lugar; fuera de él no se usa.
+  presentes = presentes.filter((n) => { const x = (contenido.npcs ?? []).find((y) => y.id === n); return !x?.escenaInicialId || x.escenaInicialId === esc; });
   const franja = franjaDe(despues.reloj?.hora ?? '08:00');
   const datos = N.escenas?.[esc] ?? {};
   const pick = (l) => elegirLinea(l, rng);
