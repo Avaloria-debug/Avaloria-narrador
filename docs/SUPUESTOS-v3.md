@@ -71,3 +71,4 @@ Q1 | valores.json y calendario.json respetan su estado (a_aprobar_canon → solo
 Q2 | navegador: producción carga a_aprobar y aprobado (cargarPendientes=true por defecto en cargarAmpliadoFetch); los avisos se devuelven y los anota quien llama | anotarlos acá
 Q3 | no hay ui/ ni index.html en la raíz: el punto de entrada real es narrador/prueba/app.js (diff mínimo) | crear ui/
 Q3 | la página guarda el estado en IndexedDB (con ext); firestore.rules /partidas usa keys().hasOnly([...]) sin 'ext': si el estado del narrador se sube ahí, hay que agregar 'ext' (A APROBAR) | cambiar rules
+Q4 | firestore.rules no se tocó: camposDeRegistro() con hasOnly rechazaría pasada_comprension; A APROBAR agregar 'pasada_comprension' a esa lista | editar rules

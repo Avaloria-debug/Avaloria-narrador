@@ -361,3 +361,16 @@ describe('registro — cola', () => {
     assert.ok(nube.enviosComoTexto().every((t) => !t.includes(CLAVE)));
   });
 });
+
+// ---- Q4: campo opcional pasada_comprension ----
+import { validarRegistro as validarQ4, crearRegistro as crearQ4 } from './registro.js';
+test('Q4: pasada_comprension opcional (viejo sin campo valida; con campo valida; inválido falla)', () => {
+  const base = { numero: 1, fecha: '2026-11-21T10:00:00Z', escena: 'escena_mercado_circular', estadoEscena: 'tranquilo', ultimosTurnos: [], textoJugador: 'calmando la situacion', ruta: 'grupo_1', intentoReformulacion: false, intencionDetectada: 'intencion_calmar', origenRespuesta: 'codigo', respuestaMostrada: 'x' };
+  const viejo = crearQ4(base);
+  assert.deepEqual(validarQ4(viejo), []);
+  assert.equal('pasada_comprension' in viejo, false);
+  const nuevo = crearQ4({ ...base, pasadaComprension: 'raiz' });
+  assert.equal(nuevo.pasada_comprension, 'raiz');
+  assert.deepEqual(validarQ4(nuevo), []);
+  assert.ok(validarQ4({ ...viejo, pasada_comprension: 'otra' }).length > 0);
+});

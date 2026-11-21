@@ -16,6 +16,9 @@ export const MAX_ULTIMOS_TURNOS = 3;
 // Quien valide registros con `permitidos.intenciones` tiene que sumarlos a los ids del contenido.
 export const INTENCIONES_DE_REGISTRO = Object.freeze(['saludo', 'reconocimiento']);
 
+// Campos opcionales (ausente = válido). pasada_comprension: pasada que resolvió la intención (comprension.js, P11).
+export const CAMPOS_OPCIONALES = Object.freeze(['pasada_comprension']);
+export const PASADAS_COMPRENSION = Object.freeze(['raiz', 'ngramas']);
 export const CAMPOS_REGISTRO = Object.freeze([
   'id', 'fecha', 'escena', 'estado_escena', 'ultimos_turnos', 'texto_jugador', 'ruta', 'intento_reformulacion',
   'intencion_detectada', 'origen_respuesta', 'respuesta_mostrada', 'revision', 'notas', 'contaminacion',
@@ -53,7 +56,8 @@ export function validarRegistro(registro, permitidos = {}) {
   const errores = [];
   const r = registro ?? {};
   for (const campo of CAMPOS_REGISTRO) if (!(campo in r)) errores.push(`falta el campo ${campo}`);
-  for (const campo of Object.keys(r)) if (!CAMPOS_REGISTRO.includes(campo)) errores.push(`campo desconocido ${campo}`);
+  for (const campo of Object.keys(r)) if (!CAMPOS_REGISTRO.includes(campo) && !CAMPOS_OPCIONALES.includes(campo)) errores.push(`campo desconocido ${campo}`);
+  if ('pasada_comprension' in r && !PASADAS_COMPRENSION.includes(r.pasada_comprension)) errores.push('pasada_comprension: valor inválido');
   const texto = (campo, vacioVale = false) => {
     if (campo in r && (typeof r[campo] !== 'string' || (!vacioVale && r[campo] === ''))) errores.push(`${campo}: no es un texto`);
   };
@@ -119,6 +123,7 @@ export function crearRegistro(datos) {
     revision: REVISIONES.PENDIENTE,
     notas: '',
     contaminacion: detectarContaminacion(d.textoJugador),
+    ...(d.pasadaComprension ? { pasada_comprension: d.pasadaComprension } : {}),
   };
   const errores = validarRegistro(registro);
   if (errores.length > 0) throw new Error(`registro incompleto: ${errores.join('; ')}`);
@@ -152,6 +157,7 @@ export function registroDeTurno({ entrada, turno, estadoAntes, estadoEscena, res
     intencionDetectada: porIa ? null : turno?.intencionId ?? null,
     origenRespuesta: porIa ? origenRespuesta ?? ORIGENES.CODIGO : ORIGENES.CODIGO,
     respuestaMostrada,
+    ...(turno?.pasada ? { pasadaComprension: turno.pasada } : {}),
   });
 }
 
