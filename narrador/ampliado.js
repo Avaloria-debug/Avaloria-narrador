@@ -25,6 +25,7 @@ import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 import { elegirLinea } from './historial.js';
 import { opcionesDeTurno, sugerencias } from './sugerencias.js';
+import { narracionDeEscena } from './narracionEscena.js';
 import { datosFocos, extFocos, detectar, vigentes, lineaDeRegreso, castigoInterrupcion, FAMILIAS } from './focos.js';
 
 const porId = (l, id) => (l ?? []).find((x) => x.id === id);
@@ -366,7 +367,7 @@ export function narrarEventos({ amp, contenido, antes, despues, ext, ctx }) {
  * Aplica las extensiones al turno ya narrado.
  * @returns {{ texto: string, aperturas: string[], ext: object }}
  */
-export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, aperturas, tipo, entrada = null }) {
+export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, aperturas, tipo, entrada = null, densidad = 'normal' }) {
   let ext = contabilizar(antes.ext, { antes, despues, turno, contenido });
   // Fase 3: el turno de foco trae su estado de focos (narrador/focos.js).
   if (turno?.extFocos) Object.assign(ext, structuredClone(turno.extFocos));
@@ -454,10 +455,18 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       ...(hAmb.festividad ? (amp.festividades?.[hAmb.festividad]?.lineas ?? []).map((t) => (typeof t === 'string' ? { c: { festividad: hAmb.festividad }, t } : t)) : []),
     ];
     const ampAmb = extraAmb.length ? { ...amp, ambiente: { ...amp.ambiente, [esc]: [...(amp.ambiente?.[esc] ?? []), ...extraAmb] } } : amp;
-    const amb = mensajeAmbiental({ ext, amp: ampAmb, hechos: hAmb, escenaId: despues.jugador.escenaId, presentes, npcTurno: ctx.npcId, rng: ctx.rng('ambiente') });
-    if (amb) {
-      ext = amb.ext;
-      partes.push(ctx.expandirTexto(amb.texto));
+    if (amp.narracion) {
+      // W4 (t39): llegada en capas, transición, ambiente cada 2–3 turnos y cierre; reemplaza al ambiente por probabilidad.
+      const n = narracionDeEscena({ amp: ampAmb, contenido, antes, despues, ext, turno, densidad, rng: ctx.rng('narracion'), hayEvento: Boolean(mundo), presentes });
+      ext = n.ext;
+      if (n.previas.length) partes.unshift(...n.previas.map((t) => ctx.expandirTexto(t)));
+      partes.push(...n.posteriores.map((t) => ctx.expandirTexto(t)));
+    } else {
+      const amb = mensajeAmbiental({ ext, amp: ampAmb, hechos: hAmb, escenaId: despues.jugador.escenaId, presentes, npcTurno: ctx.npcId, rng: ctx.rng('ambiente') });
+      if (amb) {
+        ext = amb.ext;
+        partes.push(ctx.expandirTexto(amb.texto));
+      }
     }
   }
   // P16: objetivos que avanzan solos; los hechos del jugador los impulsan o frenan.

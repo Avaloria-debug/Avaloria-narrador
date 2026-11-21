@@ -44,6 +44,11 @@
   <div class="nota">Se guarda en localStorage de este navegador. Solo se envía a la API de Groq.</div>
 </section>
 
+<section>
+  <h2>Narración</h2>
+  <div class="fila"><label for="densidad">Densidad</label> <select id="densidad"><option value="breve">breve</option><option value="normal" selected>normal</option><option value="rica">rica</option></select></div>
+</section>
+
 <section id="seccionIaLocal" hidden>
   <h2>IA local</h2>
   <div class="fila"><button id="activarIaLocal" type="button"></button> <span id="progresoIaLocal" class="nota"></span></div>
@@ -84,7 +89,7 @@
   </dl>
 </section>
 
-<div id="version">v0.0.95</div>
+<div id="version">v0.0.96</div>
 
 <script type="module" src="./app.js"></script>
 </body>

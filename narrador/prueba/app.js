@@ -134,7 +134,7 @@ async function turno(entrada) {
     try {
     const iaLocalTurno = iaLocal?.listo() ? { listo: () => true, pedir: async (o) => { const t0 = performance.now(); const r = await iaLocal.pedir(o); medidaLocal = { latenciaMs: Math.round(performance.now() - t0), ...r.tokens, modelo: iaLocal.modelo() }; return r; } } : null;
     const antes = estado;
-    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola, registroTurnos: exportacion, ...(ampliado ? { ampliado } : {}), ...(iaLocalTurno ? { iaLocal: iaLocalTurno } : {}) });
+    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola, registroTurnos: exportacion, ...(ampliado ? { ampliado } : {}), ...(iaLocalTurno ? { iaLocal: iaLocalTurno } : {}), densidad: $('densidad')?.value || 'normal' });
     estado = salida.estado;
     if (entrada?.tipo === 'texto' && esNoEntendida(salida)) { guardarNoEntendida(localStorage, entrada.texto, antes); pintarNoEntendidas(); }
   } catch (e) {

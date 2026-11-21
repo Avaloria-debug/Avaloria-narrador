@@ -570,7 +570,7 @@ export async function narrar(estado, entrada, opciones = {}) {
     let ext = partida.ext;
     if (esObjeto(opciones?.ampliado)) {
       try {
-        const r = conLineas(() => aplicarAmpliado({ amp: opciones.ampliado, contenido, antes: partida, despues: turno.estado, turno, entrada, texto, aperturas, tipo }));
+        const r = conLineas(() => aplicarAmpliado({ amp: opciones.ampliado, contenido, antes: partida, despues: turno.estado, turno, entrada, texto, aperturas, tipo, densidad: opciones.densidad }));
         if (textoMostrable(r.texto)) texto = r.texto;
         aperturas = r.aperturas;
         ext = r.ext;

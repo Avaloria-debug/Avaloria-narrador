@@ -52,7 +52,7 @@ export function fechasDeCalendario(d) {
 function vacio() {
   return {
     tandas: [], guia: null, ambiente: {}, npcsRutina: {}, plantillas: {}, voces: {}, memoria: {}, genericas: {}, rumores: {},
-    remateCiudad: {}, mensajeros: {}, reaccionNpc: {}, rumoresExtra: {}, charla: {}, eventos: {}, cierre: {}, simbolos: {},
+    remateCiudad: {}, mensajeros: {}, reaccionNpc: {}, rumoresExtra: {}, charla: {}, eventos: {}, cierre: {}, narracion: null, simbolos: {},
     conocimientos: {}, temas: {}, unicos: [], reformulacion: {}, viaje: {}, objetos: {}, eco: {}, efectos: [], objetivos: {},
     diario: {}, apodos: null, silencio: { corto: {}, gesto: [] }, estaciones: {}, festividades: {}, focos: null,
   };
@@ -92,7 +92,16 @@ export function fusionarAmpliado(archivos, v3, opciones = {}) {
     for (const [k, l] of Object.entries(d.reaccion_npc ?? {})) sumar(a.reaccionNpc, k, l);
     for (const [n, v] of Object.entries(d.charla ?? {})) sumar(a.charla, n, v.l ?? v);
     for (const [id, l] of Object.entries(d.eventos ?? {})) sumar(a.eventos, id, l);
-    for (const [cat, l] of Object.entries(d.cierre ?? {})) sumar(a.cierre, cat, l);
+    // W4 (t39): narración de escena; su `cierre` (tras acción) no se mezcla con el cierre de eventos.
+    const esNarracion = esObj(d.escenas) && esObj(d.actividad);
+    if (esNarracion) {
+      a.narracion ??= { escenas: {}, actividad: {}, transicion: {}, cierre: {} };
+      for (const [id, e] of Object.entries(d.escenas)) a.narracion.escenas[id] = { ...(a.narracion.escenas[id] ?? {}), ...e };
+      for (const [n, f] of Object.entries(d.actividad)) a.narracion.actividad[n] = { ...(a.narracion.actividad[n] ?? {}), ...f };
+      for (const [k, l] of Object.entries(d.transicion ?? {})) sumar(a.narracion.transicion, k, l);
+      for (const [k, l] of Object.entries(d.cierre ?? {})) sumar(a.narracion.cierre, k, l);
+    }
+    if (!esNarracion) for (const [cat, l] of Object.entries(d.cierre ?? {})) sumar(a.cierre, cat, l);
     for (const [k, l] of Object.entries(d.simbolos ?? {})) sumar(a.simbolos, k, l);
     for (const [n, l] of Object.entries(d.conocimientos ?? {})) {
       for (const c of l) {
