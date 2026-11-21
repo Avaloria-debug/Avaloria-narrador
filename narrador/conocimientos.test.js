@@ -131,3 +131,44 @@ describe('conocimientos — mostrar un objeto narrativo', () => {
     assert.equal(mostrar('objeto_daga', 'maren_archivista', npc('maren_archivista')).conocimiento, null);
   });
 });
+
+// ---- P10: conocimientos ampliados, temas y únicos ----
+import { temaDe, conocimientoQueCoincide, unicoDisponible } from './temas.js';
+import { consultaAmpliada, contexto as contextoP10, extInicial as extInicialP10 } from './ampliado.js';
+import { cargarAmpliadoNode as cargarP10 } from './contenidoAmpliado.js';
+import { crearPartida as crearP10, contenido as contenidoP10 } from './index.js';
+
+const ampP10 = await cargarP10({ cargarPendientes: true, incluirCanon: true });
+const ctxP10 = (estado) => { const ext = { ...extInicialP10({}, 1), turno: 1 }; return contextoP10({ amp: ampP10, contenido: contenidoP10, despues: estado, turno: {}, ext }); };
+const turnoP10 = { tipo: 'consulta', consulta: { npcId: 'maren_archivista', conocimientoId: null, resultado: 'no_se' } };
+
+test('P10: tema sin conocimiento → respuesta del tema', () => {
+  assert.equal(temaDe('¿Qué opinás del dinero?'), 'dinero');
+  assert.equal(temaDe('hola'), null);
+  const ctx = ctxP10(crearP10({ semilla: 1 }));
+  const r = consultaAmpliada({ amp: ampP10, contenido: contenidoP10, turno: turnoP10, ctx, entrada: { texto: 'y del dinero qué sabés' }, ext: ctx.ext });
+  assert.equal(r.texto, ampP10.temas.maren_archivista.dinero);
+});
+
+test('P10: el conocimiento gana al tema; pista si falta relación', () => {
+  const e = crearP10({ semilla: 1 });
+  const ctx = ctxP10(e);
+  const texto = 'sabés algo del error del copista, por dinero';
+  const r = consultaAmpliada({ amp: ampP10, contenido: contenidoP10, turno: turnoP10, ctx, entrada: { texto }, ext: ctx.ext });
+  const k = ampP10.conocimientos.maren_archivista.find((x) => x.id === 'conocimiento_maren_amp2');
+  assert.ok(k.pista.includes(r.texto), r.texto);
+  const amiga = { ...e, npcs: { ...e.npcs, maren_archivista: { ...e.npcs.maren_archivista, relacion: 80 } } };
+  const ctx2 = ctxP10(amiga);
+  const r2 = consultaAmpliada({ amp: ampP10, contenido: contenidoP10, turno: turnoP10, ctx: ctx2, entrada: { texto }, ext: ctx2.ext });
+  assert.ok(k.revelar.includes(r2.texto));
+  assert.ok(ctx2.ext.reveladosAmp.includes(k.id));
+  assert.equal(conocimientoQueCoincide([k], texto, { relacion: 80, revelados: [k.id] }), null);
+});
+
+test('P10: un único no se repite; partida vieja sin únicas usadas', () => {
+  const u = [{ id: 'u1', c: { f: 'noche' }, t: 'x' }, { id: 'u2', t: 'sin condición' }];
+  assert.equal(unicoDisponible(u, { f: 'noche' }, []).id, 'u1');
+  assert.equal(unicoDisponible(u, { f: 'noche' }, ['u1']), null);
+  assert.deepEqual(extInicialP10(undefined).unicasUsadas, []);
+  assert.ok(!ampP10.unicos.some((x) => x.id === 'u_niebla_voces'));
+});

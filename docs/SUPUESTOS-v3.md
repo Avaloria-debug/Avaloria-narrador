@@ -47,3 +47,5 @@ P5 | hablar_con con NPC: 50% charla, si no plantillas v3+ampliado por especifici
 P7 | afinidad por valores se guarda en ext.afinidad y solo ajusta r de las condiciones (no toca npcs.relacion) | sumarla a la relación real
 P8 | los eventos v3 no tienen texto: se narra el inicio (t09/t19) del evento nuevo en la escena del jugador y cierre.<categoria> al expirar; la saliencia elige entre variantes, no cambia qué evento se dispara | cambiar el disparo
 P9 | rumor se cuenta al saludar/hablar con un NPC que lo oyó (si no hubo línea de memoria); remate de ciudad 50% | contarlo siempre
+P10 | conocimientos t16 solo en consultas que v3 contestó no_se; revelados en ext.reveladosAmp (no en npcs.conocimientosRevelados) | fusionarlos en contenido v3
+P10 | únicos: tienen prioridad sobre el ambiente, sin sorteo, nunca dos turnos seguidos de ambiente | sortear con 0.25

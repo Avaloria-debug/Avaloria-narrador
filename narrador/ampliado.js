@@ -13,6 +13,7 @@ import { elegir } from './seleccion.js';
 import { ajustarTension, ajustarObjetivo, elegirPorSaliencia, NIVEL_CATEGORIA } from './eventos.js';
 import { cumple, especificidad, normalizar } from './seleccion.js';
 import { propagar, bloquesCruzados, rumorPendiente, fuerzaDe, MENSAJEROS } from './rumores.js';
+import { temaDe, conocimientoQueCoincide, unicoDisponible } from './temas.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
@@ -41,12 +42,34 @@ function accionSimple(turno, contenido) {
 }
 
 /**
+ * P10: consulta sin conocimiento v3 que coincida. Conocimiento ampliado (revelar, o pista si falta relación);
+ * si ninguno coincide, respuesta por tema. El texto del jugador solo se usa para buscar palabras clave.
+ */
+export function consultaAmpliada({ amp, contenido, turno, ctx, entrada, ext }) {
+  const npcId = turno.consulta.npcId;
+  const rng = ctx.rng('conocimientos');
+  const pick = (l) => (l?.length ? l[Math.min(l.length - 1, Math.floor(rng() * l.length))] : null);
+  const relacion = (ctx.estado.npcs?.[npcId]?.relacion ?? 0);
+  const m = conocimientoQueCoincide(amp.conocimientos?.[npcId], entrada.texto, { relacion, marcas: ctx.estado.marcas, eventosActivos: ctx.estado.eventosActivos, revelados: ext.reveladosAmp });
+  let t = null;
+  if (m) {
+    t = pick(m.puede ? m.k.revelar : m.k.pista);
+    if (t && m.puede) ext.reveladosAmp.push(m.k.id);
+  } else {
+    const tema = temaDe(entrada.texto);
+    t = tema ? amp.temas?.[npcId]?.[tema] ?? null : null;
+  }
+  const texto = t && completarAmp(ctx.expandirTexto(t), { npc: porId(contenido.npcs, npcId)?.nombre, conocimiento: m?.k?.contenido });
+  return texto ? { texto, apertura: aperturaDe(texto) } : null;
+}
+
+/**
  * P5: la frase principal del turno desde el contenido ampliado.
  * - acción simple: plantillas v3 + ampliado de la intención/resultado, por especificidad; hablar_con con NPC: a veces charla.
  * - saludo, consulta (no_se / revelar): la voz del NPC reemplaza la genérica.
  * @returns {{ texto: string, apertura: string }|null} null = queda la narración base
  */
-export function fraseAmpliada({ amp, contenido, turno, ctx, aperturas, valoresExtra = {} }) {
+export function fraseAmpliada({ amp, contenido, turno, ctx, aperturas, valoresExtra = {}, entrada = null }) {
   const rng = ctx.rng('seleccion');
   const ventana = (aperturas ?? []).slice(0, -1);
   const opc = (valores) => ({ rng, aperturas: ventana, aperturaDe, completar: (t) => completarAmp(ctx.expandirTexto(t), { ...valores, ...valoresExtra }) });
@@ -65,6 +88,10 @@ export function fraseAmpliada({ amp, contenido, turno, ctx, aperturas, valoresEx
   if (turno?.tipo === 'saludo' && amp.voces?.[turno.npcId]?.saludo?.length) {
     const npc = porId(contenido.npcs, turno.npcId);
     return elegir(amp.voces[turno.npcId].saludo, ctx.hechos(), opc({ npc: npc?.nombre }));
+  }
+  if (turno?.tipo === 'consulta' && turno.consulta?.resultado === 'no_se' && typeof entrada?.texto === 'string') {
+    const r = consultaAmpliada({ amp, contenido, turno, ctx, entrada, ext: ctx.ext });
+    if (r) return r;
   }
   if (turno?.tipo === 'consulta' && turno.consulta) {
     const { npcId, conocimientoId, resultado } = turno.consulta;
@@ -95,6 +122,8 @@ export function extInicial(ext, semilla = 0) {
     sinEvento: Number.isInteger(e.sinEvento) ? e.sinEvento : 0,
     usosEvento: e.usosEvento && typeof e.usosEvento === 'object' ? { ...e.usosEvento } : {},
     rumores: e.rumores && typeof e.rumores === 'object' ? structuredClone(e.rumores) : {},
+    unicasUsadas: Array.isArray(e.unicasUsadas) ? [...e.unicasUsadas] : [],
+    reveladosAmp: Array.isArray(e.reveladosAmp) ? [...e.reveladosAmp] : [],
     afinidad: e.afinidad && typeof e.afinidad === 'object' ? { ...e.afinidad } : {},
     ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
   };
@@ -140,7 +169,7 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
     const simbolos = npc && amp.npcsRutina?.[npc]?.gestos?.length ? { ...amp.simbolos, gesto: amp.npcsRutina[npc].gestos.map((g) => (typeof g === 'string' ? g : g.t)) } : amp.simbolos;
     return aplicarGenero(expandir(t, simbolos, { rng: rng('gramatica'), hechos: h, avisos: ext.avisos }), { npcId: npc, objetoId, genero: amp.guia?.genero });
   };
-  return { rng, npcId, hechos, expandirTexto, estado, recuerdo };
+  return { rng, npcId, hechos, expandirTexto, estado, recuerdo, ext };
 }
 
 /**
@@ -207,7 +236,7 @@ export function narrarEventos({ amp, contenido, antes, despues, ext, ctx }) {
  * Aplica las extensiones al turno ya narrado.
  * @returns {{ texto: string, aperturas: string[], ext: object }}
  */
-export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, aperturas, tipo }) {
+export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, aperturas, tipo, entrada = null }) {
   let ext = contabilizar(antes.ext, { antes, despues, turno, contenido });
   // P6: el recuerdo se lee ANTES de registrar el hecho de este turno.
   const hechosPrevios = ext.hechos;
@@ -227,13 +256,19 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
         if (rum) partes.push(rum);
       }
     }
-    const frase = fraseAmpliada({ amp, contenido, turno, ctx, aperturas });
+    const frase = fraseAmpliada({ amp, contenido, turno, ctx, aperturas, entrada });
     if (frase) {
       partes[0] = frase.texto;
       aperturas = [...(aperturas ?? []).slice(0, -1), frase.apertura];
     }
     const ev = narrarEventos({ amp, contenido, antes, despues, ext, ctx });
     if (ev) partes.push(ev);
+    const unico = ext.ultimoAmbiente === ext.turno - 1 ? null : unicoDisponible(amp.unicos, ctx.hechos(), ext.unicasUsadas);
+    if (unico) {
+      ext.unicasUsadas.push(unico.id);
+      ext.ultimoAmbiente = ext.turno;
+      partes.push(ctx.expandirTexto(unico.t));
+    }
     const presentes = npcsPresentes(despues, contenido).map((n) => n.id);
     const amb = mensajeAmbiental({ ext, amp, hechos: ctx.hechos(), escenaId: despues.jugador.escenaId, presentes, npcTurno: ctx.npcId, rng: ctx.rng('ambiente') });
     if (amb) {
