@@ -38,6 +38,8 @@ function esperadoSimple(npcId, relacion, frase) {
   const palabras = new Set(norm(frase).split(/[^a-zñ]+/).filter(Boolean));
   const i = def.conocimientos.findIndex((k) => k.palabrasClave.some((p) => palabras.has(norm(p))));
   if (i < 0) return 'reformulacion';
+  // 0.0.43: el _2 exige el _1 revelado. Los casos de un paso empiezan sin nada revelado: el _2 da fallo con cualquier relación.
+  if (i > 0) return 'fallo';
   return relacion >= def.conocimientos[i].umbralRelacion ? `rev${i + 1}` : 'fallo';
 }
 

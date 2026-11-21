@@ -60,3 +60,11 @@ Decisiones de Opus en nombre de Tomás. Criterio: el jugador no debe sentir que 
 ## Efecto sin uso de la tormenta sobre el sendero (0.0.43)
 - SUPUESTO: con el `_1` de Hollis sin `requiereEvento`, el efecto `habilita` de `evento_tormenta_verano` sobre `conocimiento_sendero_sin_vigilancia` ya no cambiaba nada: `eventoCumplido` solo mira `habilita` cuando el conocimiento pide un evento, y ningún otro conocimiento, hito ni regla lo nombra. Se quita para que no parezca que la tormenta sigue influyendo. El bloqueo de la antorcha queda igual.
 - Los dos tests que usaban ese efecto como ejemplo (`efectosEventos.test.js` «habilita» y `contenido.test.js` «conocimientoId de un efecto») pasan a la copia `contenidoConSenderoPorTormenta`, que ahora también agrega el efecto. Mismos esperados.
+
+## El _2 exige el _1 revelado, también por consulta (0.0.43)
+- SUPUESTO (decisión tomada por Opus en nombre de Tomás, a aprobar en la PR #13): el contenido ordena el `_1` antes que el `_2` en la lista de cada NPC; si el jugador puede leer el `_2` sin el `_1`, ese orden se pierde. Hasta acá solo lo aplicaba la conversación (`conocimientoARevelar`). Ahora también la consulta de tema: si un conocimiento anterior del NPC sigue sin revelar, la consulta falla con motivo `orden` (resultado `fallo`, plantilla `revelar_conocimiento.fallo`) y no consume el primer contacto. Nuevo: `anteriorSinRevelar` y `MOTIVOS_NO_REVELA.ORDEN` en `conocimientos.js`. El objeto narrativo (`conocimientoPorNarrativo`) no cambia: revela el conocimiento al que apunta.
+- Tests reescritos a la regla (esperaban un comportamiento que nadie había decidido, quedó por omisión):
+  - `noRevelacionTemprana.test.js`, «con el umbral exacto sí se revela, y solo una vez» (Ivor, Hollis, Elia y Oren, 4 subtests): ahora parte con el `_1` revelado y espera `[_1, _2]`; sin el `_1`, con el umbral exacto, el `_2` no sale.
+  - `barridoComprension.js` (tabla de `pruebasComprension.test.js`): una frase de un paso que nombra un `_2` espera `fallo` con cualquier relación, porque los casos empiezan sin nada revelado. Cambian 9 casos: Maren «llave» y «cerradura» con relación 39, 40 y 50; Serel «hornos» con 39, 40 y 50. La secuencia de dos preguntas (`rev1` > `rev2`) no cambia.
+- Test nuevo: `ordenConsulta.test.js` (3 tests).
+- VERSION sigue en 0.0.43 dentro de la PR #13, como se pidió para esta PR.

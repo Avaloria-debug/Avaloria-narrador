@@ -8,6 +8,7 @@ export const MOTIVOS_NO_REVELA = Object.freeze({
   EVENTO: 'evento',
   MARCA: 'marca',
   INEXISTENTE: 'inexistente',
+  ORDEN: 'orden',
 });
 
 /** `requiereEvento`: el evento está activo en alguna escena, o un evento activo habilita el conocimiento. Sin requisito: cumplido. */
@@ -37,6 +38,13 @@ export function puedeRevelar(conocimiento, npcId, npcEstado, estado, contenido, 
     return no(MOTIVOS_NO_REVELA.MARCA);
   }
   return { puede: true, motivo: null };
+}
+
+/** ¿Hay un conocimiento anterior del mismo NPC sin revelar? El _2 nunca se revela antes que el _1. */
+export function anteriorSinRevelar(npcDef, npcEstado, conocimiento) {
+  const lista = npcDef?.conocimientos ?? [];
+  const i = lista.findIndex((k) => k.id === conocimiento?.id);
+  return i > 0 && lista.slice(0, i).some((k) => !npcEstado.conocimientosRevelados.includes(k.id));
 }
 
 /**
