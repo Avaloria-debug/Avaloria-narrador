@@ -65,8 +65,8 @@
     "narrador/sinIa.test.js"
    ],
    "cambiaConducta": true,
-   "estado": "pendiente",
-   "aprobacion": null
+   "estado": "hecho",
+   "aprobacion": "a_aprobar"
   },
   {
    "id": "R5",

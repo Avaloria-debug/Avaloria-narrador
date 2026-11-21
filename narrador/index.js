@@ -394,6 +394,7 @@ function fechaActual(ahora) {
  * @param {{ tipo: 'boton', intencionId: string, parametros?: object } | { tipo: 'texto', texto: string }} entrada
  * @param {{
  *   groqKey?: string|null,
+ *   iaLocal?: { listo: () => boolean, pedir: (o: { contexto: object }) => Promise<object> },
  *   http?: Function, esperar?: (ms: number) => Promise<void>, ahora?: () => Date|number|string,
  *   cola?: { agregar: (registro: object) => unknown }, diccionarios?: object|null,
  *   casos?: object[], persistenciaCasos?: object, jugadorId?: string, partidaId?: string,
@@ -463,7 +464,28 @@ export async function narrar(estado, entrada, opciones = {}) {
       // El código no entendió ni tras reformular: IA, si hay clave y cupo.
       const hayClave = typeof groqKey === 'string' && groqKey.trim() !== '';
       const sinCupoHoy = iaAgotadaDia !== null && iaAgotadaDia === diaReal(ahora);
-      if (!hayClave) {
+      const iaLocal = opciones?.iaLocal;
+      const aceptar = (respuesta, recientesIa) => {
+        if (respuesta.ok && validarSalida(respuesta.texto).ok) {
+          const apertura = aperturaIa(respuesta.texto);
+          if (recientesIa.includes(apertura)) diagnosticoIa = { ...diagnosticoIa, aperturasRepetidas: diagnosticoIa.aperturasRepetidas + 1, ultimaRepetida: apertura };
+          texto = respuesta.texto;
+          tipo = TIPOS_SALIDA.DIALOGO_IA;
+          origen = ORIGENES.IA;
+          ventanaIa = anotarApertura(partida.ventanaAperturasIa, apertura);
+          return true;
+        }
+        anotar(ERRORES.IA, [respuesta.error, respuesta.motivo, respuesta.detalle].filter(Boolean).join(': '));
+        return false;
+      };
+      if (!hayClave && typeof iaLocal?.listo === 'function' && iaLocal.listo()) {
+        // Fase 5: IA local en el navegador (sin clave de Groq). Nunca recibe la clave.
+        const recientesIa = partida.ventanaAperturasIa;
+        const datos = datosDeContexto(partida, contenido, { frase: entrada.texto, ultimasAcciones: partida.ultimosTurnos, evitarAperturas: recientesIa });
+        let respuesta;
+        try { respuesta = await iaLocal.pedir({ contexto: datos }); } catch (e) { respuesta = { ok: false, error: null, motivo: 'local_error', detalle: e instanceof Error ? e.message : '' }; }
+        aceptar(respuesta ?? { ok: false, motivo: 'local_error' }, recientesIa);
+      } else if (!hayClave) {
         anotar(ERRORES.IA, `${SIN_IA}: ${MOTIVOS_IA.SIN_CLAVE}`);
       } else if (sinCupoHoy) {
         anotar(ERRORES.IA, `${SIN_IA}: ${MOTIVOS_IA.RPD_AGOTADO}`);
@@ -485,16 +507,7 @@ export async function narrar(estado, entrada, opciones = {}) {
           let recortadas = false;
           try { recortadas = armarContexto(datos).aperturasRecortadas; } catch { /* el contexto no entra: pedirRespuestaIA no llama */ }
           if (recortadas) diagnosticoIa = { ...diagnosticoIa, aperturasRecortadas: diagnosticoIa.aperturasRecortadas + 1 };
-          if (respuesta.ok && validarSalida(respuesta.texto).ok) {
-            const apertura = aperturaIa(respuesta.texto);
-            if (recientesIa.includes(apertura)) diagnosticoIa = { ...diagnosticoIa, aperturasRepetidas: diagnosticoIa.aperturasRepetidas + 1, ultimaRepetida: apertura };
-            texto = respuesta.texto;
-            tipo = TIPOS_SALIDA.DIALOGO_IA;
-            origen = ORIGENES.IA;
-            ventanaIa = anotarApertura(partida.ventanaAperturasIa, aperturaIa(respuesta.texto));
-          } else {
-            const detalle = [respuesta.error, respuesta.motivo, respuesta.detalle].filter(Boolean).join(': ');
-            anotar(ERRORES.IA, detalle);
+          if (!aceptar(respuesta, recientesIa)) {
             if (respuesta.error === SIN_IA && respuesta.motivo === MOTIVOS_IA.RPD_AGOTADO) iaAgotadaDia = diaReal(ahora);
           }
         }

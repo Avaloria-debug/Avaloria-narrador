@@ -90,3 +90,4 @@ R2 | además de acciones 3→0 se quitan descripción, salidas y aperturas antes
 R3 | modelo: PC Qwen2.5-1.5B-Instruct q4f16 (mejor español en ~1 GB, Apache 2.0); móvil Qwen2.5-0.5B q4f16; respaldo Qwen3-0.6B (piensa: enable_thinking:false) y Llama-3.2-1B; ids de prebuiltAppConfig sin verificar en red | Qwen3 como móvil
 R3 | CDN del motor jsdelivr @mlc-ai/web-llm@0.2.79 (+esm), provisional y A APROBAR | esm.run
 R3 | velocidad: generación corta de 16 tokens al cargar; bajo el umbral → siguiente candidato | medir en el primer turno
+R4 | registro sin campo nuevo: la respuesta local queda como origen ia (distinguirla requiere firestore.rules, A APROBAR) | campo origen_ia
