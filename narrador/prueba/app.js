@@ -7,7 +7,12 @@ import { textoDeProblemasDeDiccionarios } from '../diccionarios.js';
 import { crearColaDeRegistros } from '../registro.js';
 import { ExportacionArchivo } from '../registro/exportacionArchivo.js';
 import { crearAlmacenIndexedDB } from '../../persistencia/adaptadores/almacenIndexedDB.js';
+import { cargarAmpliadoPagina } from './ampliado.js';
 import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, fijarRelacion, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
+
+// Contenido ampliado (Q3): se carga una vez; `?ampliado=0` o localStorage `ampliado=0` lo apaga.
+const { ampliado, avisos: avisosAmpliado } = await cargarAmpliadoPagina({ v3: contenido });
+if (avisosAmpliado.length > 0) console.warn('contenido ampliado no cargado', avisosAmpliado);
 
 const $ = (id) => document.getElementById(id);
 const SIN_DATO = '—';
@@ -124,7 +129,7 @@ async function turno(entrada) {
   };
   let salida;
     try {
-    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola, registroTurnos: exportacion });
+    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola, registroTurnos: exportacion, ...(ampliado ? { ampliado } : {}) });
     estado = salida.estado;
   } catch (e) {
     // `narrar` no lanza; por si acaso, se muestra como error de la página.

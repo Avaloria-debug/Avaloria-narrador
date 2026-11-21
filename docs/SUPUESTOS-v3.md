@@ -69,3 +69,5 @@ P21 | festividades sin fecha en t27: solo se activan con data/contenido/ampliado
 Q1 | calendario.json (lista con dia) se convierte en código a {id:{diaDelAnio}}; el archivo no se toca | convertir el archivo
 Q1 | valores.json y calendario.json respetan su estado (a_aprobar_canon → solo con incluirCanon) | cargarlos siempre
 Q2 | navegador: producción carga a_aprobar y aprobado (cargarPendientes=true por defecto en cargarAmpliadoFetch); los avisos se devuelven y los anota quien llama | anotarlos acá
+Q3 | no hay ui/ ni index.html en la raíz: el punto de entrada real es narrador/prueba/app.js (diff mínimo) | crear ui/
+Q3 | la página guarda el estado en IndexedDB (con ext); firestore.rules /partidas usa keys().hasOnly([...]) sin 'ext': si el estado del narrador se sube ahí, hay que agregar 'ext' (A APROBAR) | cambiar rules
