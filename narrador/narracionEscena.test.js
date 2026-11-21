@@ -33,7 +33,9 @@ test('primera visita → primera; regreso → regreso; transición antes de la l
 test('ritmo de ambiente: en normal, sin dos seguidos y nunca 4 turnos sin evento ni ambiente', async () => {
   const r = await jugar(Array(40).fill('escuchar'), 'normal', 7);
   const amb = new Set([...lineas(N.escenas.escena_mercado_circular.ambiente), ...lineas(amp.ambiente.escena_mercado_circular), ...Object.values(N.actividad).flatMap(lineas)]);
-  const tiene = r.map((x) => [...amb].some((l) => x.texto.includes(l)));
+  // ambiente emitido: lo marca el estado (las líneas de gramática se expanden y no coinciden literal).
+  const tiene = r.map((x) => x.estado.ext.ultimoAmbiente === x.estado.ext.turno);
+  void amb;
   const evento = r.map((x) => x.texto.includes('\n\n'));
   let sin = 0; let total = 0;
   for (let i = 1; i < r.length; i++) {

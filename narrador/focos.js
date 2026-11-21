@@ -90,10 +90,17 @@ function activar(lista, id, { turno, escena }) {
  * (sonido/olor/luz/cielo/animal/gente) que ningún foco propio captura.
  * @param {{ familia: string, texto: string }[]} generadas
  */
-export function detectar(lista, texto, { F, turno, escena, generadas = [] }) {
+export function detectar(lista, texto, { F, turno, escena, generadas = [], entrada = null }) {
   const out = lista.map((f) => ({ ...f }));
   const norm = normalizar(texto ?? '');
-  for (const [id, def] of Object.entries(F.defs)) if ((def.alias ?? []).some((a) => tieneAlias(norm, a))) activar(out, id, { turno, escena });
+  // Solo activa lo que emite el narrador: un alias que también está en la frase del jugador (eco, IA) no abre un foco nuevo.
+  const delJugador = typeof entrada === 'string' ? normalizar(entrada) : '';
+  for (const [id, def] of Object.entries(F.defs)) {
+    const al = (def.alias ?? []).filter((a) => tieneAlias(norm, a));
+    if (!al.length) continue;
+    if (!out.some((f) => f.id === id) && delJugador && al.every((a) => tieneAlias(delJugador, a))) continue;
+    activar(out, id, { turno, escena });
+  }
   generadas.forEach((g, i) => {
     const fam = FAMILIAS[g.familia];
     const n = normalizar(g.texto ?? '');

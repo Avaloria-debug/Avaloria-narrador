@@ -16,8 +16,12 @@ for (const f of files) { const d = J(f); Object.assign(F, d.focos || {}); Object
 const VERBOS = ['seguir', 'mirar', 'llamar', 'tocar', 'escuchar', 'preguntar', 'ignorar'];
 const PH = /\{(\w+)\}/g;
 const txt = (t, ctx) => { if (typeof t !== 'string' || !t.trim()) E(`${ctx}: texto vacío`); else { if ((t.match(/«/g) || []).length !== (t.match(/»/g) || []).length) E(`${ctx}: «» desbalanceadas`); for (const m of t.matchAll(PH)) if (!['npc', 'lugar', 'objeto', 'foco'].includes(m[1])) E(`${ctx}: {${m[1]}} no previsto`); } };
+// Alias bloqueados (se quitan al cargar) y stopwords: palabras funcionales o verbos comunes no pueden ser alias.
+const BLOQ = new Set(JSON.parse(fs.readFileSync(path.join(R, 'data/config/alias-bloqueados.json'), 'utf8')).bloqueados.map(norm));
+const STOPWORDS = new Set(['sobre', 'bajo', 'entre', 'desde', 'hacia', 'hasta', 'para', 'por', 'con', 'sin', 'como', 'cuando', 'donde', 'pero', 'que', 'quien', 'cual', 'este', 'esta', 'eso', 'esto', 'aquel', 'algo', 'nada', 'todo', 'otro', 'otra', 'mismo', 'cada', 'poco', 'mucho', 'mas', 'menos', 'muy', 'bien', 'mal', 'aqui', 'ahi', 'alli', 'aca', 'alla', 'luego', 'antes', 'despues', 'ahora', 'siempre', 'nunca', 'tambien', 'solo', 'casi', 'lado', 'parte', 'vez', 'cosa', 'cosas', 'gente', 'alguien', 'nadie', 'ser', 'estar', 'haber', 'tener', 'hacer', 'ir', 'ver', 'dar', 'decir', 'poder', 'saber', 'querer', 'llegar', 'pasar', 'deber', 'poner', 'parecer', 'quedar', 'creer', 'hablar', 'llevar', 'dejar', 'seguir', 'encontrar', 'llamar', 'venir', 'pensar', 'salir', 'volver', 'tomar', 'conocer', 'vivir', 'sentir', 'tratar', 'mirar', 'contar', 'empezar', 'esperar', 'buscar', 'existir', 'entrar', 'trabajar', 'escribir', 'perder', 'entender', 'pedir', 'recibir', 'recordar', 'terminar', 'tocar', 'escuchar', 'saco', 'cola', 'registro', 'apunte', 'vecinos', 'grupo', 'bulto', 'hoja']);
 if (modo === 'estatico' || modo === 'todo') {
   const aliasEnClase = {};
+  for (const [id, f] of Object.entries(F)) for (const a of f.alias || []) { const k = norm(a); if (!BLOQ.has(k) && k.split(' ').length === 1 && STOPWORDS.has(k)) E(`foco ${id}: alias "${a}" es palabra funcional o verbo común (bloquearlo o cambiarlo)`); }
   for (const [id, f] of Object.entries(F)) {
     if (!C[f.clase]) E(`foco ${id}: clase ${f.clase} inexistente`);
     if (!Array.isArray(f.alias) || !f.alias.length) E(`foco ${id}: sin alias`);

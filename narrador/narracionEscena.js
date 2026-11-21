@@ -1,12 +1,14 @@
 // Fase 7 (W4): narración de escena con t39 (llegada en capas, ambiente con ritmo, transición y cierre).
 // Sin texto propio: todas las líneas salen de amp.narracion (t39) y de amp.ambiente.
-import { franjaDe } from './seleccion.js';
+import { franjaDe, cumple, hechosDe } from './seleccion.js';
 import { elegirLinea } from './historial.js';
 
 export const DENSIDADES = Object.freeze(['breve', 'normal', 'rica']);
 export const PROB_CIERRE = 0.5;
 
-const lineasDe = (v) => (Array.isArray(v) ? v.map((x) => (typeof x === 'string' ? x : x?.t)).filter((x) => typeof x === 'string' && x) : []);
+// Las líneas con condición `c` (clima, franja, …) solo valen si se cumplen; sin hechos, se descartan.
+let hechosActuales = null;
+const lineasDe = (v) => (Array.isArray(v) ? v.map((x) => (typeof x === 'string' ? x : x?.c && !(hechosActuales && cumple(x.c, hechosActuales)) ? null : x?.t)).filter((x) => typeof x === 'string' && x) : []);
 const porFranja = (o, franja) => (Array.isArray(o) ? lineasDe(o) : lineasDe(o?.[franja]));
 
 /**
@@ -26,6 +28,7 @@ export function narracionDeEscena({ amp, contenido, antes, despues, ext, turno, 
   const cambio = antes.jugador.escenaId !== esc;
   const inicio = !cambio && (ext.turno ?? 0) <= 1 && (ext.visitas?.[esc] ?? 1) <= 1;
   const e = { ...ext };
+  hechosActuales = hechosDe({ ...despues, ext }, { contenido });
 
   if (cambio || inicio) {
     out.llegada = true;
@@ -74,5 +77,6 @@ export function narracionDeEscena({ amp, contenido, antes, despues, ext, turno, 
     if (c) out.posteriores.push(c);
   }
   out.ext = e;
+  hechosActuales = null;
   return out;
 }

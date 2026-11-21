@@ -1,0 +1,9 @@
+{
+ "nota": "Propiedades de escena que el contenido v3 no trae. interior: el clima (lluvia/niebla/viento) solo se nombra al llegar.",
+ "escenas": {
+  "escena_archivo_real": { "interior": true },
+  "escena_biblioteca_publica": { "interior": true },
+  "escena_aula_cartografia": { "interior": true },
+  "escena_taberna_lareth": { "interior": true }
+ }
+}

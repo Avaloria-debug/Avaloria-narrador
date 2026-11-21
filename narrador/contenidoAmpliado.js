@@ -4,6 +4,9 @@
 // Navegador: no puede listar la carpeta; lee manifest.json (tools/generar-manifest.js) y después cada archivo por fetch.
 // SIN VERIFICAR: fetch real en el navegador (probado con fetch simulado).
 
+import aliasBloqueadosJson from '../data/config/alias-bloqueados.json' with { type: 'json' };
+export const ALIAS_BLOQUEADOS = new Set(aliasBloqueadosJson.bloqueados);
+
 export const CLAVES_CONDICION = Object.freeze({
   f: ['madrugada', 'manana', 'tarde', 'noche'],
   cl: ['despejado', 'nublado', 'lluvia', 'niebla'],
@@ -131,7 +134,8 @@ export function fusionarAmpliado(archivos, v3, opciones = {}) {
       a.focos ??= { defs: {}, clases: {}, no_visto: [], interrupcion: {}, fijos: {}, preguntar: {} };
       for (const [id, f] of Object.entries(d.focos ?? {})) {
         if (a.focos.defs[id]) throw new Error(`foco repetido: ${id} (${nombre})`);
-        a.focos.defs[id] = f;
+        // Alias bloqueados (data/config/alias-bloqueados.json): no activan ni nombran el foco.
+        a.focos.defs[id] = Array.isArray(f.alias) ? { ...f, alias: f.alias.filter((x) => !ALIAS_BLOQUEADOS.has(String(x).toLowerCase())) } : f;
       }
       for (const [n, o] of Object.entries(d.preguntar ?? {})) { a.focos.preguntar[n] ??= {}; for (const [c, l] of Object.entries(o)) sumar(a.focos.preguntar[n], c, l); }
       for (const [c, vs] of Object.entries(d.clases ?? {})) { a.focos.clases[c] ??= {}; for (const [v, l] of Object.entries(vs)) sumar(a.focos.clases[c], v, l); }

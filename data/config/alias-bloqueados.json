@@ -1,0 +1,4 @@
+{
+ "nota": "Alias que no activan ni nombran focos (ambiguos o palabras comunes). Se quitan al cargar t30/t32.",
+ "bloqueados": ["sobre", "saco", "cola", "hoja", "registro", "registros", "grupo", "carro", "carros", "bulto", "vecinos", "apunte", "sombra larga", "alguien"]
+}

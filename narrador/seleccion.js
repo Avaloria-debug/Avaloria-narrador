@@ -1,5 +1,10 @@
 // Selección por especificidad (P2). Sin texto propio: elige entre variantes del contenido.
 import { sinRepetir } from './historial.js';
+import escenasConfig from '../data/config/escenas.json' with { type: 'json' };
+
+/** Escenas interiores (data/config/escenas.json): el clima solo se nombra en el turno de llegada. */
+export const INTERIORES = new Set(Object.entries(escenasConfig.escenas).filter(([, e]) => e.interior).map(([id]) => id));
+export const CLIMA_DE_AFUERA = new Set(['lluvia', 'niebla', 'viento']);
 // Variante: string (0 claves) o { c?, t }. Gana la que cumple más claves de `c`; desempata la ventana de aperturas y el rng.
 import { VENTANA_APERTURAS } from './narracion.js';
 
@@ -32,6 +37,7 @@ export function hechosDe(estado, { contenido, npcId = null, escenaId, umbrales =
   const escena = (contenido?.escenas ?? []).find((e) => e.id === esc);
   const h = { f: franjaDe(estado?.reloj?.hora ?? '08:00', umbrales), esc, cat: CATEGORIA[escena?.categoria] ?? 'otro' };
   if (ext.clima) h.cl = ext.clima;
+  if (INTERIORES.has(esc)) { h.interior = true; if (ext.llegada === ext.turno || !Number.isInteger(ext.turno)) h.llegada = true; }
   h.ts = enRango(umbrales.tension, Number.isFinite(ext.tension) ? ext.tension : 0);
   const vis = cubeta(ext.visitas?.[esc] ?? 0);
   if (vis) h.vis = vis;
@@ -52,6 +58,8 @@ export function hechosDe(estado, { contenido, npcId = null, escenaId, umbrales =
 /** ¿Los hechos cumplen la condición? Lista = cualquiera; "3+" = ≥3; clave ausente en hechos = no cumple. */
 export function cumple(c, hechos) {
   if (!c) return true;
+  // Interior: líneas de lluvia/niebla/viento solo al llegar.
+  if (c.cl && hechos?.interior && !hechos.llegada && [].concat(c.cl).some((x) => CLIMA_DE_AFUERA.has(x))) return false;
   for (const [k, v] of Object.entries(c)) {
     const h = hechos?.[k];
     if (h === undefined || h === null) return false;

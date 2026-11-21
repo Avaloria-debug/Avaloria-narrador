@@ -230,7 +230,7 @@ export function contabilizar(ext, { antes, despues, turno, contenido }) {
   const e = extInicial(ext, antes.semilla);
   e.turno += 1;
   const esc = despues.jugador.escenaId;
-  if (e.turno === 1 || antes.jugador.escenaId !== esc) e.visitas[esc] = (e.visitas[esc] ?? 0) + 1;
+  if (e.turno === 1 || antes.jugador.escenaId !== esc) { e.visitas[esc] = (e.visitas[esc] ?? 0) + 1; e.llegada = e.turno; }
   const verbo = verboDe(turno, contenido);
   if (verbo) e.repeticion = e.repeticion.verbo === verbo ? { verbo, n: e.repeticion.n + 1 } : { verbo, n: 1 };
   return e;
@@ -382,7 +382,7 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
   const cerrarFocos = (salida) => {
     if (!F) return;
     const escena = despues.jugador.escenaId;
-    ext.focos = vigentes(detectar(ext.focos, salida, { F, turno: ext.turno, escena, generadas: ctx.generadas }), { F, turno: ext.turno, escena, siguiendo: ext.siguiendo });
+    ext.focos = vigentes(detectar(ext.focos, salida, { F, turno: ext.turno, escena, generadas: ctx.generadas, entrada: typeof entrada?.texto === 'string' ? entrada.texto : null }), { F, turno: ext.turno, escena, siguiendo: ext.siguiendo });
     if (ext.siguiendo && !ext.focos.some((f) => f.id === ext.siguiendo)) ext.siguiendo = null;
   };
   // P6: el recuerdo se lee ANTES de registrar el hecho de este turno.

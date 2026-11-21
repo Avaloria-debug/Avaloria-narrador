@@ -35,7 +35,8 @@ export function expandir(texto, simbolos, { rng, hechos = {}, profundidadMax = 6
     if (typeof alExpandir === 'function') alExpandir(clave, salida);
     return salida;
   });
-  return paso(texto, 0).replace(/ {2,}/g, ' ').replace(/ ([.,;:])/g, '$1').trim();
+  // Mayúscula al inicio de cada oración que arma la expansión («… puestos. pasan …» → «Pasan»).
+  return paso(texto, 0).replace(/ {2,}/g, ' ').replace(/ ([.,;:])/g, '$1').trim().replace(/([.!?…] +)(«?)([a-záéíóúñ])/g, (_, a, b, c) => a + b + c.toUpperCase());
 }
 
 /**
