@@ -105,3 +105,4 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - F6 V7: el modo (sigilo/prisa) solo viaja como dato en turno.foco.modo; el motor no tiene efecto para él (ignorado).
 - F6 V7: corpus +25 frases de control (falsos_positivos) halladas en la autorrevisión; 4 casos semilla de «ignorar al perro» pasan a aclarar (hay dos perros), como «seguir al perro».
 - F6 V7: tipeo con 4 letras solo para intercambio de letras o letra faltante («hora» no se corrige a «hoja», «tiro» no es «miro»).
+- F6 V8: «no entendida» = reformulación, error de IA (sin_ia) o aclaración pendiente; exportación con accion '?' para completar a mano.

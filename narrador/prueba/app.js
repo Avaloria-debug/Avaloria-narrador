@@ -9,6 +9,7 @@ import { ExportacionArchivo } from '../registro/exportacionArchivo.js';
 import { crearAlmacenIndexedDB } from '../../persistencia/adaptadores/almacenIndexedDB.js';
 import { cargarAmpliadoPagina } from './ampliado.js';
 import { crearIaLocal } from '../iaLocal/motor.js';
+import { esNoEntendida, guardarNoEntendida, leerNoEntendidas, exportarNoEntendidas } from './noEntendidas.js';
 import { infoDePagina, estadoDeBoton, textoDeAviso, textoDeProgreso, leerFlag, CLAVE_FLAG } from './iaLocalPagina.js';
 import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, fijarRelacion, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
 
@@ -132,8 +133,10 @@ async function turno(entrada) {
   let salida;
     try {
     const iaLocalTurno = iaLocal?.listo() ? { listo: () => true, pedir: async (o) => { const t0 = performance.now(); const r = await iaLocal.pedir(o); medidaLocal = { latenciaMs: Math.round(performance.now() - t0), ...r.tokens, modelo: iaLocal.modelo() }; return r; } } : null;
+    const antes = estado;
     salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola, registroTurnos: exportacion, ...(ampliado ? { ampliado } : {}), ...(iaLocalTurno ? { iaLocal: iaLocalTurno } : {}) });
     estado = salida.estado;
+    if (entrada?.tipo === 'texto' && esNoEntendida(salida)) { guardarNoEntendida(localStorage, entrada.texto, antes); pintarNoEntendidas(); }
   } catch (e) {
     // `narrar` no lanza; por si acaso, se muestra como error de la página.
     salida = { texto: '', tipo: 'error', registro: null, errores: [`pagina: ${e instanceof Error ? e.message : String(e)}`] };
@@ -256,3 +259,18 @@ async function iniciarIaLocal() {
   if (manifest && info.nivel !== 'ninguna' && leerFlag(location, localStorage)) activar();
 }
 iniciarIaLocal();
+
+// ---- Fase 6 (V8): frases no entendidas (solo en este navegador). Copiar al portapapeles: sin verificar. ----
+function pintarNoEntendidas() {
+  const b = $('exportarNoEntendidas');
+  if (b) b.textContent = `Exportar no entendidas (${leerNoEntendidas(localStorage).length})`;
+}
+$('exportarNoEntendidas')?.addEventListener('click', async () => {
+  const json = exportarNoEntendidas(localStorage);
+  try { await navigator.clipboard.writeText(json); avisar('Copiado al portapapeles.'); } catch {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+    a.download = 'no-entendidas.json'; a.click(); URL.revokeObjectURL(a.href);
+  }
+});
+pintarNoEntendidas();

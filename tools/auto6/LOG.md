@@ -7,3 +7,5 @@
 - revisión 2 (V4-V5): compuertas, regresión y humo verdes, 0 falsos positivos
 - V6 hecho: sinónimos de verbos y cosas, test de colisiones · comprensión 94.4 %
 - V7 hecho: varias acciones, negación, modo; control de falsos positivos · comprensión 99.9 %
+- revisión 3 (V6-V7): compuertas, regresión, humo verdes; 25 frases de control sumadas, 0 falsos positivos
+- V8 hecho: registro local de no entendidas + botón exportar · comprensión 99.9 %
