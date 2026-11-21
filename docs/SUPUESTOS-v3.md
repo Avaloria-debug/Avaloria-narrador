@@ -117,3 +117,9 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - F7 W6: ampliado = 451 KB en disco (375 KB minificado, 137 KB gzip), carga en Node 31 ms. Supera los 300 KB, pero solo 75 KB (20 %) está indexado por escena (t13, t02, t39, fijos de t30): partir en paquetes ahorraría ~69 KB (~25 KB gzip) a cambio de archivos generados y otro formato de manifest. Se hizo solo lo barato: fetch en paralelo + caché en memoria. A decidir por el autor.
 - F7 W7: la sugerencia «Podrías …» va al final del turno (antes, el ambiente quedaba pegado detrás). Ambiente detectado por estado (ext.ultimoAmbiente = turno), no por texto (las líneas con símbolos cambian).
 - F7 W7: «0 repeticiones en la ventana» no es alcanzable con listas de 2 variantes usadas más de 2 veces en 30 líneas; el bot informa repeticiones en ventana (220 en 6000 turnos) y seguidas (3, de foco agotado → «ignorar», regla de fase 3), y falla solo con párrafos repetidos dentro del mismo turno.
+
+## Fase 7 — ajustes
+- «tomar/agarrar»: transportable = objeto con fin hallazgo + inventario + `data/config/llevables.json`. El corpus pasa «agarro/tomo la carta» (y el sello) de tocar a tomar (24 casos).
+- Foco agotado: responde con la línea siguiente de su verbo si queda; si no, una de `TEXTOS_AGOTADO` (prov, 5 variantes). El test S4 de fase 3 («repetir = ignorar») ahora espera esa línea de cierre.
+- `tools/bots-juego.js` escribe `tools/auto7/repetidas.json` (40 listas que más repiten, con su ruta y variantes). «(sin lista)» = plantillas con huecos rellenados.
+- W6 cerrado sin paquetes por escena.

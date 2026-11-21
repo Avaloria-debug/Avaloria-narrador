@@ -11,8 +11,23 @@ import { derivar } from '../narrador/azar.js';
 import { botonesDeTurno } from '../narrador/prueba/filaOpciones.js';
 import { opcionesDeTurno } from '../narrador/sugerencias.js';
 import { VENTANA_LINEAS } from '../narrador/historial.js';
+import { TEXTOS_AGOTADO } from '../narrador/focos.js';
 
 const LIBRES = ['observar', 'explorar', 'escuchar', 'mirar eso', 'seguir eso', 'descansar', 'examinar', 'asdf qwer', 'bailo un tango', 'hablar', 'tocar eso', 'miro y después escucho'];
+// Ajuste fase 7: índice línea → lista de origen (ruta de clave en el ampliado) y cuántas variantes tiene.
+export function indiceListas(raiz, extra = {}) {
+  const idx = new Map();
+  const ver = (o, ruta) => {
+    if (Array.isArray(o)) {
+      const ls = o.map((x) => (typeof x === 'string' ? x : x?.t)).filter((x) => typeof x === 'string');
+      if (ls.length) for (const l of ls) if (!idx.has(l)) idx.set(l, { ruta, variantes: ls.length });
+      o.forEach((x, i) => { if (x && typeof x === 'object') ver(x, `${ruta}[${i}]`); });
+    } else if (o && typeof o === 'object') for (const [k, v] of Object.entries(o)) ver(v, ruta ? `${ruta}.${k}` : k);
+  };
+  ver(raiz, '');
+  for (const [k, v] of Object.entries(extra)) ver(v, k);
+  return idx;
+}
 const lineas = (o) => (Array.isArray(o) ? o : Object.values(o ?? {}).flat()).map((x) => (typeof x === 'string' ? x : x?.t)).filter(Boolean);
 
 export async function correr({ turnos = 500, semilla = 1, escenas = null, amp = null } = {}) {
@@ -20,6 +35,8 @@ export async function correr({ turnos = 500, semilla = 1, escenas = null, amp = 
   const N = amp.narracion;
   const transiciones = [...lineas(N?.transicion?.ciudad), ...lineas(N?.transicion?.camino)];
   const op = { ampliado: amp, ahora: () => 0 };
+  const idx = indiceListas(amp, { TEXTOS_AGOTADO, contenido });
+  const porLista = {};
   const errores = [];
   const err = (x) => { if (errores.length < 50) errores.push(x); };
   const rep = { turnos: 0, botones: 0, libres: 0, cambios: 0, sugerencias: 0, repeticionesVentana: 0, repetidasSeguidas: 0, porEscena: {} };
@@ -50,7 +67,11 @@ export async function correr({ turnos = 500, semilla = 1, escenas = null, amp = 
         // Repetido en dos turnos seguidos: se informa (pasa con listas de 2 variantes agotadas, p. ej. foco agotado → «ignorar»).
         if (previas.includes(p)) rep.repetidasSeguidas++;
         if (ps.indexOf(p) !== ps.lastIndexOf(p) && !/ y despues | y después /.test(texto)) err(`${esc} t${t}: párrafo repetido en el mismo turno «${p.slice(0, 60)}»`);
-        if (vistas.slice(-VENTANA_LINEAS).includes(p)) rep.repeticionesVentana++;
+        if (vistas.slice(-VENTANA_LINEAS).includes(p)) {
+          rep.repeticionesVentana++;
+          const o = idx.get(p) ?? { ruta: '(sin lista)', variantes: null };
+          const x = (porLista[o.ruta] ??= { ruta: o.ruta, variantes: o.variantes, repeticiones: 0, muestra: p.slice(0, 80) }); x.repeticiones++;
+        }
         vistas.push(p); cuenta[p] = (cuenta[p] ?? 0) + 1;
       }
       previas = ps;
@@ -80,7 +101,8 @@ export async function correr({ turnos = 500, semilla = 1, escenas = null, amp = 
   }
   const top = Object.fromEntries(Object.entries(rep.porEscena).map(([esc, c]) => [esc, Object.entries(c).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([l, n]) => ({ n, l }))]));
   const { porEscena, ...resumen } = rep;
-  return { ...resumen, top10: top, errores };
+  const repetidas = Object.values(porLista).sort((a, b) => b.repeticiones - a.repeticiones).slice(0, 40);
+  return { ...resumen, top10: top, repetidas, errores };
 }
 
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
@@ -89,7 +111,9 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.a
   const dir = path.join(process.cwd(), 'tools/reporte');
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'juego.json'), JSON.stringify(r, null, 1) + '\n');
-  const { top10, errores, ...resumen } = r;
+  fs.mkdirSync(path.join(process.cwd(), 'tools/auto7'), { recursive: true });
+  fs.writeFileSync(path.join(process.cwd(), 'tools/auto7/repetidas.json'), JSON.stringify({ turnos: r.turnos, ventana: VENTANA_LINEAS, listas: r.repetidas }, null, 1) + '\n');
+  const { top10, repetidas, errores, ...resumen } = r;
   console.log(JSON.stringify({ ...resumen, errores: errores.length }));
   if (errores.length) { console.error(errores.slice(0, 15).join('\n')); process.exit(1); }
 }

@@ -98,7 +98,7 @@ test('S1.3 (c): el evento sale como línea de mundo aparte, al final', async () 
 });
 
 // ---- S2: motor de focos ----
-import { detectar, vigentes, extFocos, turnoDeFoco, verboFoco, resolverReferente, MAX_FOCOS, DURA_GENERADO } from './focos.js';
+import { detectar, vigentes, extFocos, turnoDeFoco, verboFoco, resolverReferente, MAX_FOCOS, DURA_GENERADO, TEXTOS_AGOTADO } from './focos.js';
 import { cargarPartida } from './index.js';
 
 test('S2 detección por alias (palabra completa, sin tildes)', () => {
@@ -213,7 +213,7 @@ test('S3 typos en verbo y alias ("persegir al caballo")', async () => {
 import { minutosAbsolutos } from './reloj.js';
 const pasoT = (id, v, i) => { const p = F.defs[id].ramas[v][i]; return typeof p === 'string' ? p : p.t; };
 
-test('S4 rama completa de gata_mercado: seguir ×3 (tiempo, emite gatas_patio, fin nada) → mirar gatas_patio → repetir = ignorar', async () => {
+test('S4 rama completa de gata_mercado: seguir ×3 (tiempo, emite gatas_patio, fin nada) → mirar gatas_patio → repetir = cierre de agotado (ajuste fase 7)', async () => {
   const e0 = await conFocos(['gata_mercado']);
   const s = await jugar(e0, ['seguir a la gata', 'seguir a la gata', 'seguir a la gata', 'mirar las gatas', 'seguir a la gata']);
   for (let i = 0; i < 3; i++) assert.ok(s[i].texto.includes(pasoT('gata_mercado', 'seguir', i)), s[i].texto);
@@ -222,7 +222,7 @@ test('S4 rama completa de gata_mercado: seguir ×3 (tiempo, emite gatas_patio, f
   assert.ok(s[1].estado.ext.focos.some((f) => f.id === 'gatas_patio'));
   assert.ok(s[2].estado.ext.focos.find((f) => f.id === 'gata_mercado').agotado);
   assert.ok(s[3].texto.includes(pasoT('gatas_patio', 'mirar', 0)), s[3].texto);
-  assert.ok(F.clases.animal.ignorar.some((t) => s[4].texto.includes(t)), s[4].texto);
+  assert.ok(TEXTOS_AGOTADO.lineas.some((t) => s[4].texto.includes(t)), s[4].texto);
   assert.equal(min(s[4]), min(s[3]));
 });
 
@@ -304,4 +304,13 @@ test('S7 sin ampliado (?ampliado=0): sin detección ni verbos de foco, salida ig
   assert.equal(r1.texto, r2.texto);
   assert.ok(!textosFoco('gata_mercado', 'seguir').some((t) => r1.texto.includes(t)));
   assert.deepEqual(r1.estado.ext.focos, e.ext.focos);
+});
+
+test('Ajuste fase 7: foco agotado responde con la línea que quede de su verbo', async () => {
+  const s = await jugar(await conFocos(['gata_mercado']), ['ignorar a la gata', 'mirar a la gata']);
+  const r = F.defs.gata_mercado.ramas;
+  const v = r.mirar ? 'mirar' : r.examinar ? 'examinar' : null;
+  if (v) assert.ok(s[1].texto.includes(pasoT('gata_mercado', v, 0)), s[1].texto);
+  else assert.ok(TEXTOS_AGOTADO.lineas.some((t) => s[1].texto.includes(t)), s[1].texto);
+  assert.ok(TEXTOS_AGOTADO.lineas.length >= 4 && TEXTOS_AGOTADO.prov);
 });

@@ -1,0 +1,4 @@
+{
+ "nota": "Fase 7: focos que «agarrar/tomar» toma (además de objetos con fin hallazgo e inventario).",
+ "llevables": ["carta_suelta", "moneda_suelo", "cinta_atada", "bolsa_olvidada", "papel_suelto", "piedras_camino", "vaso_mesa", "libro_abierto", "registro_libreta", "sello_lacre"]
+}

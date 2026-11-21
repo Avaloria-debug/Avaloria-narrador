@@ -1,0 +1,246 @@
+{
+ "turnos": 6000,
+ "ventana": 30,
+ "listas": [
+  {
+   "ruta": "(sin lista)",
+   "variantes": null,
+   "repeticiones": 54,
+   "muestra": "Descansás un rato en Camino del norte."
+  },
+  {
+   "ruta": "focos.clases.objeto.mirar",
+   "variantes": 2,
+   "repeticiones": 22,
+   "muestra": "Lo mirás un buen rato. Es lo que parece."
+  },
+  {
+   "ruta": "focos.clases.persona.escuchar",
+   "variantes": 2,
+   "repeticiones": 18,
+   "muestra": "Aguzás el oído. Murmullos sin importancia."
+  },
+  {
+   "ruta": "focos.clases.persona.mirar",
+   "variantes": 2,
+   "repeticiones": 18,
+   "muestra": "Notás cómo camina. Nada más."
+  },
+  {
+   "ruta": "focos.clases.objeto.escuchar",
+   "variantes": 2,
+   "repeticiones": 17,
+   "muestra": "No emite ningún ruido."
+  },
+  {
+   "ruta": "focos.clases.fenomeno.mirar",
+   "variantes": 2,
+   "repeticiones": 13,
+   "muestra": "Lo observás a la distancia. Parece más cerca de lo que está."
+  },
+  {
+   "ruta": "focos.defs.cambistas_mesa.ramas.mirar",
+   "variantes": 1,
+   "repeticiones": 9,
+   "muestra": "Los cambistas cuentan en silencio, con los labios moviéndose."
+  },
+  {
+   "ruta": "focos.defs.silueta_colina.ramas.mirar",
+   "variantes": 1,
+   "repeticiones": 8,
+   "muestra": "Una figura inmóvil sobre la colina. No se ve si mira hacia vos."
+  },
+  {
+   "ruta": "charla.dario_guardia",
+   "variantes": 14,
+   "repeticiones": 7,
+   "muestra": "«Con lluvia, el puente resbala. Y los papeles se mojan», dice Darío."
+  },
+  {
+   "ruta": "focos.clases.fenomeno.escuchar",
+   "variantes": 2,
+   "repeticiones": 7,
+   "muestra": "Escuchás. Nada que no esperaras."
+  },
+  {
+   "ruta": "focos.clases.persona.tocar",
+   "variantes": 2,
+   "repeticiones": 5,
+   "muestra": "Un roce y un «perdón». Fin."
+  },
+  {
+   "ruta": "contenido.plantillas.reformulacion.falta_npc",
+   "variantes": 2,
+   "repeticiones": 5,
+   "muestra": "¿Con quién querés hablar?"
+  },
+  {
+   "ruta": "focos.defs.carta_suelta.ramas.mirar",
+   "variantes": 1,
+   "repeticiones": 4,
+   "muestra": "Una carta con el lacre roto, doblada muchas veces."
+  },
+  {
+   "ruta": "focos.clases.lugar.mirar",
+   "variantes": 2,
+   "repeticiones": 4,
+   "muestra": "Lo mirás desde donde estás. Se ve quieto."
+  },
+  {
+   "ruta": "charla.ivor_cambista",
+   "variantes": 15,
+   "repeticiones": 3,
+   "muestra": "«Con lluvia, el comercio se frena y la usura sube», dice Ivor, impasible."
+  },
+  {
+   "ruta": "focos.clases.animal.escuchar",
+   "variantes": 2,
+   "repeticiones": 3,
+   "muestra": "Prestás atención. No dice nada nuevo."
+  },
+  {
+   "ruta": "focos.defs.polvo_aire.ramas.tocar",
+   "variantes": 1,
+   "repeticiones": 3,
+   "muestra": "Pasás el dedo por una superficie. Queda una línea limpia."
+  },
+  {
+   "ruta": "focos.clases.lugar.escuchar",
+   "variantes": 2,
+   "repeticiones": 3,
+   "muestra": "Escuchás del otro lado. Silencio."
+  },
+  {
+   "ruta": "focos.clases.animal.mirar",
+   "variantes": 2,
+   "repeticiones": 3,
+   "muestra": "Observás sus movimientos. Nada fuera de lo común."
+  },
+  {
+   "ruta": "charla.tiren_docente",
+   "variantes": 15,
+   "repeticiones": 3,
+   "muestra": "«¡Buen día! Hoy tocamos escala y proporción», dice Tiren, con ánimo."
+  },
+  {
+   "ruta": "focos.defs.carreta_camino.ramas.mirar",
+   "variantes": 1,
+   "repeticiones": 2,
+   "muestra": "Una carreta cargada avanza despacio. El eje chirría con una nota fija."
+  },
+  {
+   "ruta": "focos.defs.copista_pluma.ramas.mirar",
+   "variantes": 1,
+   "repeticiones": 2,
+   "muestra": "El copista no levanta la vista. La pluma se mueve con la regularidad de un reloj"
+  },
+  {
+   "ruta": "focos.defs.carta_suelta.ramas.tocar",
+   "variantes": 1,
+   "repeticiones": 2,
+   "muestra": "La levantás. El papel es grueso y huele a humo."
+  },
+  {
+   "ruta": "focos.clases.animal.tocar",
+   "variantes": 2,
+   "repeticiones": 2,
+   "muestra": "Estirás la mano. Se aparta justo a tiempo."
+  },
+  {
+   "ruta": "charla.elia_bibliotecaria",
+   "variantes": 15,
+   "repeticiones": 2,
+   "muestra": "«Hoy vienen más lectores. La lluvia hace buena compañía», susurra Elia."
+  },
+  {
+   "ruta": "charla.sarin_mensajera",
+   "variantes": 14,
+   "repeticiones": 2,
+   "muestra": "«Con lluvia entrego envuelta en cuero. Pero llego», dice Sarin."
+  },
+  {
+   "ruta": "eventos.evento_lluvia_suave",
+   "variantes": 4,
+   "repeticiones": 2,
+   "muestra": "Empieza a lloviznar. Nadie se apura."
+  },
+  {
+   "ruta": "focos.defs.libro_abierto.ramas.mirar",
+   "variantes": 1,
+   "repeticiones": 2,
+   "muestra": "Un libro abierto boca abajo, con el lomo doblado. A quien lo leyó no le importab"
+  },
+  {
+   "ruta": "focos.clases.objeto.tocar",
+   "variantes": 2,
+   "repeticiones": 2,
+   "muestra": "Lo tocás. Está donde debía estar."
+  },
+  {
+   "ruta": "focos.defs.lluvia_cae.ramas.escuchar",
+   "variantes": 1,
+   "repeticiones": 2,
+   "muestra": "La lluvia golpea los techos con insistencia y repite el mismo ritmo."
+  },
+  {
+   "ruta": "charla.naela_tabernera",
+   "variantes": 15,
+   "repeticiones": 2,
+   "muestra": "«De noche se habla más y se paga menos. Aprendí a cobrar antes», dice Naela."
+  },
+  {
+   "ruta": "focos.clases.persona.seguir",
+   "variantes": 2,
+   "repeticiones": 2,
+   "muestra": "Seguís a la figura a distancia prudente. Se mezcla con la gente y la perdés."
+  },
+  {
+   "ruta": "focos.defs.copista_pluma.ramas.escuchar",
+   "variantes": 1,
+   "repeticiones": 1,
+   "muestra": "Se oye solo el raspar de la pluma y un suspiro cada tanto."
+  },
+  {
+   "ruta": "focos.defs.sello_lacre.ramas.tocar",
+   "variantes": 1,
+   "repeticiones": 1,
+   "muestra": "Pasás el dedo por el relieve. Una línea fina y una letra torcida."
+  },
+  {
+   "ruta": "charla.ysolde_pescadora",
+   "variantes": 14,
+   "repeticiones": 1,
+   "muestra": "«Un día claro es mal día de pesca. El pez te ve», dice Ysolde."
+  },
+  {
+   "ruta": "focos.defs.sello_lacre.ramas.mirar",
+   "variantes": 1,
+   "repeticiones": 1,
+   "muestra": "Un sello de lacre con una burbuja arriba. Es señal de auténtico, dicen."
+  },
+  {
+   "ruta": "focos.defs.libro_abierto.ramas.tocar",
+   "variantes": 1,
+   "repeticiones": 1,
+   "muestra": "Pasás los dedos por el lomo. Es cuero viejo, seco."
+  },
+  {
+   "ruta": "focos.defs.silencio_pesado.ramas.escuchar",
+   "variantes": 2,
+   "repeticiones": 1,
+   "muestra": "El silencio tiene capas. Debajo se oye una respiración, un roce, un crujido leja"
+  },
+  {
+   "ruta": "charla.serel_panadero",
+   "variantes": 15,
+   "repeticiones": 1,
+   "muestra": "«El pan caliente no espera», gruñe Serel, y te pone uno en la mano."
+  },
+  {
+   "ruta": "focos.defs.lluvia_cae.ramas.mirar",
+   "variantes": 2,
+   "repeticiones": 1,
+   "muestra": "La lluvia cae oblicua y suave. Las gotas dibujan círculos en los charcos."
+  }
+ ]
+}

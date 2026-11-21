@@ -195,8 +195,10 @@ export function ejecutarVerbo({ F, fx, ref, verbo, rng, turno, escena, npc = nul
   const clase = claseDe(f, F);
   const v = verbo === 'examinar' ? 'mirar' : verbo;
   const generico = (k) => pick(clases[clase]?.[k] ?? clases.objeto?.[k], rng);
-  if (f.agotado) return { texto: generico('ignorar'), minutos: 0, rama: false, repetido: true };
-  if (v === 'ignorar') { f.agotado = true; return { texto: generico('ignorar'), minutos: 0, rama: false }; }
+  const rama0 = f.gen ? null : F.defs[f.id]?.ramas?.[v];
+  // Ajuste fase 7: agotado → la línea que quede de su verbo; si no queda, una de cierre (prov).
+  if (f.agotado && !(Array.isArray(rama0) && (f.pasos[v] ?? 0) < rama0.length)) return { texto: pick(TEXTOS_AGOTADO.lineas, rng), minutos: 0, rama: false, repetido: true };
+  if (v === 'ignorar' && !f.agotado) { f.agotado = true; return { texto: generico('ignorar'), minutos: 0, rama: false }; }
   const enVoz = voz(clase, f.gen ? f.alias?.[0] : F.defs[f.id]?.alias?.[0]);
   if (enVoz) return { texto: enVoz, minutos: 0, rama: false, voz: true };
   const rama = f.gen ? null : F.defs[f.id]?.ramas?.[v];
@@ -235,6 +237,8 @@ export function interrumpe({ fx, verbo, turno, presentes, ref, F }) {
  * @returns {null | { tipo: 'foco'|'reformular', estado, intencionId: null, texto?, motivo?, datos?, foco?, extFocos? }}
  */
 // W1: tomar un transportable = su rama «seguir» (la que termina en hallazgo).
+// A APROBAR (prov): foco sin nada más que dar.
+export const TEXTOS_AGOTADO = Object.freeze({ prov: true, lineas: Object.freeze(['No queda nada más ahí.', 'Ahí ya no hay nada más que ver.', 'Eso ya dio todo lo que tenía.', 'No sacás nada nuevo de ahí.', 'Ya no queda nada por descubrir ahí.']) });
 const PREFIJO_FOCO = { tomar: 'seguir a', seguir: 'seguir a', mirar: 'mirar a', llamar: 'llamar a', tocar: 'tocar', escuchar: 'escuchar', preguntar: 'preguntar por', ignorar: 'ignorar' };
 
 /**

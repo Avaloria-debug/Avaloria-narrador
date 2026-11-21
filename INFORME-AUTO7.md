@@ -11,3 +11,9 @@ Rama: `claude/quirky-keller-fn77dr`. W1–W8 hechos (W6 con alcance reducido, ve
 - **Compuertas**: comprensión 99,9 % (689 frases, 0 falsos positivos), verificar-partes/focos/producción/ialocal, regresión sin ampliado idéntica, humo, bots de focos 100 %, `npm test` 2065/0.
 - **Textos `prov` a aprobar**: `TEXTOS_SUGERENCIA` y `ROTULOS_VERBO` (narrador/sugerencias.js), `TEXTOS_FILA` (narrador/prueba/filaOpciones.js), t39 completo (`a_aprobar`).
 - **Sin verificar**: la página en navegador real y en móvil (fila deslizable, toque largo, botones ≥44 px, selector de densidad).
+
+## Ajustes
+- Llevables por lista (`data/config/llevables.json`); corpus 99.9 %, 0 falsos positivos (línea base renovada).
+- Foco agotado: línea restante de su verbo o cierre prov (`TEXTOS_AGOTADO`). Test S4 actualizado.
+- Bots 6000 turnos: 0 errores, 259 repeticiones en ventana, 6 seguidas. Detalle por lista en `tools/auto7/repetidas.json` (las más repetidas: genéricos de clase con 2 variantes).
+- W6: cerrado sin paquetes.

@@ -89,7 +89,7 @@ import { colisionesDeFormas, ACCIONES } from './lectura.js';
 import { FORMAS as FORMAS_FOCO } from './focos.js';
 test('V6 sinónimos de verbos', () => {
   const c = contextoLectura({ focos: { gata_mercado: { alias: ['gata'] }, campana_lejana: { alias: ['campana'] }, carta_suelta: { alias: ['carta'] } } });
-  for (const [f, a] of [['persigo a la gata', 'seguir'], ['acompaño a la gata', 'seguir'], ['contemplo la gata', 'mirar'], ['examino la carta', 'mirar'], ['oigo la campana', 'escuchar'], ['golpeo la campana', 'tocar'], ['recojo la carta', 'tocar'], ['levanto la carta', 'tocar']]) {
+  for (const [f, a] of [['persigo a la gata', 'seguir'], ['acompaño a la gata', 'seguir'], ['contemplo la gata', 'mirar'], ['examino la carta', 'mirar'], ['oigo la campana', 'escuchar'], ['golpeo la campana', 'tocar'], ['recojo la carta', 'tomar'], ['levanto la carta', 'tomar'], ['golpeo la carta', 'tocar']]) {
     assert.equal(leerAccion(f, c).accion, a, f);
   }
 });

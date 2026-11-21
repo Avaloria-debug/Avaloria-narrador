@@ -315,38 +315,38 @@
   },
   {
    "frase": "agarro la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "tomo la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "levanto la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "agarrala",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "recojo el sobre",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "agarro la carta y se la muestro a ivor",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "luego": {
     "accion": "mostrar",
@@ -1599,7 +1599,7 @@
   },
   {
    "frase": "tomar la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "verbos"
   },
@@ -1617,7 +1617,7 @@
   },
   {
    "frase": "tomar el sello",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "sello_lacre",
    "cat": "verbos"
   },
@@ -1635,13 +1635,13 @@
   },
   {
    "frase": "tomo el sello",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "sello_lacre",
    "cat": "verbos"
   },
   {
    "frase": "tomá la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1659,13 +1659,13 @@
   },
   {
    "frase": "tomá el sello",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
   {
    "frase": "toma la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1683,13 +1683,13 @@
   },
   {
    "frase": "toma el sello",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
   {
    "frase": "tome la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1707,13 +1707,13 @@
   },
   {
    "frase": "tome el sello",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
   {
    "frase": "tomé la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1731,13 +1731,13 @@
   },
   {
    "frase": "tomé el sello",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
   {
    "frase": "sigo tomando la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1755,7 +1755,7 @@
   },
   {
    "frase": "sigo tomando el sello",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
@@ -1817,14 +1817,14 @@
   },
   {
    "frase": "tomala",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "encliticos"
   },
   {
    "frase": "tomalo",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "sello_lacre",
    "ctx": "sello_lacre",
    "cat": "encliticos"
@@ -1880,7 +1880,7 @@
   },
   {
    "frase": "agárrala",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "encliticos"
@@ -1894,7 +1894,7 @@
   },
   {
    "frase": "recogela",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "encliticos"
@@ -2006,7 +2006,7 @@
   },
   {
    "frase": "la agarro",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "referencias"
@@ -2143,7 +2143,7 @@
   },
   {
    "frase": "agarar la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "cat": "tipeos",
    "objetivo": "carta_suelta"
   },
@@ -2197,7 +2197,7 @@
   },
   {
    "frase": "tomar el selo",
-   "accion": "tocar",
+   "accion": "tomar",
    "cat": "tipeos",
    "objetivo": "sello_lacre"
   },
@@ -4176,7 +4176,7 @@
   },
   {
    "frase": "junto la carta",
-   "accion": "tocar",
+   "accion": "tomar",
    "cat": "sinonimos",
    "objetivo": "carta_suelta"
   },
@@ -4333,7 +4333,7 @@
   },
   {
    "frase": "agarro la carta y se la muestro a serel",
-   "accion": "tocar",
+   "accion": "tomar",
    "objetivo": "carta_suelta",
    "luego": {
     "accion": "mostrar",

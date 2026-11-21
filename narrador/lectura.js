@@ -2,6 +2,7 @@
 // Orden: normalizar → lematizar (+enclíticos) → sinónimos → tipeo → referencias → defaults → aclaración.
 // Cada etapa es una función pura exportada. `leerAccion` las encadena según `etapas`.
 import { normalizar, distanciaEdicion, resolverDestino } from './comprension.js';
+import llevablesJson from '../data/config/llevables.json' with { type: 'json' };
 
 /** Etapas activas por defecto (cada paso de la fase 6 enciende la suya). */
 export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: true, defaults: true, sinonimos: true, varias: true, negacion: true, modo: true });
@@ -156,9 +157,12 @@ export function contextoLectura({ focos = {}, npcs = [], presentes = null, escen
   for (const n of npcsCtx) for (const w of n.palabras) cosas.push({ tipo: 'npc', id: n.id, alias: w });
   // W1: escena donde se vio cada foco (para el rótulo) y cosas transportables (objeto con fin hallazgo, o inventario).
   const escenaDe = Object.fromEntries(Object.entries(focos).filter(([, d]) => d.escena).map(([id, d]) => [id, d.escena]));
-  const transportables = new Set([...inventario, ...Object.entries(focos).filter(([, d]) => esTransportable(d)).map(([id]) => id)]);
+  const transportables = new Set([...inventario, ...Object.entries(focos).filter(([id, d]) => esTransportable(d) || LLEVABLES.has(id)).map(([id]) => id)]);
   return { cosas, npcs: npcsCtx, presentes: presentes ?? npcsCtx.map((n) => n.id), escenas, reciente: { ...reciente }, pendiente, escenaDe, transportables };
 }
+
+/** Ajuste fase 7: lista explícita de llevables (data/config/llevables.json). */
+export const LLEVABLES = new Set(llevablesJson.llevables);
 
 /** W1: objeto con algún paso `fin: hallazgo` en sus ramas. */
 export function esTransportable(def) {
