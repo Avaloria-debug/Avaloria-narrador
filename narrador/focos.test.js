@@ -96,3 +96,65 @@ test('S1.3 (c): el evento sale como línea de mundo aparte, al final', async () 
     e = r.estado;
   }
 });
+
+// ---- S2: motor de focos ----
+import { detectar, vigentes, extFocos, turnoDeFoco, verboFoco, resolverReferente, MAX_FOCOS, DURA_GENERADO } from './focos.js';
+import { cargarPartida } from './index.js';
+
+test('S2 detección por alias (palabra completa, sin tildes)', () => {
+  const l = detectar([], 'Una GATA cruza con un pescado. Un gatazo no cuenta.', { F, turno: 2, escena: 'escena_mercado_circular' });
+  assert.deepEqual(l.map((f) => f.id), ['gata_mercado']);
+  assert.equal(l[0].visto, 2);
+  assert.deepEqual(detectar([], 'gatazo', { F, turno: 1, escena: 'x' }), []);
+});
+
+test('S2 vida: dura turnos o cambio de escena (salvo el que se sigue); máx. 8', () => {
+  const l = detectar([], 'una gata', { F, turno: 1, escena: 'a' });
+  const dura = F.defs.gata_mercado.dura;
+  assert.equal(vigentes(l, { F, turno: dura, escena: 'a' }).length, 1);
+  assert.equal(vigentes(l, { F, turno: dura + 1, escena: 'a' }).length, 0);
+  assert.equal(vigentes(l, { F, turno: 2, escena: 'b' }).length, 0);
+  assert.equal(vigentes(l, { F, turno: 2, escena: 'b', siguiendo: 'gata_mercado' }).length, 1);
+  const ids = Object.keys(F.defs).slice(0, 10);
+  let m = [];
+  ids.forEach((id, i) => { m = detectar(m, F.defs[id].alias[0], { F, turno: 1 + i * 0, escena: 'a' }); });
+  assert.ok(m.length <= MAX_FOCOS);
+});
+
+test('S2 generado desde símbolo: clase por familia y alias de la línea', () => {
+  const l = detectar([], 'Se oyen carros que empiezan a rodar.', { F, turno: 3, escena: 'a', generadas: [{ familia: 'sonido', texto: 'se oyen carros que empiezan a rodar' }] });
+  assert.equal(l.length, 1);
+  assert.equal(l[0].gen, true);
+  assert.equal(l[0].clase, 'sonido');
+  assert.ok(l[0].alias.includes('ruido') && l[0].alias.includes('carros'));
+  assert.equal(vigentes(l, { F, turno: 3 + DURA_GENERADO, escena: 'a' }).length, 0);
+  // una línea que un foco propio captura no genera
+  assert.ok(detectar([], 'Un gato duerme', { F, turno: 1, escena: 'a', generadas: [{ familia: 'animal', texto: 'un gato duerme' }] }).every((f) => !f.gen));
+});
+
+test('S2 fijos siempre disponibles sin haberlos visto', () => {
+  const v = verboFoco('mirar la fuente');
+  assert.equal(resolverReferente('mirar la fuente', v, { F, lista: [], escena: 'escena_mercado_circular' }).tipo, 'fijo');
+});
+
+test('S2 carga vieja → sin focos; el estado de focos se guarda con la partida', async () => {
+  const vieja = crearPartida({ semilla: 4 });
+  delete vieja.ext;
+  assert.deepEqual(extFocos(cargarPartida(vieja).ext).focos, []);
+  const [r] = await jugar(vieja, ['observar']);
+  const otra = cargarPartida(JSON.parse(JSON.stringify(r.estado)));
+  assert.deepEqual(otra.ext.focos, r.estado.ext.focos);
+});
+
+test('S2 determinismo: misma semilla, mismos focos y textos', async () => {
+  const t = ['observar', 'explorar', 'mirar la gata', 'seguir al perro', 'observar', 'escuchar el ruido'];
+  const a = await jugar(crearPartida({ semilla: 9 }), t);
+  const b = await jugar(crearPartida({ semilla: 9 }), t);
+  assert.deepEqual(a.map((x) => x.texto), b.map((x) => x.texto));
+  assert.deepEqual(a.at(-1).estado.ext.focos, b.at(-1).estado.ext.focos);
+});
+
+test('S2 a lo largo de una partida se detectan focos (propios o generados)', async () => {
+  const s = await jugar(crearPartida({ semilla: 2 }), Array(12).fill('observar'));
+  assert.ok(s.some((r) => (r.estado.ext.focos ?? []).length > 0));
+});
