@@ -194,7 +194,19 @@ function favoresDeTurno({ amp, contenido, partida, n, texto, eco, L, presentes }
 }
 
 /** Tick de economía de cada turno con ampliado: favores nuevos por ayudar, cobros, incumplidos y deudas vencidas. */
-export function tickEconomia({ amp, contenido, turno, estado, ext }) {
+// X7: escenas concurridas donde mostrar o pagar ≥ 1 de plata llama la atención (supuesto).
+export const ESCENAS_CONCURRIDAS = Object.freeze(['escena_mercado_circular', 'escena_plaza_cambistas', 'escena_taberna_lareth', 'escena_puente_aduana']);
+export const UMBRAL_EXHIBIR = 100;
+export const MAX_ATENCION = 5;
+const muestraDinero = (n) => /(^| )(muestro|enseno|saco|cuento|agito) (la bolsa|mi bolsa|las monedas|mis monedas|el dinero|mi dinero|la plata|mi plata)( |$)/.test(n);
+
+/** Marca `atencion_ladrones` { valor, dia }: decae 1 por día. Fase 9 (combate) la leerá para robos y emboscadas. */
+export function atencionDecaida(a, dia) {
+  if (!a || !Number.isFinite(a.valor)) return { valor: 0, dia };
+  return { valor: Math.max(0, a.valor - Math.max(0, dia - a.dia)), dia };
+}
+
+export function tickEconomia({ amp, contenido, turno, estado, ext, antes = null, texto = '' }) {
   let favores = ext?.favores ?? [];
   const lineas = [];
   const dia = estado.reloj.dia;
@@ -208,10 +220,21 @@ export function tickEconomia({ amp, contenido, turno, estado, ext }) {
   }
   const r = avanzarFavores(favores, { dia, presentes, semillaBase: ext?.semillaBase ?? 0 });
   for (const l of r.lineas) lineas.push(L(l.clave, { npc: nombreNpc(contenido, l.npc) }));
+  // X7: exhibir dinero.
+  let atencion = atencionDecaida(ext?.atencion_ladrones, dia);
+  const pagado = antes ? totalBronce(antes.jugador) - totalBronce(estado.jugador) : 0;
+  const muestra = muestraDinero(normalizar(texto)) && totalBronce(estado.jugador) >= UMBRAL_EXHIBIR;
+  if ((pagado >= UMBRAL_EXHIBIR || muestra) && ESCENAS_CONCURRIDAS.includes(estado.jugador.escenaId)) {
+    atencion = { valor: Math.min(MAX_ATENCION, atencion.valor + 1), dia };
+    lineas.push(L('pagos.exhibir', {}));
+  }
+  // `sin_dinero` de t41 en lugar del texto genérico de una compra del contenido que no alcanza.
+  const sinDinero = turno?.accion?.motivo === 'sin_dinero' ? L('pagos.sin_dinero', {}) : null;
   const nuevoEstado = r.relacion.length ? aplicarEfectosSistema(estado, r.relacion.map((x) => ({ tipo: 'relacion', ...x }))) : estado;
   const hechos = Object.keys(r.hechos).length ? { hechosSistema: { ...(ext?.hechosSistema ?? {}), ...r.hechos } } : {};
   const cambio = r.favores !== (ext?.favores ?? []) && JSON.stringify(r.favores) !== JSON.stringify(ext?.favores ?? []);
-  return { estado: nuevoEstado, ext: cambio || Object.keys(hechos).length ? { ...ext, favores: r.favores, ...hechos } : ext, lineas: lineas.filter(Boolean) };
+  const conAtencion = atencion.valor > 0 || ext?.atencion_ladrones ? { atencion_ladrones: atencion } : {};
+  return { estado: nuevoEstado, ext: cambio || Object.keys(hechos).length || Object.keys(conAtencion).length ? { ...ext, favores: r.favores, ...hechos, ...conAtencion } : ext, lineas: lineas.filter(Boolean), sinDinero };
 }
 
 export function turnoDeEconomia({ amp, contenido, partida, texto }) {

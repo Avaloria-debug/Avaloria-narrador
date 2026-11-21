@@ -619,9 +619,10 @@ export async function narrar(estado, entrada, opciones = {}) {
         aperturas = r.aperturas;
         ext = r.ext;
         // Fase 8: favores (ayudar, cobros, incumplidos) y marcas de economía, una vez por turno.
-        const te = conHistorial(ext?.lineas, () => tickEconomia({ amp: opciones.ampliado, contenido, turno, estado: turno.estado, ext }));
+        const te = conHistorial(ext?.lineas, () => tickEconomia({ amp: opciones.ampliado, contenido, turno, estado: turno.estado, ext, antes: partida, texto: entrada?.tipo === 'texto' ? entrada.texto : '' }));
         if (te.estado !== turno.estado) turno = { ...turno, estado: te.estado };
         ext = te.ext;
+        if (te.sinDinero) texto = te.sinDinero;
         if (te.lineas.length) texto = `${texto}\n\n${te.lineas.join(' ')}`;
       } catch (e) {
         anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');

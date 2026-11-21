@@ -5,3 +5,5 @@
 - Autorrevisión (X3–X4): compuertas verdes, bots-juego 0 errores, humo ok.
 - X5: trabajos de un día (oferta, pasos con reloj, contratiempo, jornal, abandono)
 - X6: favores, deudas e información como pago
+- Autorrevisión (X5–X6): compuertas verdes, bots-juego y humo sin errores.
+- X7: exhibir dinero (atencion_ladrones con decaimiento) y sin_dinero de t41

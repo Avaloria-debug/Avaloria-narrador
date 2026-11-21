@@ -138,3 +138,4 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - Regateo: rebaja máx. × (1 + 0,25·relación) (tope ×1,5); hallazgo sin precio = 100 bronce (×2 Ivor/Maren, ×0,5 resto); pagar de más = +20 %; t41 cargado al manifest en X4 (lo necesita el regateo).
 - Trabajos: se ofrecen con «busco trabajo» y variantes (no al saludar, para no tocar la charla); el reloj avanza al cerrar el trabajo; rumor = hecho `rumor_trabajo:<id>`.
 - Favores: ayudar con éxito → el NPC te debe; fiado solo con relación ≥ 1; cobro saldado = 2 h; deuda de NPC vence a los 10 días; información: curiosidad ≥ 1 → favor, si no 25 % de descuento en la próxima compra.
+- Exhibir (punto de extensión fase 9): `ext.atencion_ladrones = { valor 0–5, dia }`, +1 al pagar o mostrar ≥ 1 de plata en mercado, plaza de cambistas, taberna o puente; −1 por día. El combate debe leerlo con `atencionDecaida` (narrador/economia/index.js).
