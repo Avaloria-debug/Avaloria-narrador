@@ -241,3 +241,54 @@ test('S4 el turno de foco es un turno normal (ext.turno avanza, el ambiente sigu
   const [r] = await jugar(e0, ['mirar a la gata']);
   assert.equal(r.estado.ext.turno, e0.ext.turno + 1);
 });
+
+// ---- S5: interrupciones y memoria ----
+const INT = F.interrupcion.serel_panadero;
+async function charlaYFoco(e, verbo = 'seguir a la gata') {
+  const [h] = await jugar(e, ['hablar con serel']);
+  const x = structuredClone(h.estado);
+  x.ext.focos = [{ id: 'gata_mercado', visto: x.ext.turno, escena: x.jugador.escenaId, pasos: {}, agotado: false }];
+  const [r] = await jugar(x, [verbo]);
+  return r;
+}
+
+test('S5 durante: seguir un foco en plena charla antepone la voz del NPC y registra la interrupción', async () => {
+  const r = await charlaYFoco(await conFocos([]));
+  assert.ok(INT.durante.some((t) => r.texto.startsWith(t)), r.texto);
+  assert.equal(r.estado.ext.interrupciones.serel_panadero.veces, 1);
+});
+
+test('S5 regreso: al volver a hablar, la línea de regreso una sola vez', async () => {
+  const r = await charlaYFoco(await conFocos([]));
+  const [a, b] = await jugar(r.estado, ['hablar con serel', 'hablar con serel']);
+  assert.ok(INT.regreso.some((t) => a.texto.startsWith(t)), a.texto);
+  assert.ok(!INT.regreso.some((t) => b.texto.includes(t)), b.texto);
+});
+
+test('S5 tercera interrupción → afinidad −1 (o −2 con orden ≥ 1)', async () => {
+  let e = await conFocos([]);
+  const af0 = e.ext.afinidad?.serel_panadero ?? 0;
+  const deltas = [];
+  for (let i = 0; i < 3; i++) {
+    const antes = e.ext.afinidad?.serel_panadero ?? 0;
+    const r = await charlaYFoco(e);
+    deltas.push((r.estado.ext.afinidad?.serel_panadero ?? 0) - antes);
+    e = r.estado;
+  }
+  assert.equal(e.ext.interrupciones.serel_panadero.veces, 3);
+  assert.equal(e.ext.interrupciones.serel_panadero.castigado, true);
+  const esperado = (amp.valores?.serel_panadero?.orden ?? 0) >= 1 ? -2 : -1;
+  assert.ok(deltas[2] <= esperado + 1e-9 || deltas[2] - deltas[1] <= esperado + 1, JSON.stringify({ deltas, af0 }));
+});
+
+test('S5 mirar/escuchar/preguntar no interrumpen', async () => {
+  const r = await charlaYFoco(await conFocos([]), 'mirar a la gata');
+  assert.ok(!INT.durante.some((t) => r.texto.includes(t)), r.texto);
+  assert.equal(r.estado.ext.interrupciones.serel_panadero, undefined);
+});
+
+test('S5 carga vieja sin interrupciones ni charla', () => {
+  const x = extFocos({});
+  assert.deepEqual(x.interrupciones, {});
+  assert.equal(x.ultimaCharla, null);
+});

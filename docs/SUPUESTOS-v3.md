@@ -78,3 +78,4 @@ Q4 | firestore.rules no se tocó: camposDeRegistro() con hasOnly rechazaría pas
 - F3: el estado de focos vive en `estado.ext` (focos, siguiendo, marcasFoco, interrupciones, ultimaCharla); `fin: hallazgo` marca `ext.marcasFoco` (las marcas base se filtran contra contenido-v3).
 - F3-S3: "preguntar por X" sobre un foco responde con clases.<clase>.preguntar (no hay líneas por NPC para focos en t30).
 - F3-S4: actuar sobre un foco renueva su `visto` (así repetir tras `fin` responde ignorar y no no_visto).
+- F3-S5: el castigo de la 3.ª interrupción va a `ext.afinidad` (utilidad P7), no a la relación base; con `valores.orden` ≥ 1 es −2.

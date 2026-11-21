@@ -2,3 +2,4 @@
 - S2 hecho: focos.js: detección por alias, generados desde símbolos, vida/máx 8, fijos, ext.focos.
 - S3 hecho: verboFoco/resolverReferente: prioridad foco > anterior, eso/reciente, no_visto, typos.
 - S4 hecho: ramas en orden con tiempoMin/emite/fin, fallback por clase, ignorar tras fin.
+- S5 hecho: durante/regreso único (24 h), 3.ª vez afinidad −1/−2, mirar no interrumpe.
