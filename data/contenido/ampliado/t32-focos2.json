@@ -1,0 +1,810 @@
+{
+ "tanda": "t32",
+ "estado": "a_aprobar",
+ "nota": "Focos con camino propio de la lista de menciones sin foco (S8). Mismo schema que t30-focos.json: se fusionan en focos.",
+ "focos": {
+  "lluvia_cae": {
+   "alias": [
+    "lluvia",
+    "chaparron",
+    "chaparrón",
+    "llovizna",
+    "gotas"
+   ],
+   "clase": "fenomeno",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "La lluvia cae oblicua y suave. Las gotas dibujan círculos en los charcos.",
+     "Cada gota rebota en el empedrado y se lleva un poco de polvo."
+    ],
+    "escuchar": [
+     "La lluvia golpea los techos con insistencia y repite el mismo ritmo."
+    ],
+    "tocar": [
+     "Extendés la mano. Las gotas son frías y pesadas.",
+     "Dejás que te moje la palma. El agua baja por la muñeca."
+    ],
+    "seguir": [
+     {
+      "t": "Salís a mojarte un rato. Volvés empapado hasta los tobillos y bastante más despierto.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ]
+   }
+  },
+  "niebla_densa": {
+   "alias": [
+    "niebla",
+    "bruma",
+    "neblina"
+   ],
+   "clase": "fenomeno",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "La niebla se traga todo a diez pasos. Lo demás es una idea gris.",
+     "Las siluetas aparecen y desaparecen como pensamientos."
+    ],
+    "escuchar": [
+     "Los sonidos llegan sin dirección. No sabés si algo está cerca o lejos."
+    ],
+    "seguir": [
+     {
+      "t": "Caminás hacia donde la niebla es más espesa. Todo se vuelve gris y blando; perdés la referencia de los lados.",
+      "tiempoMin": 5
+     },
+     {
+      "t": "Volvés sobre tus pasos tanteando. No encontraste nada, salvo la sensación de haber estado muy lejos.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ]
+   }
+  },
+  "viento_frio": {
+   "alias": [
+    "viento",
+    "brisa",
+    "ventolera"
+   ],
+   "clase": "fenomeno",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "El viento mueve las lonas, los techos y el pelo de la gente."
+    ],
+    "tocar": [
+     "Abrís el abrigo y dejás que te empuje. Dura poco."
+    ],
+    "escuchar": [
+     "El viento silba entre las callejas con una nota muy aguda."
+    ],
+    "seguir": [
+     {
+      "t": "Caminás contra el viento. Te cuesta cada paso. Llegás a un rincón abrigado y ahí se acaba el esfuerzo.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ]
+   }
+  },
+  "nubes_cielo": {
+   "alias": [
+    "nubes",
+    "nubarrones",
+    "nube"
+   ],
+   "clase": "fenomeno",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "Las nubes avanzan despacio, con un peso que se nota hasta desde abajo.",
+     "Entre dos nubes se cuela un rayo delgado de luz."
+    ],
+    "seguir": [
+     {
+      "t": "Seguís las nubes con la vista hasta que se pierden detrás de las colinas. Te quedás con el cuello duro.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "luna_alta": {
+   "alias": [
+    "luna",
+    "lunar"
+   ],
+   "clase": "fenomeno",
+   "dura": 5,
+   "ramas": {
+    "mirar": [
+     "La luna cuelga sobre los techos, blanca y callada.",
+     "Sus bordes parecen más nítidos que los de cualquier cosa de abajo."
+    ],
+    "seguir": [
+     {
+      "t": "Caminás bajo la luna sin rumbo, mirándola de reojo. Tus sombras te acompañan a un paso.",
+      "fin": "nada",
+      "tiempoMin": 15
+     }
+    ]
+   }
+  },
+  "sombras_largas": {
+   "alias": [
+    "sombras",
+    "penumbra",
+    "sombra larga"
+   ],
+   "clase": "fenomeno",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "Las sombras se estiran sobre el suelo, más largas que sus dueños."
+    ],
+    "seguir": [
+     {
+      "t": "Te acercás al rincón más oscuro. Hay un barril, un trapo y un gato dormido que no se inmuta.",
+      "fin": "hallazgo",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "polvo_aire": {
+   "alias": [
+    "polvo",
+    "polvareda"
+   ],
+   "clase": "fenomeno",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "El polvo flota en la luz como una nevada lenta."
+    ],
+    "tocar": [
+     "Pasás el dedo por una superficie. Queda una línea limpia."
+    ]
+   }
+  },
+  "silencio_pesado": {
+   "alias": [
+    "silencio"
+   ],
+   "clase": "sonido",
+   "dura": 3,
+   "ramas": {
+    "escuchar": [
+     "El silencio tiene capas. Debajo se oye una respiración, un roce, un crujido lejano.",
+     "Es un silencio de lugar viejo, con memoria."
+    ],
+    "seguir": [
+     {
+      "t": "Buscás de dónde viene el silencio. Es parejo, no tiene centro. Seguirlo no lleva a ningún lado.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "puerta_cerrada": {
+   "alias": [
+    "puerta",
+    "puertas",
+    "portón",
+    "porton"
+   ],
+   "clase": "lugar",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "Una puerta de madera hinchada, con marcas de manos a la altura del pomo."
+    ],
+    "tocar": [
+     "Probás el picaporte. Está frío y no cede."
+    ],
+    "escuchar": [
+     "Apoyás la oreja en la madera. Pasos del otro lado, que se alejan."
+    ],
+    "seguir": [
+     {
+      "t": "Te acercás a la puerta. Golpeás dos veces. Nadie contesta, pero algo se mueve adentro.",
+      "tiempoMin": 5
+     },
+     {
+      "t": "Esperás un rato. La puerta no se abre. Era solo una puerta.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ]
+   }
+  },
+  "ventana_abierta": {
+   "alias": [
+    "ventana",
+    "ventanas",
+    "postigo",
+    "postigos"
+   ],
+   "clase": "lugar",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "Por una ventana abierta se ve una cocina, una olla y la espalda de alguien.",
+     "Un postigo golpea con el viento."
+    ],
+    "escuchar": [
+     "Del interior sale una conversación en voz baja y el tintineo de una cuchara."
+    ],
+    "tocar": [
+     "Apoyás la mano en el marco. La pintura está descascarada."
+    ]
+   }
+  },
+  "lampara_aceite": {
+   "alias": [
+    "lampara",
+    "lámpara",
+    "lamparas",
+    "lámparas",
+    "farol",
+    "faroles"
+   ],
+   "clase": "objeto",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "La lámpara tiene el vidrio ahumado y una llama chica que no se apaga.",
+     "Alguien dejó una mecha de repuesto junto al soporte."
+    ],
+    "tocar": [
+     "Acercás la mano a la lámpara. Irradia un calor suave."
+    ],
+    "seguir": [
+     {
+      "t": "Seguís el halo de la lámpara. Ilumina un rincón con cajas apiladas y una pared descascarada.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "libro_abierto": {
+   "alias": [
+    "libro",
+    "libros",
+    "tomo",
+    "tomos"
+   ],
+   "clase": "objeto",
+   "dura": 5,
+   "ramas": {
+    "mirar": [
+     "Un libro abierto boca abajo, con el lomo doblado. A quien lo leyó no le importaba."
+    ],
+    "tocar": [
+     "Pasás los dedos por el lomo. Es cuero viejo, seco."
+    ],
+    "seguir": [
+     {
+      "t": "Hojeás el libro. Hay anotaciones a lápiz en los márgenes, de tres manos distintas.",
+      "tiempoMin": 5
+     },
+     {
+      "t": "Una de las manos repite una palabra tachada. No lográs leerla.",
+      "fin": "hallazgo",
+      "tiempoMin": 10
+     }
+    ]
+   }
+  },
+  "moneda_suelo": {
+   "alias": [
+    "moneda",
+    "monedas",
+    "cobre"
+   ],
+   "clase": "objeto",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "Una moneda reluce en el suelo. De cobre, gastada."
+    ],
+    "seguir": [
+     {
+      "t": "Te agachás por la moneda. Es de las que ya no se acuñan, con un sello casi borrado.",
+      "fin": "hallazgo",
+      "tiempoMin": 1
+     }
+    ],
+    "tocar": [
+     "La rodás con el dedo. Está caliente de tanto sol."
+    ]
+   }
+  },
+  "carta_suelta": {
+   "alias": [
+    "carta",
+    "cartas",
+    "sobre",
+    "pliego"
+   ],
+   "clase": "objeto",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "Una carta con el lacre roto, doblada muchas veces."
+    ],
+    "tocar": [
+     "La levantás. El papel es grueso y huele a humo."
+    ],
+    "seguir": [
+     {
+      "t": "Levantás la carta. El lacre está roto y el papel, ajado.",
+      "tiempoMin": 1
+     },
+     {
+      "t": "No era para vos, pero la leés: recomendaciones sobre una compra de lana. Nada más.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "sello_lacre": {
+   "alias": [
+    "sello",
+    "sellos",
+    "lacre"
+   ],
+   "clase": "objeto",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "Un sello de lacre con una burbuja arriba. Es señal de auténtico, dicen."
+    ],
+    "tocar": [
+     "Pasás el dedo por el relieve. Una línea fina y una letra torcida."
+    ]
+   }
+  },
+  "registro_libreta": {
+   "alias": [
+    "registro",
+    "registros",
+    "libreta",
+    "libretas"
+   ],
+   "clase": "objeto",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "Un registro con columnas prolijas y una página arrancada con cuidado."
+    ],
+    "tocar": [
+     "Pasás una página. Fechas, cifras y un sello repetido."
+    ],
+    "seguir": [
+     {
+      "t": "Mirás las últimas entradas. Siempre las mismas iniciales, siempre la misma hora.",
+      "fin": "hallazgo",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "cinta_atada": {
+   "alias": [
+    "cinta",
+    "cintas",
+    "lazo"
+   ],
+   "clase": "objeto",
+   "dura": 5,
+   "ramas": {
+    "mirar": [
+     "Una cinta de color apagado atada a una rama. Alguien la ató con intención."
+    ],
+    "seguir": [
+     {
+      "t": "Seguís la dirección en que apunta la cinta. Hay una piedra apilada sobre otra, a ras del suelo.",
+      "tiempoMin": 5
+     },
+     {
+      "t": "Es una señal de peregrino. No hay nadie a la vista.",
+      "fin": "hallazgo",
+      "tiempoMin": 10
+     }
+    ],
+    "tocar": [
+     "Rozás la cinta. La tela está desteñida por años de sol."
+    ]
+   }
+  },
+  "bolsa_olvidada": {
+   "alias": [
+    "bolsa",
+    "morral",
+    "bulto",
+    "saco"
+   ],
+   "clase": "objeto",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "Una bolsa abandonada junto a un banco. No parece de nadie."
+    ],
+    "seguir": [
+     {
+      "t": "Abrís la bolsa. Hay pan duro, una cuchara y una carta sin dirección.",
+      "tiempoMin": 2
+     },
+     {
+      "t": "La cerrás. No es tuya. La dejás donde estaba.",
+      "fin": "nada",
+      "tiempoMin": 2
+     }
+    ]
+   }
+  },
+  "vaso_mesa": {
+   "alias": [
+    "vaso",
+    "vasos",
+    "jarro",
+    "jarros"
+   ],
+   "clase": "objeto",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "Un vaso a medio terminar con una marca de labios en el borde."
+    ],
+    "tocar": [
+     "Está tibio. Lo dejaron hace poco."
+    ]
+   }
+  },
+  "papel_suelto": {
+   "alias": [
+    "papeles",
+    "hoja",
+    "hojas",
+    "apunte"
+   ],
+   "clase": "objeto",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "Una hoja suelta, arrugada, con un mapa dibujado a medias."
+    ],
+    "seguir": [
+     {
+      "t": "Recogés la hoja. Trazos sin nombres, flechas y un círculo en el centro.",
+      "fin": "hallazgo",
+      "tiempoMin": 3
+     }
+    ]
+   }
+  },
+  "piedras_camino": {
+   "alias": [
+    "piedras",
+    "guijarros",
+    "pedruscos"
+   ],
+   "clase": "objeto",
+   "dura": 3,
+   "ramas": {
+    "tocar": [
+     "Levantás una piedra. Debajo hay un escarabajo ofendido."
+    ],
+    "seguir": [
+     {
+      "t": "Dás vuelta unas piedras. No hay nada debajo salvo tierra y paciencia.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "guardia_ronda": {
+   "alias": [
+    "guardia",
+    "guardias",
+    "centinela"
+   ],
+   "clase": "persona",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "El guardia vigila sin vigilar: los ojos van, la cabeza no."
+    ],
+    "llamar": [
+     "Lo llamás. Gira despacio, te mide y te hace una seña: circule."
+    ],
+    "escuchar": [
+     "Murmura entre dientes, contando pasos."
+    ],
+    "seguir": [
+     {
+      "t": "Seguís al guardia en su ronda. Se detiene en cada esquina y mira la misma ventana.",
+      "tiempoMin": 10
+     },
+     {
+      "t": "Al tercer rodeo se vuelve y te mira fijo. Mejor no insistir.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "mercader_carga": {
+   "alias": [
+    "mercader",
+    "comerciante",
+    "mercaderes"
+   ],
+   "clase": "persona",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "El mercader compara precios con un cuaderno que esconde cuando mira hacia vos."
+    ],
+    "llamar": [
+     "Lo llamás. Se hace el distraído un segundo de más."
+    ],
+    "seguir": [
+     {
+      "t": "Seguís al mercader entre los puestos. Anota cifras y mira los carros.",
+      "tiempoMin": 10
+     },
+     {
+      "t": "Termina frente a una mesa de cambistas. No te vio.",
+      "fin": "hallazgo",
+      "tiempoMin": 10
+     }
+    ]
+   }
+  },
+  "viajero_camino": {
+   "alias": [
+    "viajero",
+    "viajera",
+    "caminante",
+    "forastero"
+   ],
+   "clase": "persona",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "Un viajero con el polvo del camino hasta las rodillas."
+    ],
+    "llamar": [
+     "Te saluda con la mano sin detenerse."
+    ],
+    "seguir": [
+     {
+      "t": "Seguís al viajero un trecho. Camina sin apuro y no mira atrás.",
+      "tiempoMin": 10
+     },
+     {
+      "t": "En la bifurcación toma el sendero menos usado. No lo seguís más.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "vendedor_grita": {
+   "alias": [
+    "vendedor",
+    "vendedora",
+    "pregonero",
+    "pregonera"
+   ],
+   "clase": "persona",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "El vendedor grita precios con una sonrisa que no llega a los ojos."
+    ],
+    "llamar": [
+     "Te ofrece algo que no pediste, con una frase ensayada mil veces."
+    ],
+    "escuchar": [
+     "Repite siempre la misma frase, con la misma entonación."
+    ]
+   }
+  },
+  "cambistas_mesa": {
+   "alias": [
+    "cambistas",
+    "cambista"
+   ],
+   "clase": "persona",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "Los cambistas cuentan en silencio, con los labios moviéndose."
+    ],
+    "llamar": [
+     "Uno levanta un dedo: espere."
+    ]
+   }
+  },
+  "fila_gente": {
+   "alias": [
+    "fila",
+    "cola",
+    "filas"
+   ],
+   "clase": "persona",
+   "dura": 3,
+   "ramas": {
+    "mirar": [
+     "Una fila corta, paciente, que se parece a todas las filas."
+    ],
+    "seguir": [
+     {
+      "t": "Te sumás a la fila sin saber para qué es. A la mitad alguien te explica: es la del pan.",
+      "tiempoMin": 15
+     },
+     {
+      "t": "Te vas con más curiosidad que pan.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "grupo_charla": {
+   "alias": [
+    "grupo",
+    "corrillo",
+    "vecinos"
+   ],
+   "clase": "persona",
+   "dura": 3,
+   "ramas": {
+    "escuchar": [
+     "Un grupo habla bajo. Alcanzás pedazos: precios, una boda, un perro perdido.",
+     "Se ríen de algo. Cuando te ven, bajan la voz."
+    ],
+    "seguir": [
+     {
+      "t": "Te acercás al grupo. Callan al verte y retoman cuando seguís de largo.",
+      "fin": "nada",
+      "tiempoMin": 3
+     }
+    ]
+   }
+  },
+  "copista_pluma": {
+   "alias": [
+    "copista",
+    "copistas",
+    "escriba"
+   ],
+   "clase": "persona",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "El copista no levanta la vista. La pluma se mueve con la regularidad de un reloj."
+    ],
+    "llamar": [
+     "Lo llamás. Termina la línea antes de mirarte."
+    ],
+    "escuchar": [
+     "Se oye solo el raspar de la pluma y un suspiro cada tanto."
+    ]
+   }
+  },
+  "isla_lago": {
+   "alias": [
+    "isla",
+    "islote"
+   ],
+   "clase": "lugar",
+   "dura": 6,
+   "ramas": {
+    "mirar": [
+     "La isla es un óvalo oscuro en medio del lago. A veces parece más cerca de lo que está."
+    ],
+    "seguir": [
+     {
+      "t": "Caminás por la orilla hasta el punto más cercano a la isla. Un tronco medio hundido, atado con cuerda vieja.",
+      "tiempoMin": 15
+     },
+     {
+      "t": "Sin bote no hay cómo cruzar. Lo anotás mentalmente.",
+      "fin": "hallazgo",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  },
+  "roble_lejano": {
+   "alias": [
+    "roble",
+    "arbol grande",
+    "árbol grande"
+   ],
+   "clase": "lugar",
+   "dura": 6,
+   "ramas": {
+    "mirar": [
+     "Un roble enorme domina la colina. Parece haber visto todo lo que pasa y callar."
+    ],
+    "seguir": [
+     {
+      "t": "Subís hacia el roble. En la base hay cintas de colores, algunas viejísimas.",
+      "tiempoMin": 20
+     },
+     {
+      "t": "Apoyás la mano en el tronco. Es áspero y huele a resina vieja.",
+      "fin": "hallazgo",
+      "tiempoMin": 10
+     }
+    ]
+   }
+  },
+  "carreta_camino": {
+   "alias": [
+    "carreta",
+    "carretas",
+    "carro",
+    "carros"
+   ],
+   "clase": "objeto",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "Una carreta cargada avanza despacio. El eje chirría con una nota fija."
+    ],
+    "escuchar": [
+     "El chirrido del eje marca el paso de las mulas."
+    ],
+    "seguir": [
+     {
+      "t": "Seguís la carreta un rato. El cochero va cabeceando.",
+      "tiempoMin": 15
+     },
+     {
+      "t": "Se detiene en una posta, desengancha y se duerme. No pasó nada.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ]
+   }
+  },
+  "mulas_carga": {
+   "alias": [
+    "mulas",
+    "mula",
+    "recua"
+   ],
+   "clase": "animal",
+   "dura": 4,
+   "ramas": {
+    "mirar": [
+     "Las mulas avanzan atadas en fila, con el mismo paso exacto."
+    ],
+    "seguir": [
+     {
+      "t": "Seguís a las mulas por el camino. Marchan sin quejas.",
+      "tiempoMin": 15
+     },
+     {
+      "t": "Se detienen en un abrevadero y beben a coro. Ahí termina todo.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ]
+   }
+  }
+ }
+}

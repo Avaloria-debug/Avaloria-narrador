@@ -31,9 +31,9 @@ const DOM = {
   eco: null, efecto: null, ritmo: ['corto', 'largo'], estacion: ['primavera', 'verano', 'otono', 'invierno'],
   festividad: null, objetivoPaso: null, apodo: null, esc: null, npc: null,
 };
-const PH = new Set(['npc', 'objeto', 'lugar', 'conocimiento', 'nombres', 'eco', 'apodo']);
+const PH = new Set(['npc', 'objeto', 'lugar', 'conocimiento', 'nombres', 'eco', 'apodo', 'foco']);
 const ESTADOS = new Set(['borrador', 'a_aprobar', 'a_aprobar_canon', 'aprobado']);
-const SIN_TEXTO = new Set(['tanda', 'estado', 'nota', 'id', 'npc', 'escena', 'hecho', 'meta', 'ciudad', 'estacion', 'dias', 'duracionH', 'avanzaCadaH', 'prob', 'afinidad', 'umbralRelacion', 'requiereEvento', 'requiereMarca', 'palabrasClave', 'base']);
+const SIN_TEXTO = new Set(['tanda', 'estado', 'nota', 'id', 'npc', 'escena', 'hecho', 'meta', 'ciudad', 'estacion', 'dias', 'duracionH', 'avanzaCadaH', 'prob', 'afinidad', 'umbralRelacion', 'requiereEvento', 'requiereMarca', 'palabrasClave', 'base', 'clase', 'fin', 'emite']);
 
 function cargar() {
   const v3 = leer(V3);

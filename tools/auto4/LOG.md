@@ -1,0 +1,1 @@
+- U1 hecho: t32 fusionado (61 focos, id repetido = error), t31 en focos.preguntar, {foco} en PH, manifest; tests 1910/0.

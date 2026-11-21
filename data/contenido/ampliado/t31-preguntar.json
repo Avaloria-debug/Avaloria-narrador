@@ -1,0 +1,319 @@
+{
+ "tanda": "t31",
+ "estado": "a_aprobar",
+ "nota": "preguntar por un foco visto a un NPC presente: preguntar.<npc>.<clase> = 2 variantes en su voz. {foco} = primer alias del foco. Sin línea o sin NPC presente: clases.<clase>.preguntar de t30.",
+ "preguntar": {
+  "maren_archivista": {
+   "animal": [
+    "«El Archivo no registra animales, salvo los de tinta», dice Maren. «Pregunte fuera.»",
+    "«Si pregunta por {foco} en el Archivo, no consta nada», dice Maren."
+   ],
+   "persona": [
+    "«No consta quién es. Y si fuera de interés, constaría», dice Maren.",
+    "«Pregunta por una persona sin nombre. Eso no es consulta», dice Maren."
+   ],
+   "sonido": [
+    "«Los sonidos no se archivan. Los silencios, a veces», dice Maren.",
+    "«No consta ningún ruido relevante», dice Maren, sin levantar la vista."
+   ],
+   "objeto": [
+    "«Un objeto sin registro es un problema de otros», dice Maren.",
+    "«Si {foco} no está inventariado, no existe para el Archivo», dice Maren."
+   ],
+   "lugar": [
+    "«Ese lugar está en el mapa sur. Pregunte a Tiren», dice Maren.",
+    "«Consta que existe, nada más», dice Maren."
+   ],
+   "fenomeno": [
+    "«Fenómenos del cielo: sección de almanaques. No me corresponde», dice Maren.",
+    "«El cielo no es asunto del Archivo, salvo cuando moja los papeles», dice Maren."
+   ]
+  },
+  "serel_panadero": {
+   "animal": [
+    "«Ese bicho me roba pan, ¿lo sabías?», gruñe Serel.",
+    "«{foco}… vení por acá siempre. No le des de comer», dice Serel."
+   ],
+   "persona": [
+    "«No sé quién es. Yo amaso, no miro caras», dice Serel.",
+    "«Si compra pan, es bueno. Si no, no es mi asunto», dice Serel."
+   ],
+   "sonido": [
+    "«Con el horno de fondo no oigo nada más», dice Serel.",
+    "«Ruido hay siempre. Lo que importa es que suba la masa», dice Serel."
+   ],
+   "objeto": [
+    "«Eso no es mío, ni lo quiero en mi puesto», dice Serel.",
+    "«Si {foco} no se come, no me interesa», dice Serel."
+   ],
+   "lugar": [
+    "«Ahí no vendo. Pregunta a otro», dice Serel.",
+    "«Queda lejos del horno. No voy», dice Serel."
+   ],
+   "fenomeno": [
+    "«Con ese tiempo la masa se pone rara», dice Serel.",
+    "«El cielo no me da de comer. El horno, sí», dice Serel."
+   ]
+  },
+  "ivor_cambista": {
+   "animal": [
+    "«Un animal no cotiza. Pregunte a un criador», dice Ivor.",
+    "«{foco} no figura en mis libros», dice Ivor."
+   ],
+   "persona": [
+    "«Quien sea, no es cliente mío. Todavía», dice Ivor.",
+    "«Una persona es un activo o un pasivo. No sé cuál», dice Ivor."
+   ],
+   "sonido": [
+    "«Un ruido sin cifra no me interesa», dice Ivor.",
+    "«No oí nada que valga la pena anotar», dice Ivor."
+   ],
+   "objeto": [
+    "«Un objeto vale lo que alguien paga por él», dice Ivor.",
+    "«Si {foco} tiene precio, dígamelo. Si no, no me importa», dice Ivor."
+   ],
+   "lugar": [
+    "«Un lugar sin comercio es un lugar sin interés», dice Ivor.",
+    "«Ese sitio no está en mis rutas», dice Ivor."
+   ],
+   "fenomeno": [
+    "«El clima mueve precios. Eso sí lo sé», dice Ivor.",
+    "«Un cielo así encarece la harina», dice Ivor, impasible."
+   ]
+  },
+  "naela_tabernera": {
+   "animal": [
+    "«Los animales entran, comen y se van. Como los clientes», dice Naela.",
+    "«{foco}… alguna vez cayó por acá. No pagó», dice Naela."
+   ],
+   "persona": [
+    "«Si viene a mi taberna, lo conozco. Si no, no», dice Naela.",
+    "«Gente hay mucha. Pregunta con una ronda, y hablamos», dice Naela."
+   ],
+   "sonido": [
+    "«Ese ruido lo oigo desde la barra. Te dejo la cuenta», dice Naela.",
+    "«Todos los ruidos pasan por mi taberna tarde o temprano», dice Naela."
+   ],
+   "objeto": [
+    "«Eso no lo vendo, ni lo guardo, ni me importa», dice Naela.",
+    "«Si {foco} es tuyo, cuidalo. Si no, devolvelo», dice Naela."
+   ],
+   "lugar": [
+    "«Queda lejos de mi barra. Me suena, nada más», dice Naela.",
+    "«Ese lugar lo menciona un arriero cada tanto», dice Naela."
+   ],
+   "fenomeno": [
+    "«Con ese tiempo, la taberna se llena», dice Naela.",
+    "«El cielo es problema de los que están afuera», dice Naela."
+   ]
+  },
+  "tiren_docente": {
+   "animal": [
+    "«¡Los animales son excelentes guías de rutas! Siguen el camino fácil», dice Tiren.",
+    "«{foco}… interesante. Los mapas no los incluyen, pero deberían», dice Tiren."
+   ],
+   "persona": [
+    "«Quién será… ¡qué curioso! No tengo idea, pero me encantaría saberlo», dice Tiren.",
+    "«Si es alguien del camino, tal vez esté en mis mapas», dice Tiren."
+   ],
+   "sonido": [
+    "«El sonido es una forma de cartografía, ¿sabías?», dice Tiren, entusiasmado.",
+    "«Un ruido… depende de dónde, puede ser una pista», dice Tiren."
+   ],
+   "objeto": [
+    "«Cada objeto tiene su historia. Ese… no la sé, pero la imagino», dice Tiren.",
+    "«Si {foco} aparece en un mapa, avisame», dice Tiren, riendo."
+   ],
+   "lugar": [
+    "«Ese lugar está en mis mapas, pero mal dibujado», dice Tiren.",
+    "«¡Un lugar! Vení, te lo marco», dice Tiren, buscando tiza."
+   ],
+   "fenomeno": [
+    "«Los fenómenos del cielo cambian el terreno. Es una cuestión de escala», dice Tiren.",
+    "«El clima altera los mapas más que las guerras», dice Tiren, serio."
+   ]
+  },
+  "elia_bibliotecaria": {
+   "animal": [
+    "«Los animales no entran a la biblioteca», susurra Elia, con severidad.",
+    "«Hay libros sobre {foco}, pero no hoy», susurra Elia."
+   ],
+   "persona": [
+    "«No lo conozco. Pregunte a los lectores», susurra Elia.",
+    "«Quien sea, no pidió libros. Eso me alcanza», susurra Elia."
+   ],
+   "sonido": [
+    "«Silencio, por favor», susurra Elia, y no dice más.",
+    "«Los ruidos de fuera no me interesan», susurra Elia."
+   ],
+   "objeto": [
+    "«Un objeto sin ficha no es de la biblioteca», susurra Elia.",
+    "«Si {foco} es un libro, necesito verlo», susurra Elia."
+   ],
+   "lugar": [
+    "«Ese sitio figura en dos tratados», susurra Elia, intrigada.",
+    "«No he estado ahí, pero lo leí», susurra Elia."
+   ],
+   "fenomeno": [
+    "«El cielo tiene su sección. Segunda planta», susurra Elia.",
+    "«La humedad es el enemigo. Eso sí lo sé», susurra Elia."
+   ]
+  },
+  "brenn_arriero": {
+   "animal": [
+    "«Los animales son lo mejor del camino. Mejores que la mayoría de la gente», dice Brenn.",
+    "«{foco}… ya lo vi. Suele andar por acá», dice Brenn."
+   ],
+   "persona": [
+    "«Si anda por el camino, lo conozco. Si no, no», dice Brenn.",
+    "«Mucha gente pasa. Pocos se quedan en la memoria», dice Brenn."
+   ],
+   "sonido": [
+    "«Ese ruido en el camino es mala señal. O buena. Depende», dice Brenn.",
+    "«Lo oí. Me pareció cosa de arrieros», dice Brenn."
+   ],
+   "objeto": [
+    "«Eso no es mío, pero lo reconozco», dice Brenn.",
+    "«Si {foco} se pierde en el camino, se lo queda el que lo encuentra», dice Brenn."
+   ],
+   "lugar": [
+    "«Ese lugar queda a un día de camino. Más o menos», dice Brenn.",
+    "«Sé llegar. No sé si querés», dice Brenn."
+   ],
+   "fenomeno": [
+    "«Con ese cielo, hoy no llegamos», dice Brenn, mirando arriba.",
+    "«El clima se lee en las mulas. Están inquietas», dice Brenn."
+   ]
+  },
+  "ysolde_pescadora": {
+   "animal": [
+    "«El lago está lleno de animales. Casi todos más listos que yo», dice Ysolde.",
+    "«{foco}… viene a veces. Se queda mirando», dice Ysolde."
+   ],
+   "persona": [
+    "«No sé quién es. El lago no pregunta», dice Ysolde.",
+    "«Quien sea, no me debe nada», dice Ysolde."
+   ],
+   "sonido": [
+    "«El agua trae sonidos de lejos. Este no lo conozco», dice Ysolde.",
+    "«No oigo bien con el lago de fondo», dice Ysolde."
+   ],
+   "objeto": [
+    "«Eso no es de pesca. No me sirve», dice Ysolde.",
+    "«Si {foco} cae al lago, el lago lo guarda», dice Ysolde."
+   ],
+   "lugar": [
+    "«Ese lugar queda lejos del agua», dice Ysolde, encogiéndose de hombros.",
+    "«La isla es el único sitio que me interesa», dice Ysolde."
+   ],
+   "fenomeno": [
+    "«El cielo avisa. Hay que mirar el agua», dice Ysolde.",
+    "«El tiempo cambia, el lago no», dice Ysolde."
+   ]
+  },
+  "dario_guardia": {
+   "animal": [
+    "«Un animal sin papeles no cruza», dice Darío, medio en broma.",
+    "«{foco}… pasa de vez en cuando. No cobra peaje», dice Darío."
+   ],
+   "persona": [
+    "«Persona sin nombre es persona sospechosa», dice Darío.",
+    "«Quien sea, que pase por la caseta primero», dice Darío."
+   ],
+   "sonido": [
+    "«Todo ruido en la noche se anota», dice Darío.",
+    "«No oí nada fuera de lo normal. Hoy», dice Darío."
+   ],
+   "objeto": [
+    "«Todo objeto sin dueño pasa a custodia», dice Darío.",
+    "«Si {foco} es contrabando, lo sabré», dice Darío."
+   ],
+   "lugar": [
+    "«Ese lugar queda fuera de mi jurisdicción», dice Darío.",
+    "«No lo vigilo. Pero lo conozco», dice Darío."
+   ],
+   "fenomeno": [
+    "«Con ese cielo el puente es peligroso», dice Darío.",
+    "«El clima no es delito, pero complica el trabajo», dice Darío."
+   ]
+  },
+  "sarin_mensajera": {
+   "animal": [
+    "«Los animales me siguen. Los gatos, sobre todo», dice Sarin, sin parar.",
+    "«{foco}… lo vi. Siempre en el mismo lado del camino», dice Sarin."
+   ],
+   "persona": [
+    "«Gente hay mucha. La que importa, pocos», dice Sarin, rápido.",
+    "«Si no lleva carta, no me interesa», dice Sarin."
+   ],
+   "sonido": [
+    "«Ese ruido lo oí ayer también. Yo no me quedo a averiguar», dice Sarin.",
+    "«No tengo tiempo para ruidos», dice Sarin."
+   ],
+   "objeto": [
+    "«Eso no es una carta, así que no lo llevo», dice Sarin.",
+    "«Si {foco} es paquete, dame la dirección», dice Sarin."
+   ],
+   "lugar": [
+    "«Ese lugar queda a medio día. Conozco un atajo», dice Sarin, y no lo cuenta.",
+    "«Sé llegar. No te voy a decir cómo», dice Sarin."
+   ],
+   "fenomeno": [
+    "«Con ese cielo, las cartas se mojan», dice Sarin, preocupada.",
+    "«El clima es mi peor enemigo», dice Sarin."
+   ]
+  },
+  "hollis_pastor": {
+   "animal": [
+    "«Los animales saben cosas que uno no. Hay que mirarlos», dice Hollis.",
+    "«{foco}… lo conozco. Anda por los pastos», dice Hollis."
+   ],
+   "persona": [
+    "«Gente pasa y no se queda. Por eso no los conozco», dice Hollis.",
+    "«Si es de las colinas, me suena. Si no, no», dice Hollis."
+   ],
+   "sonido": [
+    "«El viento trae todos los ruidos. Los demás, no», dice Hollis.",
+    "«Lo oí. Venía del este», dice Hollis."
+   ],
+   "objeto": [
+    "«Eso no es de pastor. No le doy uso», dice Hollis.",
+    "«Si {foco} aparece en mi pasto, se queda ahí», dice Hollis."
+   ],
+   "lugar": [
+    "«Ese lugar queda tras la pirca. No me meto», dice Hollis.",
+    "«Cada uno con su sitio. El mío, el rebaño», dice Hollis."
+   ],
+   "fenomeno": [
+    "«Esas nubes dicen lluvia en dos días», dice Hollis.",
+    "«El cielo habla. Casi nadie escucha», dice Hollis."
+   ]
+  },
+  "oren_peregrino": {
+   "animal": [
+    "«El camino tiene muchas criaturas. Todas peregrinas a su manera», dice Oren.",
+    "«{foco}… me acompañó un trecho. Sin pedir nada», dice Oren."
+   ],
+   "persona": [
+    "«Cada persona es un camino. Este no lo conozco», dice Oren.",
+    "«Quien sea, que el camino lo trate bien», dice Oren."
+   ],
+   "sonido": [
+    "«Los sonidos del camino son oraciones. Este lo reconozco», dice Oren.",
+    "«Escuchá con calma. A veces dice más que una voz», dice Oren."
+   ],
+   "objeto": [
+    "«Un objeto sin dueño es un regalo del camino», dice Oren.",
+    "«Si {foco} es tuyo, cuidalo. Si no, devolvelo a su sitio», dice Oren."
+   ],
+   "lugar": [
+    "«Ese lugar está en el camino. Todos llegan, tarde o temprano», dice Oren.",
+    "«Lo conozco. No es el más importante», dice Oren."
+   ],
+   "fenomeno": [
+    "«El cielo es el mapa más antiguo», dice Oren.",
+    "«Cuando el cielo cambia, el camino también», dice Oren."
+   ]
+  }
+ }
+}

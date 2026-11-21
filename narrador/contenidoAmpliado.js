@@ -26,7 +26,7 @@ export const CLAVES_CONDICION = Object.freeze({
   objetivoPaso: null,
   apodo: null,
 });
-export const PLACEHOLDERS_AMPLIADO = Object.freeze(['npc', 'objeto', 'lugar', 'conocimiento', 'nombres', 'eco', 'apodo']);
+export const PLACEHOLDERS_AMPLIADO = Object.freeze(['npc', 'objeto', 'lugar', 'conocimiento', 'nombres', 'eco', 'apodo', 'foco']);
 // Únicos que no se cargan hasta que el autor los apruebe (posible choque con la regla "sin magia").
 export const UNICOS_BLOQUEADOS = Object.freeze(['u_niebla_voces']);
 const SUFIJOS = new Set([...CLAVES_CONDICION.f, ...CLAVES_CONDICION.cl]);
@@ -117,9 +117,14 @@ export function fusionarAmpliado(archivos, v3, opciones = {}) {
     for (const [s, e] of Object.entries(d.estaciones ?? {})) { a.estaciones[s] ??= {}; for (const [esc, l] of Object.entries(e)) sumar(a.estaciones[s], esc, l); }
     for (const [id, f] of Object.entries(d.festividades ?? {})) a.festividades[id] = f;
     // Fase 3 (t30): focos, clases por verbo, no_visto, interrupciones y fijos por escena.
-    if (esObj(d.focos) || esObj(d.fijos)) {
-      a.focos ??= { defs: {}, clases: {}, no_visto: [], interrupcion: {}, fijos: {} };
-      Object.assign(a.focos.defs, d.focos ?? {});
+    // Fase 4: t32 suma focos (id repetido = error); t31 trae preguntar.<npc>.<clase>.
+    if (esObj(d.focos) || esObj(d.fijos) || esObj(d.preguntar)) {
+      a.focos ??= { defs: {}, clases: {}, no_visto: [], interrupcion: {}, fijos: {}, preguntar: {} };
+      for (const [id, f] of Object.entries(d.focos ?? {})) {
+        if (a.focos.defs[id]) throw new Error(`foco repetido: ${id} (${nombre})`);
+        a.focos.defs[id] = f;
+      }
+      for (const [n, o] of Object.entries(d.preguntar ?? {})) { a.focos.preguntar[n] ??= {}; for (const [c, l] of Object.entries(o)) sumar(a.focos.preguntar[n], c, l); }
       for (const [c, vs] of Object.entries(d.clases ?? {})) { a.focos.clases[c] ??= {}; for (const [v, l] of Object.entries(vs)) sumar(a.focos.clases[c], v, l); }
       a.focos.no_visto.push(...(d.no_visto ?? []));
       for (const [n, o] of Object.entries(d.interrupcion ?? {})) { a.focos.interrupcion[n] ??= {}; for (const [k, l] of Object.entries(o)) sumar(a.focos.interrupcion[n], k, l); }

@@ -1,0 +1,28 @@
+{
+ "version": 4,
+ "rama": "actual",
+ "pasos": [
+  {
+   "id": "U1",
+   "nombre": "Cargar t32 y verificadores",
+   "depende": [],
+   "estado": "hecho"
+  },
+  {
+   "id": "U2",
+   "nombre": "Preguntar por X en la voz del NPC",
+   "depende": [
+    "U1"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "U3",
+   "nombre": "Bots y cierre",
+   "depende": [
+    "U2"
+   ],
+   "estado": "pendiente"
+  }
+ ]
+}

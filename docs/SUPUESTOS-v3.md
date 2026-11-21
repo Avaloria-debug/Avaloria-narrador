@@ -79,3 +79,5 @@ Q4 | firestore.rules no se tocó: camposDeRegistro() con hasOnly rechazaría pas
 - F3-S3: "preguntar por X" sobre un foco responde con clases.<clase>.preguntar (no hay líneas por NPC para focos en t30).
 - F3-S4: actuar sobre un foco renueva su `visto` (así repetir tras `fin` responde ignorar y no no_visto).
 - F3-S5: el castigo de la 3.ª interrupción va a `ext.afinidad` (utilidad P7), no a la relación base; con `valores.orden` ≥ 1 es −2.
+- F4 U1: id de foco repetido entre tandas lanza al fusionar (antes Object.assign lo pisaba).
+- F4 U1: test S2 de generado usa «golpes» porque t32 define «carros» (carreta_camino) y ahora gana el foco propio.

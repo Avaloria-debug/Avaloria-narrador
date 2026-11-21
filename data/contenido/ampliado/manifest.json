@@ -151,6 +151,16 @@
    "tanda": "t30"
   },
   {
+   "f": "t31-preguntar.json",
+   "estado": "a_aprobar",
+   "tanda": "t31"
+  },
+  {
+   "f": "t32-focos2.json",
+   "estado": "a_aprobar",
+   "tanda": "t32"
+  },
+  {
    "f": "valores.json",
    "estado": "a_aprobar_canon",
    "tanda": "valores"

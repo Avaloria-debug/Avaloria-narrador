@@ -122,11 +122,11 @@ test('S2 vida: dura turnos o cambio de escena (salvo el que se sigue); máx. 8',
 });
 
 test('S2 generado desde símbolo: clase por familia y alias de la línea', () => {
-  const l = detectar([], 'Se oyen carros que empiezan a rodar.', { F, turno: 3, escena: 'a', generadas: [{ familia: 'sonido', texto: 'se oyen carros que empiezan a rodar' }] });
+  const l = detectar([], 'Se oyen golpes que empiezan a sonar.', { F, turno: 3, escena: 'a', generadas: [{ familia: 'sonido', texto: 'se oyen golpes que empiezan a sonar' }] });
   assert.equal(l.length, 1);
   assert.equal(l[0].gen, true);
   assert.equal(l[0].clase, 'sonido');
-  assert.ok(l[0].alias.includes('ruido') && l[0].alias.includes('carros'));
+  assert.ok(l[0].alias.includes('ruido') && l[0].alias.includes('golpes'));
   assert.equal(vigentes(l, { F, turno: 3 + DURA_GENERADO, escena: 'a' }).length, 0);
   // una línea que un foco propio captura no genera
   assert.ok(detectar([], 'Un gato duerme', { F, turno: 1, escena: 'a', generadas: [{ familia: 'animal', texto: 'un gato duerme' }] }).every((f) => !f.gen));
