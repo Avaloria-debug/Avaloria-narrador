@@ -4,3 +4,5 @@
 - revisión 1 (V1-V3): compuertas y regresión verdes, 0 falsos positivos
 - V4 hecho: referencias y memoria con vida · comprensión 79.8 %
 - V5 hecho: defaults y aclaración, enganche en turnoDeFoco · comprensión 82.9 %
+- revisión 2 (V4-V5): compuertas, regresión y humo verdes, 0 falsos positivos
+- V6 hecho: sinónimos de verbos y cosas, test de colisiones · comprensión 94.4 %

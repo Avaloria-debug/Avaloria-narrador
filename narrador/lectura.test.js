@@ -83,3 +83,29 @@ test('V4 varias acciones: la 2.ª usa la referencia de la 1.ª', () => {
   const l = leerAccion('miro la gata y la sigo', ctx4(), { etapas: { varias: true } });
   assert.equal(l.luego?.objetivo, 'gata_mercado');
 });
+
+// ---- V6: sinónimos ----
+import { colisionesDeFormas, ACCIONES } from './lectura.js';
+import { FORMAS as FORMAS_FOCO } from './focos.js';
+test('V6 sinónimos de verbos', () => {
+  const c = contextoLectura({ focos: { gata_mercado: { alias: ['gata'] }, campana_lejana: { alias: ['campana'] }, carta_suelta: { alias: ['carta'] } } });
+  for (const [f, a] of [['persigo a la gata', 'seguir'], ['acompaño a la gata', 'seguir'], ['contemplo la gata', 'mirar'], ['examino la carta', 'mirar'], ['oigo la campana', 'escuchar'], ['golpeo la campana', 'tocar'], ['recojo la carta', 'tomar'], ['levanto la carta', 'tomar']]) {
+    assert.equal(leerAccion(f, c).accion, a, f);
+  }
+});
+test('V6 sinónimo de cosa por oficio: «el panadero» → serel_panadero', () => {
+  const c = contextoLectura({ npcs: [{ id: 'serel_panadero', nombre: 'Serel Norlen', alias: ['serel', 'panadero'] }, { id: 'maren_archivista', nombre: 'Maren de Orst', alias: ['maren', 'archivista'] }] });
+  assert.deepEqual(leerAccion('hablo con el panadero', c), { accion: 'hablar', npc: 'serel_panadero' });
+});
+test('V6 sin colisiones entre verbos de acciones distintas', () => assert.deepEqual(colisionesDeFormas(), []));
+test('V6 contra focos.js: solo difiere «agarrar» (tocar en focos, tomar en lectura)', () => {
+  const dif = [];
+  for (const [verbo, fs] of Object.entries(FORMAS_FOCO)) for (const f of fs) {
+    if (f.includes(' ')) continue;
+    const l = lematizar(f);
+    const accion = l ? leerAccion(`${f} la gata`, contextoLectura({ focos: { g: { alias: ['gata'] } } })).accion : null;
+    const esperado = verbo === 'examinar' ? 'mirar' : verbo;
+    if (accion && ACCIONES.includes(accion) && accion !== esperado) dif.push(`${f}:${verbo}→${accion}`);
+  }
+  assert.deepEqual([...new Set(dif.map((d) => d.split(':')[0].replace(/o$/, 'ar')))].sort(), ['agarrar'], dif.join(' '));
+});

@@ -4,7 +4,7 @@
 import { normalizar, distanciaEdicion, resolverDestino } from './comprension.js';
 
 /** Etapas activas por defecto (cada paso de la fase 6 enciende la suya). */
-export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: true, defaults: true, sinonimos: false, varias: false, negacion: false, modo: false });
+export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: true, defaults: true, sinonimos: true, varias: false, negacion: false, modo: false });
 
 /** Acciones que entiende la lectura. */
 export const ACCIONES = Object.freeze(['seguir', 'mirar', 'tocar', 'escuchar', 'hablar', 'preguntar', 'ignorar', 'tomar', 'callar', 'viajar', 'mostrar', 'llamar']);
@@ -67,6 +67,17 @@ function construirFormas(conSinonimos) {
     for (const f of [...(inf.length <= 3 ? [inf] : regulares(inf)), ...(IRREGULARES[inf] ?? [])]) if (!mapa.has(f) && !NO_VERBOS.has(f)) mapa.set(f, inf);
   }
   return { mapa, infs };
+}
+/** V6: formas que comparten dos verbos con acciones distintas (deberían ser 0, salvo auxiliares). */
+export function colisionesDeFormas() {
+  const infs = { ...BASE, ...SINONIMOS };
+  const de = new Map();
+  for (const inf of Object.keys(infs)) for (const f of [...(inf.length <= 3 ? [inf] : regulares(inf)), ...(IRREGULARES[inf] ?? [])]) {
+    if (NO_VERBOS.has(f)) continue;
+    const a = infs[inf] ?? `aux:${inf}`;
+    de.set(f, new Set([...(de.get(f) ?? []), a]));
+  }
+  return [...de].filter(([, as]) => as.size > 1).map(([f, as]) => ({ forma: f, acciones: [...as].sort() }));
 }
 const FORMAS_BASE = construirFormas(false);
 const FORMAS_SIN = construirFormas(true);
