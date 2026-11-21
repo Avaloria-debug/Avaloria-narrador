@@ -11,6 +11,7 @@ import {
   VERBO_A_INTENCION,
 } from './contenido.js';
 import { CLAVES_REFORMULACION } from './motivos.js';
+import { contenidoConSenderoPorTormenta } from './utilsPrueba.js';
 
 let base;
 before(async () => {
@@ -228,7 +229,7 @@ describe('contenido — nombres en lugar de ids', () => {
   });
 
   test('conocimientoId de un efecto tiene que existir en ese NPC', () => {
-    const c = copia();
+    const c = structuredClone(contenidoConSenderoPorTormenta(base));
     const ef = c.eventos.flatMap((e) => e.efectos).find((f) => f.conocimientoId);
     ef.conocimientoId = 'Sendero sin vigilancia en las colinas';
     hay(c, /conocimientoId: conocimiento inexistente/);
