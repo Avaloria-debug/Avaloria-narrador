@@ -1,5 +1,5 @@
 # Tests del narrador y reporte del simulador. No despliega nada.
-# SIN VERIFICAR: no se pudo correr en GitHub Actions desde el entorno local.
+# SIN VERIFICAR: no se pudo correr en GitHub Actions desde el entorno local (chequeo estático: tools/verificar-yml.mjs).
 name: narrador
 on:
   push:
@@ -15,6 +15,10 @@ jobs:
       - run: npm install
       - run: npm test
       - run: node narrador/validarContenido.js
+      - run: node tools/verificar-partes.mjs todo
+      - run: node tools/verificar-produccion.mjs todo
+      - run: node tools/generar-manifest.js
+      - run: git diff --exit-code data/contenido/ampliado/manifest.json
       - run: node tools/simular.js --semilla 1 --partidas 200 --turnos 50
       - uses: actions/upload-artifact@v4
         with:
