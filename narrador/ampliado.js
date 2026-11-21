@@ -47,6 +47,8 @@ function accionSimple(turno, contenido) {
   return true;
 }
 
+export const PROB_SILENCIO = 0.1;
+
 // P11 (t11): motivos del código → claves nuevas de reformulación (si el contenido las trae).
 export const CLAVES_REFORMULACION_NUEVAS = Object.freeze({ npc_ausente: 'nombre_desconocido', sin_objetos: 'objeto_desconocido', falta_destino: 'destino_invalido', sin_salidas: 'cerrado' });
 
@@ -110,6 +112,16 @@ export function fraseAmpliada({ amp, contenido, turno, ctx, aperturas, valoresEx
     }
     if (a.verbo === 'hablar_con' && npc && amp.charla?.[npc]?.length && rng() < 0.5) {
       const r = elegir(amp.charla[npc], ctx.hechos(), opc(valores));
+      if (r) return r;
+    }
+    // P19: silencio (solo gesto) con tensión alta, prob 0.1; ritmo corto → variantes breves (t25).
+    const h = ctx.hechos();
+    if (h.ts === 'alta' && npc && amp.silencio?.gesto?.length && rng() < PROB_SILENCIO) {
+      const r = elegir(amp.silencio.gesto, h, opc(valores));
+      if (r) return r;
+    }
+    if (h.ritmo === 'corto' && amp.silencio?.corto?.[a.intencionId]?.length) {
+      const r = elegir(amp.silencio.corto[a.intencionId], h, opc(valores));
       if (r) return r;
     }
     const extra = amp.plantillas?.[a.intencionId]?.[a.resultado] ?? [];

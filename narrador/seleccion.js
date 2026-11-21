@@ -41,6 +41,9 @@ export function hechosDe(estado, { contenido, npcId = null, escenaId, umbrales =
     const rel = estado?.npcs?.[npcId]?.relacion;
     if (Number.isFinite(rel)) h.r = enRango(umbrales.relacion, Math.max(-100, Math.min(100, rel)));
   }
+  // P19: ritmo corto con tensión alta o el mismo verbo 3+ veces; largo con tensión baja y 3+ visitas.
+  if (h.ts === 'alta' || h.rep === '3+') h.ritmo = 'corto';
+  else if (h.ts === 'baja' && h.vis === '3+') h.ritmo = 'largo';
   for (const [k, v] of Object.entries(extra)) if (v !== null && v !== undefined) h[k] = v;
   return h;
 }

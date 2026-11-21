@@ -61,3 +61,4 @@ P16 | objetivos desde t22 (no objetivos.json aparte); charla del paso 30% en hab
 P17 | comando: el texto exacto "diario" muestra el diario (sin cambiar comprension ni ui) | intención nueva
 P11 | (corrección en P17) la reformulación t11 no había quedado conectada en ampliado.js; se conectó en P17 con test
 P18 | saludo con apodo (t24 usos) con prob 0.3 si hay apodo; {apodo} = base si la relación es mala | siempre
+P19 | silencio solo en acciones simples con NPC; ritmo corto usa t25 siempre que haya líneas para la intención | mezclar con las demás
