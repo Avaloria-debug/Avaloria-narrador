@@ -158,3 +158,51 @@ test('S2 a lo largo de una partida se detectan focos (propios o generados)', asy
   const s = await jugar(crearPartida({ semilla: 2 }), Array(12).fill('observar'));
   assert.ok(s.some((r) => (r.estado.ext.focos ?? []).length > 0));
 });
+
+// ---- S3: verbos sobre focos ----
+async function conFocos(ids, semilla = 1) {
+  const [r] = await jugar(crearPartida({ semilla }), ['observar']);
+  const e = structuredClone(r.estado);
+  e.ext.focos = ids.map((id, i) => ({ id, visto: e.ext.turno - (ids.length - 1 - i) * 0, escena: e.jugador.escenaId, pasos: {}, agotado: false }));
+  ids.forEach((id, i) => { e.ext.focos[i].visto = e.ext.turno; });
+  return e;
+}
+const textosFoco = (id, verbo) => {
+  const d = F.defs[id];
+  const rama = (d.ramas[verbo] ?? []).map((p) => (typeof p === 'string' ? p : p.t));
+  return [...rama, ...(F.clases[d.clase][verbo] ?? [])];
+};
+
+test('S3 cada verbo sobre un foco activo responde con su rama o su clase', async () => {
+  for (const verbo of ['seguir', 'mirar', 'llamar', 'tocar', 'escuchar', 'preguntar', 'ignorar']) {
+    const frase = { seguir: 'seguir a la gata', mirar: 'mirar a la gata', llamar: 'llamar a la gata', tocar: 'tocar la gata', escuchar: 'escuchar a la gata', preguntar: 'preguntar por la gata', ignorar: 'ignorar a la gata' }[verbo];
+    const [r] = await jugar(await conFocos(['gata_mercado']), [frase]);
+    assert.ok(textosFoco('gata_mercado', verbo).some((t) => r.texto.includes(t)), `${verbo}: ${r.texto}`);
+  }
+});
+
+test('S3 referente: "eso" y sin sustantivo → el foco más reciente; dos candidatos → el más reciente', async () => {
+  const e = await conFocos(['perro_ciudad', 'gata_mercado']);
+  e.ext.focos[0].visto -= 1;
+  const [a] = await jugar(e, ['mirar eso']);
+  assert.ok(textosFoco('gata_mercado', 'mirar').some((t) => a.texto.includes(t)), a.texto);
+  const [b] = await jugar(e, ['seguila']);
+  assert.ok(textosFoco('gata_mercado', 'seguir').some((t) => b.texto.includes(t)), b.texto);
+});
+
+test('S3 no visto o vencido → una variante de no_visto', async () => {
+  const [r] = await jugar(await conFocos([]), ['seguir al burro']);
+  assert.ok(F.no_visto.some((t) => r.texto.startsWith(t)), r.texto);
+});
+
+test('S3 "seguir camino" no se vuelve un foco', async () => {
+  const e = await conFocos(['gata_mercado']);
+  const [r] = await jugar(e, ['seguir camino']);
+  assert.ok(!textosFoco('gata_mercado', 'seguir').some((t) => r.texto.includes(t)), r.texto);
+  assert.ok(!F.no_visto.some((t) => r.texto.startsWith(t)));
+});
+
+test('S3 typos en verbo y alias ("persegir al caballo")', async () => {
+  const [r] = await jugar(await conFocos(['caballo_suelto']), ['persegir al cabalo']);
+  assert.ok(textosFoco('caballo_suelto', 'seguir').some((t) => r.texto.includes(t)), r.texto);
+});
