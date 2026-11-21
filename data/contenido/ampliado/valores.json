@@ -1,0 +1,91 @@
+{
+ "tanda": "valores",
+ "estado": "a_aprobar_canon",
+ "nota": "valores de personalidad -2..2 por NPC (P7). Propuesta; ausente = 0.",
+ "valores": {
+  "maren_archivista": {
+   "orden": 2,
+   "dinero": -1,
+   "curiosidad": 1,
+   "miedo": 0,
+   "lealtad": 2
+  },
+  "serel_panadero": {
+   "orden": 1,
+   "dinero": 1,
+   "curiosidad": 0,
+   "miedo": 0,
+   "lealtad": 1
+  },
+  "ivor_cambista": {
+   "orden": 1,
+   "dinero": 2,
+   "curiosidad": 0,
+   "miedo": 0,
+   "lealtad": -1
+  },
+  "naela_tabernera": {
+   "orden": 0,
+   "dinero": 1,
+   "curiosidad": 1,
+   "miedo": -1,
+   "lealtad": 0
+  },
+  "tiren_docente": {
+   "orden": 0,
+   "dinero": -1,
+   "curiosidad": 2,
+   "miedo": 0,
+   "lealtad": 1
+  },
+  "elia_bibliotecaria": {
+   "orden": 1,
+   "dinero": -1,
+   "curiosidad": 2,
+   "miedo": 1,
+   "lealtad": 1
+  },
+  "brenn_arriero": {
+   "orden": -1,
+   "dinero": 1,
+   "curiosidad": 0,
+   "miedo": -1,
+   "lealtad": 1
+  },
+  "ysolde_pescadora": {
+   "orden": 0,
+   "dinero": -1,
+   "curiosidad": 0,
+   "miedo": 0,
+   "lealtad": 0
+  },
+  "dario_guardia": {
+   "orden": 2,
+   "dinero": 0,
+   "curiosidad": 0,
+   "miedo": 0,
+   "lealtad": 1
+  },
+  "sarin_mensajera": {
+   "orden": 0,
+   "dinero": 1,
+   "curiosidad": 1,
+   "miedo": 2,
+   "lealtad": 1
+  },
+  "hollis_pastor": {
+   "orden": -1,
+   "dinero": 0,
+   "curiosidad": 0,
+   "miedo": 0,
+   "lealtad": 1
+  },
+  "oren_peregrino": {
+   "orden": 0,
+   "dinero": -2,
+   "curiosidad": 1,
+   "miedo": -1,
+   "lealtad": 0
+  }
+ }
+}

@@ -1,0 +1,62 @@
+{
+ "tanda": "calendario",
+ "estado": "a_aprobar_canon",
+ "nota": "PROPUESTA: año de 360 días, 4 estaciones de 90. Fechas = día del año (1..360). ciudad 'cruce' = cruce_colinas. Ajustar a canon real.",
+ "anio_dias": 360,
+ "festividades": [
+  {
+   "id": "lectura_halenor",
+   "dia": 40,
+   "ciudad": "Halenor",
+   "dias": 2
+  },
+  {
+   "id": "cruce_de_caravanas",
+   "dia": 75,
+   "ciudad": "cruce",
+   "dias": 2
+  },
+  {
+   "id": "fiesta_cambistas",
+   "dia": 130,
+   "ciudad": "Lareth",
+   "dias": 2
+  },
+  {
+   "id": "cosecha_ardenhall",
+   "dia": 215,
+   "ciudad": "Ardenhall",
+   "dias": 3
+  },
+  {
+   "id": "vigilia_roble",
+   "dia": 250,
+   "ciudad": "cruce",
+   "dias": 1
+  },
+  {
+   "id": "mercado_invierno",
+   "dia": 320,
+   "ciudad": "Ardenhall",
+   "dias": 2
+  }
+ ],
+ "rangos": {
+  "primavera": [
+   1,
+   90
+  ],
+  "verano": [
+   91,
+   180
+  ],
+  "otono": [
+   181,
+   270
+  ],
+  "invierno": [
+   271,
+   360
+  ]
+ }
+}

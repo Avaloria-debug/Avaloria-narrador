@@ -1,0 +1,9 @@
+{"version":2,"rama":"actual","pasos":[
+{"id":"Q1","nombre":"calendario.json y valores.json","depende":[],"estado":"pendiente"},
+{"id":"Q2","nombre":"Manifest y carga en navegador","depende":[],"estado":"pendiente"},
+{"id":"Q3","nombre":"Activar en el punto de entrada real","depende":["Q2"],"estado":"pendiente"},
+{"id":"Q4","nombre":"Campo pasada_comprension","depende":[],"estado":"pendiente"},
+{"id":"Q5","nombre":"Humo tipo navegador","depende":["Q2","Q3"],"estado":"pendiente"},
+{"id":"Q6","nombre":"CI","depende":["Q2"],"estado":"pendiente"},
+{"id":"Q7","nombre":"Aprobación del canon (OK del autor)","depende":["Q2"],"estado":"pendiente"},
+{"id":"Q8","nombre":"Cierre","depende":["Q1","Q2","Q3","Q4","Q5","Q6","Q7"],"estado":"pendiente"}]}
