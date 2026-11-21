@@ -15,8 +15,8 @@ const serel = contenido.npcs.find((n) => n.id === SEREL);
 const EXITO = contenido.plantillas.revelar_conocimiento.exito.map((p) => completar(p, { npc: serel.nombre, conocimiento: serel.conocimientos[0].contenido }));
 const NO_SE = contenido.plantillas.no_se.map((p) => completar(p, { npc: serel.nombre }));
 const FALLO = contenido.plantillas.revelar_conocimiento.fallo.map((p) => completar(p, { npc: serel.nombre }));
-// Respuesta a un conocimiento ya revelado: la plantilla de fallo ("no te cuenta nada nuevo").
-const RESPUESTA_A_REVELADO = FALLO;
+// Respuesta a un conocimiento ya revelado: repite lo contado con la plantilla de éxito (decisión de 0.0.42).
+const RESPUESTA_A_REVELADO = EXITO;
 
 // Caso de prueba: h1 listo (pista de p1 conocida), se entrega al actuar y su texto narra el conocimiento de p1.
 const textos = [1, 2, 3, 4].map((n) => ({ id: `t_h1_${n}`, texto: `Te enterás de algo (${n}): {conocimiento:p1}.`, tono: 'neutro' }));
@@ -52,12 +52,13 @@ describe('el h1 deja revelado el conocimiento que narra', () => {
     assert.ok(r.estado.npcs[SEREL].relacion < 30, 'la relación sigue lejos del umbral');
   });
 
-  test('la consulta siguiente no responde no_se: el conocimiento figura como revelado', async () => {
+  test('la consulta siguiente no responde no_se: repite lo revelado (éxito), no fallo', async () => {
     const e = conNpc({ ...crearPartida({ semilla: 3 }), caso: estadoCaso() }, SEREL, { relacion: 0 });
     const r = await narrar(e, { tipo: 'boton', intencionId: 'intencion_hablar_con', parametros: { npcId: SEREL } }, opciones);
     const c = await decir(r.estado, '¿qué proveedor te vende la harina?', opciones);
     assert.ok(!NO_SE.includes(c.texto), c.texto);
     assert.ok(RESPUESTA_A_REVELADO.includes(c.texto), c.texto);
+    assert.ok(!FALLO.includes(c.texto), c.texto);
     assert.deepEqual(c.estado.npcs[SEREL].conocimientosRevelados, [S1]);
   });
 
