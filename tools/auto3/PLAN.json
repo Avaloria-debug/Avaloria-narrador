@@ -1,0 +1,68 @@
+{
+ "version": 3,
+ "rama": "actual",
+ "pasos": [
+  {
+   "id": "S1",
+   "nombre": "Incoherencias reportadas",
+   "depende": [],
+   "estado": "pendiente"
+  },
+  {
+   "id": "S2",
+   "nombre": "Motor de focos",
+   "depende": [
+    "S1"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "S3",
+   "nombre": "Verbos sobre focos",
+   "depende": [
+    "S2"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "S4",
+   "nombre": "Ramas y finales",
+   "depende": [
+    "S3"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "S5",
+   "nombre": "Interrupciones y memoria",
+   "depende": [
+    "S4"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "S6",
+   "nombre": "Bots de decisiones y cobertura",
+   "depende": [
+    "S5"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "S7",
+   "nombre": "Integración y regresión",
+   "depende": [
+    "S6"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "S8",
+   "nombre": "Cierre",
+   "depende": [
+    "S7"
+   ],
+   "estado": "pendiente"
+  }
+ ]
+}

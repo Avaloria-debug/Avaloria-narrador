@@ -1,0 +1,1517 @@
+{
+ "tanda": "t30",
+ "estado": "a_aprobar",
+ "nota": "FOCOS: todo lo que el texto menciona y el jugador puede seguir/mirar/llamar/etc. alias = palabras que lo detectan en el texto emitido y en el input. dura = turnos de vida. ramas.<verbo> = pasos en orden; fin: nada|hallazgo; emite = focos nuevos; tiempoMin = minutos de reloj. clases = respuestas genéricas por verbo (se usan si el foco no tiene rama). fijos = objetos fijos por escena (examinar/tocar). interrupcion = reacción de NPC al irte en plena charla.",
+ "verbos": [
+  "seguir",
+  "mirar",
+  "llamar",
+  "tocar",
+  "escuchar",
+  "preguntar",
+  "ignorar"
+ ],
+ "focos": {
+  "gata_mercado": {
+   "alias": [
+    "gata",
+    "gato",
+    "minina"
+   ],
+   "clase": "animal",
+   "dura": 4,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís a la gata entre los puestos. Se mete bajo un mostrador y asoma otra vez, como si comprobara que seguís ahí.",
+      "tiempoMin": 5
+     },
+     {
+      "t": "Cruza una callejuela trasera con el pescado entre los dientes. Termina en un patio donde otras dos gatas esperan.",
+      "emite": [
+       "gatas_patio"
+      ],
+      "tiempoMin": 10
+     },
+     {
+      "t": "Se sube a un barril y come sin mirarte. Pasó un buen rato y no ganaste nada, salvo que te reconozca.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "La gata te mira un segundo y vuelve a lamer el pescado. Tiene una oreja partida.",
+     "Camina por el mercado como si fuera suyo. Tal vez lo sea."
+    ],
+    "llamar": [
+     "La llamás con un chasquido. Gira la cabeza, decide que no y sigue.",
+     "Ni se inmuta. Los gatos del mercado no atienden a forasteros."
+    ]
+   }
+  },
+  "gatas_patio": {
+   "alias": [
+    "gatas",
+    "patio"
+   ],
+   "clase": "animal",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Las gatas se reparten el pescado en silencio. Una te mira. Otra, más chica, se acerca y se frota contra tu bota.",
+      "fin": "hallazgo",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "Tres gatas, un pescado. El reparto es más justo de lo que esperabas."
+    ]
+   }
+  },
+  "perro_ciudad": {
+   "alias": [
+    "perro",
+    "perra",
+    "chucho"
+   ],
+   "clase": "animal",
+   "dura": 4,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "El perro trota con rumbo fijo, olfateando esquinas. Lo seguís hasta una puerta donde alguien le deja un hueso.",
+      "tiempoMin": 10
+     },
+     {
+      "t": "Se echa a roer en el umbral. El dueño de la casa te mira, mira al perro y vuelve a cerrar la puerta.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "Un perro sin collar te huele las manos y decide que no tenés comida.",
+     "El perro se rasca con ganas y levanta una nube de polvo."
+    ],
+    "llamar": [
+     "Chasqueás los dedos. Mueve la cola, pero no se acerca."
+    ]
+   }
+  },
+  "gallo_patio": {
+   "alias": [
+    "gallo",
+    "gallina",
+    "gallinas"
+   ],
+   "clase": "animal",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís al gallo hasta el fondo de un patio. Te enfrenta, hincha el pecho y te corre dos pasos. Retrocedés con dignidad dudosa.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "El gallo canta fuera de hora, convencido de su importancia."
+    ],
+    "llamar": [
+     "Lo llamás. Te mira con un solo ojo y sigue picoteando."
+    ]
+   }
+  },
+  "rata_puerta": {
+   "alias": [
+    "rata",
+    "rata gris",
+    "roedor"
+   ],
+   "clase": "animal",
+   "dura": 2,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "La rata se escurre bajo la puerta y la perdés. Del otro lado se oye algo que cae.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "Una rata gris te vigila desde la sombra. No parece asustada."
+    ]
+   }
+  },
+  "burro_atado": {
+   "alias": [
+    "burro",
+    "asno",
+    "jumento"
+   ],
+   "clase": "animal",
+   "dura": 5,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Te acercás al burro. Resopla, patea un poco la tierra y te acepta a unos pasos de distancia.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "El burro espera atado a un poste, con la paciencia de quien ya vio todo."
+    ],
+    "llamar": [
+     "Le hablás. Mueve una oreja. Es toda la conversación que vas a tener."
+    ],
+    "tocar": [
+     "Le tocás el hocico. Es cálido y huele a heno. Cierra los ojos un instante."
+    ]
+   }
+  },
+  "cabra_cartel": {
+   "alias": [
+    "cabra",
+    "cabrita"
+   ],
+   "clase": "animal",
+   "dura": 4,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "La cabra se aleja con el cartel a medio masticar. La seguís hasta que te mira, mastica y te dedica un balido de desprecio.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "La cabra mordisquea un cartel con aire de crítico literario."
+    ]
+   }
+  },
+  "conejo_camino": {
+   "alias": [
+    "conejo",
+    "liebre"
+   ],
+   "clase": "animal",
+   "dura": 2,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís el rastro del conejo hasta una madriguera entre raíces. Se acabó el camino. Del agujero no sale nada.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "Un conejo se queda inmóvil, calculando. Sale disparado antes de que termines de mirarlo."
+    ]
+   }
+  },
+  "bandada_campo": {
+   "alias": [
+    "bandada",
+    "pajaros",
+    "pájaros",
+    "aves"
+   ],
+   "clase": "animal",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís la bandada con la vista hasta que se pierde sobre un campo lejano. Te quedás con el cuello duro.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "La bandada gira entera, como si pensara con una sola cabeza."
+    ],
+    "escuchar": [
+     "Los oís antes de verlos: un rumor de alas y una discusión interminable."
+    ]
+   }
+  },
+  "lagarto_piedra": {
+   "alias": [
+    "lagarto",
+    "lagartija",
+    "lagartijo"
+   ],
+   "clase": "animal",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Te acercás despacio. El lagarto no se mueve. Cuando estás a un paso, se evapora entre las piedras.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "Un lagarto toma sol sobre la piedra con los ojos cerrados. Tiene la vida resuelta."
+    ]
+   }
+  },
+  "caballo_suelto": {
+   "alias": [
+    "caballo",
+    "yegua",
+    "potro"
+   ],
+   "clase": "animal",
+   "dura": 5,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís al caballo suelto un buen trecho. Se deja alcanzar sin apuro. Tiene una marca de herradura vieja y ninguna silla.",
+      "tiempoMin": 15
+     },
+     {
+      "t": "Alguien lo reclama a los gritos desde lejos. No eras vos. El caballo ni se gira.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "El caballo pasta con las riendas arrastrando. Falta su dueño."
+    ],
+    "llamar": [
+     "Lo llamás en voz baja. Levanta la cabeza, te estudia y vuelve al pasto."
+    ]
+   }
+  },
+  "perro_granja": {
+   "alias": [
+    "perro de granja",
+    "perro",
+    "ladrido"
+   ],
+   "clase": "animal",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís los ladridos hasta una cerca. Un perro grande te ladra de lejos, sin ganas, cumpliendo.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "Ladra sin convicción desde la cerca. Es un ladrido de oficio."
+    ]
+   }
+  },
+  "garza_lago": {
+   "alias": [
+    "garza",
+    "ave",
+    "pajaro",
+    "pájaro"
+   ],
+   "clase": "animal",
+   "dura": 4,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Te acercás a la orilla muy despacio. La garza te permite acercarte lo justo y se va con dos pasos largos hacia otro junco.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "Una garza espera inmóvil sobre una pata. Su paciencia te supera."
+    ]
+   }
+  },
+  "bote_orilla": {
+   "alias": [
+    "bote",
+    "barca",
+    "remo"
+   ],
+   "clase": "objeto",
+   "dura": 6,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Revisás el bote. Tiene agua en el fondo y un remo gastado. Sin dueño a la vista.",
+      "tiempoMin": 5
+     },
+     {
+      "t": "Debajo del asiento hay una cuerda anudada con un nudo que no es de pescador. No sabés qué significa.",
+      "fin": "hallazgo",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "Un bote varado, con la pintura descascarada y la cuerda floja."
+    ]
+   }
+  },
+  "puerta_lateral": {
+   "alias": [
+    "puerta lateral",
+    "puertita",
+    "portillo",
+    "puerta del costado"
+   ],
+   "clase": "lugar",
+   "dura": 4,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Te acercás a la puerta lateral. Está entornada. Del otro lado se ve un pasillo estrecho y vacío.",
+      "tiempoMin": 5
+     },
+     {
+      "t": "Cruzás. El pasillo desemboca en un patio de servicio con cajas apiladas. Nadie. Solo olor a humedad.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "La puerta lateral se mece apenas, como si alguien acabara de pasar."
+    ]
+   }
+  },
+  "campana_lejana": {
+   "alias": [
+    "campana",
+    "campanada",
+    "campanario"
+   ],
+   "clase": "sonido",
+   "dura": 4,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Caminás hacia el sonido de la campana. Cada tanto suena más lejos, o vos más despacio. Al final sale de una capilla chica, vacía.",
+      "fin": "nada",
+      "tiempoMin": 20
+     }
+    ],
+    "mirar": [
+     "Una campana suena a lo lejos, tres veces, y calla."
+    ],
+    "escuchar": [
+     "Contás las campanadas. Son tres, separadas, como un aviso de rutina."
+    ]
+   }
+  },
+  "humo_lejano": {
+   "alias": [
+    "humo",
+    "columna de humo",
+    "fogata"
+   ],
+   "clase": "fenomeno",
+   "dura": 5,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís la columna de humo. Es una fogata baja, apagándose. Hay huellas de varias botas y restos de comida.",
+      "tiempoMin": 25
+     },
+     {
+      "t": "Quien estuvo acá se fue hace poco. Pisás las brasas con la bota. No hay más.",
+      "fin": "hallazgo",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "Una columna de humo se levanta fina y recta. Hay poco viento."
+    ]
+   }
+  },
+  "nino_senala": {
+   "alias": [
+    "niño",
+    "niña",
+    "chico",
+    "chica",
+    "nene"
+   ],
+   "clase": "persona",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís la dirección que señala el niño. Hay una grieta en la pared con un nido de gorriones. Él asiente, satisfecho.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "El niño señala algo con todo el brazo. Los adultos no miran."
+    ],
+    "llamar": [
+     "Lo llamás. Se acerca con paso de espía y te susurra algo sobre un nido.",
+     "Te cuenta, muy serio, que el nido es secreto."
+    ]
+   }
+  },
+  "silueta_colina": {
+   "alias": [
+    "silueta",
+    "figura",
+    "sombra",
+    "alguien"
+   ],
+   "clase": "persona",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Subís hacia la figura. Cuando llegás, solo queda una piedra aplastada donde alguien estuvo sentado un buen rato.",
+      "fin": "hallazgo",
+      "tiempoMin": 15
+     }
+    ],
+    "mirar": [
+     "Una figura inmóvil sobre la colina. No se ve si mira hacia vos."
+    ]
+   }
+  },
+  "halcon_alto": {
+   "alias": [
+    "halcon",
+    "halcón",
+    "rapaz"
+   ],
+   "clase": "animal",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís al halcón con la vista hasta que se hace un punto y desaparece detrás de una colina. Te duele el cuello.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "Gira alto, sin batir las alas. Debe de ver cada ratón del valle."
+    ]
+   }
+  },
+  "ovejas_lejos": {
+   "alias": [
+    "ovejas",
+    "oveja",
+    "rebaño",
+    "rebano"
+   ],
+   "clase": "animal",
+   "dura": 4,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Caminás hacia las ovejas. Resultan estar más lejos de lo que parecían y un perro te mira desde lejos, avisando.",
+      "fin": "nada",
+      "tiempoMin": 20
+     }
+    ],
+    "mirar": [
+     "Unas ovejas pastan a lo lejos, quietas como piedras blancas."
+    ]
+   }
+  },
+  "zorro_camino": {
+   "alias": [
+    "zorro",
+    "zorra"
+   ],
+   "clase": "animal",
+   "dura": 2,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís al zorro hasta unos matorrales. Te mira desde adentro, con los ojos brillando, y se esfuma.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "Un zorro se detiene un segundo, olfatea y se va."
+    ]
+   }
+  },
+  "cigarras": {
+   "alias": [
+    "cigarras",
+    "cigarra",
+    "chicharras"
+   ],
+   "clase": "animal",
+   "dura": 4,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Buscás de dónde viene el zumbido. Está en todos los árboles a la vez. Nunca vas a ver una.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "escuchar": [
+     "Un zumbido parejo, que sube y baja con el calor."
+    ]
+   }
+  },
+  "cuervo_camino": {
+   "alias": [
+    "cuervo",
+    "cuervos"
+   ],
+   "clase": "animal",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís al cuervo. Salta de poste en poste esperándote, hasta que se aburre y se va.",
+      "fin": "nada",
+      "tiempoMin": 10
+     }
+    ],
+    "mirar": [
+     "El cuervo te mira de costado, con un ojo, como quien toma notas."
+    ]
+   }
+  },
+  "buho_noche": {
+   "alias": [
+    "buho",
+    "búho",
+    "lechuza"
+   ],
+   "clase": "animal",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Seguís el llamado del búho entre los árboles. Calla cuando te acercás. Quedás en la oscuridad, atento a nada.",
+      "fin": "nada",
+      "tiempoMin": 15
+     }
+    ],
+    "escuchar": [
+     "Llama dos veces, espera, y llama otra vez. No hay respuesta."
+    ]
+   }
+  },
+  "grillos": {
+   "alias": [
+    "grillos",
+    "grillo"
+   ],
+   "clase": "animal",
+   "dura": 4,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Buscás grillos en el pasto. Callan a tu paso y cantan otra vez cuando te alejás. Nunca estás donde cantan.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "escuchar": [
+     "Un concierto parejo de grillos, de todos los lados."
+    ]
+   }
+  },
+  "murcielago": {
+   "alias": [
+    "murcielago",
+    "murciélago",
+    "murcielagos"
+   ],
+   "clase": "animal",
+   "dura": 2,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Intentás seguir al murciélago con la vista. Es imposible. Cambia de rumbo sin avisar.",
+      "fin": "nada",
+      "tiempoMin": 5
+     }
+    ],
+    "mirar": [
+     "Un murciélago cruza, un trazo oscuro más rápido que el pensamiento."
+    ]
+   }
+  },
+  "palomas": {
+   "alias": [
+    "palomas",
+    "paloma"
+   ],
+   "clase": "animal",
+   "dura": 3,
+   "ramas": {
+    "seguir": [
+     {
+      "t": "Te acercás a las palomas. Se levantan todas a la vez, con un aplauso de alas, y vuelven a posarse a diez pasos.",
+      "fin": "nada",
+      "tiempoMin": 3
+     }
+    ],
+    "mirar": [
+     "Las palomas pelean por migas con una seriedad ridícula."
+    ]
+   }
+  }
+ },
+ "clases": {
+  "animal": {
+   "seguir": [
+    "Seguís al animal un rato. Cuando lo perdés de vista, no sabés si te esquivó o te distrajo.",
+    "Lo seguís hasta un rincón donde ya no hay nada que ver."
+   ],
+   "mirar": [
+    "Lo mirás con atención. Se sabe observado y finge indiferencia.",
+    "Observás sus movimientos. Nada fuera de lo común."
+   ],
+   "llamar": [
+    "Lo llamás. Ni se inmuta.",
+    "Lo llamás en voz baja. Levanta una oreja y sigue."
+   ],
+   "tocar": [
+    "Estirás la mano. Se aparta justo a tiempo.",
+    "Lográs rozarlo. Se aleja con dignidad."
+   ],
+   "escuchar": [
+    "Escuchás un rato. Solo el ruido de siempre.",
+    "Prestás atención. No dice nada nuevo."
+   ],
+   "preguntar": [
+    "Preguntás por el animal. Nadie parece saber de quién es.",
+    "«Anda por acá siempre», te dicen. Ahí queda."
+   ],
+   "ignorar": [
+    "Lo dejás pasar. Ya habrá otros.",
+    "Dejás que se vaya. Nadie lo extraña."
+   ]
+  },
+  "persona": {
+   "seguir": [
+    "Seguís a la figura a distancia prudente. Se mezcla con la gente y la perdés.",
+    "La seguís hasta una esquina. Dobla y no la volvés a ver."
+   ],
+   "mirar": [
+    "La mirás sin disimulo. Te devuelve una mirada neutra.",
+    "Notás cómo camina. Nada más."
+   ],
+   "llamar": [
+    "La llamás. Gira, te mide con los ojos y sigue su camino.",
+    "Alzás la voz. Hace un gesto vago y se va."
+   ],
+   "tocar": [
+    "Le tocás el hombro. Se gira, sorprendida, y se disculpa sin saber de qué.",
+    "Un roce y un «perdón». Fin."
+   ],
+   "escuchar": [
+    "Escuchás lo que dice. Solo trivialidades.",
+    "Aguzás el oído. Murmullos sin importancia."
+   ],
+   "preguntar": [
+    "Preguntás por esa persona. Alguien se encoge de hombros.",
+    "«No lo conozco», responde el más cercano."
+   ],
+   "ignorar": [
+    "Seguís en lo tuyo. Tampoco era para tanto.",
+    "La dejás ir."
+   ]
+  },
+  "sonido": {
+   "seguir": [
+    "Seguís el sonido. Se desvanece antes de que llegues.",
+    "Caminás hacia el ruido. Cuando creés estar cerca, calla."
+   ],
+   "mirar": [
+    "Mirás hacia donde parece venir. No ves nada.",
+    "Buscás con la vista. Solo ves lo de siempre."
+   ],
+   "llamar": [
+    "Gritás un «¿hay alguien?». Nada responde.",
+    "Llamás a la nada. Te devuelve el eco."
+   ],
+   "tocar": [
+    "No hay nada que tocar. Es solo sonido.",
+    "Estirás la mano en vano."
+   ],
+   "escuchar": [
+    "Te quedás quieto y escuchás. Se repite, más débil.",
+    "Escuchás hasta que se apaga."
+   ],
+   "preguntar": [
+    "Preguntás qué fue ese ruido. «Siempre suena», te dicen.",
+    "Alguien se encoge de hombros: «Costumbre del lugar»."
+   ],
+   "ignorar": [
+    "Lo dejás pasar.",
+    "No le das importancia. El ruido tampoco."
+   ]
+  },
+  "objeto": {
+   "seguir": [
+    "Seguís la dirección del objeto. No hay hacia dónde.",
+    "No hay nada que seguir."
+   ],
+   "mirar": [
+    "Lo mirás un buen rato. Es lo que parece.",
+    "Lo observás con calma. Sin sorpresas."
+   ],
+   "llamar": [
+    "Hablarle a un objeto es poco útil. Lo hacés igual.",
+    "Nadie contesta, claro."
+   ],
+   "tocar": [
+    "Lo tocás. Está donde debía estar.",
+    "Lo recorrés con los dedos. Nada oculto."
+   ],
+   "escuchar": [
+    "Acercás el oído. Silencio.",
+    "No emite ningún ruido."
+   ],
+   "preguntar": [
+    "Preguntás por eso. «Siempre estuvo ahí», te dicen.",
+    "Nadie sabe bien qué es."
+   ],
+   "ignorar": [
+    "Lo dejás estar.",
+    "Pasás de largo."
+   ]
+  },
+  "lugar": {
+   "seguir": [
+    "Te acercás al lugar. Es más pequeño de lo que parecía.",
+    "Llegás. No hay nada especial."
+   ],
+   "mirar": [
+    "Lo mirás desde donde estás. Se ve quieto.",
+    "Observás un rato. Nada se mueve."
+   ],
+   "llamar": [
+    "Llamás hacia adentro. Nadie contesta.",
+    "Tu voz se pierde."
+   ],
+   "tocar": [
+    "Tocás la pared. Fría y áspera.",
+    "Probás el picaporte. Cede, o no."
+   ],
+   "escuchar": [
+    "Escuchás del otro lado. Silencio.",
+    "Apenas un rumor lejano."
+   ],
+   "preguntar": [
+    "Preguntás qué hay ahí. «Nada que interese», te responden.",
+    "«Depósito», dice alguien, y se va."
+   ],
+   "ignorar": [
+    "Lo dejás para otro momento.",
+    "No es prioridad."
+   ]
+  },
+  "fenomeno": {
+   "seguir": [
+    "Caminás hacia allá. Cuando llegás, solo quedan restos.",
+    "Seguís la señal. Pierde fuerza a mitad de camino."
+   ],
+   "mirar": [
+    "Lo observás a la distancia. Parece más cerca de lo que está.",
+    "Lo mirás un rato. Cambia lento."
+   ],
+   "llamar": [
+    "Alzás la voz. Nadie responde.",
+    "Gritás. El viento se lleva tus palabras."
+   ],
+   "tocar": [
+    "No se puede tocar.",
+    "Estirás la mano y no alcanzás."
+   ],
+   "escuchar": [
+    "Escuchás. Nada que no esperaras.",
+    "Un crujido lejano, nada más."
+   ],
+   "preguntar": [
+    "Preguntás qué es. «Siempre aparece a esta hora», dicen.",
+    "Alguien lo atribuye al viento. Otro, a un campamento."
+   ],
+   "ignorar": [
+    "Lo ignorás. Se apaga solo.",
+    "Seguís con lo tuyo."
+   ]
+  }
+ },
+ "no_visto": [
+  "No ves nada así por acá.",
+  "Mirás alrededor y no hay nada parecido.",
+  "Eso no está a la vista ahora.",
+  "No recordás haber visto eso.",
+  "Tal vez lo viste antes. Ya no está."
+ ],
+ "interrupcion": {
+  "maren_archivista": {
+   "durante": [
+    "«El Archivo no es un lugar para salir corriendo», dice Maren, ya sin interlocutor.",
+    "Maren levanta la vista cuando te vas. Anota algo en el margen."
+   ],
+   "regreso": [
+    "«Volvió. Consta que se fue sin terminar la consulta», dice Maren.",
+    "Maren sigue donde la dejaste: «Estábamos en mitad de una frase»."
+   ]
+  },
+  "serel_panadero": {
+   "durante": [
+    "«¡Eh! ¿Adónde vas?», grita Serel, con la espátula en alto.",
+    "Serel se queda con la boca abierta. «Qué modos», murmura."
+   ],
+   "regreso": [
+    "«Mirá quién vuelve», dice Serel. «¿Se te acabó el apuro?»",
+    "Serel te guarda rencor del tamaño de un pan: «¿Terminaste con lo tuyo?»"
+   ]
+  },
+  "ivor_cambista": {
+   "durante": [
+    "Ivor mira cómo te vas. «Una conversación interrumpida es una cuenta abierta», dice, y anota.",
+    "«Interesante forma de cerrar un trato», comenta Ivor, a la nada."
+   ],
+   "regreso": [
+    "«Volvió. Retomemos donde dejamos», dice Ivor, impasible.",
+    "Ivor cuenta sus monedas sin mirarte: «Aún no cerramos»."
+   ]
+  },
+  "naela_tabernera": {
+   "durante": [
+    "«¿A dónde vas, así, de golpe?», dice Naela, con el trapo en la mano.",
+    "Naela te sigue con la mirada. «Si no era mi cerveza, tampoco era para tanto», murmura."
+   ],
+   "regreso": [
+    "«Volvió el corredor», dice Naela, sin sonreír.",
+    "«¿Terminaste? Porque tu vaso sigue ahí», dice Naela."
+   ]
+  },
+  "tiren_docente": {
+   "durante": [
+    "«¡Pero si no terminé la explicación!», dice Tiren, con la tiza en el aire.",
+    "Tiren se rasca la cabeza. «Qué curioso, se fue en mitad del mapa»."
+   ],
+   "regreso": [
+    "«¡Volviste! ¿Dónde estábamos?», dice Tiren, entusiasmado.",
+    "Tiren te sonríe: «No me importa. Pero quiero saber qué viste»."
+   ]
+  },
+  "elia_bibliotecaria": {
+   "durante": [
+    "«Shhh… ¿a dónde?», susurra Elia, sorprendida.",
+    "Elia se queda con el libro abierto. Ya no habla."
+   ],
+   "regreso": [
+    "«Volviste», susurra Elia. «Retomemos en voz baja».",
+    "Elia te hace seña de silencio: «Estábamos en la página siete»."
+   ]
+  },
+  "brenn_arriero": {
+   "durante": [
+    "«¡Che, a mitad de frase!», gruñe Brenn.",
+    "Brenn escupe a un costado. «Ni las mulas se van así», masculla."
+   ],
+   "regreso": [
+    "«Volviste. ¿Qué era tan urgente?», pregunta Brenn.",
+    "Brenn te hace lugar: «Seguimos, que la carga no espera»."
+   ]
+  },
+  "ysolde_pescadora": {
+   "durante": [
+    "Ysolde te mira irte y no dice nada. Después, un chasquido de lengua.",
+    "«El agua no espera, pero tampoco se va», murmura Ysolde."
+   ],
+   "regreso": [
+    "«Volviste», dice Ysolde, sin sorpresa.",
+    "Ysolde sigue como si no te hubieras ido nunca."
+   ]
+  },
+  "dario_guardia": {
+   "durante": [
+    "«Alto. Una conversación oficial no se abandona», dice Darío, con voz seca.",
+    "Darío anota la hora en la libreta."
+   ],
+   "regreso": [
+    "«Regresó. Quedó anotado que se retiró sin autorización», dice Darío.",
+    "Darío endereza la espalda: «Continuemos, entonces»."
+   ]
+  },
+  "sarin_mensajera": {
+   "durante": [
+    "«¡Eh, yo también tengo prisa, pero aviso!», dice Sarin.",
+    "Sarin ladea la cabeza. «Qué rápido, para ser alguien que no entrega cartas»."
+   ],
+   "regreso": [
+    "«Volviste. ¿Todo bien?», pregunta Sarin, sin dejar de caminar.",
+    "Sarin te da alcance: «Te perdiste lo mejor»."
+   ]
+  },
+  "hollis_pastor": {
+   "durante": [
+    "Hollis te mira irte con la misma calma con que mira nubes.",
+    "«Las ovejas también se van sin avisar», dice Hollis, y sonríe."
+   ],
+   "regreso": [
+    "«Volviste. Las ovejas no se enojan», dice Hollis.",
+    "Hollis se hace a un lado: «Hay lugar»."
+   ]
+  },
+  "oren_peregrino": {
+   "durante": [
+    "Oren inclina la cabeza. «Cada uno camina su camino», dice, sin reproche.",
+    "Oren no se mueve. «Esperaré», murmura."
+   ],
+   "regreso": [
+    "«Qué bueno que volvieras», dice Oren, con serenidad.",
+    "«El camino te trajo de vuelta», dice Oren."
+   ]
+  }
+ },
+ "fijos": {
+  "escena_mercado_circular": {
+   "puestos": {
+    "alias": [
+     "puesto",
+     "puestos",
+     "mostrador",
+     "mostradores"
+    ],
+    "examinar": [
+     "Los puestos están armados con lo que hay: cajones, lonas y tablas con nombre.",
+     "Cada puesto tiene su manera de ordenar. Se nota quién lleva años."
+    ],
+    "tocar": [
+     "Apoyás la mano en un mostrador. Madera gastada, tibia de tanto uso."
+    ]
+   },
+   "fuente": {
+    "alias": [
+     "fuente",
+     "pileta",
+     "caño"
+    ],
+    "examinar": [
+     "La fuente de piedra gotea con ritmo. Alguien dejó un cántaro roto a sus pies.",
+     "Hay musgo en el borde y una moneda al fondo, hundida."
+    ],
+    "tocar": [
+     "Mojás los dedos. El agua está más fría de lo que parece."
+    ]
+   },
+   "toldo": {
+    "alias": [
+     "toldo",
+     "toldos",
+     "lona",
+     "lonas"
+    ],
+    "examinar": [
+     "Los toldos de lona remendados hacen un techo de colores desparejos.",
+     "Una lona tiene un parche con forma de pez. Alguien lo cosió con cariño."
+    ],
+    "tocar": [
+     "Tocás la lona. Rasposa y pesada."
+    ]
+   }
+  },
+  "escena_archivo_real": {
+   "mesa": {
+    "alias": [
+     "mesa",
+     "mesa de consulta",
+     "pupitre"
+    ],
+    "examinar": [
+     "La mesa de consulta tiene marcas de tinta de décadas y un tintero que nadie mueve.",
+     "Hay un hueco gastado donde se apoyan los codos de quienes leen demasiado."
+    ],
+    "tocar": [
+     "Pasás la mano por la mesa. Lisa, con hendiduras de pluma."
+    ]
+   },
+   "estante": {
+    "alias": [
+     "estante",
+     "estantes",
+     "estanteria",
+     "estantería",
+     "anaquel"
+    ],
+    "examinar": [
+     "Los estantes llegan hasta el techo, con rótulos de papel amarillo.",
+     "Hay volúmenes con números y otros sin nada. Esos son los interesantes."
+    ],
+    "tocar": [
+     "Tocás un lomo. El cuero cruje, seco."
+    ]
+   },
+   "puerta_deposito": {
+    "alias": [
+     "puerta del deposito",
+     "puerta del depósito",
+     "deposito",
+     "depósito",
+     "candado"
+    ],
+    "examinar": [
+     "Una puerta baja de hierro, con un candado grande y reciente.",
+     "El candado está limpio. La puerta, no. Alguien se ocupa de lo uno y no de lo otro."
+    ],
+    "tocar": [
+     "Probás el candado. Firme."
+    ]
+   }
+  },
+  "escena_plaza_cambistas": {
+   "mesa": {
+    "alias": [
+     "mesa",
+     "mesas",
+     "mesa de cambio"
+    ],
+    "examinar": [
+     "Mesas bajas con balanzas, cuencos de monedas y un cartel con tasas.",
+     "Cada mesa tiene su lámpara de aceite apagada, de día."
+    ],
+    "tocar": [
+     "Apoyás la mano. Madera vieja, lijada por el roce de monedas."
+    ]
+   },
+   "pizarra": {
+    "alias": [
+     "pizarra",
+     "tasas",
+     "cartel"
+    ],
+    "examinar": [
+     "La pizarra de tasas está escrita a tiza y corregida varias veces.",
+     "Los números cambian más rápido que las caras."
+    ],
+    "tocar": [
+     "Pasás el dedo por la pizarra. Queda polvo de tiza."
+    ]
+   },
+   "fuente": {
+    "alias": [
+     "fuente",
+     "pileta"
+    ],
+    "examinar": [
+     "Una fuente baja en el centro. Los cambistas la usan para sentarse.",
+     "Hay dos monedas en el fondo y nadie se atreve a sacarlas."
+    ],
+    "tocar": [
+     "Mojás la mano. Agua fresca."
+    ]
+   }
+  },
+  "escena_taberna_lareth": {
+   "barra": {
+    "alias": [
+     "barra",
+     "mostrador"
+    ],
+    "examinar": [
+     "La barra tiene marcas de vasos, cuchillos y apuestas.",
+     "Detrás, una fila de jarros colgados y un cuaderno cerrado."
+    ],
+    "tocar": [
+     "Apoyás los codos. Pegajosa, pero honesta."
+    ]
+   },
+   "chimenea": {
+    "alias": [
+     "chimenea",
+     "hogar",
+     "fuego"
+    ],
+    "examinar": [
+     "El fuego es bajo y constante. Alguien lo atiende sin que se note.",
+     "Hay una pila de leña perfectamente ordenada. Es obra de Naela."
+    ],
+    "tocar": [
+     "Acercás las manos. El calor te recorre los brazos."
+    ]
+   },
+   "mesa_rincon": {
+    "alias": [
+     "mesa",
+     "mesa del rincon",
+     "mesa del rincón",
+     "rincon",
+     "rincón"
+    ],
+    "examinar": [
+     "La mesa del rincón es la que tiene menos luz y mejor vista de la puerta.",
+     "Hay marcas de vasos de muchos años. Nadie la limpia a fondo."
+    ],
+    "tocar": [
+     "Pasás los dedos. Pegajoso en una esquina."
+    ]
+   }
+  },
+  "escena_biblioteca_publica": {
+   "mesas": {
+    "alias": [
+     "mesa",
+     "mesas",
+     "mesa de lectura"
+    ],
+    "examinar": [
+     "Mesas largas de lectura, con velas y mapas sueltos sin dueño.",
+     "En una mesa quedaron dos marcadores y un par de anteojos olvidados."
+    ],
+    "tocar": [
+     "Tocás la madera. Fría, con un barniz gastado."
+    ]
+   },
+   "estantes": {
+    "alias": [
+     "estante",
+     "estantes",
+     "estanteria",
+     "estantería",
+     "libros"
+    ],
+    "examinar": [
+     "Estantes altos con una escalera corrediza que chirría.",
+     "Los libros de rutas están desordenados. Los de poesía, intactos."
+    ],
+    "tocar": [
+     "Rozás los lomos. Polvo fino."
+    ]
+   },
+   "escalera": {
+    "alias": [
+     "escalera",
+     "escalerilla"
+    ],
+    "examinar": [
+     "Una escalera de madera con un peldaño reparado con cuerda.",
+     "Sube a una galería superior que parece poco usada."
+    ],
+    "tocar": [
+     "Probás el primer peldaño. Cruje pero aguanta."
+    ]
+   }
+  },
+  "escena_aula_cartografia": {
+   "pizarron": {
+    "alias": [
+     "pizarron",
+     "pizarrón",
+     "pizarra",
+     "tiza"
+    ],
+    "examinar": [
+     "El pizarrón tiene un continente a medio dibujar y flechas sin explicación.",
+     "Hay un círculo rojo alrededor de un punto sin nombre."
+    ],
+    "tocar": [
+     "Pasás la mano. La tiza se te queda en los dedos."
+    ]
+   },
+   "mesa_mapas": {
+    "alias": [
+     "mesa",
+     "mesa de mapas",
+     "mapa",
+     "mapas"
+    ],
+    "examinar": [
+     "Una mesa enorme cubierta de mapas con pesas de piedra en las esquinas.",
+     "Cada mapa tiene una letra distinta. Ninguno coincide con el de al lado."
+    ],
+    "tocar": [
+     "Pasás la mano sobre un mapa. El papel es grueso, casi tela."
+    ]
+   },
+   "atril": {
+    "alias": [
+     "atril",
+     "pupitre"
+    ],
+    "examinar": [
+     "El atril tiene la madera marcada por las manos de Tiren.",
+     "Hay una nota clavada con una tachuela. Dice «no mover»."
+    ],
+    "tocar": [
+     "Probás la firmeza. Firme."
+    ]
+   }
+  },
+  "escena_camino_norte": {
+   "mojon": {
+    "alias": [
+     "mojon",
+     "mojón",
+     "piedra",
+     "hito"
+    ],
+    "examinar": [
+     "Un mojón de piedra con una cifra casi borrada.",
+     "Alguien rayó una marca en la base con un cuchillo."
+    ],
+    "tocar": [
+     "Apoyás la mano en el mojón. Frío y áspero."
+    ]
+   },
+   "zanja": {
+    "alias": [
+     "zanja",
+     "cuneta",
+     "barro"
+    ],
+    "examinar": [
+     "La zanja tiene agua turbia y una rama atravesada como puente.",
+     "Hay huellas de ruedas profundas hacia el norte."
+    ],
+    "tocar": [
+     "Metés un dedo en el barro. Frío y pegajoso."
+    ]
+   },
+   "puente_chico": {
+    "alias": [
+     "puente",
+     "puentecito",
+     "puente chico"
+    ],
+    "examinar": [
+     "Un puente chico de piedra, con un lado hundido.",
+     "Debajo corre un arroyo apurado."
+    ],
+    "tocar": [
+     "Apoyás la mano en el pretil. Mojado y resbaladizo."
+    ]
+   }
+  },
+  "escena_camino_este": {
+   "cartel": {
+    "alias": [
+     "cartel",
+     "letrero",
+     "poste"
+    ],
+    "examinar": [
+     "Un cartel de madera con una flecha descolorida.",
+     "Alguien agregó con carbón un nombre que no es el del cartel."
+    ],
+    "tocar": [
+     "Tocás el cartel. Seco y astillado."
+    ]
+   },
+   "cerco": {
+    "alias": [
+     "cerco",
+     "alambrado",
+     "valla"
+    ],
+    "examinar": [
+     "Un cerco de piedra suelta, remendado con palos.",
+     "Cada tramo es obra de un dueño distinto."
+    ],
+    "tocar": [
+     "Apoyás la mano. Las piedras se mueven un poco."
+    ]
+   },
+   "piedra": {
+    "alias": [
+     "piedra",
+     "piedra grande",
+     "roca"
+    ],
+    "examinar": [
+     "Una piedra grande, lisa como un banco de tanto uso.",
+     "Hay una marca de hollín. Alguien hizo fuego acá."
+    ],
+    "tocar": [
+     "Tocás la piedra. Todavía guarda algo de sol."
+    ]
+   }
+  },
+  "escena_camino_sur": {
+   "poste": {
+    "alias": [
+     "poste",
+     "palo"
+    ],
+    "examinar": [
+     "Un poste con una cuerda deshilachada en lo alto.",
+     "En la base hay muescas. Alguien contó días o enemigos."
+    ],
+    "tocar": [
+     "Tocás el poste. Madera dura, pegajosa de resina."
+    ]
+   },
+   "huellas": {
+    "alias": [
+     "huellas",
+     "rastro",
+     "marcas"
+    ],
+    "examinar": [
+     "Huellas de botas con clavos, varias, en direcciones distintas.",
+     "Alguien borró algunas con una rama."
+    ],
+    "tocar": [
+     "Pasás los dedos por una huella. Tierra seca."
+    ]
+   },
+   "arbusto": {
+    "alias": [
+     "arbusto",
+     "matorral",
+     "maleza"
+    ],
+    "examinar": [
+     "Un arbusto espeso al borde del camino. Perfecto para esconderse.",
+     "Algunas ramas están quebradas hacia adentro."
+    ],
+    "tocar": [
+     "Separás las ramas. Espinas."
+    ]
+   }
+  },
+  "escena_lago_espejos": {
+   "muelle": {
+    "alias": [
+     "muelle",
+     "pasarela",
+     "tablones"
+    ],
+    "examinar": [
+     "Un muelle de tablones húmedos y resbaladizos.",
+     "Falta una tabla y alguien la reemplazó con una rama gruesa."
+    ],
+    "tocar": [
+     "Apoyás el pie. Cruje, pero aguanta."
+    ]
+   },
+   "orilla": {
+    "alias": [
+     "orilla",
+     "playa",
+     "arena",
+     "piedra plana"
+    ],
+    "examinar": [
+     "La orilla es una franja estrecha de arena oscura.",
+     "Hay una piedra plana arreglada como asiento."
+    ],
+    "tocar": [
+     "Metés la mano en la arena. Fría y húmeda."
+    ]
+   },
+   "redes": {
+    "alias": [
+     "red",
+     "redes",
+     "cuerda"
+    ],
+    "examinar": [
+     "Una red tendida a secar, con un remiendo prolijo.",
+     "Hay un hueco donde falta una red completa."
+    ],
+    "tocar": [
+     "Tocás la red. Áspera y salada."
+    ]
+   }
+  },
+  "escena_puente_aduana": {
+   "caseta": {
+    "alias": [
+     "caseta",
+     "garita",
+     "puesto"
+    ],
+    "examinar": [
+     "La caseta tiene un banco, una lámpara y una libreta clavada.",
+     "Hay marcas de dados en el banco. Nadie las admite."
+    ],
+    "tocar": [
+     "Tocás la pared de la caseta. Cal fría."
+    ]
+   },
+   "barrera": {
+    "alias": [
+     "barrera",
+     "pértiga",
+     "pertiga",
+     "tranca"
+    ],
+    "examinar": [
+     "Una barrera de madera con contrapeso de piedra.",
+     "El contrapeso está atado con una soga recién cambiada."
+    ],
+    "tocar": [
+     "Probás la barrera. Se mueve sin esfuerzo."
+    ]
+   },
+   "puente": {
+    "alias": [
+     "puente",
+     "arco"
+    ],
+    "examinar": [
+     "El puente es de piedra y tiene el pretil desgastado por manos.",
+     "Debajo, el río corre marrón y ancho."
+    ],
+    "tocar": [
+     "Pasás la mano por el pretil. Liso."
+    ]
+   }
+  },
+  "escena_cruce_colinas": {
+   "pirca": {
+    "alias": [
+     "pirca",
+     "muro",
+     "muro de piedra"
+    ],
+    "examinar": [
+     "Una pirca baja, levantada piedra sobre piedra, sin argamasa.",
+     "Algunas piedras están más nuevas. Alguien repara a escondidas."
+    ],
+    "tocar": [
+     "Tocás la pirca. Las piedras se mueven apenas."
+    ]
+   },
+   "hito": {
+    "alias": [
+     "hito",
+     "mojon",
+     "mojón",
+     "señal"
+    ],
+    "examinar": [
+     "Un hito con tres flechas grabadas. Una está casi borrada.",
+     "Alguien dejó una cinta atada alrededor."
+    ],
+    "tocar": [
+     "Pasás la mano por el hito. Frío."
+    ]
+   },
+   "sendero": {
+    "alias": [
+     "sendero",
+     "senda",
+     "huellas"
+    ],
+    "examinar": [
+     "Un sendero apenas visible entre pastos, usado por patas más que por botas.",
+     "Hay pelos de oveja enganchados en una rama."
+    ],
+    "tocar": [
+     "Pisás el sendero. Suelo firme."
+    ]
+   }
+  }
+ }
+}
