@@ -12,17 +12,20 @@ import { derivar } from '../narrador/azar.js';
 import { normalizar } from '../narrador/comprension.js';
 import { minutosAbsolutos } from '../narrador/reloj.js';
 import { VERBOS_FOCO, FAMILIAS, tieneAlias } from '../narrador/focos.js';
+import { npcsPresentes } from '../narrador/turno.js';
 
 const PREFIJO = { seguir: 'seguir a', mirar: 'mirar a', llamar: 'llamar a', tocar: 'tocar', escuchar: 'escuchar', preguntar: 'preguntar por', ignorar: 'ignorar' };
 const ACCIONES = ['observar', 'explorar', 'examinar', 'hablar con serel', 'hablar con maren', 'mirar eso', 'seguir eso', 'escuchar', 'descansar', 'viajar a la plaza', 'viajar al mercado', 'viajar al archivo', 'viajar a la taberna', 'ir al camino norte', 'trabajar', 'leer'];
 const ARTICULOS = new Set(['un', 'una', 'el', 'la', 'unos', 'unas']);
+// U3: palabras tras artículo que no son sustantivos (ruido del reporte «sin foco»).
+const STOP = new Set(['poco', 'tiene', 'buen', 'buena', 'otro', 'otra', 'mismo', 'misma', 'cada', 'algo', 'vez', 'rato', 'momento', 'primera', 'primero', 'ultimo', 'ultima', 'mira', 'seguis', 'volves', 'perdes', 'turno', 'error', 'aviso', 'lugar', 'charla', 'tema']);
 
 export async function correr({ partidas = 200, turnos = 60, semilla = 1, amp = null, sinMotor = false } = {}) {
   amp ??= await cargarAmpliadoNode({ cargarPendientes: true });
   const F = amp.focos;
   // sinMotor: narra sin focos (línea de base "antes"), pero prueba los mismos objetivos.
   const op = { ampliado: sinMotor ? { ...amp, focos: null } : amp, ahora: () => 0 };
-  const m = { pruebas: 0, ok: 0, rama: 0, clase: 0, interrupciones: 0, agotados: 0, errores: [], textos: new Set(), palabras: new Set(), propios: 0, generados: 0 };
+  const m = { pruebas: 0, ok: 0, rama: 0, clase: 0, interrupciones: 0, agotados: 0, preg: 0, pregVoz: 0, errores: [], textos: new Set(), palabras: new Set(), propios: 0, generados: 0 };
   const sinFoco = {};
   const todosAlias = [...Object.values(F.defs).flatMap((d) => d.alias), ...Object.values(F.fijos).flatMap((e) => Object.values(e).flatMap((o) => o.alias)), ...Object.values(FAMILIAS).flatMap((x) => x.alias)].map(normalizar);
   const propiosNombres = new Set([...contenido.npcs.flatMap((n) => [n.nombre, ...(n.alias ?? [])]), ...contenido.objetos.map((o) => o.nombre), ...contenido.escenas.map((e) => e.nombre)].flatMap((x) => normalizar(x).split(' ')));
@@ -45,14 +48,15 @@ export async function correr({ partidas = 200, turnos = 60, semilla = 1, amp = n
       const ws = normalizar(r.texto).split(' ');
       ws.forEach((w, i) => {
         const s = ws[i + 1];
-        if (ARTICULOS.has(w) && s && s.length >= 4 && !propiosNombres.has(s) && !todosAlias.some((a) => a === s || tieneAlias(s, a))) sinFoco[s] = (sinFoco[s] ?? 0) + 1;
+        if (ARTICULOS.has(w) && s && s.length >= 4 && !STOP.has(s) && !propiosNombres.has(s) && !todosAlias.some((a) => a === s || tieneAlias(s, a))) sinFoco[s] = (sinFoco[s] ?? 0) + 1;
       });
       e = r.estado;
       const esc = e.jugador.escenaId;
       const objetivos = [
-        ...(e.ext?.focos ?? []).map((f) => ({ id: f.id, alias: f.gen ? f.alias[0] : F.defs[f.id]?.alias[0], gen: Boolean(f.gen) })),
-        ...Object.entries(F.fijos[esc] ?? {}).map(([id, o]) => ({ id: `fijo:${id}`, alias: o.alias[0], fijo: true })),
+        ...(e.ext?.focos ?? []).map((f) => ({ id: f.id, alias: f.gen ? f.alias[0] : F.defs[f.id]?.alias[0], gen: Boolean(f.gen), clase: f.gen ? f.clase : F.defs[f.id]?.clase })),
+        ...Object.entries(F.fijos[esc] ?? {}).map(([id, o]) => ({ id: `fijo:${id}`, alias: o.alias[0], fijo: true, clase: 'objeto' })),
       ].filter((x) => x.alias);
+      const presentes = npcsPresentes(e, contenido).map((n) => n.id);
       for (const o of objetivos) {
         if (!o.fijo) { if (o.gen) m.generados++; else m.propios++; }
         for (let k = 0; k < 3; k++) {
@@ -65,7 +69,14 @@ export async function correr({ partidas = 200, turnos = 60, semilla = 1, amp = n
           if (malo(s.texto) || s.tipo === 'reformulacion' || noVisto || s.errores.length) { err(`${esc} "${frase}" → ${s.tipo}: ${s.texto.slice(0, 80)} ${s.errores.join(',')} ${process.env.DBG ? JSON.stringify([e.ext.turno, e.ext.siguiendo, e.ext.focos]) : ''}`); continue; }
           if (minutosAbsolutos(s.estado.reloj) < minutosAbsolutos(e.reloj)) { err(`reloj retrocede en "${frase}"`); continue; }
           m.ok++;
+          let enVoz = false;
+          if (verbo === 'preguntar' && presentes.length) {
+            m.preg++;
+            const voz = (F.preguntar?.[presentes[0]]?.[o.clase] ?? []).map((t) => t.replaceAll('{foco}', o.alias));
+            if (voz.some((t) => s.texto.includes(t))) { m.pregVoz++; enVoz = true; }
+          }
           const propia = o.fijo ? ['mirar', 'tocar'].includes(verbo) : !o.gen && ramaDe(o.id, verbo).some((x) => s.texto.includes(x));
+          if (enVoz) continue;
           if (propia) m.rama++; else m.clase++;
         }
       }
@@ -80,6 +91,8 @@ export async function correr({ partidas = 200, turnos = 60, semilla = 1, amp = n
     menciones_con_respuesta_pct: pct(m.ok, m.pruebas),
     rama_propia_pct: pct(m.rama, m.ok),
     clase_pct: pct(m.clase, m.ok),
+    preguntar_con_npc: m.preg,
+    preguntar_voz_npc_pct: pct(m.pregVoz, m.preg),
     focos_propios: m.propios,
     focos_generados: m.generados,
     interrupciones: m.interrupciones,

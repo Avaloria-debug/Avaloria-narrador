@@ -83,3 +83,4 @@ Q4 | firestore.rules no se tocó: camposDeRegistro() con hasOnly rechazaría pas
 - F4 U1: test S2 de generado usa «golpes» porque t32 define «carros» (carreta_camino) y ahora gana el foco propio.
 - F4 U2: la voz del NPC (t31) tiene prioridad sobre ramas.preguntar propias del foco; sin NPC se usa la rama y luego la clase.
 - F4 U2: sin «a <npc>» en el texto se usa el primer NPC presente; fijos usan la clase objeto de t31.
+- F4 U3: stopwords del reporte «sin foco» viven en tools/bots-focos.js (STOP), no en contenido.
