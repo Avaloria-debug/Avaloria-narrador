@@ -407,10 +407,11 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       aperturas = [...(aperturas ?? []).slice(0, -1), r.apertura];
     }
   }
+  let sugerenciaFinal = null;
   // W3: «no entendí» + «Podrías …» con 2–3 acciones reales de la escena.
   if (noEntendido && (turno?.tipo === 'ia' || turno?.motivo === 'no_entendido')) {
     const s = sugerencias(opcionesDeTurno({ ...despues, ext: { ...ext, focos: antes.ext?.focos ?? ext.focos, turno: Math.max(0, (ext.turno ?? 1) - 1) } }, { amp, contenido }), ctx.rng('sugerencias'), { anterior: ext.ultimaSugerencia ?? null });
-    if (s.texto) { partes.push(s.texto); ext.ultimaSugerencia = s.clave; }
+    if (s.texto) { sugerenciaFinal = s.texto; ext.ultimaSugerencia = s.clave; }
   }
   if (tipo === 'narracion') {
     // P6: memoria al saludar o hablar con un NPC que recuerda algo (una vez cada 6 turnos por NPC).
@@ -501,7 +502,7 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
     const d = castigoInterrupcion(ext, npc, amp.valores);
     if (d) ext.afinidad[npc] = Math.round(((ext.afinidad[npc] ?? 0) + d) * 100) / 100;
   }
-  let salida = partes.filter(Boolean).join(' ');
+  let salida = [...partes, sugerenciaFinal].filter(Boolean).join(' ');
   if (antepuesta) salida = `${antepuesta} ${salida}`;
   if (mundo) salida = `${salida}\n\n${mundo}`;
   cerrarFocos(salida);
