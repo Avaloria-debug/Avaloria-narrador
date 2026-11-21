@@ -46,3 +46,4 @@ P5 | despedida de voces no se usa (no hay turno de despedida en v3) | inventar d
 P5 | hablar_con con NPC: 50% charla, si no plantillas v3+ampliado por especificidad | siempre charla
 P7 | afinidad por valores se guarda en ext.afinidad y solo ajusta r de las condiciones (no toca npcs.relacion) | sumarla a la relación real
 P8 | los eventos v3 no tienen texto: se narra el inicio (t09/t19) del evento nuevo en la escena del jugador y cierre.<categoria> al expirar; la saliencia elige entre variantes, no cambia qué evento se dispara | cambiar el disparo
+P9 | rumor se cuenta al saludar/hablar con un NPC que lo oyó (si no hubo línea de memoria); remate de ciudad 50% | contarlo siempre

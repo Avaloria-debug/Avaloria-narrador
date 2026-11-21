@@ -12,6 +12,7 @@ import { resolverPlantillas } from './contenido.js';
 import { elegir } from './seleccion.js';
 import { ajustarTension, ajustarObjetivo, elegirPorSaliencia, NIVEL_CATEGORIA } from './eventos.js';
 import { cumple, especificidad, normalizar } from './seleccion.js';
+import { propagar, bloquesCruzados, rumorPendiente, fuerzaDe, MENSAJEROS } from './rumores.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
 
@@ -93,6 +94,7 @@ export function extInicial(ext, semilla = 0) {
     tensionObjetivo: Number.isFinite(e.tensionObjetivo) ? e.tensionObjetivo : 3,
     sinEvento: Number.isInteger(e.sinEvento) ? e.sinEvento : 0,
     usosEvento: e.usosEvento && typeof e.usosEvento === 'object' ? { ...e.usosEvento } : {},
+    rumores: e.rumores && typeof e.rumores === 'object' ? structuredClone(e.rumores) : {},
     afinidad: e.afinidad && typeof e.afinidad === 'object' ? { ...e.afinidad } : {},
     ultimoRecuerdo: e.ultimoRecuerdo && typeof e.ultimoRecuerdo === 'object' ? { ...e.ultimoRecuerdo } : {},
   };
@@ -128,6 +130,8 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
   const recuerdo = (npc) => recuerdosDe(ext.hechos ?? [], npc, despues.reloj, umbrales.recuerdo?.reciente_horas);
   const hechos = (extra = {}, npc = npcId) => {
     const { rec, ant } = recuerdo(npc);
+    const rumor = npc ? rumorPendiente(ext.rumores, npc) : null;
+    if (rumor) extra = { escuchoDe: rumor.tipo, fz: fuerzaDe(rumor.fuerza), ...extra };
     const verbo = turno?.accion?.verbo;
     const afin = npc && verbo ? afinidadAccion(amp, npc, verbo) : 0;
     return hechosDe(estado, { contenido, npcId: npc, umbrales, extra: { rec, ant, ...(afin ? { afinidadAccion: afin } : {}), ...extra } });
@@ -137,6 +141,30 @@ export function contexto({ amp, contenido, despues, turno, ext }) {
     return aplicarGenero(expandir(t, simbolos, { rng: rng('gramatica'), hechos: h, avisos: ext.avisos }), { npcId: npc, objetoId, genero: amp.guia?.genero });
   };
   return { rng, npcId, hechos, expandirTexto, estado, recuerdo };
+}
+
+/**
+ * P9: un NPC cuenta un rumor que oyó (rumores.<verbo>.<fz>, o la voz del mensajero), con remate de ciudad y su reacción.
+ */
+export function narrarRumor({ amp, contenido, despues, ext, ctx, npc }) {
+  const rumor = rumorPendiente(ext.rumores, npc);
+  if (!rumor) return null;
+  const rng = ctx.rng('rumores');
+  const pick = (l) => (l?.length ? l[Math.min(l.length - 1, Math.floor(rng() * l.length))] : null);
+  const valores = { npc: porId(contenido.npcs, rumor.npc)?.nombre ?? '', lugar: porId(contenido.escenas, rumor.escena)?.nombre ?? '' };
+  const base = MENSAJEROS.includes(npc) && amp.mensajeros?.[npc]?.length ? pick(amp.mensajeros[npc]) : pick(amp.rumores?.[rumor.tipo]?.[fuerzaDe(rumor.fuerza)]);
+  const linea = base && completarAmp(ctx.expandirTexto(base), valores);
+  if (!linea) return null;
+  rumor.contado = true;
+  const partes = [linea];
+  const r = ctx.hechos({}, npc).r;
+  const reac = r && pick(amp.reaccionNpc?.[r]);
+  const t2 = reac && completarAmp(reac, { npc: porId(contenido.npcs, npc)?.nombre });
+  if (t2) partes.push(t2);
+  const ciudad = porId(contenido.escenas, despues.jugador.escenaId)?.ciudad;
+  const remate = ciudad && rng() < 0.5 ? pick(amp.remateCiudad?.[ciudad]) : null;
+  if (remate) partes.push(remate);
+  return partes.join(' ');
 }
 
 /**
@@ -194,6 +222,10 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       const linea = lineaDeMemoria(amp, npcMem, recuerdosDe(hechosPrevios, npcMem, despues.reloj, amp.guia?.umbrales?.recuerdo?.reciente_horas), ctx.rng('memoria'));
       const t = linea && completarAmp(ctx.expandirTexto(linea), { npc: porId(contenido.npcs, npcMem)?.nombre });
       if (t) { partes.push(t); ext.ultimoRecuerdo[npcMem] = ext.turno; }
+      else {
+        const rum = narrarRumor({ amp, contenido, despues, ext, ctx, npc: npcMem });
+        if (rum) partes.push(rum);
+      }
     }
     const frase = fraseAmpliada({ amp, contenido, turno, ctx, aperturas });
     if (frase) {
@@ -209,6 +241,8 @@ export function aplicarAmpliado({ amp, contenido, antes, despues, turno, texto, 
       partes.push(ctx.expandirTexto(amb.texto));
     }
   }
+  // P9: rumores cada 6 h de reloj.
+  for (let i = 0, n = Math.min(4, bloquesCruzados(antes.reloj, despues.reloj)); i < n; i++) ext.rumores = propagar(ext.rumores, ext.hechos, { contenido, reloj: despues.reloj });
   if (turno?.tipo === 'accion' && turno.accion) {
     const npcA = turno.accion.parametros?.npcId;
     const afin = npcA ? afinidadAccion(amp, npcA, turno.accion.verbo) : 0;
