@@ -6236,6 +6236,32 @@
    "frase": "me aburro",
    "accion": "no_entendido",
    "cat": "real_a_medias"
+  },
+  {
+   "frase": "dejo al perro",
+   "accion": "aclarar",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ],
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "dejo tranquila a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "dejá a la gata",
+   "accion": "ignorar",
+   "objetivo": "gata_mercado",
+   "cat": "real_acciones"
+  },
+  {
+   "frase": "dejo el vaso",
+   "accion": "no_entendido",
+   "cat": "real_acciones"
   }
  ]
 }

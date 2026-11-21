@@ -1,0 +1,387 @@
+{
+ "nota": "Escenas donde cada foco puede activarse (complementa t30/t32 sin editarlos). Fuera de estas escenas, el alias no abre el foco.",
+ "escenas": {
+  "gata_mercado": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth"
+  ],
+  "gatas_patio": [
+   "escena_mercado_circular",
+   "escena_taberna_lareth",
+   "escena_plaza_cambistas"
+  ],
+  "perro_ciudad": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_puente_aduana"
+  ],
+  "gallo_patio": [
+   "escena_mercado_circular",
+   "escena_camino_este"
+  ],
+  "rata_puerta": [
+   "escena_mercado_circular",
+   "escena_taberna_lareth",
+   "escena_archivo_real"
+  ],
+  "burro_atado": [
+   "escena_mercado_circular",
+   "escena_puente_aduana",
+   "escena_camino_este"
+  ],
+  "cabra_cartel": [
+   "escena_camino_sur",
+   "escena_cruce_colinas"
+  ],
+  "conejo_camino": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_cruce_colinas"
+  ],
+  "bandada_campo": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_cruce_colinas"
+  ],
+  "lagarto_piedra": [
+   "escena_camino_sur",
+   "escena_cruce_colinas"
+  ],
+  "caballo_suelto": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_puente_aduana"
+  ],
+  "perro_granja": [
+   "escena_camino_este",
+   "escena_camino_norte"
+  ],
+  "garza_lago": [
+   "escena_lago_espejos"
+  ],
+  "bote_orilla": [
+   "escena_lago_espejos"
+  ],
+  "puerta_lateral": [
+   "escena_mercado_circular",
+   "escena_archivo_real",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia"
+  ],
+  "campana_lejana": [
+   "escena_mercado_circular",
+   "escena_archivo_real",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "humo_lejano": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "nino_senala": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_puente_aduana"
+  ],
+  "silueta_colina": [
+   "escena_cruce_colinas",
+   "escena_camino_sur"
+  ],
+  "halcon_alto": [
+   "escena_camino_norte",
+   "escena_camino_sur",
+   "escena_cruce_colinas"
+  ],
+  "ovejas_lejos": [
+   "escena_cruce_colinas",
+   "escena_camino_norte"
+  ],
+  "zorro_camino": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_cruce_colinas"
+  ],
+  "cigarras": [
+   "escena_camino_sur",
+   "escena_camino_este",
+   "escena_cruce_colinas"
+  ],
+  "cuervo_camino": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_cruce_colinas",
+   "escena_puente_aduana"
+  ],
+  "buho_noche": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_cruce_colinas",
+   "escena_lago_espejos"
+  ],
+  "grillos": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "murcielago": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "palomas": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_puente_aduana"
+  ],
+  "lluvia_cae": [
+   "escena_mercado_circular",
+   "escena_archivo_real",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "niebla_densa": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "viento_frio": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "nubes_cielo": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "luna_alta": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "sombras_largas": [
+   "escena_mercado_circular",
+   "escena_archivo_real",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia",
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_lago_espejos",
+   "escena_puente_aduana",
+   "escena_cruce_colinas"
+  ],
+  "polvo_aire": [
+   "escena_archivo_real",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia",
+   "escena_camino_norte",
+   "escena_camino_sur"
+  ],
+  "silencio_pesado": [
+   "escena_archivo_real",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia",
+   "escena_cruce_colinas"
+  ],
+  "puerta_cerrada": [
+   "escena_mercado_circular",
+   "escena_archivo_real",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia",
+   "escena_puente_aduana"
+  ],
+  "ventana_abierta": [
+   "escena_mercado_circular",
+   "escena_archivo_real",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia"
+  ],
+  "lampara_aceite": [
+   "escena_archivo_real",
+   "escena_taberna_lareth",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia",
+   "escena_puente_aduana"
+  ],
+  "libro_abierto": [
+   "escena_archivo_real",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia"
+  ],
+  "moneda_suelo": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth",
+   "escena_puente_aduana"
+  ],
+  "carta_suelta": [
+   "escena_archivo_real",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth",
+   "escena_puente_aduana"
+  ],
+  "sello_lacre": [
+   "escena_archivo_real",
+   "escena_plaza_cambistas",
+   "escena_puente_aduana"
+  ],
+  "registro_libreta": [
+   "escena_archivo_real",
+   "escena_plaza_cambistas",
+   "escena_puente_aduana"
+  ],
+  "cinta_atada": [
+   "escena_cruce_colinas",
+   "escena_camino_norte",
+   "escena_camino_sur"
+  ],
+  "bolsa_olvidada": [
+   "escena_mercado_circular",
+   "escena_taberna_lareth",
+   "escena_puente_aduana",
+   "escena_camino_norte"
+  ],
+  "vaso_mesa": [
+   "escena_taberna_lareth"
+  ],
+  "papel_suelto": [
+   "escena_archivo_real",
+   "escena_biblioteca_publica",
+   "escena_aula_cartografia",
+   "escena_mercado_circular"
+  ],
+  "piedras_camino": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_cruce_colinas",
+   "escena_lago_espejos"
+  ],
+  "guardia_ronda": [
+   "escena_puente_aduana",
+   "escena_plaza_cambistas",
+   "escena_mercado_circular",
+   "escena_archivo_real"
+  ],
+  "mercader_carga": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_puente_aduana"
+  ],
+  "viajero_camino": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_cruce_colinas",
+   "escena_puente_aduana",
+   "escena_taberna_lareth"
+  ],
+  "vendedor_grita": [
+   "escena_mercado_circular"
+  ],
+  "cambistas_mesa": [
+   "escena_plaza_cambistas"
+  ],
+  "fila_gente": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_puente_aduana"
+  ],
+  "grupo_charla": [
+   "escena_mercado_circular",
+   "escena_plaza_cambistas",
+   "escena_taberna_lareth"
+  ],
+  "copista_pluma": [
+   "escena_archivo_real",
+   "escena_biblioteca_publica"
+  ],
+  "isla_lago": [
+   "escena_lago_espejos"
+  ],
+  "roble_lejano": [
+   "escena_cruce_colinas"
+  ],
+  "carreta_camino": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_cruce_colinas",
+   "escena_puente_aduana",
+   "escena_mercado_circular"
+  ],
+  "mulas_carga": [
+   "escena_camino_norte",
+   "escena_camino_este",
+   "escena_camino_sur",
+   "escena_cruce_colinas",
+   "escena_puente_aduana"
+  ]
+ }
+}

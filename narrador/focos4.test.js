@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { cargarAmpliadoNode, fusionarAmpliado } from './contenidoAmpliado.js';
 import { contenido } from './index.js';
-import { tieneAlias } from './focos.js';
+import { tieneAlias, FOCOS_ESCENAS } from './focos.js';
 import { normalizar } from './comprension.js';
 
 const amp = await cargarAmpliadoNode({ cargarPendientes: true });
@@ -41,9 +41,10 @@ import { crearPartida } from './index.js';
 const CLASES = ['animal', 'persona', 'sonido', 'objeto', 'lugar', 'fenomeno'];
 const defDeClase = (c) => Object.entries(F.defs).find(([, d]) => d.clase === c)?.[0];
 function preguntar(id, npc, sem = 'x') {
-  const fx = { focos: detectar([], F.defs[id].alias[0], { F, turno: 1, escena: 'a' }), marcasFoco: [], interrupciones: {} };
+  const esc = FOCOS_ESCENAS[id]?.[0] ?? 'a';
+  const fx = { focos: detectar([], F.defs[id].alias[0], { F, turno: 1, escena: esc }), marcasFoco: [], interrupciones: {} };
   const f = fx.focos.find((x) => x.id === id);
-  return ejecutarVerbo({ F, fx, ref: { tipo: 'foco', f }, verbo: 'preguntar', rng: derivar(sem, 'focos'), turno: 2, escena: 'a', npc });
+  return ejecutarVerbo({ F, fx, ref: { tipo: 'foco', f }, verbo: 'preguntar', rng: derivar(sem, 'focos'), turno: 2, escena: esc, npc });
 }
 
 test('U2: cada clase con un NPC responde con su línea de t31 y sustituye {foco}', () => {

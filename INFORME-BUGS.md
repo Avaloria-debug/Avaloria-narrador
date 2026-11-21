@@ -6,9 +6,9 @@ Barrido (`tools/barrido.mjs`, 12 escenas × 200 turnos, semillas 1–4: 0 hallaz
 - Vacío: mayúscula al inicio de oración en piezas juntadas (gramática y salida final); «la piedras» → «las piedras».
 - NPC: «qué hacés acá» fuera de su lugar → `no_se` (antes, línea de rutina de otro sitio o «no entendí»).
 - Comprensión: +202 frases reales (saludos, preguntas, cortesías, insultos, a medias, sin tildes, errores): 99.5 %, 0 falsos positivos. Arreglos: singular de alias plural («papel»), letras estiradas, k/ke/kien, muletillas, «no le doy bola», «me aburro» ≠ burro.
-No arreglado (propuesta):
-1. «dejo la gata» no se entiende: «dejar» es ambiguo (soltar/ignorar). Propuesta: ignorar solo con animal/persona.
-2. Un foco nuevo nombrado en el texto de viaje se activa en la escena de llegada (sin `escenas` en t30/t32). Propuesta: campo `escenas` por foco en el contenido.
-3. «Un postigo golpea con el viento» (ventana_abierta, Archivo) queda como excepción: el viento entra por la ventana.
-4. `falta_npc` del v3 («¿Con cuál: {nombres}?») nombra a todos los presentes aunque no se hayan oído. Propuesta: usar oficio también ahí.
-5. La validación «sin habla» de la IA usa heurística (2.ª persona / NPC en 3.ª sin decir nada); sin verificar con Groq ni modelo local reales.
+Cierre:
+1. Cerrado: «dejar» = ignorar solo con animal/persona («dejo la carta» no ignora); 5 casos al corpus.
+2. Cerrado: `data/config/focos-escenas.json` cargado; fuera de esas escenas el alias no abre el foco (test + barrido).
+3. Excepción: «Un postigo golpea con el viento» (ventana_abierta, Archivo): el viento entra por la ventana.
+4. Cerrado: falta_npc (y la 3.ª reformulación) nombra por oficio a los presentes no oídos.
+5. Abierto: la validación «sin habla» de la IA es heurística; sin verificar con Groq ni modelo local reales.

@@ -10,6 +10,8 @@ import { MOTIVOS } from './motivos.js';
 import { elegirLinea } from './historial.js';
 import { leerAccion, contextoLectura, referenciasVigentes, anotarReferencias } from './lectura.js';
 import { INTERIORES, coherente } from './coherencia.js';
+import focosEscenasJson from '../data/config/focos-escenas.json' with { type: 'json' };
+export const FOCOS_ESCENAS = Object.freeze(focosEscenasJson.escenas ?? {});
 
 export const VERBOS_FOCO = Object.freeze(['seguir', 'mirar', 'llamar', 'tocar', 'escuchar', 'preguntar', 'ignorar']);
 export const MAX_FOCOS = 8;
@@ -105,6 +107,8 @@ export function detectar(lista, texto, { F, turno, escena, generadas = [], entra
     // Un foco de otra escena nombrado al viajar («dejás atrás la carreta») no se muda a la escena nueva.
     const previo = out.find((f) => f.id === id);
     if (previo && previo.escena !== escena) continue;
+    // data/config/focos-escenas.json: fuera de sus escenas, el alias no abre el foco.
+    if (!previo && FOCOS_ESCENAS[id] && !FOCOS_ESCENAS[id].includes(escena)) continue;
     activar(out, id, { turno, escena });
     // B (conocimiento): el nombre con que el texto lo mostró es el que usan la fila y las sugerencias.
     const f = out.find((x) => x.id === id); if (f) f.rotulo = al[0];

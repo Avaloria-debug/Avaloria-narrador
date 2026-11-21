@@ -109,10 +109,10 @@ test('S2 detección por alias (palabra completa, sin tildes)', () => {
 });
 
 test('S2 vida: dura turnos o cambio de escena (salvo el que se sigue); máx. 8', () => {
-  const l = detectar([], 'una gata', { F, turno: 1, escena: 'a' });
+  const l = detectar([], 'una gata', { F, turno: 1, escena: 'escena_mercado_circular' });
   const dura = F.defs.gata_mercado.dura;
-  assert.equal(vigentes(l, { F, turno: dura, escena: 'a' }).length, 1);
-  assert.equal(vigentes(l, { F, turno: dura + 1, escena: 'a' }).length, 0);
+  assert.equal(vigentes(l, { F, turno: dura, escena: 'escena_mercado_circular' }).length, 1);
+  assert.equal(vigentes(l, { F, turno: dura + 1, escena: 'escena_mercado_circular' }).length, 0);
   assert.equal(vigentes(l, { F, turno: 2, escena: 'b' }).length, 0);
   assert.equal(vigentes(l, { F, turno: 2, escena: 'b', siguiendo: 'gata_mercado' }).length, 1);
   const ids = Object.keys(F.defs).slice(0, 10);

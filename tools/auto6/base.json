@@ -1,5 +1,5 @@
 {
- "pct": 99.8,
+ "pct": 99.9,
  "mal": 0,
  "categorias": {
   "aclaracion": 100,
@@ -14,7 +14,7 @@
   "negacion": 100,
   "npcs": 100,
   "real_a_medias": 100,
-  "real_acciones": 97.9,
+  "real_acciones": 100,
   "real_cortesia": 100,
   "real_hablar": 100,
   "real_insultos": 100,
@@ -923,7 +923,7 @@
   "miro bien la carta": "ok",
   "quiero mirar la gata": "ok",
   "voy a seguir a la gata": "ok",
-  "dejo la gata": "no",
+  "dejo la gata": "ok",
   "paso de la gata": "ok",
   "que dice ese papel": "ok",
   "leo lo que dice la carta": "ok",
@@ -945,6 +945,10 @@
   "ayuda": "ok",
   "que hago": "ok",
   "no se que hacer": "ok",
-  "me aburro": "ok"
+  "me aburro": "ok",
+  "dejo al perro": "ok",
+  "dejo tranquila a la gata": "ok",
+  "dejá a la gata": "ok",
+  "dejo el vaso": "ok"
  }
 }

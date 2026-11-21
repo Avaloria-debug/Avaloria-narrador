@@ -14,9 +14,9 @@ test('A1: alias bloqueados no quedan en los focos', () => {
   assert.ok(!F.defs.carta_suelta.alias.includes('sobre'));
 });
 test('A1: un alias que viene de la frase del jugador no abre un foco nuevo', () => {
-  const l = detectar([], 'Serel repite: la carta.', { F, turno: 1, escena: 'escena_mercado_circular', entrada: 'miro la carta' });
+  const l = detectar([], 'Serel repite: la carta.', { F, turno: 1, escena: 'escena_archivo_real', entrada: 'miro la carta' });
   assert.ok(!l.some((f) => f.id === 'carta_suelta'));
-  const m = detectar([], 'Hay una carta en el suelo.', { F, turno: 1, escena: 'escena_mercado_circular', entrada: 'miro' });
+  const m = detectar([], 'Hay una carta en el suelo.', { F, turno: 1, escena: 'escena_archivo_real', entrada: 'miro' });
   assert.ok(m.some((f) => f.id === 'carta_suelta'));
 });
 test('A2: en interiores, lluvia/niebla/viento solo en el turno de llegada', () => {
@@ -33,4 +33,23 @@ test('A3: eco, narración y fuera de personaje se rechazan', () => {
   assert.equal(validarContraTurno('Como modelo de lenguaje no puedo opinar.', ctx), MOTIVOS_SALIDA.FUERA_DE_PERSONAJE);
   assert.equal(validarContraTurno('Acá, horneando desde las cuatro.', ctx), null);
   assert.equal(validarContraTurno('Serel se encoge de hombros: «Ni idea».', ctx), null);
+});
+
+test('cierre: fuera de las escenas de focos-escenas.json el alias no abre el foco', async () => {
+  const { FOCOS_ESCENAS } = await import('./focos.js');
+  assert.ok(!FOCOS_ESCENAS.carta_suelta.includes('escena_mercado_circular'));
+  assert.deepEqual(detectar([], 'Hay una carta en el suelo.', { F, turno: 1, escena: 'escena_mercado_circular' }).filter((f) => f.id === 'carta_suelta'), []);
+  assert.ok(detectar([], 'Hay una carta en el suelo.', { F, turno: 1, escena: 'escena_archivo_real' }).some((f) => f.id === 'carta_suelta'));
+});
+test('cierre: «dejar» = ignorar solo con animal o persona', async () => {
+  const { leerAccion, contextoLectura } = await import('./lectura.js');
+  const ctx = contextoLectura({ focos: F.defs, npcs: [], presentes: [] });
+  assert.equal(leerAccion('dejo a la gata', ctx).accion, 'ignorar');
+  assert.notEqual(leerAccion('dejo la carta', ctx).accion, 'ignorar');
+});
+test('cierre: falta_npc nombra por oficio a quien no se oyó', async () => {
+  const { nombreVisible } = await import('./ampliado.js');
+  const { contenido } = await import('./index.js');
+  assert.equal(nombreVisible('Serel Norlen', contenido, {}), 'el panadero');
+  assert.equal(nombreVisible('Serel Norlen', contenido, { nombresOidos: ['serel_panadero'] }), 'Serel Norlen');
 });

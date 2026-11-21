@@ -570,6 +570,13 @@ export function leerAccion(texto, ctx, { etapas = ETAPAS } = {}) {
     const n0 = normalizar(texto).trim();
     if (MULETILLAS.has(n0)) return { accion: 'no_entendido' };
     texto = texto.replace(/\bno (le )?(doy|des|presto|prestes) (bola|bolilla|atenci[oó]n)( a)?\b/i, 'ignoro a');
+    // «dejar» = ignorar solo con animal o persona («dejo la gata»); con un objeto no se lee así (soltar/dejar ahí).
+    const d = normalizar(texto).match(/^(dejo|deja|deja|dejar|dejamos)( (en paz|tranquil[oa]s?))? (a )?(el |la |los |las |al )?(.+)$/);
+    if (d) {
+      const ws = d[6].split(' ');
+      const c = ctx.cosas.find((x) => ws.includes(x.alias) || ws.some((w) => w.length > 3 && (`${w}` === `${x.alias}s` || w === x.alias.replace(/s$/, ''))));
+      if (c && (c.tipo === 'npc' || c.clase === 'animal' || c.clase === 'persona')) texto = `ignoro a ${d[5] ?? ''}${d[6]}`;
+    }
   }
   if (et.charla !== false && !ctx.pendiente) { const c = leerCharla(texto, ctx); if (c) return c; }
   if (et.defaults && ctx.pendiente) {

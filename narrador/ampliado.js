@@ -57,13 +57,22 @@ export const PROB_SILENCIO = 0.1;
 // P11 (t11): motivos del código → claves nuevas de reformulación (si el contenido las trae).
 export const CLAVES_REFORMULACION_NUEVAS = Object.freeze({ npc_ausente: 'nombre_desconocido', sin_objetos: 'objeto_desconocido', falta_destino: 'destino_invalido', sin_salidas: 'cerrado' });
 
+/** B (conocimiento): nombre de un NPC presente; si el jugador todavía no lo oyó, su oficio («el panadero»). */
+export function nombreVisible(nombre, contenido, ext) {
+  const n = (contenido.npcs ?? []).find((x) => x.nombre === nombre);
+  const oidos = Array.isArray(ext?.nombresOidos) ? ext.nombresOidos : [];
+  if (!n || oidos.includes(n.id)) return nombre;
+  const of = (n.alias ?? []).find((a) => !n.nombre.toLowerCase().split(' ').includes(String(a).toLowerCase()));
+  return of ? `${/a$/.test(of) ? 'la' : 'el'} ${of}` : nombre;
+}
+
 /** Reformulación con el contenido ampliado: clave diferenciada si existe; si no, la del motivo (v3 + ampliado). */
 export function reformulacionAmpliada({ amp, contenido, turno, ctx, aperturas }) {
   const ref = amp.plantillas?.reformulacion ?? {};
   const nueva = CLAVES_REFORMULACION_NUEVAS[turno.motivo];
   const lista = nueva && ref[nueva]?.length ? ref[nueva] : [...(contenido.plantillas.reformulacion?.[turno.motivo] ?? []), ...(ref[turno.motivo] ?? [])];
   if (!lista.length || (!(nueva && ref[nueva]?.length) && !(ref[turno.motivo]?.length))) return null;
-  const valores = { nombres: (turno.datos?.nombres ?? []).filter((x) => typeof x === 'string').join(', ') };
+  const valores = { nombres: (turno.datos?.nombres ?? []).filter((x) => typeof x === 'string').map((x) => nombreVisible(x, contenido, ctx.ext)).join(', ') };
   return elegir(lista, ctx.hechos(), { rng: ctx.rng('reformulacion'), aperturas: (aperturas ?? []).slice(0, -1), aperturaDe, completar: (t) => completarAmp(ctx.expandirTexto(t), valores) });
 }
 
@@ -82,7 +91,7 @@ export function reformulacionEnEscena({ amp, contenido, despues, ctx, aperturas,
  * NPCs presentes (falta_npc, {nombres}) o salidas de la escena (destino_ambiguo, {opciones}).
  */
 export function sugerirOpciones({ amp = null, contenido, despues, ctx, aperturas }) {
-  const presentes = npcsPresentes(despues, contenido).map((n) => n.nombre);
+  const presentes = npcsPresentes(despues, contenido).map((n) => nombreVisible(n.nombre, contenido, ctx.ext));
   const escena = porId(contenido.escenas, despues.jugador.escenaId);
   const salidas = (escena?.salidas ?? []).map((id) => porId(contenido.escenas, id)?.nombre).filter(Boolean);
   const lista = (l) => (l.length <= 1 ? l[0] : `${l.slice(0, -1).join(', ')} o ${l.at(-1)}`);
