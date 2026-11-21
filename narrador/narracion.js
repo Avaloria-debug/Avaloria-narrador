@@ -159,7 +159,7 @@ export function valoresDeAccion(accion, contenido) {
  *   Viajar a donde ya se está usa la reformulación `ya_en_destino`. Si quedó una segunda acción sin hacer, sigue `repetir_segunda`.
  * - `reformular`: plantilla del motivo.
  * - `saludo` y `reconocimiento`: plantilla del mismo nombre con el NPC presente (sin NPC, el respaldo `no_entendido`).
- * - `consulta`: si el NPC cuenta, o ya lo contó, `revelar_conocimiento.exito`; si no cuenta por ahora, `revelar_conocimiento.fallo`;
+ * - `consulta`: si el NPC cuenta, `revelar_conocimiento.exito`; si no cuenta por ahora, `revelar_conocimiento.fallo`;
  *   si no sabe del tema, `no_se`.
  * - `ia` y `error`: sin texto (null); no los narra este módulo.
  * @param {object} turno
@@ -186,9 +186,7 @@ export function narrarTurno(turno, { contenido, rng, aperturas = [] }) {
     if (resultado === 'no_se') {
       return salida([narrarLista(contenido, BLOQUE_NO_SE, valores, opciones)]);
     }
-    // Ya revelado (por consulta o porque un hito lo narró): el NPC repite lo que contó, con la plantilla de éxito.
-    const yaRevelado = resultado === 'fallo' && turno.consulta.motivo === 'ya_revelado' && valores.conocimiento;
-    return salida([narrarResultado(contenido, BLOQUE_REVELAR, yaRevelado ? 'exito' : resultado, valores, opciones)]);
+    return salida([narrarResultado(contenido, BLOQUE_REVELAR, resultado, valores, opciones)]);
   }
   if (turno?.tipo === 'saludo' || turno?.tipo === 'reconocimiento') {
     const npc = porId(contenido.npcs, turno.npcId);
