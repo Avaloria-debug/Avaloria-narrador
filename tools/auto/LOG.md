@@ -12,3 +12,4 @@ P7 | hecho | etiquetasVerbos.js; valores.json opcional (A APROBAR), sin valores 
 P8 | hecho | tensión, saliencia y textos de inicio/cierre de eventos (64 en simulación)
 P9 | hecho | rumores.js: propagación cada 6 h, mensajeros, reacción y remate
 P10 | hecho | temas.js: conocimientos ampliados (canon), temas, únicos
+P11 | hecho | stemmer Snowball (28378/28378 oficiales), trigramas, reformulación t11

@@ -352,6 +352,8 @@ function ejecutarTurnoSinPendiente(estado, entrada, { contenido, rng, diccionari
     tipo: TIPOS_TURNO.ACCION,
     estado: nuevo,
     intencionId: accion.intencionId,
+    // P11: pasada de comprensión que resolvió la intención (raiz | ngramas), solo si no fue la de siempre.
+    ...(decision.pasada ? { pasada: decision.pasada } : {}),
     accion: {
       intencionId: accion.intencionId,
       verbo: resolucion.verbo,

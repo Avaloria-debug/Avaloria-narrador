@@ -41,6 +41,19 @@ function accionSimple(turno, contenido) {
   return true;
 }
 
+// P11 (t11): motivos del código → claves nuevas de reformulación (si el contenido las trae).
+export const CLAVES_REFORMULACION_NUEVAS = Object.freeze({ npc_ausente: 'nombre_desconocido', sin_objetos: 'objeto_desconocido', falta_destino: 'destino_invalido', sin_salidas: 'cerrado' });
+
+/** Reformulación con el contenido ampliado: clave diferenciada si existe; si no, la del motivo (v3 + ampliado). */
+export function reformulacionAmpliada({ amp, contenido, turno, ctx, aperturas }) {
+  const ref = amp.plantillas?.reformulacion ?? {};
+  const nueva = CLAVES_REFORMULACION_NUEVAS[turno.motivo];
+  const lista = nueva && ref[nueva]?.length ? ref[nueva] : [...(contenido.plantillas.reformulacion?.[turno.motivo] ?? []), ...(ref[turno.motivo] ?? [])];
+  if (!lista.length || (!(nueva && ref[nueva]?.length) && !(ref[turno.motivo]?.length))) return null;
+  const valores = { nombres: (turno.datos?.nombres ?? []).filter((x) => typeof x === 'string').join(', ') };
+  return elegir(lista, ctx.hechos(), { rng: ctx.rng('reformulacion'), aperturas: (aperturas ?? []).slice(0, -1), aperturaDe, completar: (t) => completarAmp(ctx.expandirTexto(t), valores) });
+}
+
 /**
  * P10: consulta sin conocimiento v3 que coincida. Conocimiento ampliado (revelar, o pista si falta relación);
  * si ninguno coincide, respuesta por tema. El texto del jugador solo se usa para buscar palabras clave.

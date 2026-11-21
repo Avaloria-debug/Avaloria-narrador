@@ -2,6 +2,8 @@
 // Módulo puro: no escribe texto para el jugador. Devuelve acciones con un `motivo`;
 // el texto de cada motivo lo pone la narración (bloque 4).
 // El texto del jugador solo se lee: nunca vuelve en los datos de salida.
+import { raiz } from './stemmer.js';
+import { similitud } from './ngramas.js';
 import { resolverNpcObjetivo } from '../core/orquestador/resolverNpcObjetivo.js';
 import { DESTINOS_CIUDAD } from './contenido.js';
 import { MOTIVOS } from './motivos.js';
@@ -808,8 +810,8 @@ function esHablarConExplicito(texto, intenciones) {
 export function decidir(texto, contexto = {}) {
   const diccionarios = prepararDiccionarios(contexto.diccionarios, contexto.intenciones);
   // `t`: la frase con la que se encontró la intención (corregida por ortografía, si hizo falta).
-  const { coincidencia, texto: t, porLexico } = coincidirConDiccionarios(texto, contexto.intenciones, diccionarios);
-  const intencionId = coincidencia?.intencionId ?? null;
+  let { coincidencia, texto: t, porLexico } = coincidirConDiccionarios(texto, contexto.intenciones, diccionarios);
+  let intencionId = coincidencia?.intencionId ?? null;
 
   // Sección 5: una sola reformulación por turno. Después, IA.
   const reformular = (motivo, datos = {}) =>
@@ -854,6 +856,16 @@ export function decidir(texto, contexto = {}) {
     return r;
   }
 
+  // P11: si la vía de siempre no encontró intención, segunda pasada por raíz (Snowball) y tercera por trigramas
+  // (coseno ≥ 0.6). Solo antes de reformular; nunca para verbos de riesgo ni para viajar.
+  let pasada = null;
+  if (!coincidencia) {
+    const alt = coincidirPorRaiz(t, contexto.intenciones) ?? coincidirPorNgramas(t, contexto.intenciones);
+    if (alt) {
+      ({ pasada, ...coincidencia } = alt);
+      intencionId = coincidencia.intencionId;
+    }
+  }
   if (!coincidencia) return reformular(MOTIVOS.NO_ENTENDIDO);
   if (coincidencia.empateCon.length > 0) {
     const r = reformular(MOTIVOS.INTENCION_AMBIGUA);
@@ -901,5 +913,44 @@ export function decidir(texto, contexto = {}) {
     parametros,
     repetirIntencionId: coincidencia.segundaIntencionId,
     reportes,
+    ...(pasada ? { pasada } : {}),
   };
+}
+
+// ---------------------------------------------------------------------------
+// P11: pasadas de respaldo (raíz y trigramas)
+// ---------------------------------------------------------------------------
+export const UMBRAL_NGRAMAS = 0.6;
+const EXCLUIDAS_RESPALDO = new Set([...VERBOS_DE_RIESGO, 'viajar']);
+
+function coincidirRespaldo(texto, intenciones, iguales, pasada) {
+  const entrada = tokenizar(texto);
+  if (!entrada.length || !Array.isArray(intenciones)) return null;
+  let mejor = [];
+  let max = 0;
+  for (const intencion of intenciones) {
+    if (EXCLUIDAS_RESPALDO.has(intencion.verbo)) continue;
+    for (const forma of intencion.formas ?? []) {
+      const ft = tokenizar(forma);
+      if (!ft.length || !ft.every((f) => entrada.some((e) => iguales(e, f)))) continue;
+      // La forma tiene que cubrir al menos la mitad de la frase: "sigo sin decir nada claro" no es "decirle a".
+      const cubiertas = entrada.filter((e) => ft.some((f) => iguales(e, f))).length;
+      if (cubiertas * 2 < entrada.length) continue;
+      if (ft.length > max) { max = ft.length; mejor = [intencion]; }
+      else if (ft.length === max && !mejor.includes(intencion)) mejor.push(intencion);
+    }
+  }
+  if (mejor.length !== 1) return null;
+  const [i] = mejor;
+  return { intencionId: i.id, verbo: i.verbo, parametrosPendientes: parametrosPendientesDe(i.verbo), segundaIntencionId: null, empateCon: [], pasada };
+}
+
+/** Segunda pasada: todas las palabras de una forma aparecen por su raíz. Un solo ganador, o null. */
+export function coincidirPorRaiz(texto, intenciones) {
+  return coincidirRespaldo(texto, intenciones, (e, f) => e.length >= 3 && raiz(e) === raiz(f), 'raiz');
+}
+
+/** Tercera pasada: cada palabra de la forma (≥5 letras) se parece por trigramas (≥0.6, misma inicial, largo ±2) a una de la frase. */
+export function coincidirPorNgramas(texto, intenciones) {
+  return coincidirRespaldo(texto, intenciones, (e, f) => e.length >= 5 && f.length >= 5 && e[0] === f[0] && Math.abs(e.length - f.length) <= 2 && similitud(e, f) >= UMBRAL_NGRAMAS, 'ngramas');
 }

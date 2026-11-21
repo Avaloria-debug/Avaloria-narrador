@@ -49,3 +49,7 @@ P8 | los eventos v3 no tienen texto: se narra el inicio (t09/t19) del evento nue
 P9 | rumor se cuenta al saludar/hablar con un NPC que lo oyó (si no hubo línea de memoria); remate de ciudad 50% | contarlo siempre
 P10 | conocimientos t16 solo en consultas que v3 contestó no_se; revelados en ext.reveladosAmp (no en npcs.conocimientosRevelados) | fusionarlos en contenido v3
 P10 | únicos: tienen prioridad sobre el ambiente, sin sorteo, nunca dos turnos seguidos de ambiente | sortear con 0.25
+- P11 | pasadas de respaldo (raíz, trigramas) excluyen verbos de riesgo y viajar, exigen ganador único y cubrir ≥50% de la frase | aplicarlas a todo
+- P11 | trigramas: además de coseno ≥0.6, misma inicial y largo ±2 (evita "blablabla"→hablar) | solo coseno
+- P11 | la pasada queda en turno.pasada; el registro Firestore tiene esquema cerrado: campo `pasada_comprension` A APROBAR | agregarlo al esquema
+- P11 | t11 claves nuevas: npc_ausente→nombre_desconocido, sin_objetos→objeto_desconocido, falta_destino→destino_invalido, sin_salidas→cerrado; verbo_desconocido sin disparador (no hay motivo) | inventar motivo
