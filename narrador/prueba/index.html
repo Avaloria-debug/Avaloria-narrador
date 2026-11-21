@@ -44,6 +44,12 @@
   <div class="nota">Se guarda en localStorage de este navegador. Solo se envía a la API de Groq.</div>
 </section>
 
+<section id="seccionIaLocal" hidden>
+  <h2>IA local</h2>
+  <div class="fila"><button id="activarIaLocal" type="button"></button> <span id="progresoIaLocal" class="nota"></span></div>
+  <div id="avisoIaLocal" class="nota"></div>
+</section>
+
 <section>
   <h2>Turno</h2>
   <form id="formTexto" class="fila">
@@ -77,7 +83,7 @@
   </dl>
 </section>
 
-<div id="version">v0.0.82</div>
+<div id="version">v0.0.83</div>
 
 <script type="module" src="./app.js"></script>
 </body>

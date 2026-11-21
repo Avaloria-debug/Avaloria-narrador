@@ -8,6 +8,8 @@ import { crearColaDeRegistros } from '../registro.js';
 import { ExportacionArchivo } from '../registro/exportacionArchivo.js';
 import { crearAlmacenIndexedDB } from '../../persistencia/adaptadores/almacenIndexedDB.js';
 import { cargarAmpliadoPagina } from './ampliado.js';
+import { crearIaLocal } from '../iaLocal/motor.js';
+import { infoDePagina, estadoDeBoton, textoDeAviso, textoDeProgreso, leerFlag, CLAVE_FLAG } from './iaLocalPagina.js';
 import { opcionesDeEscena, entradaDeBoton, llamadaDeRespuesta, armarPanel, fijarRelacion, CLAVE_LOCALSTORAGE_GROQ, BD_PRUEBA, CLAVE_PARTIDA } from './panel.js';
 
 // Contenido ampliado (Q3): se carga una vez; `?ampliado=0` o localStorage `ampliado=0` lo apaga.
@@ -129,7 +131,8 @@ async function turno(entrada) {
   };
   let salida;
     try {
-    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola, registroTurnos: exportacion, ...(ampliado ? { ampliado } : {}) });
+    const iaLocalTurno = iaLocal?.listo() ? { listo: () => true, pedir: async (o) => { const t0 = performance.now(); const r = await iaLocal.pedir(o); medidaLocal = { latenciaMs: Math.round(performance.now() - t0), ...r.tokens, modelo: iaLocal.modelo() }; return r; } } : null;
+    salida = await narrar(estado, entrada, { groqKey: leerClave() || null, http, cola, registroTurnos: exportacion, ...(ampliado ? { ampliado } : {}), ...(iaLocalTurno ? { iaLocal: iaLocalTurno } : {}) });
     estado = salida.estado;
   } catch (e) {
     // `narrar` no lanza; por si acaso, se muestra como error de la página.
@@ -137,7 +140,9 @@ async function turno(entrada) {
   }
   pintarContador();
   ocupado = false;
-  pintarPanel(armarPanel(salida, { llamadas, pendientes: cola.pendientes().length }));
+  const panel = armarPanel(salida, { llamadas, pendientes: cola.pendientes().length });
+  if (medidaLocal) { panel.tokens = { ...(panel.tokens ?? {}), local: medidaLocal }; medidaLocal = null; }
+  pintarPanel(panel);
   pintarEscena();
 }
 
@@ -222,3 +227,32 @@ $('formTexto').addEventListener('submit', (evento) => {
 $('clave').value = leerClave();
 pintarPanel(armarPanel(null));
 pintarEscena();
+
+// ---- Fase 5: IA local (apagada por defecto; ?ialocal=0 la apaga). SIN VERIFICAR en navegador real. ----
+let iaLocal = null;
+let medidaLocal = null;
+async function iniciarIaLocal() {
+  const env = { navigator, sessionStorage, localStorage, location, window };
+  const info = infoDePagina(env);
+  const boton = $('activarIaLocal');
+  let manifest = null;
+  try { manifest = await (await fetch(new URL('../iaLocal/modelo-manifest.json', import.meta.url))).json(); } catch { /* sin manifest */ }
+  const pintar = (estadoIa) => {
+    const b = estadoDeBoton(info, estadoIa);
+    $('seccionIaLocal').hidden = !b.visible || !manifest;
+    boton.textContent = b.texto;
+    boton.disabled = !b.habilitado;
+  };
+  $('avisoIaLocal').textContent = textoDeAviso(info, manifest);
+  pintar('apagada');
+  const activar = async () => {
+    iaLocal = crearIaLocal({ manifest, nivel: info.nivel, env, alProgreso: (p) => { $('progresoIaLocal').textContent = textoDeProgreso(p); } });
+    pintar('cargando');
+    const ok = await iaLocal.cargar();
+    pintar(ok ? 'lista' : 'fallida');
+    if (ok) { try { localStorage.setItem(CLAVE_FLAG, '1'); } catch { /* sin almacenamiento */ } } else iaLocal = null;
+  };
+  boton.addEventListener('click', activar);
+  if (manifest && info.nivel !== 'ninguna' && leerFlag(location, localStorage)) activar();
+}
+iniciarIaLocal();

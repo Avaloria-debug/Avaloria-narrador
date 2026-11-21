@@ -3,3 +3,5 @@
 - revisión 1 (R1-R2): compuertas, focos y regresión en verde
 - R3 hecho: motor.js + manifest, 14 tests con motor falso
 - R4 hecho: enganche en narrar (sin clave + iaLocal lista), 7 tests, regresión ok
+- revisión 2 (R3-R4): compuertas, focos y regresión en verde
+- R5 hecho: botón IA local en la página, 11 tests, panel con latencia/tokens; navegador sin verificar

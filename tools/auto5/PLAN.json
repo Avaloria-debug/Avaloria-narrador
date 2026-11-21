@@ -83,8 +83,8 @@
     "narrador/prueba/panel.test.js"
    ],
    "cambiaConducta": true,
-   "estado": "pendiente",
-   "aprobacion": null
+   "estado": "hecho",
+   "aprobacion": "a_aprobar"
   },
   {
    "id": "R6",
