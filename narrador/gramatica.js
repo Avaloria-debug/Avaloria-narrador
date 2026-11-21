@@ -1,3 +1,4 @@
+import { sinRepetir } from './historial.js';
 // Gramática de símbolos #a.b# (P3). Sin texto propio: los fragmentos salen de `simbolos` del contenido ampliado.
 // Resolución, de más a menos específico: a.b.<franja>.<clima> → a.b.<franja> → a.b.<clima> → a.b.<tensión> → a.b.
 // Si nada de eso existe pero hay a.b.<sufijo> con sufijos de franja/clima/tensión, se usan todos (respaldo).
@@ -28,7 +29,8 @@ export function expandir(texto, simbolos, { rng, hechos = {}, profundidadMax = 6
     if (prof >= profundidadMax) { avisos.push({ tipo: 'gramatica_tope', simbolo: clave }); return ''; }
     const vs = variantesDe(clave, simbolos, hechos);
     if (!vs) { avisos.push({ tipo: 'gramatica_simbolo', simbolo: clave }); return ''; }
-    const elegido = vs[Math.min(vs.length - 1, Math.floor(rng() * vs.length))];
+    const pool = sinRepetir(vs);
+    const elegido = pool[Math.min(pool.length - 1, Math.floor(rng() * pool.length))];
     const salida = paso(String(typeof elegido === 'string' ? elegido : elegido?.t ?? ''), prof + 1);
     if (typeof alExpandir === 'function') alExpandir(clave, salida);
     return salida;

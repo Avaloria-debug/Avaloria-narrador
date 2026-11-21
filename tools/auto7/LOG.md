@@ -1,1 +1,2 @@
 - W1 hecho: rótulo de aclaración y tomar/tocar · comprensión 99.9 %
+- W2 hecho: anti-repetición global (ext.lineas 30)

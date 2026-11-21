@@ -20,6 +20,7 @@ import { registroDeTurnoNoResuelto } from './registro/registroTurnos.js';
 const lineasPendientes = new WeakMap();
 import { narrarTurno, narrarReformulacion, VENTANA_APERTURAS, anotarApertura } from './narracion.js';
 import { separarAcciones } from './lectura.js';
+import { conHistorial, anotarTexto } from './historial.js';
 import { pedirRespuestaIA, datosDeContexto, armarContexto, validarSalida, aperturaIa, SIN_IA, MOTIVOS_IA } from './ia.js';
 import { registroDeTurno, ORIGENES, MAX_ULTIMOS_TURNOS } from './registro.js';
 
@@ -421,6 +422,8 @@ export async function narrar(estado, entrada, opciones = {}) {
     }
   }
   const errores = [];
+  // W2: anti-repetición global, solo con ampliado (sin ampliado: idéntico a antes).
+  const conLineas = (fn) => (esObjeto(opciones?.ampliado) ? conHistorial(estado?.ext?.lineas, fn) : fn());
   const groqKey = opciones?.groqKey;
   // Ningún mensaje de error puede llevar la clave.
   const anotar = (codigo, detalle = '') => {
@@ -458,7 +461,7 @@ export async function narrar(estado, entrada, opciones = {}) {
     let turno = null;
     if (esObjeto(opciones?.ampliado) && entrada?.tipo === 'texto') {
       try {
-        turno = turnoDeFoco({ amp: opciones.ampliado, contenido, partida, texto: entrada.texto, dic });
+        turno = conHistorial(partida.ext?.lineas, () => turnoDeFoco({ amp: opciones.ampliado, contenido, partida, texto: entrada.texto, dic }));
       } catch (e) {
         anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');
       }
@@ -528,14 +531,14 @@ export async function narrar(estado, entrada, opciones = {}) {
       }
       if (texto === null) {
         // Modo código: la plantilla de "no entendí".
-        const plantilla = narrarReformulacion(contenido, MOTIVOS.NO_ENTENDIDO, {}, { rng, aperturas: ventana });
+        const plantilla = conLineas(() => narrarReformulacion(contenido, MOTIVOS.NO_ENTENDIDO, {}, { rng, aperturas: ventana }));
         texto = plantilla.texto;
         aperturas = anotarApertura(ventana, plantilla.apertura);
       }
     } else if (turno.tipo === 'foco') {
       texto = turno.texto;
     } else {
-      const narracion = narrarTurno(turno, { contenido, rng, aperturas: ventana });
+      const narracion = conLineas(() => narrarTurno(turno, { contenido, rng, aperturas: ventana }));
       texto = narracion.texto;
       aperturas = narracion.aperturas;
       if (narracion.respaldo) anotar(ERRORES.NARRACION_DE_RESPALDO, turno.intencionId ?? '');
@@ -567,13 +570,14 @@ export async function narrar(estado, entrada, opciones = {}) {
     let ext = partida.ext;
     if (esObjeto(opciones?.ampliado)) {
       try {
-        const r = aplicarAmpliado({ amp: opciones.ampliado, contenido, antes: partida, despues: turno.estado, turno, entrada, texto, aperturas, tipo });
+        const r = conLineas(() => aplicarAmpliado({ amp: opciones.ampliado, contenido, antes: partida, despues: turno.estado, turno, entrada, texto, aperturas, tipo }));
         if (textoMostrable(r.texto)) texto = r.texto;
         aperturas = r.aperturas;
         ext = r.ext;
       } catch (e) {
         anotar(ERRORES.AMPLIADO, e instanceof Error ? e.message : '');
       }
+      if (esObjeto(ext)) ext = { ...ext, lineas: anotarTexto(partida.ext?.lineas, texto) };
     }
 
     // Registro: solo los turnos con texto libre.

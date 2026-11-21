@@ -1,4 +1,5 @@
 // Selección por especificidad (P2). Sin texto propio: elige entre variantes del contenido.
+import { sinRepetir } from './historial.js';
 // Variante: string (0 claves) o { c?, t }. Gana la que cumple más claves de `c`; desempata la ventana de aperturas y el rng.
 import { VENTANA_APERTURAS } from './narracion.js';
 
@@ -82,6 +83,6 @@ export function elegir(variantes, hechos, { rng, aperturas = [], completar = (t)
   const max = Math.max(...candidatas.map((c) => c.claves));
   const mejores = candidatas.filter((c) => c.claves === max);
   const libres = mejores.filter((c) => !ventana.includes(c.apertura));
-  const pool = libres.length ? libres : mejores;
+  const pool = sinRepetir(libres.length ? libres : mejores, (c) => c.texto);
   return pool[Math.min(pool.length - 1, Math.floor(rng() * pool.length))];
 }

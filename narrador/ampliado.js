@@ -23,6 +23,7 @@ import { derivarApodo, apodoPara } from './apodo.js';
 import { estacionDe, festividadActiva } from './calendario.js';
 import { afinidadAccion } from './etiquetasVerbos.js';
 import { hechosGuardados, registrarHecho, recuerdosDe, lineaDeMemoria } from './hechos.js';
+import { elegirLinea } from './historial.js';
 import { datosFocos, extFocos, detectar, vigentes, lineaDeRegreso, castigoInterrupcion, FAMILIAS } from './focos.js';
 
 const porId = (l, id) => (l ?? []).find((x) => x.id === id);
@@ -95,7 +96,7 @@ export function sugerirOpciones({ contenido, despues, ctx, aperturas }) {
 export function consultaAmpliada({ amp, contenido, turno, ctx, entrada, ext }) {
   const npcId = turno.consulta.npcId;
   const rng = ctx.rng('conocimientos');
-  const pick = (l) => (l?.length ? l[Math.min(l.length - 1, Math.floor(rng() * l.length))] : null);
+  const pick = (l) => elegirLinea(l, rng);
   const relacion = (ctx.estado.npcs?.[npcId]?.relacion ?? 0);
   const m = conocimientoQueCoincide(amp.conocimientos?.[npcId], entrada.texto, { relacion, marcas: ctx.estado.marcas, eventosActivos: ctx.estado.eventosActivos, revelados: ext.reveladosAmp });
   let t = null;
@@ -273,7 +274,7 @@ export function narrarRumor({ amp, contenido, despues, ext, ctx, npc }) {
   const rumor = rumorPendiente(ext.rumores, npc);
   if (!rumor) return null;
   const rng = ctx.rng('rumores');
-  const pick = (l) => (l?.length ? l[Math.min(l.length - 1, Math.floor(rng() * l.length))] : null);
+  const pick = (l) => elegirLinea(l, rng);
   const valores = { npc: porId(contenido.npcs, rumor.npc)?.nombre ?? '', lugar: porId(contenido.escenas, rumor.escena)?.nombre ?? '' };
   const base = MENSAJEROS.includes(npc) && amp.mensajeros?.[npc]?.length ? pick(amp.mensajeros[npc]) : pick(amp.rumores?.[rumor.tipo]?.[fuerzaDe(rumor.fuerza)]);
   const linea = base && completarAmp(ctx.expandirTexto(base), valores);
@@ -296,7 +297,7 @@ export function narrarRumor({ amp, contenido, despues, ext, ctx, npc }) {
 export function narrarConsecuencias({ amp, despues, ext, ctx }) {
   if (!amp.efectos?.length) return null;
   const rng = ctx.rng('consecuencias');
-  const pick = (l) => (l?.length ? l[Math.min(l.length - 1, Math.floor(rng() * l.length))] : null);
+  const pick = (l) => elegirLinea(l, rng);
   const esc = despues.jugador.escenaId;
   const def = (id) => amp.efectos.find((x) => x.id === id);
   const { activos, vencidos } = vencer(ext.efectos, despues.reloj);

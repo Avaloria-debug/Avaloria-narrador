@@ -1,6 +1,7 @@
 // Narración por plantillas. Módulo puro: todo el texto sale de `plantillas` del contenido.
 // No escribe texto propio: solo elige una plantilla, completa sus placeholders y une frases con un espacio.
 // La ventana de aperturas entra y sale como dato; este módulo no la guarda.
+import { sinRepetir } from './historial.js';
 import { resolverPlantillas } from './contenido.js';
 import { destinosDeViaje } from './comprension.js';
 import { BLOQUE_REFORMULACION, MOTIVOS, REPETIR_SEGUNDA, YA_EN_DESTINO } from './motivos.js';
@@ -86,7 +87,8 @@ export function elegirPlantilla(plantillas, valores, { rng, aperturas = [], hech
   }
   if (candidatas.length === 0) return null;
   const libres = candidatas.filter((c) => !ventana.includes(c.apertura));
-  if (libres.length > 0) return libres.length === 1 ? libres[0] : libres[Math.min(libres.length - 1, Math.floor(rng() * libres.length))];
+  const pool = sinRepetir(libres, (c) => c.texto);
+  if (pool.length > 0) return pool.length === 1 ? pool[0] : pool[Math.min(pool.length - 1, Math.floor(rng() * pool.length))];
   return candidatas.reduce((mejor, c) => (ventana.lastIndexOf(c.apertura) < ventana.lastIndexOf(mejor.apertura) ? c : mejor));
 }
 

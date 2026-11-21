@@ -7,6 +7,7 @@ import { normalizar, tokenizar, coincidePalabra, resolverObjeto } from './compre
 import { objetosAplicables, npcsPresentes } from './turno.js';
 import { avanzar, minutosAbsolutos } from './reloj.js';
 import { MOTIVOS } from './motivos.js';
+import { elegirLinea } from './historial.js';
 import { leerAccion, contextoLectura, referenciasVigentes, anotarReferencias } from './lectura.js';
 
 export const VERBOS_FOCO = Object.freeze(['seguir', 'mirar', 'llamar', 'tocar', 'escuchar', 'preguntar', 'ignorar']);
@@ -42,7 +43,7 @@ const escapar = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const palabras = (t) => { const n = normalizar(t); return n ? n.split(' ') : []; };
 /** ¿El texto (normalizado) trae el alias como palabra(s) completa(s)? */
 export const tieneAlias = (norm, alias) => { const a = normalizar(alias); return Boolean(a) && new RegExp(`(^| )${escapar(a)}( |$)`).test(norm); };
-const pick = (l, rng) => (Array.isArray(l) && l.length ? l[Math.min(l.length - 1, Math.floor(rng() * l.length))] : null);
+const pick = (l, rng) => elegirLinea(l, rng);
 
 /** Bloque de focos del contenido ampliado, o null. */
 export const datosFocos = (amp) => (amp?.focos && amp.focos.defs ? amp.focos : null);
