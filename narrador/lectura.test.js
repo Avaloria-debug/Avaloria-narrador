@@ -35,3 +35,22 @@ test('V2 excepciones: no son verbos', () => {
   }
   assert.ok(NO_VERBOS.has('vale'));
 });
+
+// ---- V3: tipeo ----
+import { corregirTipeo, toleranciaTipeo } from './lectura.js';
+const vocab = new Map([['seguir', 'v:seguir'], ['gata', 'f:gata'], ['lampara', 'f:lampara'], ['misa', 'f:misa'], ['puerta', 'f:puerta'], ['casa', 'x:casa'], ['cosa', 'x:cosa']]);
+test('V3 tolerancia por largo', () => { assert.equal(toleranciaTipeo(3), 0); assert.equal(toleranciaTipeo(5), 1); assert.equal(toleranciaTipeo(7), 2); });
+test('V3 segir→seguir, gatta→gata, lampra→lámpara, pueta→puerta', () => {
+  assert.equal(corregirTipeo('segir', vocab).clave, 'v:seguir');
+  assert.equal(corregirTipeo('gatta', vocab).clave, 'f:gata');
+  assert.equal(corregirTipeo('lampra', vocab).clave, 'f:lampara');
+  assert.equal(corregirTipeo('lámpara', vocab).distancia, 0);
+  assert.equal(corregirTipeo('pueta', vocab).clave, 'f:puerta');
+});
+test('V3 «mesa» no se corrige a «misa»; ≤3 letras no se corrigen', () => {
+  assert.equal(corregirTipeo('mesa', vocab), null);
+  assert.equal(corregirTipeo('gat', vocab), null);
+});
+test('V3 empate entre claves distintas → sin corregir', () => {
+  assert.equal(corregirTipeo('cesa', new Map([['casa', 'a'], ['cosa', 'b']])), null);
+});

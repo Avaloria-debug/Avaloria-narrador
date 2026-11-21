@@ -4,7 +4,7 @@
 import { normalizar, distanciaEdicion, resolverDestino } from './comprension.js';
 
 /** Etapas activas por defecto (cada paso de la fase 6 enciende la suya). */
-export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: false, referencias: false, defaults: false, sinonimos: false, varias: false, negacion: false, modo: false });
+export const ETAPAS = Object.freeze({ lematizar: true, encliticos: true, tipeo: true, referencias: false, defaults: false, sinonimos: false, varias: false, negacion: false, modo: false });
 
 /** Acciones que entiende la lectura. */
 export const ACCIONES = Object.freeze(['seguir', 'mirar', 'tocar', 'escuchar', 'hablar', 'preguntar', 'ignorar', 'tomar', 'callar', 'viajar', 'mostrar', 'llamar']);
@@ -140,6 +140,8 @@ export function contextoLectura({ focos = {}, npcs = [], presentes = null, escen
 function vocabCosas(ctx) {
   const v = new Map();
   for (const c of ctx.cosas) for (const w of c.alias.split(' ')) if (w.length >= 4 && !VACIAS.has(w)) { const k = `${c.tipo}:${c.id}`; v.set(w, v.has(w) && v.get(w) !== k ? '*' : k); }
+  // Palabras de escenas: protegen de corregir «lago» a «lazo» o «taberna» a «tabernera».
+  for (const e of ctx.escenas ?? []) for (const w of normalizar(e.nombre).split(' ')) if (w.length >= 4 && !VACIAS.has(w) && !v.has(w)) v.set(w, `escena:${e.id}`);
   return v;
 }
 function vocabVerbos(et) {
@@ -222,13 +224,13 @@ export function cosasNombradas(ws, ctx, et = ETAPAS) {
   if (et.tipeo && hall.size === 0) {
     const vocab = vocabCosas(ctx);
     ws.forEach((w, pos) => {
-      if (w.length < 4 || VACIAS.has(w) || verboDe(w, et)) return;
+      if (w.length < 4 || VACIAS.has(w) || PRON_F.has(w) || PRON_M.has(w) || PRON_NPC.has(w) || PRON_NEUTRO.has(w) || verboDe(w, et)) return;
       const r = corregirTipeo(w, vocab);
-      if (r && r.clave !== '*' && r.distancia > 0) {
+      if (r && r.clave !== '*' && r.distancia > 0 && !r.clave.startsWith('escena:')) {
         const [tipo, ...id] = r.clave.split(':');
         const c = ctx.cosas.find((x) => x.tipo === tipo && x.id === id.join(':'));
         const k = `${tipo}:${c.id}`;
-        if (!hall.has(k)) hall.set(k, { ...c, span: [pos], pos });
+        if (!hall.has(k)) hall.set(k, { ...c, span: [pos], pos, tipeo: true });
       }
     });
   }
@@ -357,9 +359,11 @@ function leerParte(parte, ctx, et) {
   };
 
   if (accion === 'viajar') {
+    const d = resolverDestino(resto.join(' '), ctx.escenas ?? [], { exacto: !et.tipeo });
+    const exactas = nombradas.filter((c) => !c.tipeo);
+    if (d.estado === 'resuelto' && !exactas.length) return { ...r, lugar: d.destino };
     if (focosN.length === 1 && !npcsN.length) return { ...r, accion: 'seguir', objetivo: focosN[0].id };
     if (npcsN.length === 1) return { ...r, accion: 'seguir', objetivo: npcsN[0].id };
-    const d = resolverDestino(resto.join(' '), ctx.escenas ?? []);
     if (d.estado === 'resuelto') return { ...r, lugar: d.destino };
     if (d.datos?.ids?.length) return { accion: 'aclarar', opciones: d.datos.ids };
     return { accion: 'no_entendido' };

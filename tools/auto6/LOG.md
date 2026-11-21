@@ -1,2 +1,3 @@
 - V1 hecho: corpus 655 casos + medidor, base 31 % · comprensión 31 %
 - V2 hecho: lematizador, enclíticos, plurales · comprensión 67.9 %
+- V3 hecho: tipeo y tildes · comprensión 71.9 %
