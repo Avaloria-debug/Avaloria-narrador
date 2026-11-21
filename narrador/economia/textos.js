@@ -28,6 +28,8 @@ export const TEXTOS_ECONOMIA = Object.freeze({
   trabajo_rechaza: ['«Como quieras», dice {npc}.'],
   trabajo_sigue: ['Seguís con el trabajo.'],
   trabajo_abandona: ['Dejás el trabajo a medias. {npc} no dice nada, pero lo anota.'],
+  trabajo_pregunta: ['¿Aceptás?', '¿Te sumás?'],
+  trabajo_rumor: ['Mientras trabajás, alguien comenta algo que te queda dando vueltas.', 'Entre carga y carga, escuchás un comentario que no era para vos.'],
   trabajo_contratiempo: ['Algo sale mal y se pierde parte del día. La paga va a ser menor.'],
   trabajo_paga: ['Te pagan {monto}.'],
   favor_cumple: ['Hacés lo que te pide.'],

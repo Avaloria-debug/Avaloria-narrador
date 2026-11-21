@@ -3,9 +3,10 @@
 //   cerrable?(sub) → boolean }. El estado guarda a lo sumo un sistema activo en `ext.sistema = { id, sub }`;
 // `sub` es JSON plano, así el juego principal puede dibujar su propia UI leyéndolo.
 // Efectos: los de resolver (dinero, objeto_agregado, objeto_usado, marca, movimiento) más `relacion` { npc, delta }
-// `hecho` { clave, valor }, `pago`/`cobro` { monto en bronce } (nuevos; anotados en SUPUESTOS-v3).
+// `hecho` { clave, valor }, `pago`/`cobro` { monto en bronce }, `reloj` { horas } (nuevos; anotados en SUPUESTOS-v3).
 import { aplicarEfectos as aplicarDeResolver } from '../resolver.js';
 import { totalBronce, conTotal } from '../economia/monedas.js';
+import { avanzar } from '../reloj.js';
 
 const MODULOS = new Map();
 export const PALABRAS_SALIR = Object.freeze(['salir', 'salgo', 'irme', 'me voy', 'dejar', 'dejo', 'dejarlo', 'basta', 'chau', 'adios']);
@@ -35,7 +36,7 @@ export const esSalir = (texto) => { const t = ` ${normal(texto)} `; return PALAB
 
 /** Aplica efectos al estado. */
 export function aplicarEfectosSistema(estado, efectos = []) {
-  let e = aplicarDeResolver(estado, efectos.filter((x) => !['relacion', 'hecho', 'pago', 'cobro'].includes(x.tipo)));
+  let e = aplicarDeResolver(estado, efectos.filter((x) => !['relacion', 'hecho', 'pago', 'cobro', 'reloj'].includes(x.tipo)));
   for (const x of efectos) {
     if (x.tipo === 'relacion' && e.npcs?.[x.npc]) {
       const r = Math.max(-2, Math.min(2, (e.npcs[x.npc].relacion ?? 0) + x.delta));
@@ -44,6 +45,8 @@ export function aplicarEfectosSistema(estado, efectos = []) {
       // `pago`: el jugador paga (en bronce); `cobro`: recibe. Nunca negativo.
       const t = totalBronce(e.jugador) + (x.tipo === 'pago' ? -1 : 1) * Math.max(0, Math.round(x.monto) || 0);
       e = { ...e, jugador: conTotal(e.jugador, t) };
+    } else if (x.tipo === 'reloj' && e.reloj && Number.isFinite(x.horas) && x.horas > 0) {
+      e = { ...e, reloj: avanzar(e.reloj, x.horas) };
     } else if (x.tipo === 'hecho') {
       e = { ...e, ext: { ...(e.ext ?? {}), hechosSistema: { ...(e.ext?.hechosSistema ?? {}), [x.clave]: x.valor } } };
     }

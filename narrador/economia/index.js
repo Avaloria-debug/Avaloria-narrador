@@ -7,6 +7,7 @@ import { estacionDe, festividadActiva } from '../calendario.js';
 import { totalBronce, conTotal, formatoMonto, precioDe, aBronce } from './monedas.js';
 import { elegirLinea } from './textos.js';
 import { abrirSistema, turnoSistema, sistemaActivo } from '../sistemas/index.js';
+import { pideTrabajo, trabajoEn } from './trabajos.js';
 import { abreRegateo, formatoAcuerdo, rasgoDinero } from './regateo.js';
 
 // Productos de precios.json: palabras que los nombran, objeto del contenido (si existe) y quién los vende.
@@ -118,6 +119,19 @@ export const TEXTO_SISTEMA = {
       default: return L('regateo_opciones', v);
     }
   },
+  trabajo(sub, { L, contenido }) {
+    const npc = nombreNpc(contenido, sub.npc);
+    const t41 = (k) => L(`trabajos.${sub.trabajo}.${k}`, { npc });
+    const extra = sub.evento === 'contratiempo' ? ` ${L('trabajo_contratiempo', { npc })}` : sub.evento === 'rumor' ? ` ${L('trabajo_rumor', { npc })}` : '';
+    switch (sub.ultimo) {
+      case 'oferta': return `${t41('oferta')} ${L('trabajo_pregunta', { npc })}`;
+      case 'rechaza': return L('trabajo_rechaza', { npc });
+      case 'durante': return `${t41('durante')}${extra}`;
+      case 'abandona': return L('trabajo_abandona', { npc });
+      case 'fin': return [extra.trim(), t41('fin'), L('trabajo_paga', { npc, monto: formatoMonto(sub.jornal) })].filter(Boolean).join(' ');
+      default: return L('trabajo_sigue', { npc });
+    }
+  },
 };
 
 function turnoConSistema({ amp, contenido, partida, texto, eco, L, abrir = null }) {
@@ -145,6 +159,14 @@ export function turnoDeEconomia({ amp, contenido, partida, texto }) {
     const precio = precioDe(producto, { ...ctxPrecio({ amp, contenido, partida, vendedor }), objetoId: PRODUCTOS[producto].objetoId, categoria: PRODUCTOS[producto].categoria ?? 'consumible' });
     const ctx = { npc: vendedor, producto, objetoId: PRODUCTOS[producto].objetoId ?? null, nombre: PRODUCTOS[producto].nombre, escena: partida.jugador.escenaId, precio, rasgoDinero: rasgoDinero(amp, vendedor), relacion: partida.npcs[vendedor]?.relacion ?? 0 };
     return turnoConSistema({ amp, contenido, partida, texto, eco, L, abrir: { id: 'regateo', ctx, procesar: /\d/.test(n) } });
+  }
+  if (pideTrabajo(n)) {
+    const t = trabajoEn(amp, partida.jugador.escenaId, presentes);
+    if (!t) return turnoTexto(partida, presentes.length ? L('trabajo_nada', { npc: nombreNpc(contenido, presentes[0].id) }) : L('nadie'), eco);
+    const hechos = partida.ext?.hechosSistema ?? {};
+    if (hechos[`trabajo:${t.npc}`] === partida.reloj.dia) return turnoTexto(partida, L('trabajo_hecho', { npc: nombreNpc(contenido, t.npc) }), eco);
+    const ctx = { trabajo: t.id, npc: t.npc, escena: partida.jugador.escenaId, dia: partida.reloj.dia, semillaBase: partida.ext?.semillaBase ?? 0 };
+    return turnoConSistema({ amp, contenido, partida, texto, eco, L, abrir: { id: 'trabajo', ctx } });
   }
   const lec = leerEconomia(texto);
   if (!lec) return null;

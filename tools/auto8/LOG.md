@@ -2,3 +2,5 @@
 - X2: interfaz de sistemas (registro de módulos, ext.sistema, cierre forzado)
 - X3: monedas y precios (precios.json, formato natural, modificadores, compra/venta/precio con ampliado)
 - X4: regateo como sistema (rondas, contraoferta, trueque, pagar de más), t41 al manifest
+- Autorrevisión (X3–X4): compuertas verdes, bots-juego 0 errores, humo ok.
+- X5: trabajos de un día (oferta, pasos con reloj, contratiempo, jornal, abandono)
