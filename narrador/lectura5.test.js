@@ -31,7 +31,7 @@ test('V5 aclaración con dos candidatos nombra ambos y se resuelve con respuesta
   const c = ctx();
   const l = leerAccion('seguir al perro', c);
   assert.deepEqual(l.opciones.sort(), ['perro_ciudad', 'perro_granja']);
-  assert.match(l.pregunta, /perro.*perro de granja|perro de granja.*perro/);
+  assert.equal(l.pregunta, '¿El perro o el de granja?');
   const p = { accion: 'seguir', opciones: ['perro_ciudad', 'perro_granja'] };
   assert.equal(responderAclaracion('el primero', p, c), 'perro_ciudad');
   assert.equal(responderAclaracion('el de la granja', p, c), 'perro_granja');
@@ -56,4 +56,25 @@ test('V5 juego: conjugación y enclítico sobre un foco visto', async () => {
   const b = await narrar(e, { tipo: 'texto', texto: 'acariciala' }, op);
   assert.ok(!F.no_visto.some((n) => b.texto.includes(n)), b.texto);
   assert.equal(b.tipo !== 'reformulacion', true, b.texto);
+});
+
+// ---- W1 (fase 7) ----
+import { tomarOTocar, esTransportable } from './lectura.js';
+test('W1 rótulo por escena y por alias propio', () => {
+  const c = contextoLectura({ focos: { perro_ciudad: { ...F.defs.perro_ciudad, escena: 'escena_plaza_cambistas' }, perro_granja: { ...F.defs.perro_granja, escena: 'escena_cruce_colinas' } }, escenas: contenido.escenas });
+  assert.equal(leerAccion('seguir al perro', c).pregunta, '¿El perro de la plaza o el del cruce?');
+  const d = contextoLectura({ focos: { perro_ciudad: F.defs.perro_ciudad, perro_granja: F.defs.perro_granja }, escenas: contenido.escenas });
+  assert.equal(leerAccion('seguir al perro', d).pregunta, '¿El perro o el de granja?');
+});
+test('W1 agarrar: transportable → tomar; si no → tocar; inventario cuenta', () => {
+  const c = ctx();
+  assert.ok(esTransportable(F.defs.moneda_suelo));
+  assert.equal(leerAccion('agarro la moneda', c).accion, 'tomar');
+  assert.equal(leerAccion('agarro la puerta', c).accion, 'tocar');
+  assert.equal(tomarOTocar('carta_suelta', contextoLectura({ focos: F.defs, inventario: ['carta_suelta'] })), 'tomar');
+});
+test('W1 juego: «agarro la moneda» la levanta (rama de hallazgo)', async () => {
+  const e = await conFocos(['moneda_suelo']);
+  const r = await narrar(e, { tipo: 'texto', texto: 'agarro la moneda' }, op);
+  assert.ok(r.texto.includes(F.defs.moneda_suelo.ramas.seguir[0].t), r.texto);
 });

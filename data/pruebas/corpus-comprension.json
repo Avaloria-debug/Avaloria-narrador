@@ -315,38 +315,38 @@
   },
   {
    "frase": "agarro la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "tomo la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "levanto la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "agarrala",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "recojo el sobre",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "semilla"
   },
   {
    "frase": "agarro la carta y se la muestro a ivor",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "luego": {
     "accion": "mostrar",
@@ -1599,7 +1599,7 @@
   },
   {
    "frase": "tomar la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "verbos"
   },
@@ -1617,7 +1617,7 @@
   },
   {
    "frase": "tomar el sello",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "sello_lacre",
    "cat": "verbos"
   },
@@ -1635,13 +1635,13 @@
   },
   {
    "frase": "tomo el sello",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "sello_lacre",
    "cat": "verbos"
   },
   {
    "frase": "tomá la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1659,13 +1659,13 @@
   },
   {
    "frase": "tomá el sello",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
   {
    "frase": "toma la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1683,13 +1683,13 @@
   },
   {
    "frase": "toma el sello",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
   {
    "frase": "tome la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1707,13 +1707,13 @@
   },
   {
    "frase": "tome el sello",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
   {
    "frase": "tomé la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1731,13 +1731,13 @@
   },
   {
    "frase": "tomé el sello",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
   {
    "frase": "sigo tomando la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "cat": "conjugacion"
   },
@@ -1755,7 +1755,7 @@
   },
   {
    "frase": "sigo tomando el sello",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "sello_lacre",
    "cat": "conjugacion"
   },
@@ -1817,14 +1817,14 @@
   },
   {
    "frase": "tomala",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "encliticos"
   },
   {
    "frase": "tomalo",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "sello_lacre",
    "ctx": "sello_lacre",
    "cat": "encliticos"
@@ -1880,7 +1880,7 @@
   },
   {
    "frase": "agárrala",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "encliticos"
@@ -1894,7 +1894,7 @@
   },
   {
    "frase": "recogela",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "encliticos"
@@ -2006,7 +2006,7 @@
   },
   {
    "frase": "la agarro",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "ctx": "carta_suelta",
    "cat": "referencias"
@@ -2143,7 +2143,7 @@
   },
   {
    "frase": "agarar la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "cat": "tipeos",
    "objetivo": "carta_suelta"
   },
@@ -2197,7 +2197,7 @@
   },
   {
    "frase": "tomar el selo",
-   "accion": "tomar",
+   "accion": "tocar",
    "cat": "tipeos",
    "objetivo": "sello_lacre"
   },
@@ -4176,7 +4176,7 @@
   },
   {
    "frase": "junto la carta",
-   "accion": "tomar",
+   "accion": "tocar",
    "cat": "sinonimos",
    "objetivo": "carta_suelta"
   },
@@ -4333,7 +4333,7 @@
   },
   {
    "frase": "agarro la carta y se la muestro a serel",
-   "accion": "tomar",
+   "accion": "tocar",
    "objetivo": "carta_suelta",
    "luego": {
     "accion": "mostrar",
@@ -4723,6 +4723,80 @@
    "frase": "no entiendo",
    "accion": "no_entendido",
    "cat": "falsos_positivos"
+  },
+  {
+   "frase": "agarro el libro",
+   "accion": "tomar",
+   "objetivo": "libro_abierto",
+   "cat": "tomar_tocar"
+  },
+  {
+   "frase": "levanto la cinta",
+   "accion": "tomar",
+   "objetivo": "cinta_atada",
+   "cat": "tomar_tocar"
+  },
+  {
+   "frase": "agarro la puerta",
+   "accion": "tocar",
+   "objetivo": "puerta_cerrada",
+   "cat": "tomar_tocar"
+  },
+  {
+   "frase": "levanto la lámpara",
+   "accion": "tocar",
+   "objetivo": "lampara_aceite",
+   "cat": "tomar_tocar"
+  },
+  {
+   "frase": "tomo la ventana",
+   "accion": "tocar",
+   "objetivo": "ventana_abierta",
+   "cat": "tomar_tocar"
+  },
+  {
+   "frase": "agarro el registro",
+   "accion": "tomar",
+   "objetivo": "registro_libreta",
+   "cat": "tomar_tocar"
+  },
+  {
+   "frase": "sigo al perro otra vez",
+   "accion": "aclarar",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ],
+   "escenaDe": {
+    "perro_ciudad": "escena_plaza_cambistas",
+    "perro_granja": "escena_cruce_colinas"
+   },
+   "pregunta": "¿El perro de la plaza o el del cruce?",
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "miro al perro otra vez",
+   "accion": "aclarar",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ],
+   "escenaDe": {
+    "perro_ciudad": "escena_plaza_cambistas",
+    "perro_granja": "escena_cruce_colinas"
+   },
+   "pregunta": "¿El perro de la plaza o el del cruce?",
+   "cat": "aclaracion"
+  },
+  {
+   "frase": "llamo al perro otra vez",
+   "accion": "aclarar",
+   "opciones": [
+    "perro_ciudad",
+    "perro_granja"
+   ],
+   "pregunta": "¿El perro o el de granja?",
+   "cat": "aclaracion"
   }
  ]
 }

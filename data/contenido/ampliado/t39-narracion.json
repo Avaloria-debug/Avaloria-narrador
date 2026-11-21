@@ -1,0 +1,649 @@
+{
+ "tanda": "t39",
+ "estado": "a_aprobar",
+ "nota": "Narración de escena: llegada en capas (primera por franja / regreso), ambiente cada 2–3 turnos, actividad visible de NPC por franja, transición entre escenas por categoría, cierre tras acción. Densidad: breve=solo regreso/1 línea; normal=1 primera+0–1 ambiente; rica=2 primera+actividad+ambiente.",
+ "escenas": {
+  "escena_mercado_circular": {
+   "primera": {
+    "madrugada": [
+     "El mercado circular todavía duerme. Los puestos son esqueletos de madera bajo lonas atadas, y solo el horno de la panadería respira: una luz naranja, un olor a masa que se adelanta al día.",
+     "En el centro del círculo, el aljibe gotea. Alguien barre lejos, sin apuro, y el ruido de la escoba da la vuelta entera a la plaza."
+    ],
+    "manana": [
+     "El mercado circular hierve. Las lonas están abiertas, los pregones se pisan unos a otros y el aire mezcla pan, cuero y fruta madura. La gente se mueve en ronda, como si el círculo la obligara.",
+     "Entre los puestos pasan carros chicos, chicos descalzos y una gata que parece la dueña. Nadie te mira dos veces: acá todos están ocupados en algo."
+    ],
+    "tarde": [
+     "El mercado afloja. Los puestos de fruta ya regatean a la baja y las sombras de las lonas se estiran hacia el aljibe. Hay menos gritos y más charla.",
+     "Un vendedor cuenta monedas sobre un trapo. Otro duerme sentado, con el sombrero en la cara. El olor a pan ya es de pan frío."
+    ],
+    "noche": [
+     "El mercado vacío es otro lugar. Las lonas cerradas golpean con el viento y el aljibe refleja una sola lámpara. Cada paso tuyo suena más de lo que debería.",
+     "Quedan restos del día: hojas de repollo, un cajón roto, una cinta en el piso. Algo chico corre entre los puestos y desaparece."
+    ]
+   },
+   "regreso": [
+    "El mercado sigue girando como siempre.",
+    "Volvés al círculo; el aljibe sigue en su lugar, la gente también.",
+    "El mercado te recibe con el mismo ruido de antes, apenas cambiado."
+   ],
+   "ambiente": [
+    "Un pregonero cambia de precio a mitad de la frase.",
+    "Se cae un cajón de manzanas y tres chicos aparecen de la nada.",
+    "Una mujer discute el peso de una gallina con una paciencia infinita.",
+    "El viento levanta una lona y por un momento entra el sol entero.",
+    "Alguien silba una canción que nadie más conoce.",
+    "Un perro olfatea el aljibe y sigue de largo, decidido."
+   ]
+  },
+  "escena_archivo_real": {
+   "primera": {
+    "madrugada": [
+     "El Archivo Real a esta hora es un pasillo de piedra con una lámpara al fondo. Huele a polvo frío y a tinta vieja. Tus pasos parecen pedir permiso.",
+     "Las estanterías suben hasta perderse en la penumbra. En algún lugar, un papel se acomoda solo."
+    ],
+    "manana": [
+     "La luz entra por ventanas altas y cae en franjas sobre las mesas de lectura. Copistas inclinados, plumas que raspan, alguien que tose y se disculpa en voz baja.",
+     "El Archivo tiene el silencio de un lugar que guarda cosas. Cada estante tiene una etiqueta, y cada etiqueta una mano distinta."
+    ],
+    "tarde": [
+     "La tarde vuelve dorado el polvo que flota. Los copistas estiran la espalda; uno cierra un tomo con un golpe seco que retumba más de lo previsto.",
+     "Sobre una mesa quedó un libro abierto y una pluma sin limpiar. El dueño no está a la vista."
+    ],
+    "noche": [
+     "El Archivo de noche es un barco quieto. Solo arde la lámpara de la guardia y el resto es sombra con forma de estante.",
+     "Se oye la madera del edificio, que cruje como si se acomodara para dormir."
+    ]
+   },
+   "regreso": [
+    "El Archivo sigue en su silencio de siempre.",
+    "Volvés entre estantes; el olor a tinta te reconoce.",
+    "Nada cambió en el Archivo, salvo quizá un tomo de lugar."
+   ],
+   "ambiente": [
+    "Una página pasa con un ruido de ala.",
+    "Un copista sopla la tinta y la mira secarse.",
+    "Alguien busca un tomo murmurando números.",
+    "Cae una mota de polvo en un rayo de luz y se queda flotando.",
+    "Una puerta lejana se cierra con cuidado.",
+    "Se oye el raspar de una pluma, regular como un reloj."
+   ]
+  },
+  "escena_plaza_cambistas": {
+   "primera": {
+    "madrugada": [
+     "La plaza de los cambistas está cerrada con cadenas y candados. Las mesas, apiladas. Solo un guardia aburrido cuida un dinero que no está.",
+     "El empedrado brilla de rocío. Hasta el silencio parece contar algo."
+    ],
+    "manana": [
+     "La plaza de los cambistas suena a metal. Monedas que caen en platillos, pesas que se acomodan, voces bajas que nombran cifras. Nadie grita: acá el dinero se dice en voz baja.",
+     "Cada mesa tiene su balanza y su cara seria. Los clientes esperan con la bolsa apretada contra el pecho."
+    ],
+    "tarde": [
+     "La tarde trae los últimos tratos, los más tensos. Un cambista niega con la cabeza tres veces seguidas; el cliente se va sin despedirse.",
+     "Las sombras de las balanzas se alargan sobre las mesas como agujas de reloj."
+    ],
+    "noche": [
+     "La plaza vacía guarda el olor a metal. Las mesas, apiladas otra vez; los candados, puestos. Una moneda olvidada brilla entre dos piedras.",
+     "Pasa una ronda de guardia, mira todo y no mira nada."
+    ]
+   },
+   "regreso": [
+    "La plaza sigue sonando a metal.",
+    "Los cambistas no levantan la vista al verte volver.",
+    "La plaza te recibe con el mismo tintineo."
+   ],
+   "ambiente": [
+    "Una moneda rueda y alguien la pisa antes de que llegue lejos.",
+    "Un cambista muerde una moneda y hace una mueca.",
+    "Dos hombres se dan la mano demasiado tiempo.",
+    "Se oye una balanza que se equilibra con un clic.",
+    "Un chico corre con un recado y una bolsa atada al cinturón.",
+    "Alguien cuenta en voz baja y se equivoca, y vuelve a empezar."
+   ]
+  },
+  "escena_taberna_lareth": {
+   "primera": {
+    "madrugada": [
+     "La taberna de Lareth huele a cerveza de ayer y a fuego apagado. Las sillas están sobre las mesas, patas arriba, como animales dormidos.",
+     "Detrás de la barra alguien enjuaga jarros sin ganas."
+    ],
+    "manana": [
+     "La taberna a la mañana es casi un comedor: pan, caldo, viajeros que todavía no hablan. La luz entra por la puerta abierta y se queda en el umbral.",
+     "Naela ordena botellas con la seriedad de quien ordena soldados."
+    ],
+    "tarde": [
+     "La taberna se va llenando. Arrieros con polvo hasta las rodillas, una partida de dados en un rincón, una risa que se escapa demasiado fuerte. El fuego ya está prendido.",
+     "El ruido sube de a poco, como la marea, hasta que hay que acercarse para escuchar."
+    ],
+    "noche": [
+     "La taberna de noche es un solo animal caliente: humo, voces, jarros que chocan, una canción que alguien empieza y nadie termina. La luz del fuego hace bailar las caras.",
+     "En un rincón, dos hablan bajito y miran la puerta cada vez que se abre."
+    ]
+   },
+   "regreso": [
+    "La taberna te recibe con el mismo calor.",
+    "Naela te ve entrar y no dice nada, lo cual es casi un saludo.",
+    "El ruido de la taberna te traga de nuevo."
+   ],
+   "ambiente": [
+    "Un jarro se cae y la taberna entera aplaude.",
+    "Alguien pide otra ronda con un dedo levantado.",
+    "El fuego estalla una chispa que cae lejos.",
+    "Un viejo cuenta la misma historia por tercera vez; todos la escuchan igual.",
+    "La puerta se abre y entra frío, y todos la miran mal.",
+    "Los dados ruedan, alguien maldice y alguien se ríe."
+   ]
+  },
+  "escena_biblioteca_publica": {
+   "primera": {
+    "madrugada": [
+     "La biblioteca pública está cerrada, pero por una ventana se ve una vela: alguien no se fue a dormir.",
+     "Las escaleras de la entrada están húmedas y alguien dejó un libro olvidado en el último escalón."
+    ],
+    "manana": [
+     "La biblioteca pública es amplia y luminosa, más joven que el Archivo. Estudiantes, lectores de diario, una anciana que lee con lupa. Elia patrulla entre las mesas con la mirada.",
+     "El silencio acá es más liviano: se permite un susurro, una página que se pasa rápido."
+    ],
+    "tarde": [
+     "La tarde llena la biblioteca de estudiantes cansados. Uno duerme sobre un libro abierto; otro copia sin entender lo que copia.",
+     "La luz baja y alguien enciende las primeras lámparas con un pabilo largo."
+    ],
+    "noche": [
+     "La biblioteca de noche cierra sus puertas grandes. Solo queda abierta la sala de lectura, con tres lámparas y dos lectores que no se conocen.",
+     "Los libros en sombra parecen más gruesos."
+    ]
+   },
+   "regreso": [
+    "La biblioteca sigue en su silencio liviano.",
+    "Elia levanta la vista y la baja.",
+    "Volvés entre mesas largas y lectores quietos."
+   ],
+   "ambiente": [
+    "Alguien estornuda y se ganan diez miradas.",
+    "Un estudiante deja caer un tomo y se queda rígido.",
+    "Se oye una risa ahogada en una mesa del fondo.",
+    "Elia acomoda un libro con un dedo, sin mirar.",
+    "Una página se rasga despacio; alguien gime.",
+    "La luz cambia en las ventanas y nadie lo nota."
+   ]
+  },
+  "escena_aula_cartografia": {
+   "primera": {
+    "madrugada": [
+     "El aula de cartografía está oscura, pero los mapas en las paredes guardan la luz como si fueran ventanas a otros lugares.",
+     "Sobre la mesa central hay un compás abierto y un mapa a medio terminar."
+    ],
+    "manana": [
+     "El aula de cartografía huele a tiza y a papel encerado. Mapas en las paredes, globos en los rincones, alumnos que discuten distancias. Tiren gesticula frente a un pizarrón lleno de flechas.",
+     "Un alumno mide con un hilo la distancia entre dos ciudades y se sorprende."
+    ],
+    "tarde": [
+     "La tarde en el aula es de copia: alumnos inclinados sobre mapas, trazando ríos con pluma fina. Hay olor a tinta fresca y a fatiga.",
+     "Por la ventana se ven las colinas reales, más torcidas que en los mapas."
+    ],
+    "noche": [
+     "El aula de noche es un mapa del mapa: siluetas de globos, sombras de reglas, un pizarrón borrado a medias.",
+     "Alguien dejó una vela que todavía humea."
+    ]
+   },
+   "regreso": [
+    "El aula sigue llena de mapas y de flechas.",
+    "Tiren te saluda con la tiza en la mano.",
+    "Los mapas siguen ahí, apuntando a todas partes."
+   ],
+   "ambiente": [
+    "Un alumno borra un río entero y suspira.",
+    "La tiza chilla contra el pizarrón.",
+    "Alguien gira un globo y lo detiene con el dedo en un lugar al azar.",
+    "Un compás cae y rueda lejos.",
+    "Tiren dibuja una montaña que parece un sombrero.",
+    "Se oye a dos alumnos discutir el norte."
+   ]
+  },
+  "escena_camino_norte": {
+   "primera": {
+    "madrugada": [
+     "El camino norte sale de la ciudad como una cinta gris bajo estrellas que se apagan. El frío corta y huele a pasto mojado.",
+     "A lo lejos, un perro ladra una vez, como para avisar que hay mundo."
+    ],
+    "manana": [
+     "El camino norte se abre entre campos y cercos de piedra. Carretas, arrieros, mulas cargadas. El polvo se levanta con cada paso y queda flotando.",
+     "El sol pega de costado y estira las sombras de los postes."
+    ],
+    "tarde": [
+     "La tarde en el camino norte es calor y polvo. Las mulas bajan la cabeza, los arrieros se tapan la nuca con trapos. Todo avanza más lento.",
+     "A un costado del camino hay una piedra con marcas de distancia."
+    ],
+    "noche": [
+     "El camino norte de noche es un hilo apenas visible. Los campos son masas oscuras y el cielo, enorme.",
+     "Cada ruido del pasto parece cercano."
+    ]
+   },
+   "regreso": [
+    "El camino norte sigue ahí, estirándose.",
+    "Volvés al polvo y a las mulas.",
+    "El camino te recibe con el mismo viento."
+   ],
+   "ambiente": [
+    "Una carreta pasa chirriando y el cochero saluda sin mirar.",
+    "Una bandada se levanta de un campo y cambia de idea en el aire.",
+    "El viento trae olor a heno.",
+    "Alguien canta lejos, del otro lado de un cerco.",
+    "Una mula rebuzna y otra le contesta.",
+    "El polvo se asienta despacio después de un carro."
+   ]
+  },
+  "escena_camino_este": {
+   "primera": {
+    "madrugada": [
+     "El camino este empieza a clarear antes que los otros. El sol asoma de frente y te obliga a entrecerrar los ojos.",
+     "Hay rocío en las telas de araña de los cercos, que brillan como hilos de vidrio."
+    ],
+    "manana": [
+     "El camino este es de huertas y molinos. Ruedas de agua que giran, gente con cestas, un olor a tierra recién regada.",
+     "Un molino cruje a un ritmo propio que parece marcar el paso de todos."
+    ],
+    "tarde": [
+     "La tarde en el camino este es amable: sombra de álamos, gente que vuelve con cestas vacías, chicos que tiran piedras al canal.",
+     "El canal brilla y lleva hojas secas hacia algún lado."
+    ],
+    "noche": [
+     "El camino este de noche suena a agua: el canal, las ruedas quietas que gotean, alguna rana.",
+     "La ciudad queda atrás como una mancha de luz."
+    ]
+   },
+   "regreso": [
+    "El camino este sigue sonando a agua.",
+    "Volvés entre álamos y canales.",
+    "Los molinos siguen girando como antes."
+   ],
+   "ambiente": [
+    "Una rueda de molino se traba y vuelve a girar.",
+    "Pasa una mujer con una cesta de cebollas en la cabeza.",
+    "Una rana salta al canal con un plop exacto.",
+    "Un chico tira una piedra que rebota tres veces.",
+    "El viento mueve los álamos al mismo tiempo.",
+    "Se oye un martillo lejano en una granja."
+   ]
+  },
+  "escena_camino_sur": {
+   "primera": {
+    "madrugada": [
+     "El camino sur baja hacia tierras secas. A esta hora el aire es limpio y el horizonte, una línea violeta.",
+     "Las piedras del camino están frías y hay huellas de un animal que pasó de noche."
+    ],
+    "manana": [
+     "El camino sur es pedregoso y abierto. Pocas carretas, muchos caminantes, un sol que empieza a pesar temprano. Las cabras miran desde las lomas.",
+     "El polvo es rojizo y se pega a todo."
+    ],
+    "tarde": [
+     "La tarde en el camino sur aprieta. El calor tiembla sobre las piedras y las cigarras no se callan. Cualquier sombra es un tesoro.",
+     "Una cruz de piedra marca algo que ya nadie recuerda."
+    ],
+    "noche": [
+     "El camino sur de noche es silencio y estrellas. El calor se va de golpe y queda un frío seco.",
+     "A lo lejos, una fogata de pastores, chica como una brasa."
+    ]
+   },
+   "regreso": [
+    "El camino sur sigue polvoriento.",
+    "Volvés a las piedras y al sol.",
+    "El camino sur te recibe con el mismo calor."
+   ],
+   "ambiente": [
+    "Una cabra se asoma a una piedra y se va ofendida.",
+    "Las cigarras suben el volumen de golpe.",
+    "Pasa un caminante con un bastón que golpea cada tres pasos.",
+    "Un remolino chico de polvo cruza el camino.",
+    "Un lagarto se queda quieto, convencido de que no lo ves.",
+    "El viento trae olor a tomillo."
+   ]
+  },
+  "escena_lago_espejos": {
+   "primera": {
+    "madrugada": [
+     "El lago de los espejos a esta hora es una placa de plata sin una arruga. La isla en el medio parece suspendida. No hay viento ni ruido; solo la niebla que se levanta del agua.",
+     "En la orilla hay botes dados vuelta, como caparazones."
+    ],
+    "manana": [
+     "El lago se despierta con los botes de pesca. El agua refleja todo con una exactitud incómoda: el cielo, las nubes, tu cara si te asomás.",
+     "Ysolde arregla una red sentada en un tronco, sin mirar el lago, como si ya lo supiera de memoria."
+    ],
+    "tarde": [
+     "La tarde pone el lago dorado. Una brisa riza la superficie y los reflejos se rompen en mil pedazos que vuelven a juntarse.",
+     "Las garzas caminan en la orilla con paso de juez."
+    ],
+    "noche": [
+     "El lago de noche refleja las estrellas tan bien que no sabés dónde termina el cielo. La isla es una sombra que respira.",
+     "El agua golpea los botes con un ritmo lento."
+    ]
+   },
+   "regreso": [
+    "El lago sigue quieto, devolviendo todo.",
+    "Volvés a la orilla; el agua no cambió de opinión.",
+    "La isla sigue ahí, en el medio."
+   ],
+   "ambiente": [
+    "Un pez salta y deja un círculo perfecto.",
+    "Una garza levanta una pata y se queda pensando.",
+    "El viento riza el agua y se arrepiente.",
+    "Un bote cruje atado a su estaca.",
+    "Se oye un remo lejano, sin ver el bote.",
+    "Una hoja cae al lago y gira despacio."
+   ]
+  },
+  "escena_puente_aduana": {
+   "primera": {
+    "madrugada": [
+     "El puente de la aduana está cerrado con una barrera de madera. La caseta tiene una lámpara y un guardia que bosteza. Abajo, el río corre oscuro y ruidoso.",
+     "Hay una fila de carros esperando, con los cocheros dormidos sobre el pescante."
+    ],
+    "manana": [
+     "El puente de la aduana es un embudo: carros, mulas, viajeros con papeles en la mano. Darío revisa con calma lo que otros quieren hacer rápido.",
+     "El río, abajo, se lleva el ruido de todos."
+    ],
+    "tarde": [
+     "La tarde en la aduana es de impaciencia. La fila no avanza, alguien protesta, un guardia anota algo y no levanta la vista.",
+     "El sol pega en el agua y sube un reflejo que encandila."
+    ],
+    "noche": [
+     "El puente de noche es una línea de antorchas sobre el agua negra. La barrera baja, la caseta encendida, y el río más fuerte que nunca.",
+     "Alguien pasa sin carro y le piden igual los papeles."
+    ]
+   },
+   "regreso": [
+    "El puente sigue igual de lento.",
+    "Darío te reconoce con un gesto mínimo.",
+    "El río sigue pasando por debajo."
+   ],
+   "ambiente": [
+    "Una mula se niega a cruzar y hay que convencerla.",
+    "Un sello golpea un papel con un ruido seco.",
+    "Alguien discute el peso de una carga.",
+    "Una gaviota se posa en la barrera.",
+    "El río arrastra una rama que golpea un pilar.",
+    "Un guardia cuenta bultos en voz alta."
+   ]
+  },
+  "escena_cruce_colinas": {
+   "primera": {
+    "madrugada": [
+     "El cruce de las colinas es un nudo de caminos entre lomas peladas. La niebla se apoya en las hondonadas y el roble grande asoma por encima, solitario.",
+     "Hay una piedra con tres flechas talladas, cada una más gastada que la otra."
+    ],
+    "manana": [
+     "El cruce de las colinas se abre en todas direcciones. Ovejas en las lomas, un pastor sentado, el viento que no para. Desde acá se ve medio mundo.",
+     "El roble de la colina tiene cintas atadas que se mueven con el viento."
+    ],
+    "tarde": [
+     "La tarde en el cruce es de viento largo. Las nubes corren sobre las lomas y sus sombras pasan por el suelo como animales grandes.",
+     "Un viajero duda en el cruce y elige sin mucha convicción."
+    ],
+    "noche": [
+     "El cruce de noche es oscuridad abierta. El viento se lleva cualquier ruido y el roble es una mancha contra el cielo.",
+     "Se ve una luz lejana en una de las lomas, sin saber de quién."
+    ]
+   },
+   "regreso": [
+    "El cruce sigue abriéndose en todas direcciones.",
+    "Volvés al viento de las colinas.",
+    "El roble sigue mirando desde arriba."
+   ],
+   "ambiente": [
+    "Una oveja se queda mirándote demasiado tiempo.",
+    "El viento cambia de lado de golpe.",
+    "Una sombra de nube cruza la loma entera.",
+    "El pastor silba y el perro corre.",
+    "Una cinta del roble se suelta y vuela.",
+    "Se oye un cencerro, uno solo, lejano."
+   ]
+  }
+ },
+ "actividad": {
+  "maren_archivista": {
+   "madrugada": [
+    "Maren abre los postigos del Archivo, uno por uno, sin apuro.",
+    "Maren sigue en lo suyo, sin notar que la mirás."
+   ],
+   "manana": [
+    "Maren clasifica legajos con dedos rápidos y labios apretados.",
+    "Maren corrige la etiqueta de un estante y la mira con desconfianza."
+   ],
+   "tarde": [
+    "Maren revisa un registro línea por línea, con una regla bajo cada renglón.",
+    "Maren sigue en lo suyo, sin notar que la mirás."
+   ],
+   "noche": [
+    "Maren cierra el Archivo apagando lámparas de a una.",
+    "Maren sigue en lo suyo, sin notar que la mirás."
+   ]
+  },
+  "serel_panadero": {
+   "madrugada": [
+    "Serel saca la primera hornada con una pala larga; el delantal ya está blanco de harina.",
+    "Serel amasa en silencio, golpeando la masa como si le debiera algo."
+   ],
+   "manana": [
+    "Serel acomoda panes en la vidriera y espanta una mosca con el codo.",
+    "Serel sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "tarde": [
+    "Serel vende lo que queda a mitad de precio, con cara de pérdida.",
+    "Serel sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "noche": [
+    "Serel limpia el horno con la cabeza adentro, maldiciendo.",
+    "Serel sigue en lo suyo, sin notar que lo mirás."
+   ]
+  },
+  "ivor_cambista": {
+   "madrugada": [
+    "Ivor cuenta monedas en la penumbra, antes de que lleguen los clientes.",
+    "Ivor sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "manana": [
+    "Ivor pesa una moneda dos veces y anota algo sin mostrarlo.",
+    "Ivor escucha a un cliente con los dedos entrelazados y cara de piedra."
+   ],
+   "tarde": [
+    "Ivor cierra un trato con un gesto mínimo y guarda la bolsa.",
+    "Ivor sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "noche": [
+    "Ivor guarda su balanza en una caja con candado.",
+    "Ivor sigue en lo suyo, sin notar que lo mirás."
+   ]
+  },
+  "naela_tabernera": {
+   "madrugada": [
+    "Naela barre la taberna, juntando tapas y algún diente.",
+    "Naela sigue en lo suyo, sin notar que la mirás."
+   ],
+   "manana": [
+    "Naela sirve caldo y pan a viajeros que todavía no hablan.",
+    "Naela sigue en lo suyo, sin notar que la mirás."
+   ],
+   "tarde": [
+    "Naela llena jarros sin mirar, con una precisión de años.",
+    "Naela echa a un borracho con una sola frase."
+   ],
+   "noche": [
+    "Naela atiende tres conversaciones a la vez y no pierde ninguna.",
+    "Naela sigue en lo suyo, sin notar que la mirás."
+   ]
+  },
+  "tiren_docente": {
+   "madrugada": [
+    "Tiren repasa un mapa con una vela, murmurando distancias.",
+    "Tiren sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "manana": [
+    "Tiren dibuja flechas en el pizarrón con entusiasmo de chico.",
+    "Tiren corrige un río mal trazado y se ríe solo."
+   ],
+   "tarde": [
+    "Tiren discute con un alumno sobre el norte, y pierde a propósito.",
+    "Tiren sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "noche": [
+    "Tiren cierra el aula, pero se lleva un mapa bajo el brazo.",
+    "Tiren sigue en lo suyo, sin notar que lo mirás."
+   ]
+  },
+  "elia_bibliotecaria": {
+   "madrugada": [
+    "Elia lee a la luz de una vela, en la sala vacía.",
+    "Elia sigue en lo suyo, sin notar que la mirás."
+   ],
+   "manana": [
+    "Elia ordena libros devueltos con una paciencia severa.",
+    "Elia chista a un estudiante sin levantar la vista."
+   ],
+   "tarde": [
+    "Elia repara un lomo con hilo y cola, concentrada.",
+    "Elia sigue en lo suyo, sin notar que la mirás."
+   ],
+   "noche": [
+    "Elia apaga las lámparas y deja una, siempre la misma.",
+    "Elia sigue en lo suyo, sin notar que la mirás."
+   ]
+  },
+  "brenn_arriero": {
+   "madrugada": [
+    "Brenn carga las mulas en la oscuridad, hablándoles bajito.",
+    "Brenn sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "manana": [
+    "Brenn ajusta una cincha y escupe al costado del camino.",
+    "Brenn sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "tarde": [
+    "Brenn camina junto a la recua con el sombrero bajo y el paso pesado.",
+    "Brenn le da agua a una mula antes de tomar él."
+   ],
+   "noche": [
+    "Brenn arma un fuego chico al costado del camino.",
+    "Brenn sigue en lo suyo, sin notar que lo mirás."
+   ]
+  },
+  "ysolde_pescadora": {
+   "madrugada": [
+    "Ysolde empuja su bote al agua en la niebla, sin hacer ruido.",
+    "Ysolde sigue en lo suyo, sin notar que la mirás."
+   ],
+   "manana": [
+    "Ysolde arregla una red con los dedos y los dientes.",
+    "Ysolde mira el agua como si leyera algo escrito."
+   ],
+   "tarde": [
+    "Ysolde limpia pescados en la orilla; las garzas esperan.",
+    "Ysolde sigue en lo suyo, sin notar que la mirás."
+   ],
+   "noche": [
+    "Ysolde ata su bote y se queda mirando la isla.",
+    "Ysolde sigue en lo suyo, sin notar que la mirás."
+   ]
+  },
+  "dario_guardia": {
+   "madrugada": [
+    "Darío bosteza en la caseta y se frota los ojos.",
+    "Darío sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "manana": [
+    "Darío revisa papeles con calma y pide uno más.",
+    "Darío deja pasar un carro y baja la barrera detrás, sin apuro."
+   ],
+   "tarde": [
+    "Darío anota algo en un registro y mira el río.",
+    "Darío sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "noche": [
+    "Darío hace la ronda del puente con una antorcha.",
+    "Darío sigue en lo suyo, sin notar que lo mirás."
+   ]
+  },
+  "sarin_mensajera": {
+   "madrugada": [
+    "Sarin ajusta las correas de su bolso, lista antes que el sol.",
+    "Sarin sigue en lo suyo, sin notar que la mirás."
+   ],
+   "manana": [
+    "Sarin pasa corriendo con una carta en la mano y no saluda.",
+    "Sarin entrega un sobre y ya se está yendo."
+   ],
+   "tarde": [
+    "Sarin se sienta un momento a sacarse una piedra del zapato.",
+    "Sarin sigue en lo suyo, sin notar que la mirás."
+   ],
+   "noche": [
+    "Sarin vuelve con el bolso vacío y los pies cansados.",
+    "Sarin sigue en lo suyo, sin notar que la mirás."
+   ]
+  },
+  "hollis_pastor": {
+   "madrugada": [
+    "Hollis cuenta ovejas en voz baja, con el cayado apoyado.",
+    "Hollis sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "manana": [
+    "Hollis lleva el rebaño loma arriba, silbando al perro.",
+    "Hollis sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "tarde": [
+    "Hollis se sienta en una piedra y mira las nubes, sin apuro.",
+    "Hollis cura la pata de una oveja con un trapo."
+   ],
+   "noche": [
+    "Hollis enciende una fogata chica junto al corral.",
+    "Hollis sigue en lo suyo, sin notar que lo mirás."
+   ]
+  },
+  "oren_peregrino": {
+   "madrugada": [
+    "Oren reza en voz baja de cara al camino.",
+    "Oren sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "manana": [
+    "Oren camina con su bastón, deteniéndose en cada cinta de los árboles.",
+    "Oren sigue en lo suyo, sin notar que lo mirás."
+   ],
+   "tarde": [
+    "Oren comparte pan con un desconocido sin preguntar nada.",
+    "Oren ata una cinta nueva a una rama."
+   ],
+   "noche": [
+    "Oren duerme sentado, con la espalda contra una piedra.",
+    "Oren sigue en lo suyo, sin notar que lo mirás."
+   ]
+  }
+ },
+ "transicion": {
+  "ciudad": [
+   "Atravesás calles estrechas, esquivando carros y vecinos.",
+   "Cruzás la ciudad por callejones que huelen a guiso y a humedad.",
+   "Caminás entre fachadas que se apoyan unas en otras."
+  ],
+  "camino": [
+   "El camino se estira bajo tus pies; el paisaje cambia de a poco.",
+   "Caminás largo rato. El polvo se te pega a la ropa.",
+   "El trayecto es largo y monótono; los pensamientos te acompañan."
+  ]
+ },
+ "cierre": {
+  "hallazgo": [
+   "Te quedás un momento con eso en la mano, pensando.",
+   "Lo guardás en la memoria, por si sirve.",
+   "Algo en eso te deja inquieto."
+  ],
+  "charla": [
+   "La conversación te deja un sabor raro.",
+   "Te alejás repasando lo que dijo.",
+   "Te quedás con una pregunta que no hiciste."
+  ],
+  "nada": [
+   "No era nada. Igual lo recordás.",
+   "Te sacudís la idea y seguís."
+  ]
+ }
+}

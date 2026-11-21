@@ -1,0 +1,67 @@
+{
+ "version": 7,
+ "pasos": [
+  {
+   "id": "W1",
+   "nombre": "Correcciones fase 6",
+   "depende": [],
+   "estado": "hecho"
+  },
+  {
+   "id": "W2",
+   "nombre": "Anti-repetición",
+   "depende": [],
+   "estado": "pendiente"
+  },
+  {
+   "id": "W3",
+   "nombre": "No entendí con sugerencias",
+   "depende": [
+    "W1"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "W4",
+   "nombre": "Narración de escena t39",
+   "depende": [
+    "W2"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "W5",
+   "nombre": "Fila de opciones",
+   "depende": [
+    "W3"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "W6",
+   "nombre": "Carga por escena",
+   "depende": [
+    "W4"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "W7",
+   "nombre": "Bots de juego",
+   "depende": [
+    "W4",
+    "W5"
+   ],
+   "estado": "pendiente"
+  },
+  {
+   "id": "W8",
+   "nombre": "Cierre",
+   "depende": [
+    "W6",
+    "W7"
+   ],
+   "estado": "pendiente"
+  }
+ ]
+}

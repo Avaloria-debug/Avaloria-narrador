@@ -89,7 +89,7 @@ import { colisionesDeFormas, ACCIONES } from './lectura.js';
 import { FORMAS as FORMAS_FOCO } from './focos.js';
 test('V6 sinónimos de verbos', () => {
   const c = contextoLectura({ focos: { gata_mercado: { alias: ['gata'] }, campana_lejana: { alias: ['campana'] }, carta_suelta: { alias: ['carta'] } } });
-  for (const [f, a] of [['persigo a la gata', 'seguir'], ['acompaño a la gata', 'seguir'], ['contemplo la gata', 'mirar'], ['examino la carta', 'mirar'], ['oigo la campana', 'escuchar'], ['golpeo la campana', 'tocar'], ['recojo la carta', 'tomar'], ['levanto la carta', 'tomar']]) {
+  for (const [f, a] of [['persigo a la gata', 'seguir'], ['acompaño a la gata', 'seguir'], ['contemplo la gata', 'mirar'], ['examino la carta', 'mirar'], ['oigo la campana', 'escuchar'], ['golpeo la campana', 'tocar'], ['recojo la carta', 'tocar'], ['levanto la carta', 'tocar']]) {
     assert.equal(leerAccion(f, c).accion, a, f);
   }
 });
@@ -98,7 +98,7 @@ test('V6 sinónimo de cosa por oficio: «el panadero» → serel_panadero', () =
   assert.deepEqual(leerAccion('hablo con el panadero', c), { accion: 'hablar', npc: 'serel_panadero' });
 });
 test('V6 sin colisiones entre verbos de acciones distintas', () => assert.deepEqual(colisionesDeFormas(), []));
-test('V6 contra focos.js: solo difiere «agarrar» (tocar en focos, tomar en lectura)', () => {
+test('V6 contra focos.js: sin diferencias (W1 sacó «agarrar» de focos.js)', () => {
   const dif = [];
   for (const [verbo, fs] of Object.entries(FORMAS_FOCO)) for (const f of fs) {
     if (f.includes(' ')) continue;
@@ -107,5 +107,5 @@ test('V6 contra focos.js: solo difiere «agarrar» (tocar en focos, tomar en lec
     const esperado = verbo === 'examinar' ? 'mirar' : verbo;
     if (accion && ACCIONES.includes(accion) && accion !== esperado) dif.push(`${f}:${verbo}→${accion}`);
   }
-  assert.deepEqual([...new Set(dif.map((d) => d.split(':')[0].replace(/o$/, 'ar')))].sort(), ['agarrar'], dif.join(' '));
+  assert.deepEqual([...new Set(dif.map((d) => d.split(':')[0].replace(/o$/, 'ar')))].sort(), [], dif.join(' '));
 });

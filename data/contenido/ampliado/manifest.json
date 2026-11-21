@@ -161,6 +161,11 @@
    "tanda": "t32"
   },
   {
+   "f": "t39-narracion.json",
+   "estado": "a_aprobar",
+   "tanda": "t39"
+  },
+  {
    "f": "valores.json",
    "estado": "a_aprobar_canon",
    "tanda": "valores"

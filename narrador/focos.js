@@ -27,7 +27,7 @@ export const FORMAS = Object.freeze({
   seguir: ['seguir', 'sigo', 'segui', 'seguila', 'seguilo', 'seguirla', 'seguirlo', 'ir tras', 'voy tras', 'perseguir', 'persigo', 'persegui', 'acercarme a', 'me acerco a', 'acercate a', 'ir hacia', 'voy hacia', 'correr tras', 'corro tras'],
   mirar: ['mirar a', 'mirar al', 'mirar la', 'mirar el', 'mirar los', 'mirar las', 'mira a', 'mira la', 'mira el', 'miro a', 'miro la', 'miro el', 'mirala', 'miralo', 'mirar eso', 'mira eso', 'fijarme en', 'me fijo en', 'observar a', 'observar al', 'observo a', 'observala', 'observalo'],
   llamar: ['llamar', 'llamo', 'llama', 'llamala', 'llamalo', 'silbar', 'silbo', 'silbale', 'gritarle', 'le grito'],
-  tocar: ['tocar', 'toco', 'toca', 'tocala', 'tocalo', 'agarrar', 'agarro', 'acariciar', 'acaricio', 'acariciala', 'acarícialo'],
+  tocar: ['tocar', 'toco', 'toca', 'tocala', 'tocalo', 'acariciar', 'acaricio', 'acariciala', 'acarícialo'],
   escuchar: ['escuchar', 'escucho', 'escucha', 'escuchalo', 'escuchala', 'oir', 'oigo', 'prestar oido', 'presto oido'],
   preguntar: ['preguntar por', 'pregunto por', 'pregunta por', 'preguntarle por', 'preguntale por'],
   ignorar: ['ignorar', 'ignoro', 'ignora', 'ignoralo', 'ignorala', 'dejar pasar', 'dejo pasar'],
@@ -233,7 +233,8 @@ export function interrumpe({ fx, verbo, turno, presentes, ref, F }) {
  * Turno de foco, antes de la comprensión. null = comportamiento anterior.
  * @returns {null | { tipo: 'foco'|'reformular', estado, intencionId: null, texto?, motivo?, datos?, foco?, extFocos? }}
  */
-const PREFIJO_FOCO = { seguir: 'seguir a', mirar: 'mirar a', llamar: 'llamar a', tocar: 'tocar', escuchar: 'escuchar', preguntar: 'preguntar por', ignorar: 'ignorar' };
+// W1: tomar un transportable = su rama «seguir» (la que termina en hallazgo).
+const PREFIJO_FOCO = { tomar: 'seguir a', seguir: 'seguir a', mirar: 'mirar a', llamar: 'llamar a', tocar: 'tocar', escuchar: 'escuchar', preguntar: 'preguntar por', ignorar: 'ignorar' };
 
 /**
  * Fase 6: lectura por etapas (lectura.js) sobre los focos vigentes. Devuelve el texto canónico que entiende
@@ -241,7 +242,7 @@ const PREFIJO_FOCO = { seguir: 'seguir a', mirar: 'mirar a', llamar: 'llamar a',
  */
 function leerSobreFocos({ F, fx, texto, partida, contenido, turno, escena }) {
   const focos = {};
-  for (const f of fx.focos) focos[f.id] = { alias: aliasDe(f, F), clase: claseDe(f, F) };
+  for (const f of fx.focos) focos[f.id] = { alias: aliasDe(f, F), clase: claseDe(f, F), escena: f.escena, ramas: f.gen ? {} : F.defs[f.id]?.ramas };
   for (const [id, o] of fijosDe(F, escena)) focos[`fijo:${id}`] ??= { alias: o.alias ?? [], clase: 'objeto' };
   const presentes = npcsPresentes(partida, contenido).map((n) => n.id);
   const reciente = referenciasVigentes(fx.refs, turno);

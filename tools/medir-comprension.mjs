@@ -27,6 +27,7 @@ export function juzgar(esperado, leido) {
   const la = leido?.accion ?? 'no_entendido';
   if (DUDA.has(la)) {
     if (la !== esperado.accion) return 'no';
+    if (la === 'aclarar' && esperado.pregunta && esperado.pregunta !== leido.pregunta) return 'no';
     if (la === 'aclarar' && esperado.opciones) return [...esperado.opciones].sort().join() === [...(leido.opciones ?? [])].sort().join() ? 'ok' : 'no';
     return 'ok';
   }
@@ -43,7 +44,8 @@ export async function medir({ etapas = ETAPAS, corpus = JSON.parse(fs.readFileSy
     const npcIds = new Set(contenido.npcs.map((n) => n.id));
     const reciente = {};
     for (const x of [].concat(c.ctx ?? [])) { if (npcIds.has(x)) reciente.npc = x; else reciente.foco = x; }
-    const ctx = contextoLectura({ ...base, presentes: c.presentes ?? ['serel_panadero'], reciente, pendiente: c.pendiente ?? null });
+    const focos = c.escenaDe ? Object.fromEntries(Object.entries(base.focos).map(([id, d]) => [id, c.escenaDe[id] ? { ...d, escena: c.escenaDe[id] } : d])) : base.focos;
+    const ctx = contextoLectura({ ...base, focos, presentes: c.presentes ?? ['serel_panadero'], reciente, pendiente: c.pendiente ?? null });
     const leido = leerAccion(c.frase, ctx, { etapas });
     return { i, frase: c.frase, cat: c.cat ?? 'otros', estado: juzgar(c, leido), leido };
   });

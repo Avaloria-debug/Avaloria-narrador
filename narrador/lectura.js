@@ -149,12 +149,24 @@ const genero = (alias) => (/a(s)?$/.test(normalizar(alias).split(' ')[0]) ? 'f' 
  * Contexto de lectura desde contenido + focos.
  * @param {{ focos?: object, npcs?: object[], presentes?: string[], escenas?: object[], reciente?: object, pendiente?: object }} o
  */
-export function contextoLectura({ focos = {}, npcs = [], presentes = null, escenas = [], reciente = {}, pendiente = null } = {}) {
+export function contextoLectura({ focos = {}, npcs = [], presentes = null, escenas = [], reciente = {}, pendiente = null, inventario = [] } = {}) {
   const cosas = [];
   for (const [id, d] of Object.entries(focos)) for (const a of d.alias ?? []) cosas.push({ tipo: 'foco', id, alias: normalizar(a), genero: genero(d.alias[0]), clase: d.clase });
   const npcsCtx = npcs.map((n) => ({ id: n.id, nombre: n.nombre, palabras: [...new Set([...normalizar(n.nombre).split(' '), ...(n.alias ?? []).map(normalizar)])].filter((w) => w && !VACIAS.has(w)) }));
   for (const n of npcsCtx) for (const w of n.palabras) cosas.push({ tipo: 'npc', id: n.id, alias: w });
-  return { cosas, npcs: npcsCtx, presentes: presentes ?? npcsCtx.map((n) => n.id), escenas, reciente: { ...reciente }, pendiente };
+  // W1: escena donde se vio cada foco (para el rótulo) y cosas transportables (objeto con fin hallazgo, o inventario).
+  const escenaDe = Object.fromEntries(Object.entries(focos).filter(([, d]) => d.escena).map(([id, d]) => [id, d.escena]));
+  const transportables = new Set([...inventario, ...Object.entries(focos).filter(([, d]) => esTransportable(d)).map(([id]) => id)]);
+  return { cosas, npcs: npcsCtx, presentes: presentes ?? npcsCtx.map((n) => n.id), escenas, reciente: { ...reciente }, pendiente, escenaDe, transportables };
+}
+
+/** W1: objeto con algún paso `fin: hallazgo` en sus ramas. */
+export function esTransportable(def) {
+  return def?.clase === 'objeto' && Object.values(def.ramas ?? {}).some((l) => Array.isArray(l) && l.some((p) => p && typeof p === 'object' && p.fin === 'hallazgo'));
+}
+/** W1: único lugar de decisión de «agarrar/tomar/levantar»: transportable → tomar; si no → tocar. */
+export function tomarOTocar(id, ctx) {
+  return ctx?.transportables?.has(id) ? 'tomar' : 'tocar';
 }
 
 function vocabCosas(ctx) {
@@ -310,8 +322,33 @@ function nombreDe(id, opciones, ctx) {
   const a = (opciones[0] === id ? al[0] : propias[0]) ?? al[0] ?? id;
   return `${genero(a) === 'f' ? 'la' : 'el'} ${a}`;
 }
+/** W1: rótulo que distingue candidatos con el mismo alias: escena donde se vio, o el resto de un alias propio («de granja»). */
+export function rotuloDe(id, base, opciones, ctx) {
+  const escenas = opciones.map((o) => ctx.escenaDe?.[o]);
+  if (ctx.escenaDe?.[id] && new Set(escenas).size === opciones.length) {
+    const e = (ctx.escenas ?? []).find((x) => x.id === ctx.escenaDe[id]);
+    const w = e ? normalizar(e.nombre).split(' ')[0] : null;
+    if (w) return /a$/.test(w) ? `de la ${w}` : `del ${w}`;
+  }
+  const propio = ctx.cosas.find((c) => c.id === id && c.alias !== base && c.alias.startsWith(`${base} `));
+  return propio ? propio.alias.slice(base.length + 1) : null;
+}
+function aliasComun(opciones, ctx) {
+  const de = opciones.map((o) => new Set(ctx.cosas.filter((c) => c.id === o).map((c) => c.alias)));
+  return [...de[0]].find((a) => de.every((s) => s.has(a))) ?? null;
+}
 const capital = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 export function preguntaAclaracion({ opciones = [], verbo = null } = {}, ctx) {
+  const base = opciones.length >= 2 ? aliasComun(opciones.slice(0, 2), ctx) : null;
+  if (base) {
+    const art = genero(base) === 'f' ? 'la' : 'el';
+    const r = opciones.slice(0, 2).map((o) => rotuloDe(o, base, opciones.slice(0, 2), ctx));
+    if (r.some(Boolean)) {
+      const a = `${art} ${base}${r[0] ? ` ${r[0]}` : ''}`;
+      const b = r[1] ? `${art} ${r[1]}` : nombreDe(opciones[1], opciones, ctx);
+      return TEXTOS_ACLARACION.opciones.replace('{a}', capital(a)).replace('{b}', b);
+    }
+  }
   if (opciones.length >= 2) return TEXTOS_ACLARACION.opciones.replace('{a}', capital(nombreDe(opciones[0], opciones, ctx))).replace('{b}', nombreDe(opciones[1], opciones, ctx));
   return TEXTOS_ACLARACION.falta.replace('{verbo}', verbo ?? 'hacer');
 }
@@ -493,6 +530,7 @@ export function leerAccion(texto, ctx, { etapas = ETAPAS } = {}) {
   let primera = null; let ultima = null;
   for (const p of partes) {
     const l = leerParte(p, { ...ctx, reciente }, et);
+    if (l.accion === 'tomar' && l.objetivo && !ctx.cosas.some((c) => c.id === l.objetivo && c.tipo === 'npc')) l.accion = tomarOTocar(l.objetivo, ctx);
     reciente = recordar(reciente, l, ctx);
     if (!primera) primera = l; else ultima.luego = l;
     ultima = l;

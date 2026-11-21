@@ -106,3 +106,6 @@ R6 | sin espejo propio: solo origen oficial de Hugging Face | espejo en Pages
 - F6 V7: corpus +25 frases de control (falsos_positivos) halladas en la autorrevisión; 4 casos semilla de «ignorar al perro» pasan a aclarar (hay dos perros), como «seguir al perro».
 - F6 V7: tipeo con 4 letras solo para intercambio de letras o letra faltante («hora» no se corrige a «hoja», «tiro» no es «miro»).
 - F6 V8: «no entendida» = reformulación, error de IA (sin_ia) o aclaración pendiente; exportación con accion '?' para completar a mano.
+- F7 W1: transportable = clase objeto con algún paso `fin: hallazgo`, o id en inventario; tomarlo ejecuta su rama «seguir» (la que lleva al hallazgo). «agarrar» sale de FORMAS.tocar de focos.js: decide solo tomarOTocar (lectura.js). La carta no es transportable (sin hallazgo) → tocar; 28 casos del corpus pasan a tocar.
+- F7 W1: rótulo = escena donde se vio cada candidato (si difieren) o el resto de un alias propio («el de granja»).
+- F7 W1: manifest regenerado ya en W1 porque t39 llegó en el paquete (el test de manifest lo exige).
